@@ -85,3 +85,7 @@ presentations/
       transcript.txt       # Fetched/cached transcript
       writeup.md           # Final annotated blog post
 ```
+
+## Acknowledgements
+
+Inspired by the [hamel](https://github.com/hamelsmu/hamel) package by [Hamel Husain](https://hamel.dev).

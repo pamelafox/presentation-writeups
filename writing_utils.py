@@ -330,22 +330,50 @@ def generate_annotated_talk_post(
     prompt = f"""Attached is the transcript (in <transcript> tags) of a technical talk. Create an annotated blog post that explains the content of each slide.
 
 STRUCTURE REQUIREMENTS:
-1. Start with a brief introduction paragraph (no heading needed for intro).
-2. Include a Table of Contents after the introduction, listing all slide section titles as markdown links.
-3. For each slide, create a section with:
+1. Start with a level-1 heading (#) containing the talk title
+2. Follow with an overview paragraph introducing the talk (e.g., "This talk introduces...")
+3. Do NOT include a table of contents - it will be generated automatically
+4. For each slide, create a section with:
    - A level-2 heading (##) with a descriptive title for that slide's content
    - The slide image reference immediately after the heading
    - A timestamp link to the video
    - The explanatory text
+5. End with a "## Q&A" section containing questions and answers from the talk, each question as a level-3 heading (###)
 
-Example structure for each slide section:
+HEADING CAPITALIZATION: Capitalize the first letter of headings like a normal sentence. Only capitalize proper nouns (product names, acronyms) elsewhere.
+- CORRECT: "Hybrid search combines keyword and vector retrieval"
+- CORRECT: "How Azure AI Search handles embeddings"
+- CORRECT: "Introduction to RAG architecture"
+- WRONG: "hybrid search combines keyword and vector retrieval" (missing capital)
+- WRONG: "Hybrid Search Combines Keyword And Vector Retrieval" (title case)
 
-## Hybrid Search Combines Multiple Retrieval Methods
+Example structure:
+
+# Building intelligent agents with RAG
+
+This talk introduces techniques for building AI agents using retrieval-augmented generation...
+
+## Hybrid search combines multiple retrieval methods
 
 ![Diagram showing hybrid search architecture](slide_images/slide_8.png)
 [Watch from 04:12](https://www.youtube.com/watch?v=VIDEO_ID&t=252s)
 
 Hybrid search combines keyword search and vector search to leverage the strengths of both...
+
+## Understanding the Azure AI Search architecture
+
+![Azure AI Search overview](slide_images/slide_9.png)
+[Watch from 05:30](https://www.youtube.com/watch?v=VIDEO_ID&t=330s)
+
+Azure AI Search provides enterprise-grade vector search capabilities...
+
+## Q&A
+
+### How do I configure specific indexes as knowledge sources?
+
+Answer text here...
+
+---
 
 For each slide, provide a detailed synopsis of the information to maximize understanding for the reader. Each section should provide enough commentary and info to understand the full context of that particular slide. The idea is that the reader will not have to watch the video and can instead read the material, so the writing + slide should stand alone. Do not simply repeat the information on each slide. Capture supplementary information from the talk that is NOT visible on the slides. Be thoroughly detailed and capture useful asides or commentary as well, such that the notes you generate should be a legitimate value add on top of the slides.
 
@@ -357,7 +385,7 @@ Refer to slides with naming convention (slide_1.png, slide_2.png, etc)
 
 {timestamp_note}
 
-If there is a Q&A section of the talk that does not correspond to any slides, list those questions with answers in a Q&A section at the end. Add timestamps to each question if possible.
+The Q&A section is REQUIRED if there is any question-and-answer discussion in the transcript. Include timestamps for each question if possible.
 
 <transcript>
 {transcript}
@@ -389,6 +417,7 @@ Writing guidelines:
 12. Use direct statements. Avoid hedge words unless exceptions matter.
 13. No emojis in professional writing.
 14. Use simple language. Present information objectively.
+15. Capitalize headings like sentences: first letter uppercase, then lowercase except for proper nouns.
 
 Please go ahead and draft the post."""
 
@@ -407,4 +436,49 @@ Please go ahead and draft the post."""
         }
     ]
     
-    return chat_completion(messages, temperature=0.7, max_tokens=16000)
+    writeup = chat_completion(messages, temperature=0.7, max_tokens=16000)
+    
+    # Generate and insert table of contents
+    writeup = insert_table_of_contents(writeup)
+    
+    return writeup
+
+
+def insert_table_of_contents(markdown: str) -> str:
+    """
+    Parse markdown for ## headings and insert a table of contents after the first paragraph.
+    
+    Args:
+        markdown: The markdown content
+        
+    Returns:
+        Markdown with TOC inserted after the intro paragraph
+    """
+    import re
+    
+    # Find all ## headings
+    headings = re.findall(r'^## (.+)$', markdown, re.MULTILINE)
+    
+    if not headings:
+        return markdown
+    
+    # Generate TOC entries
+    toc_lines = ["## Table of contents", ""]
+    for heading in headings:
+        # Convert heading to anchor link (lowercase, spaces to hyphens, remove special chars)
+        anchor = heading.lower()
+        anchor = re.sub(r'[^a-z0-9\s-]', '', anchor)
+        anchor = re.sub(r'\s+', '-', anchor)
+        anchor = re.sub(r'-+', '-', anchor).strip('-')
+        toc_lines.append(f"- [{heading}](#{anchor})")
+    toc_lines.append("")
+    toc = "\n".join(toc_lines)
+    
+    # Find insertion point: after the first paragraph (after # heading and intro text)
+    # Look for the first ## heading and insert TOC before it
+    first_h2_match = re.search(r'^## ', markdown, re.MULTILINE)
+    if first_h2_match:
+        insert_pos = first_h2_match.start()
+        return markdown[:insert_pos] + toc + "\n" + markdown[insert_pos:]
+    
+    return markdown
