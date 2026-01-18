@@ -1,0 +1,1061 @@
+[00:00] He gave us a thumbs up.
+[00:01] Thumbs up.
+[00:02] OK.
+[00:02] All right.
+[00:04] We want to welcome you all to our session today
+[00:07] about building agents with Knowledge Agentic, RAG, and Azure AI
+[00:11] Search.
+[00:11] My name is Matt, I'm a program manager on Azure
+[00:14] Search.
+[00:15] I'm Pamela and I am a Python cloud advocate.
+[00:23] Does it say to clap right now?
+[00:26] All right, let's talk about our agenda for today.
+[00:29] First, we're going to cover the basics of RAG retrieval,
+[00:32] augmented generation.
+[00:34] Then we're going to do a deep dive on knowledge
+[00:37] bases inside Azure AI Search.
+[00:39] We're also going to cover how foundry and knowledge bases
+[00:42] are connected through Foundry IQ.
+[00:44] And we're going to have time to take some questions.
+[00:47] Let's dive right in.
+[00:49] All right, so I'm going to talk a bit about
+[00:52] RAG.
+[00:53] So how many of you are using RAG today, right?
+[00:59] That's a very good number.
+[01:01] Awesome.
+[01:02] Now just to, you know, get us all on the
+[01:04] same page here, right?
+[01:05] We're all building these applications.
+[01:07] We're starting to build agentic applications and agents and we're
+[01:12] seeing agents in many different parts of our work flows,
+[01:15] right?
+[01:16] And these agents can be conversational.
+[01:19] That's what a lot of us originally started building.
+[01:21] And now we have more task oriented agents that are
+[01:24] actually taking actions and doing stuff on our behalf.
+[01:27] Now the majority of these agents need domain specific context
+[01:31] to ground themselves in your organization's data, right in the
+[01:36] information that matters for you, for your task.
+[01:40] And that is where we need to have very good
+[01:42] retrieval and very good RAG.
+[01:46] So RAG is the name for the technique that LLMS
+[01:49] use in order to use your information.
+[01:53] RAG stands for retrieval augmented generation.
+[01:56] The basic idea is that you get in a question,
+[01:59] use that question to search a search index.
+[02:02] You get back those results and then you send them
+[02:05] to an LLM and say, hey, LLM, here's the results,
+[02:07] here's the original question or intent.
+[02:10] Now please answer based off the results and provide citations.
+[02:13] Right?
+[02:14] I actually have a demo that I can show of
+[02:19] a very basic, the most basic rag application.
+[02:23] Right?
+[02:24] Of course we're asking about Zaba.
+[02:25] What is the best Zaba paint for bathroom walls?
+[02:29] It says it's the interior semi gloss paint, very important
+[02:33] for washing when your children decide to draw all over
+[02:36] your bathroom, as happens to me a lot.
+[02:40] And if we look at the the process here, what
+[02:42] we do in this very basic rag is we take
+[02:45] that question, we send it to our AI search index,
+[02:48] we get back results.
+[02:49] These are chunks of documents that we've indexed and you
+[02:52] know, they have file pages and scores.
+[02:55] And then we send those results to an LLM and
+[02:59] say, hey, your job LLM is to answer the question
+[03:02] based off these sources.
+[03:04] And so then we get back that answer with citations.
+[03:08] That's the basic RAG.
+[03:09] And that is what we have, you know, many people
+[03:12] started with in, you know, in this space of RAG.
+[03:18] So let's talk a little bit more about Azure AI
+[03:21] Search is actually going to help you run advanced RAG
+[03:25] for better generative AI applications.
+[03:28] Azure AI Search provides customers with a feature rich vector
+[03:32] database built on an enterprise ready foundation so you can
+[03:36] focus on growth and scale.
+[03:38] It's integrations offer an end to end data management pipeline
+[03:42] for all types of data.
+[03:43] A full stack RAG solution available.
+[03:46] Where and how you want to build your retrieval strategy
+[03:49] matters.
+[03:50] Our comprehensive search technology allows you to go beyond vector
+[03:54] search.
+[03:54] We ensure that you have the capabilities you need to
+[03:57] retrieve accurate information for every question, regardless of your use
+[04:01] case or data.
+[04:03] So how many of you are using AI Search already?
+[04:06] Let's see some hands again.
+[04:07] Make sure everyone's listening to the right headphones.
+[04:08] Awesome.
+[04:09] Look at that, all your customers.
+[04:11] Very good.
+[04:12] All right.
+[04:12] So the thing that's fantastic about Azure AI Search is
+[04:15] that it has this state-of-the-art retrieval strategy.
+[04:18] It uses a full hybrid search.
+[04:21] So it's not just using vector search or just using
+[04:24] keyword search.
+[04:25] It is combining vector and keyword search together, merging those
+[04:29] results using reciprocal rank fusion and then re ranking those
+[04:33] results to get the very best results.
+[04:36] So we're going to start off with talking through this
+[04:38] search stop so you all understand hybrid search.
+[04:40] And then we're going to go on to all the
+[04:42] new agentic search strategies that you can layer on top
+[04:46] of hybrid search to get even more powerful results.
+[04:49] So there's just so much stuff that AI search has
+[04:51] to offer.
+[04:52] But let's start with the basics, right?
+[04:53] So keyword search is the traditional search that we've been
+[04:57] using for decades now, right?
+[04:58] And the idea of keyword search is that we store
+[05:01] an inverted document index, which says, hey, you know, for
+[05:05] this particular term, this is how often we saw in
+[05:07] the documents and the general frequency relative to the length
+[05:11] of the document.
+[05:12] So if I'm searching for hose and there's a document
+[05:15] that says hose, hose, hose, hose, hose all over the
+[05:18] place, that's probably a very good document for my, you
+[05:21] know, for my search for hose right now, as your
+[05:24] AI search uses BM 25, which is basically the best
+[05:27] in class full text algorithm and does a very good
+[05:30] job at handling keyword search.
+[05:32] Let's see, I've got a little example over here with
+[05:37] keyword search.
+[05:38] So what I've got is I'm using Python because it
+[05:42] is the best language and I'm setting up the Azure
+[05:46] AI search client, connecting to my search service and then
+[05:51] doing a search here for 25 foot hose.
+[05:54] OK, and this is searching.
+[05:56] This is, you know, fake Zaba product catalog that's got
+[05:58] names, description, categories, price, etcetera.
+[06:02] And what you can see is the very top result
+[06:04] is in fact a 25 foot hose.
+[06:06] So you can see here that keyword search did a
+[06:08] good job.
+[06:09] It actually found exactly what we needed, right?
+[06:11] And it did a good job here because 25 matched
+[06:14] foot matched hose match like, you know, like it's kind
+[06:16] of like a easy one for it right?
+[06:19] Now, the issue with keyword search is that it does
+[06:21] much worse with other kinds of queries, right?
+[06:24] So if I'm searching to figure out how do I
+[06:26] water my plants efficiently without waste.
+[06:30] Now when I do keyword search, I can see the
+[06:32] 1st result is water based polyurethane.
+[06:35] The 2nd result is water based wood stain.
+[06:38] You should not water your plants with either of those.
+[06:41] I tried it just didn't work.
+[06:44] So this is an example where keyword search just utterly
+[06:46] fails, right?
+[06:47] Because we asked this query that was much more broad,
+[06:51] ambiguous.
+[06:52] It doesn't have, you know, exact keywords in it.
+[06:55] And you know, and that's what keyword search does well
+[06:58] at, right?
+[07:00] So This is why people get so excited about vector
+[07:04] search, right?
+[07:05] This has really become big in the last three years
+[07:08] or so when we came up with these new vector
+[07:10] embedding models like the ones from Open AI, Tex embedding,
+[07:13] Tex 8 Embedding, all those great models.
+[07:15] And the idea with vector search is that we take
+[07:18] our information, we turn it into a vector, and that
+[07:21] vector represents the information in this multidimensional space.
+[07:25] And then when we get in a new query, we
+[07:27] convert that into a vector using that same embedding model.
+[07:30] And then we check and see like, hey, for this
+[07:33] vector, which vectors are the closest?
+[07:35] And we go and we see, oh, OK, like for
+[07:37] dog, cat is closest and puppy is closest, right?
+[07:41] And we find which ones are closest.
+[07:43] And the idea of that multidimensional space is to represent
+[07:46] similarity.
+[07:47] And it's it's been trained off the Internet and seeing
+[07:50] generally what terms, you know, course, you know, show up
+[07:53] together in in the Internet corpus, right?
+[07:56] So that's the idea of vector search.
+[07:59] And with Azure AS search, it has very good support
+[08:02] for vector search, one of the first search engines that
+[08:04] added it.
+[08:05] And you know, you can use it on your documents
+[08:07] and you can also use it if you have massive
+[08:09] vector databases.
+[08:10] So it can actually scale to handle searching across billions
+[08:14] of vectors because it can use this approximation algorithm called
+[08:18] HNSW, which can scale to huge amounts of vectors.
+[08:21] So vector search is very powerful.
+[08:23] So let's see a little demo of that.
+[08:25] So we set up our search curves again.
+[08:27] And so now when we perform the vector search, we
+[08:31] have our query.
+[08:32] We're going to turn that into a vector and we're
+[08:34] turning it in the vector using Azure Open AI, one
+[08:37] of the text embedding models.
+[08:39] And then when we search, we're going to only pass
+[08:41] in that vector here.
+[08:42] So I'm actually not passing in the text at all.
+[08:45] I'm only passing in the vector.
+[08:46] So I can see what can I get with just
+[08:48] that vector, right?
+[08:49] What is the most semantically similar to that vector?
+[08:52] So here I'm trying that, you know, the, the query
+[08:55] that keyword search struggled with water plants efficiently without waste.
+[08:59] And this time the results are much better, right?
+[09:01] So the very first result is a self watering planter.
+[09:04] Then we get our 25 foot hose, we get some
+[09:06] tomato plant food, you know, and that's not quite as
+[09:09] good and then some planters.
+[09:11] So maybe the, you know, the ones that found that
+[09:13] really good are at the very top there.
+[09:16] So there, you know, you're looking at that going like,
+[09:18] wow, vector search was way better for that query.
+[09:20] Can we just use vector search for everything, Right.
+[09:23] And you'll hear many people say like, Oh yeah, just
+[09:25] set up a vector search.
+[09:26] Just set up a vector database.
+[09:27] That's all you need.
+[09:27] That is not all you need because vector search can
+[09:32] fail in so many ways.
+[09:35] So we look for this example 100 foot hose that
+[09:38] won't break.
+[09:39] This is something I've been searching for my entire life.
+[09:41] If anyone can find it please tell me because Zava
+[09:43] doesn't exist.
+[09:44] So I really really need this.
+[09:46] So what we can see with vector search, it's very
+[09:49] interesting.
+[09:49] The top result is actually 50 foot hose and the
+[09:52] 2nd result is 75 hose.
+[09:54] The 100 foot hose is result #3 and why does
+[09:57] that happen?
+[09:59] Well, in the vector and betting space, it doesn't really
+[10:03] care about numbers to to like a vector and betting
+[10:06] model 5075100.
+[10:08] They're all kind of the same thing.
+[10:09] They're just like a number you put in there.
+[10:11] Like it doesn't really think that they're semantically that different.
+[10:15] So we don't end up getting 100 foot as being
+[10:17] the top result here, right?
+[10:20] So this is where you can see where vector search
+[10:22] like it did, still did a decent job because it
+[10:24] did find hoses and we do see 100 foot hose
+[10:26] somewhere in there.
+[10:27] But as a user, I might be thinking, wait, if
+[10:30] you have 100 foot hose, why isn't that just number
+[10:33] one, right?
+[10:34] So what we're going to do is use the best
+[10:38] of both worlds.
+[10:39] So the first thing we need to do is we're
+[10:41] going to take that search query, we're going to take
+[10:44] that search vector and we're going to use it to
+[10:46] search with both keyword search and vector search.
+[10:48] So we'll get back the results for each of those
+[10:50] and we'll have relative ranks in each results.
+[10:52] Then we're going to merge them together using this algorithm
+[10:56] called reciprocal rank fusion.
+[10:57] And it sounds super fancy because computer scientists like to
+[11:01] write papers with fancy names, but what it really is,
+[11:04] is just looking at the relative rank and be like,
+[11:07] oh, this was like #3 over there and #5 over
+[11:09] there.
+[11:09] We're just going to kind of, you know, like averages
+[11:11] together and and see what the rank ends up being,
+[11:13] right?
+[11:14] So it's a good way of like just representing the
+[11:16] relative ranks across both of them.
+[11:19] So, you know, we can go and check it out
+[11:22] in our example.
+[11:25] So here in order to do reciprocal rank fusion, I'm
+[11:27] going to take that search query.
+[11:29] I'm going to take that search vectors.
+[11:30] I'm going to pass both of those in.
+[11:32] So here's the search query, here's the vector query, and
+[11:35] then I'm going to look at the results.
+[11:37] So this time we still have a 50 foot hose
+[11:40] is #1 but that 100 foot hose did move to
+[11:42] the number two spot and that's just because of where
+[11:46] it was in the keyword results and the vector results
+[11:49] that got it high enough to get to #2.
+[11:52] So here you can see that we are getting better
+[11:56] by using the RF, but we can get even better
+[12:00] than that.
+[12:01] So the next step is to bring in the RE
+[12:04] ranking model.
+[12:05] This is a particular kind of model.
+[12:07] It is not a large language model.
+[12:10] It is something called a cross encoder model that has
+[12:13] been specifically trained to look at a user query, look
+[12:16] at search results, and then assign scores.
+[12:19] And so this was actually trained with humans where humans
+[12:21] would look at search queries, look at results and say,
+[12:23] hey, I'll give that like a four.
+[12:24] That was really good.
+[12:25] I'll give that a one.
+[12:26] That was really bad, right?
+[12:27] I'll give it a two.
+[12:28] It was kind of meh, right?
+[12:29] So you can actually look at it and be like,
+[12:31] oh, it got a four.
+[12:31] That's a really good result.
+[12:32] Oh, it got a one that's bad result.
+[12:34] We're just going to throw that out, right?
+[12:36] So it's incredibly useful, you know, ranking model to use.
+[12:40] Let's see what happens when we use it for for
+[12:43] this example here.
+[12:45] Now, in order to use it with AI search, we're
+[12:47] going to pass in our query, we're going to pass
+[12:49] in our vector and we're going to specify that we
+[12:51] wanted to use the semantic ranker.
+[12:52] So it's just a couple extra parameters that we throw
+[12:55] in.
+[12:55] And so then when we look at the results, we
+[12:58] can see that the hose got up to 1, the
+[13:00] number one spots, right, because the re ranker model is
+[13:04] actually looking at that original query and going, hey, they're
+[13:08] looking for 100 foot hose.
+[13:10] There's 100 foot hose seems like the best result for
+[13:13] it.
+[13:13] Now it did some of the other ones like I'm
+[13:16] like kind of a little dubious about, but maybe it
+[13:18] just didn't find better results there.
+[13:21] I mean, they're all kind of related to hoses that
+[13:23] won't break.
+[13:23] So I wouldn't, I certainly wouldn't be against buying a
+[13:26] lot of those things.
+[13:27] But that's the point of the re ranking model.
+[13:29] It was able to hoist the most important result to
+[13:32] the top that really matched that query.
+[13:35] So if you are, you know, using this hybrid search,
+[13:38] you really want to have that re ranking model.
+[13:40] The other thing that's super powerful about it is that
+[13:43] we get the re ranking score.
+[13:45] It's hard to see it in this model here, but
+[13:47] you can see it's like 1 and twos.
+[13:49] And so actually if some things like oftentimes we use
+[13:51] a threshold of 1.9 and if it's less than 1.9,
+[13:54] we just throw it out.
+[13:55] We just say, hey, that's just not good enough.
+[13:57] We want to have really, really high quality results.
+[13:59] So that's the other nice thing about that re ranking
+[14:01] model is that it's absolute scores where you can actually
+[14:04] just say, you know, after a certain threshold we're we
+[14:06] just think it's not good enough quality.
+[14:10] All right, so this is the complete hybrid search flow
+[14:14] that we showed earlier, right?
+[14:16] We're going to do both those kinds of searches, we're
+[14:18] going to merge them together and then we're going to
+[14:20] do that re ranking step.
+[14:22] If you are searching and you want really good search
+[14:25] quality, you need to be using this stack as your
+[14:29] AI search is a great option for it.
+[14:31] It is also possible to implement on top of a
+[14:33] few other stacks as well if you if you need
+[14:36] to do it.
+[14:37] But AI search has it built in and it's just
+[14:39] super easy to do with it.
+[14:41] Now the AI search team has actually done research in
+[14:44] order to verify why it's so important to have this
+[14:46] stack in this example here where they looked at lots
+[14:48] of different kinds of queries, right?
+[14:50] We look at keyword queries, we'll get short queries, long
+[14:53] queries, concepts.
+[14:53] There's so many different kinds of queries that are going
+[14:55] to be thrown out your applications, right?
+[14:57] If they're user facing like users, right.
+[14:59] The darndest thing is right, if you give a user
+[15:01] a text field like, Oh my God, this stuff to
+[15:03] put in there, right?
+[15:05] So you get, you have to be prepared for all
+[15:07] these kinds of queries.
+[15:08] And so they did all this research to show like,
+[15:11] listen, if you want the best results across all of
+[15:13] those, you really need that entire search stack.
+[15:16] So hopefully I've sold you on hybrid search.
+[15:19] Now, the thing about hybrid search is that AI search
+[15:21] has supported this for what, maybe 2 years now?
+[15:24] It's been a couple more.
+[15:25] Yeah.
+[15:25] OK.
+[15:25] So like we've like, that's all.
+[15:27] It's almost old news, but I feel the need to
+[15:29] talk about it because I don't think everybody realizes like
+[15:31] how incredible it is.
+[15:33] So you should definitely be using hybrid Search whenever possible.
+[15:37] However, today we're actually here to talk about when hybrid
+[15:41] search isn't enough, when we need to build additional strategies
+[15:44] on top of hybrid search, right?
+[15:46] So here I have some examples of hard queries that
+[15:49] we need to address with more genetic techniques, right?
+[15:54] So the first example here is having multiple questions in
+[15:56] one query, right?
+[15:57] So this one is like, oh, what type of paint
+[15:59] is most suitable for the bathroom?
+[16:01] What's the price range of all these different options?
+[16:03] Like they're asking a lot of things in one query,
+[16:05] and it's not the kind of thing we can answer
+[16:07] with a single search call, right?
+[16:09] We actually have to decompose that question into multiple questions.
+[16:12] A related kind of question is what I call a
+[16:14] chained query.
+[16:15] This one is like explain how to paint my house
+[16:17] most efficiently, then give me a list of the products
+[16:19] that would help me, right?
+[16:20] So in order to answer the second part of the
+[16:22] question, we first need to get the search results for
+[16:25] the first part of the question, right?
+[16:27] And so that implies we have to do some sort
+[16:28] of sequence of search calls.
+[16:30] So that's quite interesting.
+[16:31] And then the third kind is queries requiring external knowledge,
+[16:34] right?
+[16:34] So a lot of people expect your applications to both
+[16:37] be able to search your data, but also just generally
+[16:40] know things about the world, right?
+[16:42] So they need to be able to search the web
+[16:44] in order to answer those questions.
+[16:46] So those are the kind of interesting queries that you're
+[16:49] going to see in many of your applications that the
+[16:51] AI search team has been figuring out a way to
+[16:54] approach.
+[16:54] So let's have Matt talk about that.
+[16:57] Thank you so much, Pamela, for that great introduction to
+[17:00] RAG.
+[17:01] But we're here today to also talk about knowledge bases
+[17:05] inside Azure AI Search because this feature is what's going
+[17:09] to improve on top of those hybrid search strategies using
+[17:12] agentic retrieval.
+[17:14] So when we talk about agentic retrieval, here's specifically what
+[17:18] we mean.
+[17:19] Every knowledge base inside Azure Search has an Agentic Retrieval
+[17:23] engine, which essentially the whole purpose is to define better
+[17:27] context whenever you're trying to use RAG for agents or
+[17:31] any kind of agentic application.
+[17:33] The three core components of this engine are query planning,
+[17:37] knowledge sources, and merged outputs.
+[17:40] The first part of Agentic Retrieval is using an LLM
+[17:44] to break down a complex conversation into individual queries representing
+[17:48] the the basic information need from that conversation.
+[17:53] Now, part of this query planning process, it goes beyond
+[17:55] just generating the queries.
+[17:57] We're also selecting the knowledge sources which are necessary to
+[18:00] answer these queries.
+[18:02] These knowledge sources represent all the data that your agent
+[18:05] would need to answer questions or perform any relevant tasks
+[18:09] that it needs to do.
+[18:11] The queries that it generated are sent to every selected
+[18:15] knowledge source to gather the relevant documents.
+[18:18] Finally, the results of these queries are merged together and
+[18:22] are used to produce a single synthesized answer with citations.
+[18:26] Now, if the agentic retrieval engine determines that the results
+[18:30] found are not sufficient to answer the queries, it's actually
+[18:34] going to take a second pass.
+[18:35] It's going to repeat that query planning phase taking into
+[18:38] account the results it's already seen.
+[18:41] So this is a very powerful feature that lets you
+[18:43] get the best out of hybrid search and get the
+[18:46] best context for your agents.
+[18:49] So when we talk about knowledge sources, we have two
+[18:51] main different categories.
+[18:54] Indexed knowledge sources represent data which is actually going to
+[18:57] get copied out of some original data repository.
+[19:01] Maybe you've landed a bunch of PD FS inside a
+[19:03] BLOB container.
+[19:04] Maybe you've got a 1 lake lake house full of
+[19:06] relevant files.
+[19:07] We're actually going to take those files and we're going
+[19:10] to copy them into an Azure AI Search index so
+[19:12] we can perform hybrid search with re ranking on them.
+[19:16] Remote knowledge sources are a bit different.
+[19:18] Instead of copying the data directly into Azure AI Search,
+[19:21] we're going to create a connection.
+[19:23] Maybe you need to add information from the web and
+[19:26] in private preview, we're happy to announce that you'll be
+[19:29] able to bring any MCP connector as a knowledge source.
+[19:32] Now, Sharepoint's a bit special here.
+[19:34] You'll see it's in the middle of this Venn diagram.
+[19:37] We're actually offering two ways to talk to SharePoint.
+[19:40] The first way allows you to copy files out of
+[19:43] a SharePoint site into a search index.
+[19:45] The other way is to directly query SharePoint using an
+[19:48] end user's identity.
+[19:51] So let's let's start off by talking a little bit
+[19:53] more about how this remote SharePoint knowledge actually works.
+[19:57] When remote SharePoint knowledge is queried, we actually are going
+[20:00] to need the end user's identity.
+[20:03] This is the person that's actually interacting directly with the
+[20:06] agent because we need to make sure that the documents
+[20:09] that they have access to are only shown to them.
+[20:12] We should not be showing additional documents.
+[20:15] In this example, you can see an end user in
+[20:17] a sales organization is asking about some executive documents they
+[20:20] don't actually have access to, so we are actually going
+[20:23] to go past that identity on to SharePoint.
+[20:26] They perform the access control and trimming so that the
+[20:29] relevant results of I don't know will eventually be generated.
+[20:33] Note that if you already use Copilot, you're going to
+[20:36] get very similar results here, as we actually use the
+[20:39] same underlying index on SharePoint that Copilot uses.
+[20:44] For index SharePoint, it's a bit different because we're actually
+[20:47] taking those files out of SharePoint and creating a copy
+[20:51] inside your Azure Search Index.
+[20:53] We do this using an existing feature in Azure Search
+[20:56] called Indexers and Skill sets.
+[20:58] The indexer is actually going to be responsible for going
+[21:00] out to the SharePoint site and fetching the files.
+[21:03] The skill set actually takes those files and it chunks
+[21:06] and vectorizes them, which is a very critical step to
+[21:09] allow hybrid search to be successful.
+[21:12] Note that even though we're actually copying the data out
+[21:15] of SharePoint, we're actually going to preserve as much permission
+[21:18] metadata as possible, and you can still use an end
+[21:21] user's identity to filter the results that are coming out
+[21:24] of SharePoint.
+[21:27] So in general, any indexed knowledge source is going to
+[21:30] use the same strategy.
+[21:32] We're going to leverage the same indexer and skill set
+[21:35] integration, and we're actually going to be using what are
+[21:38] called skills, which are basically reusable components that apply AI
+[21:42] enrichment to your documents from your data repository.
+[21:46] This allows you to get the best search results possible.
+[21:52] Want to really highlight a brand new feature we're also
+[21:55] announcing at this conference, which is a better integration with
+[21:59] content understanding.
+[22:01] You have two main options when indexing knowledge from outside
+[22:04] data containers like BLOB and one link.
+[22:07] You could use a built in free parsing strategy from
+[22:10] indexers, what we call minimal.
+[22:11] And just like the name suggests, we're going to be
+[22:14] creating a minimal representation of that content.
+[22:17] So we'll be able to queried.
+[22:19] But if your content has images embedded tables, you're actually
+[22:22] going to benefit from using the standard strategy, which leverages
+[22:26] a content understanding deployment that you bring to create a
+[22:29] significantly richer representation of this content.
+[22:33] In the example you can see on the screen, you're
+[22:35] going to notice that we have a flow chart, and
+[22:38] if you were to use the default minimal strategy, this
+[22:41] content would be completely missing.
+[22:43] Because we're using content understanding, we're actually going to convert
+[22:47] it to this figure tag, and the text is actually
+[22:49] going to be OCR Ed and made available so that
+[22:52] if you were to use an LLM to reason over
+[22:54] it, it could actually see the underlying text in the
+[22:56] diagram.
+[23:00] Now, when you're using knowledge bases, you're probably using this
+[23:04] in a larger agentic context where you've got a lot
+[23:07] of moving parts and you're probably worried, how can I
+[23:10] control the cost and latency from retrieval from my knowledge
+[23:13] base?
+[23:14] We offer a single control today we call retrieval reasoning
+[23:18] effort.
+[23:19] There are three main levels here.
+[23:22] The first is the minimal effort, which is the cheapest
+[23:24] option for getting information out of agentic retrieval.
+[23:28] Low effort is a more balanced option that allows you
+[23:30] to get good results at higher latency.
+[23:33] And finally, medium effort is the step that's going to
+[23:36] take the most effort to get the most comprehensive results.
+[23:40] Now, Matt, you seem to be missing a high.
+[23:43] That's a great point.
+[23:44] In the future, we hope to extend retrieval reasoning efforts
+[23:47] to offer a more advanced capabilities for retrieval.
+[23:50] Maybe a super high?
+[23:52] Maybe, But for now, these are the three options we
+[23:54] have.
+[23:57] So let's start off by talking about what this minimal
+[23:59] effort actually is.
+[24:01] Minimal effort is actually really interesting because it is effectively
+[24:06] a way to use knowledge bases without any LLMS at
+[24:08] all.
+[24:09] You are giving up some advanced features like query planning,
+[24:12] knowledge source selection in order to get lower latency.
+[24:16] If you need results out of your knowledge base fast,
+[24:18] this is definitely the right effort for you.
+[24:21] Now note that because you need to do a query
+[24:23] planning anyway, you have to actually give us the queries
+[24:26] you want to run.
+[24:27] This is a great fit whenever you want to combine
+[24:29] an agent with a knowledge base.
+[24:31] Now let's go check out a demo of this minimal
+[24:34] effort.
+[24:35] All right, so here I have the conversational RAG application,
+[24:39] and this time I have a gentle retrieval enabled.
+[24:41] I've set that reasoning effort to minimal and I have
+[24:45] included SharePoint.
+[24:47] So it does have the option to search both a
+[24:49] search index and SharePoint.
+[24:51] So this is a knowledge base that has two sources
+[24:54] configured, a search index and a SharePoint source.
+[24:57] And you can see that I'm logged in.
+[24:59] Thank you.
+[25:00] And so this is where I'm logged in.
+[25:02] So that's the SharePoint it would have access to.
+[25:05] So here I've once again asked the question, what is
+[25:07] the best Zaba paint for bathroom walls?
+[25:09] And this time I actually get a slightly different answer
+[25:12] because it has access to both the search index and
+[25:15] SharePoint.
+[25:16] And we can see citations here.
+[25:18] And some of these citations are actually files on the
+[25:21] SharePoint.
+[25:23] That's right, SharePoint.
+[25:25] Now, if we look at the process that it used
+[25:28] to get this right, we took the user's query and
+[25:31] we just directly in this case, we just directly sent
+[25:34] it to that minimal knowledge base.
+[25:36] We said, hey, here's the user question.
+[25:38] Just, you know, just use it to search all the
+[25:41] sources, right?
+[25:42] So with minimal, it always searches every single source you
+[25:44] configured for that knowledge base, right?
+[25:47] So it took that question and it sent it to
+[25:49] the index, it sent it to the SharePoint.
+[25:52] It got back, you know, like 6 results for the
+[25:54] 1-2 results for the, the second one.
+[25:57] All of those go through the semantic rancor and get
+[25:59] merged together.
+[26:00] And then, and then we use our own model in
+[26:03] this application in order to answer the question based off
+[26:07] those results.
+[26:08] So this is an example of how you might integrate
+[26:10] minimal into an application.
+[26:12] It is the easiest switch if you're already using like
+[26:15] the search function of the search SDK and you want
+[26:18] to start using multi sources.
+[26:20] The easiest switch is just to bring in minimal and
+[26:23] and try that out and you'll find that you could
+[26:25] kind of just, you know, just swap it in there.
+[26:29] Thanks for that demo.
+[26:30] That was great.
+[26:32] Now let's talk more about the low effort option.
+[26:36] Low effort is going to give you access to those
+[26:38] more advanced features from the Agentic Retrieval engine.
+[26:41] Because we're using an LLM, this is the mode that
+[26:44] instead of just taking individual queries, it's going to take
+[26:47] an entire conversation, run it through that query planning process,
+[26:51] and break it down into these decomposed queries.
+[26:54] Now we run this knowledge source selection process as part
+[26:57] of query planning.
+[26:58] So in addition to getting those queries, we're also going
+[27:01] to pick which knowledge sources we're going to use.
+[27:04] Now we send these queries to either remote or index
+[27:07] knowledge sources to fetch the relevant documents.
+[27:10] And finally, we have an answer synthesis option, so you
+[27:13] can actually get a complete answer that you could render
+[27:16] directly in your application that includes citations.
+[27:21] Yeah, So this query planning step that does knowledge source
+[27:24] selection, let's talk a little bit more about how exactly
+[27:27] that works.
+[27:28] There are really three key factors in how knowledge sources
+[27:32] are selected.
+[27:33] We actually use that LLM to decide.
+[27:36] So the three main inputs are the name of the
+[27:39] knowledge source.
+[27:40] You have an optional description, so you can give it
+[27:42] like say like, hey, I have a BLOB container that's
+[27:45] a knowledge source.
+[27:46] Maybe this BLOB container contains a bunch of HR documents.
+[27:49] I have one leg, it contains a bunch of invoices,
+[27:51] and then the web should only be used in certain
+[27:53] circumstances.
+[27:54] So these descriptions are really critical to getting the most
+[27:57] out of knowledge source selection when you choose to use
+[27:59] it.
+[28:00] Finally, you can also provide some custom retrieval instructions which
+[28:04] allow you to basically customize this selection process in natural
+[28:08] language.
+[28:09] It looks very, very similar to a prompt.
+[28:13] Let's do a demo of the low effort.
+[28:17] We're back to our application.
+[28:19] You can see this time we have low effort enabled
+[28:22] and we are including SharePoint, not including web yet.
+[28:26] We'll see that soon.
+[28:27] And this time I'm asking a more complex question.
+[28:29] I'm asking which Saba Paint can I use to paint
+[28:32] my bathroom and how much does it cost?
+[28:34] Now remember this has access to two sources, a search
+[28:38] index and a SharePoint.
+[28:41] And what we can see here is that it decided
+[28:44] to only get results from the search index.
+[28:47] I can tell that from the citations.
+[28:49] I can also click on and see this thought process
+[28:52] where we can see it does some query planning.
+[28:55] It breaks down that query into multiple queries.
+[28:58] So it says, oh OK, I'm going to search for
+[29:01] Zaba paints for bathrooms and it gets back 6 results
+[29:04] there from the search index.
+[29:05] And it's also going to search for Zaba paint prices
+[29:08] and it gets back 10 results.
+[29:10] So those must all be paints.
+[29:11] And here you can see it actually decided not to
+[29:13] search the SharePoint at all.
+[29:15] And actually I agree with that decision because when I
+[29:18] set up the knowledge sources, I told it, hey, listen,
+[29:21] if you need Zaba products and prices, just search the
+[29:23] search index.
+[29:24] That's where they are.
+[29:25] That's the only place you need to go.
+[29:27] So it decided that it wasn't worth searching SharePoint, right?
+[29:31] So this is a way that we can like save
+[29:33] some costs where we don't have to search those sources
+[29:36] if we don't need to.
+[29:37] There is actually an option where you can say always
+[29:39] query source.
+[29:40] So if you are in a situation where you do
+[29:42] want it to force query every source, you can do
+[29:44] that.
+[29:44] But it is nice to have this dynamic source collection
+[29:47] because you can save time, you can save money, you
+[29:49] can save tokens and it can do a good job
+[29:51] deciding.
+[29:52] And so then we get back the results there.
+[29:54] So that is low without web.
+[29:58] Thank you.
+[29:59] So let's talk a little bit more about how this
+[30:02] answer to this process actually works.
+[30:05] The main feature that we're offering here, in addition to
+[30:08] kind of pre generating an answer, is allowing you to
+[30:11] customize the style and tone with an additional set of
+[30:14] natural language answer instructions.
+[30:16] So we have a couple examples here to kind of
+[30:19] illustrate how much of an impact you can have on
+[30:21] the style and tone of the generated answer.
+[30:25] The first example is this kind of defaults what we
+[30:27] get out-of-the-box and you're going to notice it's a little
+[30:30] more verbose, which is good.
+[30:32] And that's generally speaking, a good starting place.
+[30:35] But maybe you want to give a guidance to just
+[30:37] hey, answer with bullet points only.
+[30:40] And I my personal favorite is going to be a
+[30:42] more stylized poetic answer.
+[30:44] So for that bathroom paint question we had, we can
+[30:48] kind of get a much more poetic answer.
+[30:51] You know this this moisture in the air If you're
+[30:54] in a bathroom semi gloss shines strand song here bathrooms
+[30:58] 47 dollars.
+[30:59] So you can really customize exactly how this answer shows
+[31:02] up, even a little bit silly, but it's a really
+[31:05] powerful feature.
+[31:08] So let's talk now about the web knowledge feature because
+[31:12] many times your knowledge sources are going to cover a
+[31:15] lot of internal information your organization would know.
+[31:19] For example, it's like, hey, I've got manuals, I've got
+[31:22] training information.
+[31:23] But a lot of times your agent agent can benefit
+[31:26] from public, up to date information that's available on the
+[31:29] web.
+[31:30] So by adding the Bing Web knowledge source, you can
+[31:33] actually fill in this gap.
+[31:34] You are able to search the entire web or specify
+[31:37] a custom list of domains.
+[31:39] Now note that in order to use this feature, you
+[31:42] do have to opt in to answer synthesis.
+[31:44] That is not optional.
+[31:45] So let's go take a look at a demo.
+[31:50] All right, so here we can see that we're on
+[31:52] low and we are including the web source.
+[31:55] Now this time we're asking what is the best Zaba
+[31:57] paint for bathroom walls and how does it compare to
+[32:00] other brand paints.
+[32:02] So it's obviously a question that requires going out to
+[32:04] the web to find out about other brands paints.
+[32:07] And so when we look at the answer here, we
+[32:09] can see that there's in fact a lot of websites
+[32:11] that are cited.
+[32:12] We've got fixer.com, we've got the ultimate paint brand comparison
+[32:17] from Perfect Touch PTP, right?
+[32:19] So it's gone out and found all these additional web
+[32:22] sources.
+[32:23] And we can look at the process here and we
+[32:25] can see that it decomposed that query into multiple queries.
+[32:28] So it searched for best Zaba paint and then it
+[32:30] searched for comparison to Zaba Bath and paint to other
+[32:33] brand paints.
+[32:34] It searched the web for both of those as well,
+[32:36] right?
+[32:37] So it takes both those two decomposed queries and sends
+[32:40] it to both the search index and the web, get
+[32:42] backs lots of results and then merges those together and
+[32:46] uses the answer synthesis in order to come up with
+[32:48] a result.
+[32:49] That answer, that synthesized answer still has citations.
+[32:52] So you can see I can still make everything clickable,
+[32:56] the stuff in my BLOB, the stuff on the web,
+[32:58] they can reference everything to find out if they actually
+[33:02] trust fixer.com, right?
+[33:04] Which is important, right?
+[33:05] That's the whole point of these RAG applications, is to
+[33:08] give users a way to get accurate information that they
+[33:11] can back up with citations.
+[33:14] Thanks for that great demo.
+[33:16] All right, now let's finish up the reasoning efforts here
+[33:20] with medium effort.
+[33:22] Medium effort is the one that actually adds this optional
+[33:25] iterative retrieval step.
+[33:27] This means that if the agentic retrieval engine determines that
+[33:31] results retrieved from the initial search aren't sufficient to answer
+[33:35] the question, we're actually going to do a second pass
+[33:38] of query planning and retrieval to try to get a
+[33:40] better answer.
+[33:43] So we have a big problem here.
+[33:45] In order to know if we have to do the
+[33:47] second iteration, we have to actually decide how to do
+[33:50] that.
+[33:51] We have actually introduced a new model for the first
+[33:54] time into the Agentic Retrieval engine.
+[33:57] It's only accessible on the medium retrieval reasoning effort mode.
+[34:00] We call this model Semantic Classifier.
+[34:03] It performs really two key tasks that enable this confident
+[34:07] iteration.
+[34:08] The first is to decide, hey, is there enough information
+[34:11] in the results of each query to actually answer the
+[34:14] results of the underlying question.
+[34:16] In addition to that, we also want to be sure
+[34:19] we found at least one highly relevant document to answer
+[34:23] the question in these queries.
+[34:25] Now, if we don't meet these conditions, we're actually going
+[34:28] to go and do that second iteration because we want
+[34:30] to try to get the best results.
+[34:32] So basically this is allowing us to confidently iterate rather
+[34:35] than just iterating all the time, which can be a
+[34:38] big challenge in a Gentek rag.
+[34:41] Now, when the second iteration is performed, we're not just
+[34:44] saying, hey, try again.
+[34:46] We're actually passing additional contacts to that query planning that
+[34:49] wasn't present in the first iteration.
+[34:52] We're actually going to use the documents that were retrieved
+[34:55] from the first retrieval and the original queries so that
+[34:58] we can better formulate a more intelligent second pass that's
+[35:02] taking into account the results from the first.
+[35:05] So let's go take another look at a demo of
+[35:07] how this looks like.
+[35:09] All right, so here we have medium enabled and we've
+[35:12] got web, we've got SharePoint and we've got our hardest
+[35:15] question.
+[35:15] So it says explain how to paint my house most
+[35:18] efficiently.
+[35:19] Then give me a list of the Zaba products and
+[35:21] prices for each supply.
+[35:22] So let's see what it decided to do.
+[35:24] So it it came up with a query most efficient
+[35:28] way to paint a house worse, that'd be fun.
+[35:31] Then Zaba products and prices for house painting supplies.
+[35:34] And this first query actually didn't get any results from
+[35:36] the search index.
+[35:38] It did get a lot of results from the web
+[35:40] when it searched for, you know, efficient way to pound
+[35:43] a house didn't get any for Zaba products because Zaba
+[35:45] is a made-up brand.
+[35:47] So it's a little hard to search the web for
+[35:49] it, but hopefully all of you are working for companies
+[35:51] that exist and it's going to be easier to find
+[35:53] you on the web.
+[35:54] So then it looked at those results and said, OK,
+[35:56] it, you know, it found a lot of results that
+[35:58] could answer the question about painting a house most efficiently.
+[36:01] But it realized it couldn't yet answer the question about
+[36:04] Zaba products.
+[36:05] So it decided it needed to do a second iteration.
+[36:07] And in that second iteration it comes up with a
+[36:10] new set of queries and source selection that will help
+[36:13] it get a comprehensive answer.
+[36:15] So then the second iteration, this time it searches the
+[36:18] search index again, it comes up with a different query
+[36:21] and it gets 4 results right?
+[36:23] It also did a bunch of other searches.
+[36:24] It got more specific.
+[36:25] It was like looking for drop cloth cock like prep
+[36:29] materials.
+[36:29] Unfortunately Zava doesn't have drop cloth, but if it did
+[36:32] it would find it right?
+[36:33] So it actually gets very clever in that second iteration
+[36:36] and comes up with some really good queries based off
+[36:39] that first iteration to get much more focused results.
+[36:43] So it can really help in getting much more comprehensive
+[36:46] answers to these complex questions.
+[36:49] And there we go.
+[36:52] So all of the examples that I have been showing
+[36:55] are from an open source repo.
+[36:58] So and this repo, we added the agentic retrieval feature
+[37:02] to it today on Monday.
+[37:04] It's been a very exciting week for us.
+[37:06] And so any of you who want to get started
+[37:08] with RAG, A conversational RAG in your domain, definitely check
+[37:12] out that repo.
+[37:13] We've had thousands of developers deploy it.
+[37:16] It's got tons of feature, multimodal data access, cloud ingestion,
+[37:19] just all the different features that people are wanting out
+[37:23] of a conversational rag solution.
+[37:25] So certainly check it out.
+[37:26] It can be a great starting point and great inspiration
+[37:29] for all of you to see how we tackle common
+[37:32] common issues in these sort of applications all.
+[37:36] Right, that's awesome.
+[37:38] So now let's switch gears a bit and let's talk
+[37:41] about how knowledge bases fit in the Foundry Azure Search.
+[37:44] Knowledge bases are going to give us reusable topic centric
+[37:47] collections to actually ground our agents.
+[37:50] Now with Foundry IQ we're actually able to take those
+[37:54] knowledge bases using MCP to give our agents a unified
+[37:57] knowledge layer.
+[37:59] The result is going to be it's much simpler to
+[38:01] build agents instead of stitching a bunch of separate data
+[38:05] retrieval tools together to get the same results you could
+[38:08] get from a single knowledge base.
+[38:10] Now the magic question is how exactly is Foundry IQ
+[38:14] going to enable us to use knowledge bases to ground
+[38:17] agents?
+[38:18] So we are actually going to be using delegation the
+[38:22] same way that you might be familiar with the MCP
+[38:26] protocol to use external services in your agents.
+[38:30] You're able to use MCP to connect to your knowledge
+[38:33] base.
+[38:34] The agent is actually going to play the role the
+[38:37] role of the query planner and the answer synthesizer here
+[38:40] as input.
+[38:41] We're going to take a bunch of separate intents or
+[38:43] queries and the output is just going to contain the
+[38:46] merged results.
+[38:47] So let's check out a demo of Foundry IQ you
+[38:49] want.
+[38:50] To do this one.
+[38:52] Yeah, So what I'm seeing I'm showing you here is
+[38:55] the new experience inside Foundry.
+[38:58] It's a kind of unified agent builder.
+[39:00] So I'm able in a single place to see all
+[39:02] my tools, knowledge, data, evaluations.
+[39:05] This is a demo of the agent playground.
+[39:07] So once I built an agent, I want to try
+[39:09] it out, customized instructions.
+[39:11] I'm able to use this UX to actually see how
+[39:14] my changes make.
+[39:16] So I'm using the same exact knowledge base that Pamela
+[39:18] was showing in her demo, but this time I'm using
+[39:20] it through an agent rather than through that deployed application.
+[39:24] So when I ask the same question, what's the best
+[39:26] solve of paint for bathroom walls, you're going to see
+[39:29] that I reach out to the knowledge base using MCP.
+[39:31] I use this knowledge base retrieval tool which I have
+[39:34] been approved and I end up getting an answer that
+[39:37] looks exactly the same to what I got in the
+[39:40] application.
+[39:41] So this is kind of a great way to lift
+[39:43] and shift your knowledge bases so you can actually use
+[39:46] them inside your Foundry agents.
+[39:50] Yeah.
+[39:54] So that about wraps up our presentation today.
+[39:57] I want to put up a call.
+[40:00] You can take it.
+[40:00] Feel free to take a picture of this slide.
+[40:02] Again, we invite you all to sign up for the
+[40:05] private preview of MCP Now sources and we'd also like
+[40:09] to open up the floor.
+[40:11] Anyways, any questions do you like to share please?
+[40:17] Do we have a mic?
+[40:17] Oh, they could probably go there.
+[40:18] Yeah, there's a mic.
+[40:19] And all right, if you do have a question, there
+[40:21] is a mic right there.
+[40:22] You can come up and ask it.
+[40:24] Don't be shy.
+[40:26] We've got 4 minutes left to answer questions.
+[40:32] There we go.
+[40:34] I have no idea how this works.
+[40:35] No, I think you can hear us.
+[40:37] So up to you.
+[40:38] I have I have a question with regards to the
+[40:41] knowledge sources that you can add in the knowledge base.
+[40:44] I was looking at it from the Foundry portal.
+[40:46] I don't know like on the Azure AI search side,
+[40:49] can you add as a knowledge source only a specific
+[40:52] index from like an Azure AI search resource or you
+[40:55] need to add the full search resource?
+[40:59] That's a great question.
+[41:00] So it depends.
+[41:01] With index knowledge sources, what you're actually going to do
+[41:05] under the hood is create an indexer and a skill
+[41:07] set so data from an outside source is brought into
+[41:10] an automatically created search index.
+[41:12] With remote knowledge sources, you don't ingest any data at
+[41:15] all.
+[41:15] You directly connect to an external source of information and
+[41:18] query it at retrieval time.
+[41:21] Yeah.
+[41:22] And with those remote knowledge sources, we get this question
+[41:24] a lot.
+[41:24] Like with SharePoint, if you do need to filter the
+[41:27] SharePoint, you can use a filter expression you could pass
+[41:30] in like a site ID if you want to restrict
+[41:32] it to a particular part of your SharePoint authors, etcetera.
+[41:35] And similarly with the web, you can specify domain filters
+[41:38] to just, you know, limited to websites that aren't sketchy,
+[41:42] right?
+[41:42] Small list, but but you've got these abilities that you
+[41:45] can that you can filter down those remote searches as
+[41:48] well.
+[41:51] We also have a survey slide too.
+[41:56] Yeah, we do also have this QR code for you
+[41:59] to give feedback about the session, and you can scan
+[42:03] that QR code in order to fill it out.
+[42:06] We have a couple more minutes if anyone does want
+[42:08] to go with Mike.
+[42:09] Of course, we'll also be here after the session to
+[42:11] answer any questions that you don't want to ask in
+[42:14] front of everyone.
+[42:17] And again, we thank you all so much for joining
+[42:20] us.
+[42:20] I know it's pretty late in the day, so thank
+[42:22] you very much for attending our session.
+[42:26] Thank you for joining.
+[42:27] Us at Microsoft Ignite Silence Stages Please leave your headset
+[42:30] at your seat as you exit.
+[42:32] Thank you for your cooperation.
+[42:35] Can I ask a question?
+[42:36] Oh, of course, yeah.
+[42:38] This is like magic.
+[42:39] You've kind of taken what I wanted to build and
+[42:42] commoditized it.
+[42:43] So I think you're like, this is can you go
+[42:45] closer to the.
+[42:46] Yeah, yeah.
+[42:46] So this is kind of you've commoditized exactly what I
+[42:50] think we need to do to provide agents and knowledge
+[42:54] bases.
+[42:55] I wonder you haven't is there any worth of storing?
+[43:00] Graphs and relationships of separate entities, kind of more connections,
+[43:05] the connections between certain entities.
+[43:08] Yeah.
+[43:09] Does that have value in the knowledge base or is
+[43:10] that something that you confer anyway?
+[43:11] Yeah.
+[43:12] So I can tell you that graphs are something we
+[43:14] are very interested in as well.
+[43:16] We don't have a built in graph, but if you
+[43:19] can join the MCP private preview, if you have a
+[43:21] graph database, you are able to add that as a
+[43:24] knowledge source.
+[43:25] Awesome.
+[43:25] Thank you.
+[43:26] Of course.
+[43:26] Thank you.
+[43:30] So what kind of chunking strategies do you recommend when
+[43:34] you use this from the portal?
+[43:36] We don't get a choice of the chunking strategies.
+[43:40] So so we offer a built in chunking strategy which
+[43:43] is some defaults.
+[43:44] So there's two options.
+[43:46] The first option is you can do the chunking totally
+[43:48] yourself, push the data into the search index and complete
+[43:51] control.
+[43:52] The second option is to use an indexer with a
+[43:54] custom skill set and we actually have a built in
+[43:57] skill called split skill and you can customize the chunking
+[44:00] strategy to some degree on that skill or you can
+[44:02] define a custom skill that does the chunking completely the
+[44:05] way you want it.
+[44:07] Actually in the repo we added support for custom skill
+[44:10] sets and we use our custom chunking strategy with the
+[44:13] built in indexers that way.

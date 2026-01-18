@@ -1,0 +1,30 @@
+1. Title slide for Microsoft Ignite presentation.
+2. Introduction slide with presentation title and speakers.
+3. Agenda slide outlining topics to be covered.
+4. Introduction to Retrieval-Augmented Generation (RAG).
+5. Explanation of the need for agents and context in various domains.
+6. How agents use context through Retrieval-Augmented Generation (RAG).
+7. Overview of Azure AI Search features.
+8. Explanation of hybrid search as an optimal retrieval strategy.
+9. Description of keyword search and its indexing method.
+10. Description of vector search and embedding-based similarity.
+11. Explanation of Reciprocal Rank Fusion (RRF) for merging search results.
+12. Description of re-ranking step using a cross-encoder model.
+13. Illustration of a complete hybrid search flow combining keyword, vector, and re-ranking.
+14. Impact of hybrid search across different query types with performance metrics.
+15. Situations where hybrid search may not be sufficient.
+16. Overview of knowledge bases in Azure AI Search.
+17. Agentic retrieval architecture using multiple knowledge sources.
+18. Venn diagram of indexed and remote knowledge sources.
+19. Remote SharePoint knowledge integration example.
+20. Indexed SharePoint knowledge ingestion process.
+21. Content understanding capabilities in indexed knowledge sources.
+22. Knowledge base retrieval reasoning effort spectrum.
+23. Explanation of minimal effort knowledge base retrieval.
+24. Example output of minimal effort knowledge base retrieval.
+25. Example output of low effort knowledge base retrieval.
+26. Example output of medium effort knowledge base retrieval.
+27. Example output of low effort retrieval with Bing web knowledge.
+28. Conclusion slide with resources and next steps.
+29. Call to action slide with links to resources and samples.
+30. Final thank you and feedback request slide.

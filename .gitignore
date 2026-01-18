@@ -21,9 +21,6 @@ ENV/
 .env
 .env.local
 
-# Generated outputs
-**/outputs/
-
 # IDE
 .idea/
 .vscode/

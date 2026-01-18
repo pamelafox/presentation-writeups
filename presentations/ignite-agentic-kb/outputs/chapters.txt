@@ -1,0 +1,39 @@
+Summary:
+This video session presents an in-depth overview of building intelligent agentic applications using Retrieval-Augmented Generation (RAG) combined with Azure AI Search. The presenters explain the fundamentals of RAG, demonstrate hybrid search techniques that combine keyword and vector search with re-ranking for improved results, and introduce advanced agentic retrieval features in Azure AI Search knowledge bases. They also showcase integration with Foundry IQ for unified agent knowledge layers and provide demos illustrating minimal, low, and medium retrieval reasoning efforts, including the use of web and SharePoint as knowledge sources.
+
+Chapters:
+00:00 - Introduction and Agenda  
+00:49 - Overview of Retrieval-Augmented Generation (RAG)  
+02:18 - Basic RAG Demo: Using Azure AI Search with LLMs  
+03:18 - Azure AI Search for Advanced RAG Applications  
+04:12 - Hybrid Search: Combining Keyword and Vector Search  
+05:32 - Keyword Search Explained with Demo  
+07:00 - Vector Search Explained with Demo  
+09:20 - Limitations of Vector Search and Need for Hybrid Approach  
+10:20 - Reciprocal Rank Fusion to Merge Search Results  
+12:01 - Re-ranking Model for Improved Search Result Quality  
+14:10 - Complete Hybrid Search Workflow  
+15:16 - Importance and Research Behind Hybrid Search  
+15:37 - When Hybrid Search Isn’t Enough: Complex Queries  
+16:57 - Introduction to Knowledge Bases and Agentic Retrieval in Azure AI Search  
+17:33 - Agentic Retrieval Engine Components: Query Planning, Knowledge Sources, Merged Outputs  
+18:49 - Indexed vs Remote Knowledge Sources  
+19:53 - Remote SharePoint Knowledge Source Explained  
+20:44 - Indexed SharePoint Knowledge Source and Indexers  
+21:27 - General Indexed Knowledge Source Strategy and AI Enrichment Skills  
+21:52 - New Content Understanding Feature for Richer Document Representation  
+23:00 - Retrieval Reasoning Effort Levels: Minimal, Low, Medium  
+23:57 - Minimal Effort Mode Explained and Demo  
+26:32 - Low Effort Mode with Agentic Retrieval Engine Explained  
+27:21 - Knowledge Source Selection Process in Low Effort Mode  
+28:17 - Low Effort Demo with Query Planning and Source Selection  
+30:02 - Customizing Answer Style and Tone with Natural Language Instructions  
+31:08 - Web Knowledge Source Feature and Demo  
+33:14 - Medium Effort Mode with Iterative Retrieval and Semantic Classifier  
+35:07 - Medium Effort Demo: Complex Query Handling with Iteration  
+36:52 - Open Source Repo for Conversational RAG Applications  
+37:38 - Using Knowledge Bases with Foundry IQ for Unified Agent Knowledge  
+38:50 - Demo of Foundry IQ Agent Using Knowledge Base via MCP  
+39:54 - Session Wrap-up and Invitation to MCP Private Preview  
+40:17 - Audience Q&A: Knowledge Sources and Indexing Details  
+43:00 - Audience Q&A: Graphs and Chunking Strategies in Knowledge Bases
