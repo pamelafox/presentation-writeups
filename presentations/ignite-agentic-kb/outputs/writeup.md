@@ -39,10 +39,10 @@ This talk introduces techniques for building intelligent agentic applications by
 
 ## Introduction and agenda
 
-![Title slide for Microsoft Ignite presentation](slide_images/slide_2.png)
+![Title slide for Microsoft Ignite presentation](slide_images/slide_3.png)
 [Watch from 00:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=0s)
 
-The session begins by welcoming attendees and outlining the agenda. It covers basics of Retrieval-Augmented Generation (RAG), a deep dive into knowledge bases powered by Azure AI Search, the connection between Foundry and knowledge bases via Foundry IQ, and a Q&A segment. This sets the stage for understanding how to build agentic workflows leveraging search and generative AI.
+The session covers the basics of Retrieval-Augmented Generation (RAG), a deep dive into knowledge bases powered by Azure AI Search, the connection between Foundry and knowledge bases via Foundry IQ, and a Q&A segment.
 
 ## Understanding Retrieval-Augmented Generation (RAG)
 
