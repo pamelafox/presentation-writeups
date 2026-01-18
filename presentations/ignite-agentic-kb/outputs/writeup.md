@@ -1,226 +1,303 @@
-# Building Intelligent Agents with Retrieval-Augmented Generation and Azure AI Search
+# Build agents with knowledge, agentic RAG and Azure AI Search
 
-This blog post presents a comprehensive explanation of building agentic applications using Retrieval-Augmented Generation (RAG) combined with Azure AI Search capabilities. It details the fundamentals of RAG, hybrid search strategies, advanced agentic retrieval features in Azure AI Search knowledge bases, and integration with Foundry IQ for unified agent knowledge layers. Each slide from the original talk is annotated with extended explanations and practical insights.
+Building intelligent agentic applications requires effective integration of domain-specific knowledge with large language models (LLMs). Retrieval-Augmented Generation (RAG) is a key technique enabling LLMs to answer queries based on relevant information retrieved from external data sources. Azure AI Search enhances this approach by offering a robust hybrid search framework that combines keyword and vector search, re-ranking models, and advanced agentic retrieval capabilities. This talk explains how Azure AI Search supports complex retrieval and knowledge base scenarios to power next-generation agents.
 
----
+## Table of Contents
 
-![Title slide for Microsoft Ignite presentation](slide_images/slide_1.png)  
-[Watch from 00:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=0s)
-
-The session introduces the topic of building intelligent agents using Retrieval-Augmented Generation (RAG) together with Azure AI Search. It sets the stage for exploring how to combine large language models (LLMs) with powerful search technologies to create domain-specific, task-oriented agents.
-
----
-
-![Introduction slide with presentation title and speakers](slide_images/slide_2.png)  
-[Watch from 00:04](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=4s)
-
-The speakers are introduced, representing Azure Search program management and Python cloud advocacy. The focus is on practical application development using Microsoft Azure's AI search capabilities and RAG techniques.
-
----
-
-![Agenda slide outlining topics to be covered](slide_images/slide_3.png)  
-[Watch from 00:23](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=23s)
-
-The agenda covers four main sections: fundamentals of RAG, deep dive into Azure AI Search knowledge bases, the integration of Foundry IQ with knowledge bases, and a Q&A session. This roadmap prepares the reader for a layered exploration of retrieval and generation techniques in modern AI agents.
-
----
-
-![Introduction to Retrieval-Augmented Generation (RAG)](slide_images/slide_4.png)  
-[Watch from 00:49](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=49s)
-
-Retrieval-Augmented Generation (RAG) is a method that enables large language models (LLMs) to generate answers grounded in specific, relevant data retrieved from external sources. It addresses the challenge of LLMs hallucinating or providing generic answers by anchoring responses in real documents. RAG workflows typically involve receiving a natural language query, retrieving pertinent documents from a search index, and then prompting an LLM to synthesize an answer referencing those retrieved documents.
-
----
-
-![Explanation of the need for agents and context in various domains](slide_images/slide_5.png)  
-[Watch from 01:05](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=65s)
-
-Modern AI agents are evolving beyond conversational bots to task-oriented systems that act on behalf of users in specific domains. These agents require precise domain-specific context to operate effectively, which means grounding their knowledge in an organization's proprietary data. Without accurate retrieval of relevant context, agents risk generating irrelevant or incorrect outputs. Thus, retrieval quality directly impacts the usefulness and reliability of agents.
+- [Introduction to Retrieval-Augmented Generation (RAG)](#introduction-to-retrieval-augmented-generation-rag)  
+- [The Role of Agents and Context in AI Applications](#the-role-of-agents-and-context-in-ai-applications)  
+- [How RAG Grounds Agents Using Domain Knowledge](#how-rag-grounds-agents-using-domain-knowledge)  
+- [Azure AI Search: Features for Advanced RAG](#azure-ai-search-features-for-advanced-rag)  
+- [Hybrid Search: Combining Keyword and Vector Search](#hybrid-search-combining-keyword-and-vector-search)  
+- [Keyword Search Explained](#keyword-search-explained)  
+- [Vector Search Explained](#vector-search-explained)  
+- [Merging Results with Reciprocal Rank Fusion](#merging-results-with-reciprocal-rank-fusion)  
+- [Re-ranking for Improved Search Quality](#re-ranking-for-improved-search-quality)  
+- [Complete Hybrid Search Workflow](#complete-hybrid-search-workflow)  
+- [Research Supporting Hybrid Search Effectiveness](#research-supporting-hybrid-search-effectiveness)  
+- [Limitations of Hybrid Search and Complex Queries](#limitations-of-hybrid-search-and-complex-queries)  
+- [Knowledge Bases and Agentic Retrieval in Azure AI Search](#knowledge-bases-and-agentic-retrieval-in-azure-ai-search)  
+- [Indexed and Remote Knowledge Sources](#indexed-and-remote-knowledge-sources)  
+- [Remote SharePoint Knowledge Source](#remote-sharepoint-knowledge-source)  
+- [Indexed SharePoint Data Ingestion](#indexed-sharepoint-data-ingestion)  
+- [General Indexed Knowledge Source Strategy and AI Enrichment](#general-indexed-knowledge-source-strategy-and-ai-enrichment)  
+- [Content Understanding Feature for Rich Document Representation](#content-understanding-feature-for-rich-document-representation)  
+- [Retrieval Reasoning Effort Levels](#retrieval-reasoning-effort-levels)  
+- [Minimal Effort Mode](#minimal-effort-mode)  
+- [Low Effort Mode and Agentic Retrieval Engine](#low-effort-mode-and-agentic-retrieval-engine)  
+- [Knowledge Source Selection in Low Effort Mode](#knowledge-source-selection-in-low-effort-mode)  
+- [Customizing Answer Style and Tone](#customizing-answer-style-and-tone)  
+- [Web Knowledge Source Integration](#web-knowledge-source-integration)  
+- [Medium Effort Mode with Iterative Retrieval](#medium-effort-mode-with-iterative-retrieval)  
+- [Demo: Medium Effort Handling Complex Queries](#demo-medium-effort-handling-complex-queries)  
+- [Open Source Conversational RAG Repository](#open-source-conversational-rag-repository)  
+- [Foundry IQ Integration with Knowledge Bases](#foundry-iq-integration-with-knowledge-bases)  
+- [Foundry IQ Agent Demo Using Knowledge Base](#foundry-iq-agent-demo-using-knowledge-base)  
 
 ---
 
-![How agents use context through Retrieval-Augmented Generation (RAG)](slide_images/slide_6.png)  
-[Watch from 01:46](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=106s)
+## Introduction to Retrieval-Augmented Generation (RAG)  
 
-RAG operates by first sending user questions to a search index to retrieve relevant document chunks. These chunks are then provided to an LLM alongside the original question. The LLM generates an answer based on the retrieved context and includes citations to the source documents. This approach leverages the strengths of both search engines (precise retrieval) and LLMs (natural language synthesis), delivering grounded and explainable answers.
+![Introduction slide with Retrieval-Augmented Generation overview](slide_images/slide_4.png)  
+[Watch from 00:49](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=49s)  
 
----
-
-![Overview of Azure AI Search features](slide_images/slide_7.png)  
-[Watch from 03:18](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=198s)
-
-Azure AI Search offers an enterprise-grade vector database and an end-to-end data ingestion and management pipeline for diverse data types. It provides a full-stack RAG solution designed for scalability and production readiness. Its capabilities extend beyond simple vector search by integrating with various data sources, supporting hybrid search strategies, and enabling advanced AI enrichment. This makes it a strong foundation for building robust generative AI applications.
+Retrieval-Augmented Generation (RAG) is a technique that combines LLMs with external information retrieval to provide grounded, accurate responses. Instead of relying solely on the LLM's internal knowledge, RAG uses a user query to search a knowledge base or search index, retrieving relevant documents or data chunks. These retrieved results are then fed into the LLM along with the original query, enabling the model to generate answers supported by actual source content and citations. This approach is essential for building agents that operate with domain-specific knowledge and ensures that responses reflect the most relevant and current information available.
 
 ---
 
-![Explanation of hybrid search as an optimal retrieval strategy](slide_images/slide_8.png)  
-[Watch from 04:12](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=252s)
+## The Role of Agents and Context in AI Applications  
 
-Hybrid search combines keyword search and vector search to leverage the strengths of both. Keyword search excels with exact terms and structured queries, while vector search handles semantic similarity and ambiguous queries. Azure AI Search merges results from both using reciprocal rank fusion and applies a re-ranking model to optimize relevance. This layered approach significantly improves retrieval quality across varied query types.
+![Slide showing agent types and need for domain context](slide_images/slide_5.png)  
+[Watch from 01:05](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=65s)  
 
----
-
-![Description of keyword search and its indexing method](slide_images/slide_9.png)  
-[Watch from 05:32](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=332s)
-
-Keyword search relies on inverted document indexes, mapping terms to document frequencies and positions. Azure AI Search uses the BM25 ranking function, a state-of-the-art full-text retrieval algorithm that scores documents based on term frequency, inverse document frequency, and document length normalization. Keyword search is highly effective for queries with explicit terms but struggles with ambiguous or concept-based queries.
+Agentic AI applications increasingly handle tasks beyond simple conversation by performing actions grounded in organizational data. Agents require domain-specific context to operate effectively, drawing on relevant information rather than generic knowledge. This context is critical to aligning agent behavior with user intent and organizational requirements. Retrieval mechanisms like RAG provide this grounding by connecting agents to structured or unstructured data repositories, ensuring that their actions and answers are informed by the appropriate knowledge base.
 
 ---
 
-![Description of vector search and embedding-based similarity](slide_images/slide_10.png)  
-[Watch from 07:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=420s)
+## How RAG Grounds Agents Using Domain Knowledge  
 
-Vector search transforms documents and queries into high-dimensional embeddings that capture semantic meaning. Similarity between query and documents is computed via distance metrics (e.g., cosine similarity). Embedding models like OpenAI's text embedding provide these vector representations. Vector search identifies semantically related documents even if exact keywords are missing, enhancing retrieval for natural language queries. Azure AI Search supports large-scale vector search using HNSW (Hierarchical Navigable Small World) graphs for efficient approximate nearest neighbor retrieval.
+![Diagram illustrating RAG workflow: query, retrieval, generation](slide_images/slide_6.png)  
+[Watch from 01:53](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=113s)  
 
----
-
-![Explanation of Reciprocal Rank Fusion (RRF) for merging search results](slide_images/slide_11.png)  
-[Watch from 10:20](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=620s)
-
-Reciprocal Rank Fusion (RRF) is a method to combine multiple ranked lists (e.g., keyword and vector search results) into a single ranking. It uses the reciprocal of each result's rank to compute a combined score, effectively averaging ranks while emphasizing higher-ranked items. This simple yet effective technique harmonizes heterogeneous search results, improving overall retrieval performance by balancing precision and recall.
+RAG enables grounding of agents by first converting a user question into a search query that retrieves relevant text chunks from a search index. These chunks, often accompanied by metadata like document IDs and scores, are then provided to an LLM alongside the original query. The LLM synthesizes an answer based on this retrieved context, generating responses that include citations to the source documents. This process bridges unstructured data and generative models, allowing agents to respond accurately to specific information needs within an organization's data.
 
 ---
 
-![Description of re-ranking step using a cross-encoder model](slide_images/slide_12.png)  
-[Watch from 12:01](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=721s)
+## Azure AI Search: Features for Advanced RAG  
 
-Re-ranking refines the merged search results using a specialized model called a cross-encoder, trained to score the relevance of each document relative to the query. Unlike generative LLMs, this model is optimized for ranking tasks and trained on human-annotated data, ensuring more accurate prioritization. The cross-encoder provides absolute relevance scores, enabling filtering of low-quality results by thresholding, which enhances precision and user satisfaction.
+![Slide highlighting Azure AI Search capabilities](slide_images/slide_7.png)  
+[Watch from 03:18](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=198s)  
 
----
-
-![Illustration of a complete hybrid search flow combining keyword, vector, and re-ranking](slide_images/slide_13.png)  
-[Watch from 14:10](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=850s)
-
-The hybrid search workflow involves sending a query both to keyword and vector search engines, merging their ranked results with RRF, and then applying the re-ranking model to produce the final ordered list. This pipeline balances fast retrieval with semantic understanding and precise relevance scoring, suitable for diverse query types. Azure AI Search provides this full stack natively, simplifying implementation.
+Azure AI Search offers a comprehensive vector database built on a scalable, enterprise-grade platform. It supports end-to-end data ingestion, indexing, and retrieval pipelines for diverse data types. Its full-stack RAG capabilities include hybrid search combining keyword and vector retrieval, advanced re-ranking models, and integration with AI enrichment skills. These features allow developers to build sophisticated retrieval strategies tailored to their use cases, ensuring accurate and relevant information retrieval at scale.
 
 ---
 
-![Impact of hybrid search across different query types with performance metrics](slide_images/slide_14.png)  
-[Watch from 15:16](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=916s)
+## Hybrid Search: Combining Keyword and Vector Search  
 
-Empirical research shows hybrid search consistently outperforms individual keyword or vector search across various query categories, including short, long, and concept-based queries. This confirms that combining complementary retrieval methods with re-ranking addresses the breadth of real-world user requests, reducing failure modes and improving answer accuracy in AI-powered applications.
+![Diagram showing hybrid search combining keyword and vector retrieval](slide_images/slide_8.png)  
+[Watch from 04:12](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=252s)  
 
----
-
-![Situations where hybrid search may not be sufficient](slide_images/slide_15.png)  
-[Watch from 15:37](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=937s)
-
-Certain complex queries exceed the capabilities of hybrid search alone. Examples include multi-part questions requiring decomposition, chained queries needing sequential retrieval steps, and queries demanding external knowledge beyond internal data. Addressing these requires agentic retrieval strategies that orchestrate multiple queries and knowledge sources dynamically.
+Hybrid search merges keyword-based retrieval, which excels at precise term matching, with vector search, which captures semantic similarity in high-dimensional embedding spaces. Azure AI Search implements this by performing both searches in parallel and merging their results using Reciprocal Rank Fusion (RRF). This combined approach outperforms either method alone, balancing exact matches with conceptually related content and improving overall retrieval relevance.
 
 ---
 
-![Overview of knowledge bases in Azure AI Search](slide_images/slide_16.png)  
-[Watch from 16:57](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1017s)
+## Keyword Search Explained  
 
-Azure AI Search knowledge bases extend hybrid search by embedding agentic retrieval engines that manage complex query planning, knowledge source selection, and result merging. Knowledge bases act as reusable, topic-centric collections that ground agents in domain-specific data, enabling more sophisticated and context-aware interactions.
+![Example code snippet and explanation of keyword search](slide_images/slide_9.png)  
+[Watch from 05:32](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=332s)  
 
----
-
-![Agentic retrieval architecture using multiple knowledge sources](slide_images/slide_17.png)  
-[Watch from 17:33](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1053s)
-
-The agentic retrieval engine decomposes conversations into atomic queries via an LLM-based query planner, dynamically selects relevant knowledge sources, issues queries to those sources, and merges retrieved documents into a single synthesized answer with citations. If initial results are insufficient, the engine iterates query planning considering prior results to refine retrieval, enhancing answer completeness.
+Keyword search relies on an inverted document index mapping terms to document occurrences. Azure AI Search employs BM25, a top-performing full-text ranking algorithm, to score documents based on term frequency and document length normalization. This method is effective for straightforward queries with explicit keywords, as shown in the demo retrieving a 25-foot hose product. However, keyword search struggles with broader or ambiguous queries where exact term matching is insufficient.
 
 ---
 
-![Venn diagram of indexed and remote knowledge sources](slide_images/slide_18.png)  
-[Watch from 18:49](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1129s)
+## Vector Search Explained  
 
-Knowledge sources fall into two categories: indexed and remote. Indexed sources involve copying data from external repositories (e.g., PDFs in Blob storage) into Azure AI Search indexes, enabling full hybrid search and re-ranking. Remote sources connect directly to external services (e.g., SharePoint, web) at query time without data ingestion, supporting live, permission-aware retrieval. SharePoint supports both modes.
+![Example of vector search embedding and similarity](slide_images/slide_10.png)  
+[Watch from 07:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=420s)  
 
----
-
-![Remote SharePoint knowledge integration example](slide_images/slide_19.png)  
-[Watch from 19:53](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1193s)
-
-Remote SharePoint integration queries SharePoint directly using the end user's identity to enforce access controls, ensuring users see only permitted documents. This approach supports real-time, secure retrieval of SharePoint content for agents, analogous to Microsoft Copilot's underlying SharePoint index, preserving enterprise security and compliance.
+Vector search encodes documents and queries into dense numerical vectors representing semantic meaning. Using embedding models like OpenAI’s text embeddings, documents are mapped into a multidimensional space where proximity reflects conceptual similarity. Queries are similarly embedded and matched to the nearest vectors, enabling retrieval of relevant documents even without shared keywords. Azure AI Search supports efficient vector search at scale using approximate nearest neighbor algorithms like HNSW, capable of handling billions of vectors.
 
 ---
 
-![Indexed SharePoint knowledge ingestion process](slide_images/slide_20.png)  
-[Watch from 20:44](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1244s)
+## Merging Results with Reciprocal Rank Fusion  
 
-Indexed SharePoint ingestion uses Azure Search indexers and skill sets to extract files from SharePoint sites, chunk and vectorize them for efficient hybrid search. This approach copies content into Azure AI Search indexes while preserving permission metadata for post-retrieval filtering. It enables richer AI enrichment and faster search response times at the cost of data duplication.
+![Diagram illustrating Reciprocal Rank Fusion (RRF)](slide_images/slide_11.png)  
+[Watch from 10:20](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=620s)  
 
----
-
-![Content understanding capabilities in indexed knowledge sources](slide_images/slide_21.png)  
-[Watch from 21:52](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1312s)
-
-Azure AI Search offers enhanced content understanding for indexed documents beyond minimal text extraction. Using a dedicated content understanding deployment, it can parse embedded images, tables, and complex elements, converting them into searchable and OCR-processed text. This richer representation allows LLMs to reason over diagrams and non-textual content, improving answer quality in knowledge bases.
+Reciprocal Rank Fusion is a technique for combining ranked lists from different retrieval methods by averaging the reciprocal of their rank positions. It aggregates the relative importance of a document across keyword and vector search results, boosting items consistently ranked highly by both. This simple yet effective fusion strategy balances strengths of each retrieval type and produces a unified, more accurate ranking.
 
 ---
 
-![Knowledge base retrieval reasoning effort spectrum](slide_images/slide_22.png)  
-[Watch from 23:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1380s)
+## Re-ranking for Improved Search Quality  
 
-Retrieval reasoning effort controls the depth and cost of knowledge base retrieval in Azure AI Search. Minimal effort offers low latency by bypassing LLMs for query planning and source selection. Low effort enables query decomposition and dynamic source selection using LLMs. Medium effort adds iterative retrieval when initial results are insufficient, balancing comprehensiveness against latency and cost. Future plans include higher effort levels.
+![Slide showing re-ranking model overview](slide_images/slide_12.png)  
+[Watch from 12:01](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=721s)  
 
----
-
-![Explanation of minimal effort knowledge base retrieval](slide_images/slide_23.png)  
-[Watch from 23:57](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1437s)
-
-Minimal effort retrieval performs direct queries across all configured sources without LLM-driven query planning or source selection. This mode sacrifices advanced features for speed and simplicity. It requires the application to provide the queries explicitly. Minimal effort suits scenarios needing rapid retrieval or integration with agents handling their own query logic.
+Re-ranking applies a cross-encoder model trained to score the relevance of each document against the user query. Unlike the initial retrieval steps, this model jointly processes the query and candidate document to produce a precise relevance score, learned from human judgments. Azure AI Search uses this semantic re-ranker to refine the fused results, promoting the most relevant documents to the top. The re-ranker's scoring also provides an absolute quality threshold, allowing filtering of low-quality matches.
 
 ---
 
-![Example output of minimal effort knowledge base retrieval](slide_images/slide_24.png)  
-[Watch from 24:35](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1475s)
+## Complete Hybrid Search Workflow  
 
-A demonstration shows a conversational RAG application using minimal effort with SharePoint and search index sources. The query is sent directly to all sources, and results are merged and re-ranked. Citations indicate which source each result originates from. Minimal effort can be integrated with minimal code changes, making it a practical entry point for multi-source retrieval.
+![Comprehensive hybrid search pipeline: keyword, vector, fusion, re-ranking](slide_images/slide_13.png)  
+[Watch from 14:10](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=850s)  
 
----
-
-![Example output of low effort knowledge base retrieval](slide_images/slide_25.png)  
-[Watch from 26:32](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1592s)
-
-Low effort retrieval enables the agentic retrieval engine's query planning features. The engine decomposes complex queries into simpler sub-queries and selects only the knowledge sources relevant to those sub-queries. This dynamic selection reduces unnecessary queries, saving latency and cost. The engine also synthesizes answers with citations, delivering coherent responses from multiple data sources.
+The hybrid search workflow in Azure AI Search consists of executing parallel keyword and vector searches, merging results with Reciprocal Rank Fusion, and refining the merged list with a semantic re-ranking model. This layered approach maximizes retrieval accuracy across diverse query types and data sets. Implementing this stack is critical for high-quality search experiences in generative AI applications.
 
 ---
 
-![Example output of medium effort knowledge base retrieval](slide_images/slide_26.png)  
-[Watch from 33:14](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1994s)
+## Research Supporting Hybrid Search Effectiveness  
 
-Medium effort adds iterative retrieval, where the system assesses the sufficiency of initial results using a semantic classifier model. If results are inadequate, it re-plans queries considering prior results and performs a second retrieval pass. This improves answer completeness for complex, multi-faceted questions. The semantic classifier evaluates both the quantity and relevance of retrieved documents to decide on iteration.
+![Slide summarizing hybrid search research findings](slide_images/slide_14.png)  
+[Watch from 15:16](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=916s)  
 
----
-
-![Example output of low effort retrieval with Bing web knowledge](slide_images/slide_27.png)  
-[Watch from 31:08](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1868s)
-
-The Bing Web knowledge source supplements internal data by providing up-to-date public information from the web. When enabled, queries are decomposed and sent to internal indexes and the web, with results combined and synthesized. This expands agent knowledge beyond organizational data, vital for answering questions involving current events or general knowledge. Answer synthesis with citations maintains transparency.
+Extensive research across short and long queries, keyword-based and conceptual questions, confirms that hybrid search consistently outperforms singular retrieval methods. This robustness is essential for real-world applications where user input is unpredictable and varied. Azure AI Search’s hybrid stack is a proven foundation for reliable, scalable retrieval in agentic AI.
 
 ---
 
-![Conclusion slide with resources and next steps](slide_images/slide_28.png)  
-[Watch from 36:52](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2212s)
+## Limitations of Hybrid Search and Complex Queries  
 
-An open-source repository provides a full conversational RAG solution incorporating agentic retrieval, multi-source access, and cloud data ingestion. The repo serves as a practical foundation for developers to build domain-specific agents using Azure AI Search features. Exploring this codebase accelerates adoption and experimentation with RAG applications.
+![Slide listing complex query challenges needing advanced strategies](slide_images/slide_15.png)  
+[Watch from 15:37](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=937s)  
 
----
-
-![Call to action slide with links to resources and samples](slide_images/slide_29.png)  
-[Watch from 37:38](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2258s)
-
-Foundry IQ integrates knowledge bases with agents using the Microsoft Communication Protocol (MCP), enabling unified knowledge access. Agents act as query planners and answer synthesizers, delegating retrieval to knowledge bases. This modular approach simplifies agent development by consolidating disparate data retrieval tools into a single knowledge layer, improving maintainability and scalability.
+Hybrid search may falter with complex queries requiring decomposition, chaining, or external knowledge. Examples include multi-part questions needing separate answers, chained queries where one answer informs the next, and queries requiring up-to-date web knowledge. Addressing these requires agentic retrieval strategies that break down intent, select appropriate knowledge sources, and iteratively synthesize answers.
 
 ---
 
-![Final thank you and feedback request slide](slide_images/slide_30.png)  
-[Watch from 39:54](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2394s)
+## Knowledge Bases and Agentic Retrieval in Azure AI Search  
 
-The session concludes with an invitation to join the MCP private preview for new knowledge source integrations, followed by a Q&A segment addressing practical questions about knowledge source configuration, indexing strategies, and graph database integration. Feedback is encouraged via a survey, emphasizing community engagement.
+![Diagram of agentic retrieval engine components](slide_images/slide_16.png)  
+[Watch from 16:57](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1017s)  
+
+Azure AI Search knowledge bases integrate an Agentic Retrieval engine designed to enhance RAG by managing query planning, knowledge source selection, and result merging. The engine uses LLMs to decompose complex conversations into individual queries, determines which knowledge sources to query, and synthesizes merged output answers with citations. It can perform multi-pass retrieval to improve answer quality when initial results are insufficient.
 
 ---
 
-# Q&A Highlights
+## Indexed and Remote Knowledge Sources  
 
-**Can specific Azure AI Search indexes be added as knowledge sources, or must the entire search resource be used?**  
-Indexed knowledge sources create new Azure Search indexes by copying data from external repositories using indexers and skill sets. Remote knowledge sources connect to external systems directly without ingesting data. Filters can be applied to restrict scope, such as limiting SharePoint queries to specific sites or domains for web sources.
+![Venn diagram showing indexed vs remote knowledge sources](slide_images/slide_18.png)  
+[Watch from 18:49](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1129s)  
 
-**Is storing graphs and entity relationships in knowledge bases supported or valuable?**  
-Graph databases are not natively built into Azure AI Search knowledge bases but can be integrated as remote knowledge sources via MCP in private preview. This allows agents to leverage graph-structured data alongside other sources.
+Knowledge sources in Azure AI Search fall into two categories: indexed and remote. Indexed sources involve copying data from repositories like blobs or SharePoint into search indexes with vectorization and AI enrichment. Remote sources maintain data in place and query it live, such as web search or direct SharePoint queries with user identity-based access control. Each type serves different use cases depending on data freshness, access control, and latency requirements.
 
-**What chunking strategies are recommended for indexing documents via the portal?**  
-Azure AI Search provides a built-in chunking mechanism with default settings. For more control, users can chunk documents externally before ingestion or create custom skills within skill sets to define chunking logic. The open-source repo includes examples of custom chunking strategies for optimized retrieval.
+---
+
+## Remote SharePoint Knowledge Source  
+
+![Diagram illustrating remote SharePoint query flow with user identity](slide_images/slide_19.png)  
+[Watch from 19:53](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1193s)  
+
+Remote SharePoint knowledge sources query SharePoint content live using the end user's identity to enforce access controls. This ensures users only see documents they are authorized to view. The integration mirrors Microsoft Copilot’s data access approach, leveraging the same underlying SharePoint index. This live querying avoids data duplication while maintaining security and compliance.
+
+---
+
+## Indexed SharePoint Data Ingestion  
+
+![Diagram showing SharePoint data ingestion via indexers and skill sets](slide_images/slide_20.png)  
+[Watch from 20:44](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1244s)  
+
+Indexed SharePoint integration extracts files from SharePoint and ingests them into Azure AI Search indexes using indexers and AI enrichment skill sets. The indexer fetches documents, while skill sets chunk and vectorize content, enabling hybrid search. Permission metadata is preserved to allow filtering results by user identity during retrieval, combining the benefits of local indexing with security.
+
+---
+
+## General Indexed Knowledge Source Strategy and AI Enrichment  
+
+![Slide describing indexing pipeline and AI enrichment skills](slide_images/slide_21.png)  
+[Watch from 21:27](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1287s)  
+
+Indexed knowledge sources leverage reusable AI enrichment components called skills that process and transform raw data into optimized searchable content. These skills perform functions like chunking, vectorization, and metadata extraction, improving retrieval effectiveness. The indexing pipeline supports diverse data types and repositories, enabling consistent, high-quality search across organizational knowledge.
+
+---
+
+## Content Understanding Feature for Rich Document Representation  
+
+![Example content understanding processing a flow chart and embedded images](slide_images/slide_22.png)  
+[Watch from 21:52](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1312s)  
+
+A new content understanding feature enhances document indexing by extracting rich semantic information from complex elements such as images, tables, and diagrams. Instead of minimal parsing, this approach uses OCR and structural tagging to make embedded text and visuals accessible for LLM reasoning. This results in more comprehensive search and generation capabilities, especially for technical or graphical content.
+
+---
+
+## Retrieval Reasoning Effort Levels  
+
+![Diagram showing minimal, low, and medium retrieval reasoning effort](slide_images/slide_23.png)  
+[Watch from 23:00](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1380s)  
+
+Azure AI Search knowledge bases offer configurable retrieval reasoning effort levels controlling the depth of query processing and retrieval:  
+- Minimal effort prioritizes low latency and bypasses LLM planning, directly querying all sources.  
+- Low effort engages the agentic retrieval engine with query planning and knowledge source selection using an LLM.  
+- Medium effort adds iterative retrieval with a semantic classifier model to re-plan queries when initial results are insufficient, improving answer completeness.
+
+---
+
+## Minimal Effort Mode  
+
+![Demo showing minimal effort retrieval with multi-source querying](slide_images/slide_24.png)  
+[Watch from 23:57](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1437s)  
+
+Minimal effort mode performs direct querying of all configured knowledge sources without LLM-driven query decomposition. It suits scenarios demanding fast responses with moderate complexity. Queries are sent simultaneously to sources like search indexes and SharePoint, and results are merged using semantic ranking. This mode is easy to integrate into existing applications by swapping retrieval calls for multi-source querying.
+
+---
+
+## Low Effort Mode and Agentic Retrieval Engine  
+
+![Diagram illustrating low effort mode with query planning and source selection](slide_images/slide_25.png)  
+[Watch from 26:32](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1592s)  
+
+Low effort mode activates the agentic retrieval engine’s core features. It uses an LLM to analyze entire conversations, decomposing them into multiple precise queries. The engine dynamically selects which knowledge sources to query based on metadata and custom instructions, optimizing cost and latency. Retrieved documents from selected sources are synthesized into a unified, citation-backed answer. This mode balances sophistication and efficiency.
+
+---
+
+## Knowledge Source Selection in Low Effort Mode  
+
+![Slide detailing knowledge source selection inputs: names, descriptions, instructions](slide_images/slide_26.png)  
+[Watch from 27:21](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1641s)  
+
+Knowledge source selection uses three inputs to guide the LLM’s decision: the source name, an optional descriptive summary of its contents or purpose, and custom retrieval instructions phrased in natural language. This contextual information enables the LLM to intelligently choose relevant sources for each decomposed query, preventing unnecessary searches and reducing resource consumption while maintaining answer accuracy.
+
+---
+
+## Customizing Answer Style and Tone  
+
+![Examples of answer style customization: default, bullet points, poetic](slide_images/slide_30.png)  
+[Watch from 30:02](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1802s)  
+
+Azure AI Search allows customization of the generated answer’s style and tone via natural language instructions. Examples include default verbose responses, succinct bullet-point formats, or even stylized poetic renditions. This flexibility lets developers tailor agent responses to suit branding, user preferences, or interaction context, enhancing user engagement and experience.
+
+---
+
+## Web Knowledge Source Integration  
+
+![Slide showing Bing Web knowledge source and demo with citations](slide_images/slide_27.png)  
+[Watch from 31:08](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1868s)  
+
+The Bing Web knowledge source provides access to fresh, public web content to complement internal organizational data. It enables querying the entire web or a curated domain list, expanding knowledge coverage. Answer synthesis is mandatory when using web sources to produce integrated responses with citations linking back to web pages. This enriches agents’ ability to handle questions requiring external or up-to-date information.
+
+---
+
+## Medium Effort Mode with Iterative Retrieval  
+
+![Diagram of medium effort mode with iterative query planning](slide_images/slide_28.png)  
+[Watch from 33:14](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=1994s)  
+
+Medium effort mode extends low effort with an iterative retrieval step guided by a semantic classifier model. This model assesses whether initial retrieval results sufficiently answer the queries and if at least one highly relevant document was found. If not, the engine performs a second pass of query planning and retrieval, informed by previously retrieved documents, to refine and improve results. This approach improves answer completeness for complex or ambiguous queries.
+
+---
+
+## Demo: Medium Effort Handling Complex Queries  
+
+![Demo output showing multi-step query planning and iterative retrieval](slide_images/slide_26.png)  
+[Watch from 35:07](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2107s)  
+
+A complex query requesting painting instructions and product pricing is decomposed into multiple subqueries. The first iteration retrieves results primarily from the web, while the second iteration refines search queries to target internal product data. This demonstrates medium effort’s ability to iteratively improve answers by combining diverse sources and adjusting retrieval based on partial results, providing comprehensive, accurate responses.
+
+---
+
+## Open Source Conversational RAG Repository  
+
+![Slide promoting open source repo for conversational RAG](slide_images/slide_29.png)  
+[Watch from 36:52](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2212s)  
+
+An open source repository implementing conversational RAG with agentic retrieval features is available as a reference and starting point. It supports multimodal data, cloud ingestion, and scalable conversational workflows. Thousands of developers have deployed this solution, making it a valuable resource for teams building domain-specific AI agents using Azure AI Search technologies.
+
+---
+
+## Foundry IQ Integration with Knowledge Bases  
+
+![Diagram showing Foundry IQ unifying knowledge bases for agents](slide_images/slide_37.png)  
+[Watch from 37:38](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2258s)  
+
+Foundry IQ integrates knowledge bases with agents via the Microsoft Communication Protocol (MCP). It acts as a unified knowledge layer, simplifying agent development by delegating retrieval and synthesis tasks to connected knowledge bases. Agents use MCP to send multiple intents or queries to knowledge bases and receive merged, citation-backed results, reducing the complexity of stitching multiple retrieval tools.
+
+---
+
+## Foundry IQ Agent Demo Using Knowledge Base  
+
+![Screenshot of Foundry IQ agent playground querying knowledge base](slide_images/slide_38.png)  
+[Watch from 38:50](https://www.youtube.com/watch?v=lW47o2ss3Yg&t=2330s)  
+
+The Foundry IQ agent playground provides a unified interface for building and testing agents with integrated knowledge sources. It supports customized instructions and real-time evaluation of agent responses. The demo shows querying the same knowledge base used earlier, accessed through MCP, yielding consistent answers with citations. This showcases how Foundry IQ facilitates deployment of knowledge-grounded agents at scale.
+
+---
+
+This detailed breakdown illustrates the layered architecture and advanced retrieval strategies in Azure AI Search that underpin effective RAG applications. Through hybrid search, dynamic knowledge source management, and iterative retrieval reasoning, developers can build intelligent agents capable of handling complex queries with accurate, context-rich answers. Integration with Foundry IQ further streamlines agent creation, enabling unified access to diverse knowledge repositories. The accompanying open source resources provide practical tools to accelerate development of conversational AI grounded in organizational data.

@@ -329,13 +329,27 @@ def generate_annotated_talk_post(
     
     prompt = f"""Attached is the transcript (in <transcript> tags) of a technical talk. Create an annotated blog post that explains the content of each slide.
 
+STRUCTURE REQUIREMENTS:
+1. Start with a brief introduction paragraph (no heading needed for intro).
+2. Include a Table of Contents after the introduction, listing all slide section titles as markdown links.
+3. For each slide, create a section with:
+   - A level-2 heading (##) with a descriptive title for that slide's content
+   - The slide image reference immediately after the heading
+   - A timestamp link to the video
+   - The explanatory text
+
+Example structure for each slide section:
+
+## Hybrid Search Combines Multiple Retrieval Methods
+
+![Diagram showing hybrid search architecture](slide_images/slide_8.png)
+[Watch from 04:12](https://www.youtube.com/watch?v=VIDEO_ID&t=252s)
+
+Hybrid search combines keyword search and vector search to leverage the strengths of both...
+
 For each slide, provide a detailed synopsis of the information to maximize understanding for the reader. Each section should provide enough commentary and info to understand the full context of that particular slide. The idea is that the reader will not have to watch the video and can instead read the material, so the writing + slide should stand alone. Do not simply repeat the information on each slide. Capture supplementary information from the talk that is NOT visible on the slides. Be thoroughly detailed and capture useful asides or commentary as well, such that the notes you generate should be a legitimate value add on top of the slides.
 
 IMPORTANT: Write in an expository style that directly explains the concepts. Do NOT narrate what the speakers said or did (e.g., avoid "Matt explains that..." or "She describes..."). Instead, directly state the information (e.g., "RAG is a technique that..." or "Hybrid search combines...").
-
-When writing the article, provide markdown image references with appropriate captions where the slides will go. For example:
-
-![Overview of xyz concept](slide_images/slide_1.png)
 
 Note that images for this post will be placed in slide_images/
 
