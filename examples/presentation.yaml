@@ -1,0 +1,23 @@
+# Example presentation.yaml
+# Copy this file to your presentation folder and fill in the details
+
+title: "January 6, 2026 Office Hours"
+date: 2026-01-06
+
+# Video source: YouTube URL or local MP4 path (relative to this folder)
+video: "https://www.youtube.com/watch?v=LZLg_hQYk4I"
+
+# Slides: PDF path (relative to this folder) - required
+slides: "slides.pdf"
+
+# Transcript: optional, hamel will fetch from video if not provided
+# transcript: "transcript.txt"
+
+# Optional: additional notes or context
+notes: |
+  Recent happenings:
+  Holiday break!
+
+  What I'm working on this week:
+  Entra OBO with Python MCP servers
+  Planning next Reactor series

@@ -1,0 +1,17 @@
+[project]
+name = "presentation-writeups"
+version = "0.1.0"
+description = "Turn presentations into annotated blog-style write-ups with embedded slide images"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "azure-identity",
+    "openai",
+    "python-dotenv",
+    "pyyaml",
+    "rich",
+    "youtube-transcript-api",
+]
+
+[project.scripts]
+generate-writeup = "generate_writeup:main"

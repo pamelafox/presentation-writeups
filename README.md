@@ -1,46 +1,87 @@
-# Discord Office Hours write-ups
+# Presentation Write-ups
 
-This repo turns recordings of weekly Discord office hours into structured Q&A write-ups, using VS Code GitHub Copilot and [custom skills](https://code.visualstudio.com/docs/copilot/customization/agent-skills). The user-facing instructions are below, and he agent-facing instructions are in [AGENTS.md](AGENTS.md).
+This repo turns presentations into annotated blog-style write-ups with embedded slide images. It uses Azure OpenAI to process video recordings and PDF slides.
 
-## User workflow
+## Raw materials
 
-1. Add a new folder under `office-hours/` for each week's office hours, named with the date in `YYYY_MM_DD` format. Add `raw.md` with raw resources: typically that's the YouTube recording links, Discord pasted chat logs, and weekly slide content.
+Each presentation requires:
 
-2. Ask GitHub Copilot to generate the structured Q&A write-up:
+- **Slides**: PDF file (required)
+- **Recording**: YouTube video URL or local MP4 file (required)
+- **Transcript**: Optional text file (auto-fetched from video if not provided)
 
-    ```text
-    Generate a markdown write-up of the weekly Python + AI office hours held on DATE.
-    ```
+## Setup
 
-3. Review the generated `questions_answers.md` for accuracy and formatting.
+Install [uv](https://docs.astral.sh/uv/) if you haven't already:
 
-4. Ask GitHub Copilot to post each Q&A as a comment to the GitHub Discussion thread using the `discussion-commenter` skill:
-
-    ```text
-    Post each Q&A from the write-up as a comment to the GitHub Discussion thread.
-    ```
-
-    That will use the GitHub CLI, authenticated as you, to post each question and answer as a separate comment in the discussion thread.
-
-5. Ask GitHub Copilot to generate a YouTube-friendly description:
-
-    ```text
-    Generate a YouTube description for the weekly Python + AI office hours held on DATE, based off the Q&A write-up.
-    ```
-
-    That will generate `youtube_description.md` with timestamps and links, and you can copy-paste that into the YouTube video description.
-
-You should end up with a structure like this:
-
-```text
-office-hours/
-  YYYY_MM_DD/
-    raw.md                 # Raw resources: YouTube links, chat logs, slides
-    questions_answers.md   # Q&A write-up with timestamps
-    youtube_description.md # Description for YouTube video
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-## Resources
+Install the project dependencies:
 
-- [Weekly office hours recordings & Q&A](https://github.com/orgs/microsoft-foundry/discussions/280)
-- [Weekly live office hours](http://aka.ms/aipython/oh)
+```bash
+uv sync
+```
+
+You'll also need:
+- Azure OpenAI access with the following environment variables:
+  - `AZURE_OPENAI_ENDPOINT`: Your Azure OpenAI endpoint URL
+  - `AZURE_OPENAI_CHAT_DEPLOYMENT`: The deployment name for chat completions
+- Azure authentication configured (uses `DefaultAzureCredential` - works with Azure CLI login, managed identity, etc.)
+- `ffmpeg` installed for local video transcription: `brew install ffmpeg`
+- `poppler` installed for PDF processing: `brew install poppler`
+
+## Generating write-ups
+
+Create a `presentation.yaml` file in your presentation folder (see [examples/presentation.yaml](examples/presentation.yaml)):
+
+```yaml
+title: "My Presentation"
+date: 2026-01-06
+
+# Video source: YouTube URL or local MP4 path (required)
+video: "https://www.youtube.com/watch?v=abc123"
+
+# Slides: PDF path relative to this folder (required)
+slides: "slides.pdf"
+
+# Transcript: optional, auto-fetched from video if not provided
+# transcript: "transcript.txt"
+
+# Optional: additional notes
+notes: |
+  Any additional context
+```
+
+Then run the script:
+
+```bash
+uv run generate_writeup.py presentations/my-talk
+```
+
+The script:
+
+1. Converts PDF slides to images
+2. Fetches transcript from YouTube
+3. Generates chapter summaries using Azure OpenAI
+4. Generates slide outline using Azure OpenAI
+5. Creates an annotated blog-style write-up with embedded slide images
+
+All generated outputs are saved to an `outputs/` folder, and intermediate results are cached for faster re-runs.
+
+## Folder structure
+
+```text
+presentations/
+  my-talk/
+    presentation.yaml      # Configuration: video URL, slides path
+    slides.pdf             # PDF slides (required)
+    transcript.txt         # Optional: pre-made transcript
+    outputs/               # All generated content
+      slide_images/        # Individual slide images (PNG)
+      chapters.txt         # Generated video chapters
+      outline.txt          # Generated slide outline
+      transcript.txt       # Fetched/cached transcript
+      writeup.md           # Final annotated blog post
+```
