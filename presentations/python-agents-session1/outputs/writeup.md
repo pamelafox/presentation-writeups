@@ -4,7 +4,7 @@ This talk introduces the fundamentals of building AI agents using the Microsoft 
 
 ## Table of contents
 
-- [Overview of the Python + Agents livestream series](#overview-of-the-python-agents-livestream-series)
+- [Overview of the Python + Agents livestream series](#overview-of-the-python--agents-livestream-series)
 - [Building your first agent in Python: session topics](#building-your-first-agent-in-python-session-topics)
 - [Running code examples using GitHub Codespaces](#running-code-examples-using-github-codespaces)
 - [Agents 101: what is an agent?](#agents-101-what-is-an-agent)
