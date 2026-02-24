@@ -1,0 +1,8 @@
+title: "Just because AI can write your tests... should it?"
+date: 2025-10-18
+
+# Video source: YouTube URL or local MP4 path (relative to this folder)
+video: "https://youtu.be/Lha1741iEjE"
+
+# Slides: PDF or RevealJS HTML path (relative to this folder)
+slides: "https://pamelafox.github.io/my-py-talks/ai-assisted-testing-pybay/"

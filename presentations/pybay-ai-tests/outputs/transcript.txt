@@ -1,0 +1,796 @@
+[00:08] Thank you. All right. Hello everyone. So
+[00:11] the title of this talk is just because
+[00:14] AI can write your tests, should it? So
+[00:17] let's start with a poll. Uh so those of
+[00:19] you who think AI should write your
+[00:21] tests, raise your hands.
+[00:24] It's pretty good. Okay. Those of you who
+[00:26] think AI should definitely not write
+[00:29] your tests, raise your hands. You did it
+[00:31] twice, sir. Uh, and those of you who are
+[00:34] like,
+[00:36] raise your hands. All right, great.
+[00:39] [laughter] All of you raise your hands
+[00:40] multiple times. Fantastic. Yeah. No, I'm
+[00:42] kind of with you. I would just raise my
+[00:43] hand for all of them, too. I agree. All
+[00:45] right. So, that's what we're going to
+[00:46] try and figure out today, right? And
+[00:48] this is a topic that's actually come up
+[00:50] quite a bit in my like conversations
+[00:52] with people over the last year,
+[00:53] especially as people are moving towards
+[00:55] using AI to write your code is like,
+[00:57] well, if AI writes your code and writes
+[00:58] your tests, like that sounds kind of
+[01:00] scary, right? So, it's it's a it's a big
+[01:02] topic and one I think that's worth
+[01:04] exploring. So, that's what we're going
+[01:06] to talk about today. But first, oh yeah,
+[01:10] this is me. Blah blah blah. Follow me
+[01:11] online. Great. Okay. I'll I'll flash
+[01:14] that later, too. No, first first I want
+[01:17] to talk about bees. And this will
+[01:19] somehow become relevant later. Uh so
+[01:21] let's talk about bees.
+[01:24] Everybody knows the honeybee. If you
+[01:26] search Etsy for bees, which I do quite a
+[01:29] bit, uh you're going to see honeybees
+[01:32] freaking everywhere, right? Like there's
+[01:34] honey bee earrings and honey necklaces
+[01:35] and honey shirts. And it's just if you
+[01:38] if like an alien was coming and trying
+[01:40] to figure out what a bee was, they would
+[01:41] assume that a bee is a honeybee, right?
+[01:44] Uh, so yeah, everybody knows the
+[01:46] honeybee. And you know, I know the honey
+[01:48] bee well. This is a honey bee from my
+[01:49] yard. Uh, this is a female because you
+[01:51] can tell she's got a pollen basket
+[01:53] because only the females collect pollen
+[01:54] because the males don't do anything. Um,
+[01:58] no com. But uh, but there you go. So, so
+[02:01] that is the western honeybee. They're
+[02:03] lovely. They're awesome. I, you know, I
+[02:05] love to see them and uh, they're
+[02:07] industrious little workers there. And
+[02:08] the honeybee can pollinate quite a few
+[02:11] plants as you can see from this
+[02:14] scrolling marquee here. And uh and yeah,
+[02:17] so they're, you know, they're useful.
+[02:18] They are what we'd call a generalist,
+[02:20] right? If you have honeybees, they can
+[02:22] be useful because they can go around and
+[02:23] they can pollinate quite a few plants
+[02:25] and they're they're flexible, right?
+[02:29] However, many times you actually want a
+[02:32] specialist. So this is the yellowfaced
+[02:34] bumblebee. This is one that you can see
+[02:35] quite a bit in the Bay Area. And this is
+[02:38] also hanging out on the buckwheat in my
+[02:40] garden. And the thing is that the
+[02:41] yellowfaced bumblebee is a more
+[02:43] efficient pollinator of tomatoes than
+[02:46] honeybees or humans, right? They've done
+[02:49] studies and they're not even sure why.
+[02:50] There's some reasons why it might be
+[02:52] better, but they think also it's just
+[02:53] kind of good at timing. Like it just
+[02:55] kind of knows when is like the right
+[02:56] time to do that pollination, right? So
+[02:58] it's actually incredibly important that
+[03:00] we have this specialist yellowfaced
+[03:02] bumblebee here.
+[03:04] And then I wanted to show you my
+[03:06] favorite California specialist bee. This
+[03:08] is the California mountain digger bee
+[03:09] and it is so cute. It's like gray and
+[03:12] fuzzy and it's adorable. So I love when
+[03:15] the digger bees come to the garden. And
+[03:17] digger bees are one of the species that
+[03:19] use buzz pollination which means that
+[03:21] they flap their wings at such a high
+[03:24] frequency that the pollen bursts out of
+[03:28] the uh of the you know the flower the
+[03:30] the parts holding it. And I was watching
+[03:32] a video about it and all the comments
+[03:34] were actually really inappropriate
+[03:37] because it's, you know, it's shaking
+[03:39] pollen loose uh with a vibration. So uh
+[03:41] it's like but they're the like only
+[03:43] bumblebees and certain types of bees are
+[03:45] able to actually do puzzollination. So
+[03:47] if you want to get all of the pollen
+[03:49] from a plant, you have to have something
+[03:51] that is capable of doing it. So you
+[03:52] either need like a bumblebee or a digger
+[03:54] bee or you actually need a tuning fork.
+[03:56] So you can do it with a tuning fork if
+[03:58] you want to go around all the flowers
+[03:59] with a tuning fork.
+[04:01] >> [snorts]
+[04:01] >> So this is the point. Why are
+[04:02] specialists important? Right? So uh you
+[04:05] can go and use I naturalist in order to
+[04:07] find uh this is this amazing site where
+[04:10] you can find observations. These are uh
+[04:12] my own observations in my garden. You
+[04:14] can go and see all the ones around here.
+[04:15] And they have this fantastic API and
+[04:18] data dumps that you can use. So for
+[04:19] those of you who like messing with data,
+[04:21] it is a really really fun set of data.
+[04:23] So, for example, if you have a
+[04:24] six-year-old that's like begging to see
+[04:26] a bobcat, you can like stock the bobcats
+[04:28] and figure out exactly where to see a
+[04:30] bobcat, and I'm pretty sure they don't
+[04:32] eat people. So, I think this is a great
+[04:34] activity to do with six-year-olds. Uh,
+[04:36] so I made like a little app for today's
+[04:39] talk in order to play with the I
+[04:41] naturalist data. So, here we've got this
+[04:44] uh this is a fast API app, right? So,
+[04:46] we've got an endpoint where we can
+[04:47] search to see, okay, what are the active
+[04:49] bees around here? So we can see the most
+[04:51] active one is in fact that honey bee,
+[04:53] but then we do have the yellowfaced
+[04:55] bumblebee. So we can see quite a few of
+[04:56] those, right? And then we can see the
+[04:58] tax on. And then I can go and I can take
+[05:00] that tax on and be like, okay, you know,
+[05:02] if I really want to see that yellowfaced
+[05:03] bumblebee. Well, when's the best month
+[05:06] to see it, right? So as you can see, the
+[05:08] best month, you know, is May. That's
+[05:10] true for many of the bees. Um although
+[05:12] there's another one I man, the the
+[05:14] yellow the fine striped sweat bee is
+[05:17] this amazing bee. It is entirely
+[05:20] turquoise. Well, the females are
+[05:21] entirely port uh turquoise. The males
+[05:23] are only half because reasons. Um so, uh
+[05:27] here we go. The the this one is most
+[05:30] active in July, right? So, this is the
+[05:32] one I love when July comes around
+[05:33] because I get to see the turquoise all
+[05:34] around the garden. All right. So,
+[05:38] anyway,
+[05:39] what the heck? Why did I just talk about
+[05:41] bees for so long, right? What do bees
+[05:43] have to do with AI and testing and all
+[05:46] of that? So I promise I'm gonna I'm
+[05:48] going to relate these topics. So the LLM
+[05:51] is a generalist, right? That's its whole
+[05:54] point. An LLM is a language model that
+[05:56] they trained on so much data with so
+[05:58] many flops like so many uh you know so
+[06:01] many training iterations that it it was
+[06:04] able to achieve general purpose language
+[06:06] understanding and generation. And we
+[06:08] didn't know this was hap would happen
+[06:10] until they threw enough training data
+[06:11] and enough training cycles at these
+[06:13] models. And then they're like, whoa, you
+[06:15] see these like jumps, right? This is
+[06:17] from this paper where you see this
+[06:18] sudden jump. It's like, oh man, once we
+[06:20] train it on enough stuff, suddenly you
+[06:21] can do anything, right? So before we had
+[06:23] to build our own models to do sentiment
+[06:25] analysis and summarization and
+[06:27] translation. Now you have an LLM and it
+[06:30] can do all of those things, right? So
+[06:32] that's what's amazing about LLM, why
+[06:34] they, you know, taken the world by storm
+[06:35] here is because of this general purpose
+[06:38] ability, right? It is a generalist.
+[06:41] And so LLMs are have seen quite a lot of
+[06:45] Python data. So they can write Python
+[06:47] tests, right? So uh you know as a test
+[06:50] of this I took this you know the fast
+[06:52] API app here and I did I didn't write
+[06:55] any tests for it. I did write test
+[06:57] fixtures, right? So I told it here's how
+[06:59] you make the app and here's how you set
+[07:00] up the test database, right? So I you
+[07:02] know I set those up. That can be a bit
+[07:03] tricky. So I wrote those two fixtures
+[07:05] and then said hey LLM write tests for my
+[07:09] app. Okay. and you know using this sort
+[07:10] of prompt here right so write test for
+[07:13] all the routes so this is what GB5 came
+[07:16] back with uh it wrote 10 tests only
+[07:19] eight out of the 10 tests pass
+[07:21] unfortunately and um and you might
+[07:24] wonder like well why why couldn't it get
+[07:26] that last test to pass that test did
+[07:28] actually pass when GPD5 ran it the first
+[07:30] time but then when I reran it there was
+[07:33] a SQL integrity error because of
+[07:35] uniqueness constraint because it didn't
+[07:37] clean up its work properly and so I
+[07:39] consider those failing. So anyway, it's
+[07:40] interesting like you can here I'm using
+[07:42] these LLMs in an agent mode. I'm using
+[07:44] this in GitHub copilot. So it is able to
+[07:46] iterate on its work, but the LLMs don't
+[07:49] always realize that actually you should
+[07:51] run your test twice, right? To see like
+[07:53] okay, they ran the first time. Are they
+[07:55] going to run the second time too, right?
+[07:57] Uh so GB5 it got uh you know eight out
+[08:00] of 10 tests passed and it had 75%
+[08:03] coverage of the routes file. Uh it took
+[08:05] about two minutes and it took 500,000
+[08:07] tokens to do that.
+[08:09] I then ran the same test with Sonnet
+[08:11] 4.5. That one wrote 61 tests. It's a bit
+[08:15] of an eager beaver, bit of an
+[08:17] overachiever, but maybe that's good
+[08:18] because it did achieve 96% coverage,
+[08:22] right? So that's really really quite
+[08:23] high coverage. Uh it did take six
+[08:25] minutes to do it and it took 1.3 million
+[08:29] uh tokens. Uh so, you know, worked for
+[08:31] longer but arguably got better results
+[08:34] if we're going by those metrics. So I
+[08:36] ran I tested a bunch of models, right?
+[08:39] Like to see what the variance is. And
+[08:40] there's so much variance, right? This is
+[08:42] like the model really does matter. So we
+[08:44] go between four tests with 81% coverage
+[08:46] all the way up to those 61 tests with
+[08:49] 96% coverage. Uh so there's a big
+[08:52] variation here and it's super
+[08:53] interesting to see the different ways
+[08:55] that they wrote the test, the different
+[08:56] styles. And I do have all these saved
+[09:00] out if if you want to just look at
+[09:02] people's tests later or LLM tests. All
+[09:04] right. So, like you're looking at that
+[09:06] thinking like, okay, well, maybe the
+[09:07] solution is we can just use Sonnet 4.5.
+[09:09] Like that looks pretty good, right? Um,
+[09:12] but the thing is there's a lot to be
+[09:14] improved in these tests, right? Uh, the
+[09:17] first obvious issue is that none of them
+[09:18] got 100% coverage, right? Um, and how,
+[09:22] you know, if we're humans, so the first
+[09:24] question is, should you have 100%
+[09:26] coverage? How many of you here think you
+[09:27] should strive for 100% coverage?
+[09:29] Ideally,
+[09:31] a few people. Guido. Okay, great. Thank
+[09:33] you, Guido. That's what I I would like
+[09:35] 100%. It makes me feel good. Um because
+[09:38] there are arguments like how many people
+[09:39] think that actually no, you should do
+[09:41] like mostly and just like be okay with
+[09:43] some edge cases just hanging out. Yeah,
+[09:46] there's a lot there. So there isn't a
+[09:47] debate about should you strive for 100%
+[09:50] coverage, but I would like to have 100%
+[09:52] coverage because then then we're not
+[09:54] debating what can be left out, right?
+[09:56] We're just like, well, we're getting
+[09:57] 100%. That's it, right? So if I want to
+[09:59] get 100% coverage, how do I do it? I
+[10:02] look I run coverage and I look at the
+[10:04] coverage report and I'm like okay what
+[10:05] lines am I missing right? So what I did
+[10:08] was that I wrote another prompt that
+[10:09] said all right you're going to generate
+[10:10] the coverage report and I got a report
+[10:13] that actually would show the specific
+[10:15] lines because if you just do the line
+[10:16] numbers that's not going to work. LLMs
+[10:18] don't usually look at line numbers that
+[10:20] carefully. Uh so I wanted to get the
+[10:22] exact lines. So this one dumps out the
+[10:24] line so we can see here's the line this
+[10:25] one's covered. This one's not covered.
+[10:27] So we pass all that to the LM and say
+[10:29] hey you're going to look at this. you're
+[10:30] going to figure it out and you're going
+[10:31] to add tests to cover the missing lines.
+[10:33] So then I rerun with that um with Sonnet
+[10:36] 4.5 it got to 98% and then um and then
+[10:39] was like you know what those last the
+[10:41] last two lines they don't really matter.
+[10:44] Um we're going to ignore them. Now
+[10:46] here's the thing like this was this was
+[10:47] with me not I did not go back and forth
+[10:49] with the LM, right? Uh I could totally
+[10:52] go back and forth and say no, I really
+[10:54] really want 100% and it would make it
+[10:56] work. It can it can get there, right?
+[10:57] you have to like convince it like you
+[10:59] know that you really want it to work. I
+[11:00] did also try with GBD5 and it did get to
+[11:03] 95% coverage when I gave it that prompt.
+[11:06] So if you you know if you give the you
+[11:08] know give them a prompt that hey you do
+[11:09] care about coverage and this is how you
+[11:11] do it. This is how you figure out what's
+[11:13] not covered then you can get much much
+[11:15] better coverage right and interestingly
+[11:18] this time around it wrote less tests. So
+[11:20] we managed to get to more coverage with
+[11:22] less less tests, which is a interesting
+[11:24] to think about like you kind of then you
+[11:26] want to like shrink down your test to
+[11:28] the minimal ones, right? All right. So
+[11:30] we got to higher coverage, but those
+[11:32] tests still have problems, right? Uh so
+[11:34] we've got in those tests, we've got
+[11:36] redundant test code, right? Like why do
+[11:38] we have 54 tests, 61 tests? Uh we've got
+[11:40] fake data that's just not really good
+[11:42] fake data. We're missing edge cases. We
+[11:44] think we have 100% coverage, but we
+[11:46] won't really. So we're going to bring in
+[11:48] the specialists, the the libraries that
+[11:50] are going to help us write better tests
+[11:52] for Python. So the first problem we have
+[11:54] is redundant test code, right? These are
+[11:56] some LLM generated tests. One is for
+[11:58] sorting activity descending. The other
+[12:00] one is for sorting activity ascending.
+[12:03] Those are two very similar tests, right?
+[12:05] And the only thing that's different is
+[12:07] that you know which order they're
+[12:09] they're going in, right? So this is a
+[12:10] perfect opportunity to use the piest
+[12:13] parameterize function where you can just
+[12:15] say hey these are the things I want to
+[12:17] parameterize about my test you're going
+[12:19] to you know for each run of the test
+[12:20] you're going to parameterize it and then
+[12:22] you can just put in the arguments and
+[12:24] say you know this is the parameter I'm
+[12:25] bringing in and then you use that in
+[12:27] your code right so now we have a single
+[12:28] test that's parameterized and now you
+[12:30] can look at it and be like okay that's
+[12:31] you know that's what this test is doing
+[12:33] so that's a great thing you can do with
+[12:35] piest is parameterization it makes it
+[12:37] easy to to see when tests are really
+[12:39] similar and only differ in one or two
+[12:41] ways. The other thing you can do is that
+[12:43] you if you're constantly making the same
+[12:44] fake data, fake test objects, fake
+[12:47] mocks, you can use a fixture, right? So
+[12:49] fixtures are particularly good for like
+[12:51] fake database data. You're like, "Okay,
+[12:53] for a bunch of tests, I need to have an
+[12:55] example trip in the database." Uh this
+[12:57] is like a batching trip like we take all
+[12:59] the time. So I'm going to put my beew
+[13:00] watching trip in the database. Uh and
+[13:03] then I'm going to give that to the test.
+[13:05] And then after the test completes, I'm
+[13:07] going to clean it up and remove it from
+[13:08] the database. Right? So this is a great
+[13:10] thing to use a piest fixture for. And
+[13:12] then you can bring that fixture into any
+[13:14] test where you need it just by
+[13:16] referencing it in the arguments of that
+[13:18] test.
+[13:20] So this one, this is what helps with our
+[13:21] redundancies is parameterize and
+[13:23] fixtures. So you definitely want to be
+[13:25] using those. The next problem we have is
+[13:27] the fake data is not fake enough. If you
+[13:30] ask LLMs to generate names, they are the
+[13:32] most boring names in the world. Oh, I
+[13:34] don't know if anybody has these names
+[13:35] here. Um,
+[13:38] sorry. [laughter] Uh, but it's always
+[13:41] going to be John Doe or Jane Smith. It's
+[13:43] like over and over. Do we have any John
+[13:44] Doe's or Jane Smith? Okay, we do. Um,
+[13:47] so, uh, [laughter] there just they don't
+[13:50] represent the beautiful lingual
+[13:53] diversity of the whole world of names,
+[13:55] right? And there's so many things that
+[13:57] can be different about names. You can
+[13:59] have non-askky characters, you can have
+[14:00] hyphens, you can have multiple names,
+[14:02] right? You can, you know, have like six
+[14:04] names in your name. You can have
+[14:06] accents, diitics, hyphens, all that
+[14:08] stuff, right? Um, and there's this
+[14:10] amazing, if you haven't seen it yet,
+[14:11] it's the falsehoods that programmers
+[14:13] believe in. These are all the falsehoods
+[14:14] we believe in that make our programs bad
+[14:18] because we don't properly account for
+[14:20] them. Uh, so the one that started all
+[14:22] started off was the falsehoods about
+[14:24] names. So all the things that we think
+[14:27] are true about names that are not true.
+[14:30] So, uh, you really should like read
+[14:32] through a lot of these, uh, f falsehoods
+[14:34] here because it'll make you realize that
+[14:36] all of your tests are wrong or like are
+[14:38] not reflecting the true diversity of the
+[14:41] world because a lot of times our
+[14:42] programs are dealing with actual human
+[14:45] data and humans, we have all different
+[14:48] ways of doing things, right? So, it's
+[14:50] super important that we encount, you
+[14:52] know, uh, account for that. Uh, my kid
+[14:55] actually had to get her birth
+[14:57] certificate redone because I wanted to
+[15:00] have camel casing in her last name
+[15:02] [laughter]
+[15:03] because I I was raised in a Java
+[15:05] household before Python existed. Um, and
+[15:08] so I wanted it to be because my
+[15:10] partner's last name is Gray, right? So I
+[15:11] wanted to be gray, capital F, Fox,
+[15:14] right? Like that's how you'd write a
+[15:16] class, gray fox. And they couldn't
+[15:18] understand it at all. They added a
+[15:19] hyphen. I was like, uh-uh, we're not
+[15:20] doing hyphens here. So we had to like go
+[15:22] back and forth with the hospital and the
+[15:24] thing and then anyway so that's why it's
+[15:26] really important that remember that you
+[15:28] know some names can be camelcased except
+[15:30] they couldn't we gave up
+[15:33] [snorts] ideally in another world. All
+[15:35] right so what's the solution um that you
+[15:38] can use uh you can use libraries that
+[15:40] are designed to generate realistic fake
+[15:42] data. Uh the one that I use all the time
+[15:44] is faker. Uh there's another one called
+[15:46] mimissis mim mimissism
+[15:49] but I use faker the most. it's easier
+[15:51] pronounced. Uh, and it has all these
+[15:53] abilities to make fake data. So, you
+[15:55] need names, uh, coordinates, phone
+[15:57] numbers, credit cards, currencies,
+[15:59] airport codes, like all of those kinds
+[16:02] of things that you might be dealing
+[16:03] with, they have fake providers for. And
+[16:06] so, you can get much more uh,
+[16:08] representative uh, inputs, right?
+[16:10] Especially useful for addresses. My
+[16:12] gosh, for any of you who've worked in
+[16:13] the geography space, you know that
+[16:15] average addresses can be vastly
+[16:17] different across different countries.
+[16:19] And it's really helpful to be able to
+[16:21] represent that in your testing data.
+[16:24] Uh the next problem is that a lot of
+[16:26] times LN like LLM's they want to make
+[16:29] themselves look good. [laughter]
+[16:31] So they'll like write tests that pass
+[16:33] but they aren't really testing as much
+[16:35] as they could, right? So if you're you
+[16:37] know this in the example is testing a
+[16:38] JSON endpoint. So when the JSON comes
+[16:40] back it says, "Oh, okay. Does it have a
+[16:42] field? Great. Does it have another
+[16:44] field? Great. Okay, we're done." Uh so
+[16:47] it like instead if I was actually
+[16:49] writing this test I'd be like well
+[16:50] what's in those fields? I care about
+[16:52] what is in those fields. I want to
+[16:53] actually make sure that the data in
+[16:55] those fields is what I expected it to
+[16:57] be. Uh so you can either like with a
+[16:59] JSON response you can go through and
+[17:01] like manually check every single
+[17:02] freaking field. Or what I like to do is
+[17:06] snapshot testing. So here what you do is
+[17:08] you're testing your uh your JSON API.
+[17:11] you take a snapshot of it and you say
+[17:13] okay I'm gonna save that snapshot and
+[17:15] then the next time I run the test we are
+[17:17] going to run the test against that
+[17:18] snapshot and see hey does that snapshot
+[17:22] match right and if it doesn't then you
+[17:24] have to update the snapshots and then
+[17:25] what's really cool is that when you're
+[17:27] sending your change for code review you
+[17:29] can see everything that changed in the
+[17:30] snapshots and you can say oh yeah that
+[17:33] was an intentional API change or oh that
+[17:35] was an unintentional API change so I
+[17:37] pretty much use snapshot testing for all
+[17:39] of my API based apps now uh so that I
+[17:41] can see exactly what's changed over time
+[17:43] and do a full diff and I've like
+[17:44] discovered so many uh bugs from this
+[17:46] that I wouldn't have thought of
+[17:47] otherwise. So it's super super helpful.
+[17:50] All right, so is that enough? Do we now
+[17:52] have perfect tests that Pamela loves and
+[17:54] is thinks awesome and you know I can
+[17:55] rubber stamp?
+[17:57] No. Because the thing is even if it says
+[18:00] that we have 100% coverage, that doesn't
+[18:04] actually mean 100% coverage. Right.
+[18:07] Right. 100% coverage means every line
+[18:10] was run. Uh you can even enable what's
+[18:12] called cycle matching complexity
+[18:14] checking where you check that every um
+[18:16] you know flow in an if statement was
+[18:18] covered. Uh but even that is not 100%
+[18:21] because what you don't know is like what
+[18:24] about all the different kinds of data
+[18:26] that could flow through the system right
+[18:27] have we have we flowed all the possible
+[18:30] kinds of inputs through the system to
+[18:31] see how the system responds right and
+[18:33] there's all these kind of edge tissue
+[18:35] like you know numbers that are huge that
+[18:37] are out of bounds that are negative that
+[18:39] are zero right [snorts] and these are
+[18:41] the things that will lead to 500s and
+[18:43] like you know wake you up in the middle
+[18:44] of night and you know not so fun so the
+[18:47] solution here is to use what's property
+[18:49] based testing and luckily we had a talk
+[18:51] earlier today entirely about it from
+[18:54] Zach. Uh so he was talking about
+[18:55] hypothesis and that's the main package
+[18:58] that you want to use for property based
+[19:00] testing in uh Python and luckily it also
+[19:03] has a pollinator logo the dragonfly
+[19:05] which is awesome. Uh so Hypothesis is
+[19:08] like the go-to for property based
+[19:09] testing and basically what it's going to
+[19:10] do is be able to generate all these
+[19:13] possible inputs for your function or
+[19:16] program based off of like oh it takes
+[19:17] integers. Okay, we're going to try all
+[19:19] these different kinds of integers. Oh,
+[19:20] it takes strings. Let's let's try empty
+[19:22] strings. Let's try really long strings,
+[19:24] right? Uh [snorts]
+[19:26] so it's really really helpful to figure
+[19:27] out what you forgot about, what you
+[19:29] didn't cover, right? Uh so for example,
+[19:32] like with the endpoint that takes in a
+[19:35] tax on ID, right? I can just say, okay,
+[19:38] hypothesis, you know, I just need to
+[19:40] test all the integers, right? And so
+[19:42] it's gonna it's not going to throw every
+[19:44] single integer because that would take
+[19:45] like infinity time, but what it'll it'll
+[19:47] be like really smart about what integers
+[19:50] it throws at it to try and figure out
+[19:51] what you know where it's most likely to
+[19:53] fail. Uh and we could also, you know,
+[19:55] specify mins and maxes and different
+[19:57] types and it'll just really smartly
+[20:00] throw things in there. Uh so I ran this,
+[20:03] I did get an immediate error. Uh you can
+[20:05] see this is a SQL Alchemy error because
+[20:07] I was using SQL Alchemy. And here it
+[20:09] basically said like uh oh we got like a
+[20:11] 500 error when this endpoint received a
+[20:15] huge integer right? Uh so I can look at
+[20:17] that and be like okay well in case
+[20:19] somebody like because generally you
+[20:21] never want your server to give a 500
+[20:23] right because if your server gives a 500
+[20:25] then you got to wake up you got to look
+[20:27] at the 500 logs and see is that a good
+[20:29] 500 or like a bad 500 right uh you as an
+[20:33] API you want to return back like an h
+[20:35] you know a 400 code and be like hey you
+[20:37] did it wrong right it's not my fault
+[20:39] it's yours uh so what we want to do is
+[20:41] put in some additional validation in our
+[20:43] endpoint to say hey if we get a big int
+[20:45] that we can't handle
+[20:46] uh we're just going to throw back an
+[20:48] error to the user that you know says
+[20:49] what they should you know be using
+[20:51] instead right uh so it's definitely like
+[20:53] if you are you know doing any sort of
+[20:55] API I think that property based testing
+[20:58] is particularly uh important for you
+[21:00] because the developers using your API
+[21:03] are going to throw everything at that
+[21:04] API and uh you can just throw it at the
+[21:07] API ahead of time. Now schema thesis is
+[21:10] built on top of hypothesis and is
+[21:12] specifically if you are using if you're
+[21:15] building an API using the open API
+[21:17] specifications like using swagger using
+[21:19] fast API uh which I think many people
+[21:22] how many people are using fast API here
+[21:24] all right yeah so with this like this is
+[21:27] literally what I did right I just said
+[21:29] all right you're going to you know this
+[21:32] is your this is the fast API you know uh
+[21:35] generated uh open API specification now
+[21:38] test it. So it goes through every
+[21:40] endpoint. It looks at the parameters for
+[21:41] the endpoints and it uses hypothesis to
+[21:44] throw lots of values at those endpoints
+[21:46] and this found error. This was the first
+[21:49] error that popped up was that issue with
+[21:51] the endpoint with the really large
+[21:53] numbers. Right? Now in this case it says
+[21:55] okay you can reproduce it. So both of
+[21:57] them I didn't point this out but with
+[21:58] hypothesis it says here's the falsifying
+[22:01] example. So you can see how you can
+[22:02] reproduce it with that test. And then
+[22:05] with schema thesis, you get a curl
+[22:07] command, right? So it's like, oh, okay,
+[22:08] you want to reproduce it, here's the
+[22:10] curl command, right? So that makes it
+[22:11] super easy to tackle.
+[22:14] All right, so now that we've seen all
+[22:17] that, should you use LLMs to write your
+[22:20] tests? It is entirely up to you. Uh, I
+[22:24] am not going to be one of those people
+[22:26] that say that you have to use AI or get
+[22:29] out of the industry because that's
+[22:31] thing to say. Uh because you should be
+[22:33] able to be a programmer even if all
+[22:35] you're using is like I mean I used
+[22:36] notepad.exe exe for like many years,
+[22:38] right? Um, you know, you like you can
+[22:41] write programs with all kinds of tools
+[22:43] and you can lovingly handwrite your, you
+[22:46] know, HTML or you can like have someone
+[22:48] generate it for it, right? Like I still
+[22:50] write HTML for fun is like a meditation,
+[22:52] but I'm the only one who does that. Um,
+[22:54] so it is up to you, right? Uh, you know,
+[22:56] everyone should belong in the Python
+[22:58] community, you know, whether or not you
+[23:00] use AI for something. Uh however, if you
+[23:02] are going to use LMS to write your test,
+[23:05] it helps to seed them with good ideas
+[23:09] for how they can write better tests. It
+[23:11] does it also helps to start off with
+[23:12] some good fixtures, right? So start off
+[23:14] with your app and DB fixtures and then
+[23:16] give your LM good guidance as to how to
+[23:19] proceed, right? Um and here's a prompt
+[23:22] for an example prompt, right? So you're
+[23:24] going to write the tests. Um you're
+[23:26] going to use the, you know, the fixtures
+[23:27] in the comp test. You're going to use
+[23:29] these guidelines. Make sure you're using
+[23:30] parameterized tests, use fixtures, use
+[23:32] baker, use snapshot testing, run the
+[23:34] coverage, right? You know, this one is
+[23:36] kind of a simplified prompt here. You
+[23:38] could also ask it to use hypothesis and
+[23:40] schema thesis here. Um, whatever. Like I
+[23:44] mean, the thing is like I have my
+[23:45] preference for how we're writing tests.
+[23:46] It's not necessarily your preference
+[23:48] too, right? So, I wanted to give some
+[23:49] ideas of my favorite tools that we have
+[23:51] from Python ecosystem, but it's also up
+[23:53] to you what you think makes for a great
+[23:55] test. So, you can put all of that in,
+[23:57] you know, in your prompt. um so that you
+[24:00] modify it. Okay, so there we go. And now
+[24:03] [laughter]
+[24:04] uh going back to bees. Uh so should we
+[24:08] use bees to pollinate our flowers? Yes,
+[24:11] probably. Uh but we should also, you
+[24:14] know, consider the specialists. Um and
+[24:16] so I do have a huge amount of seeds with
+[24:20] me today. Uh this is why I'm wearing
+[24:22] three fanny packs here. Um thank God for
+[24:25] my mom. I I messaged my mom
+[24:28] coming up like, "Mom, I need all your
+[24:32] uh so here we have many different kinds
+[24:35] of seeds here from the Xeri Society
+[24:38] Pollinator Mix." Uh so, uh yeah, if any
+[24:41] of you want to feed your gardens to get
+[24:44] more specialists in your gardens, please
+[24:46] hit me up so that I don't have to carry
+[24:48] three fanny packs home. And uh and
+[24:52] that's how I managed to relate.
+[24:55] All right, that's what I have FOR YOU
+[24:56] TODAY.
+[24:57] >> [applause]
+[25:16] >> UH IN FIXING THIS UH AI and LLM for
+[25:20] test, do you think if testdriven
+[25:22] development can make any difference with
+[25:24] the you know coverage since you write
+[25:27] tests before and then failing test after
+[25:31] kind of something like that. So how is
+[25:33] your experience maybe if you tried uh
+[25:35] with all this coverage thing that uh
+[25:38] >> I so the thing with test-driven
+[25:40] development is you have to have a really
+[25:41] good idea ahead of time of what you're
+[25:43] building. So, if you know really exactly
+[25:45] what you're building and have a very,
+[25:48] you know, strict definition of it, then
+[25:49] test-driven development can be really,
+[25:50] really good, right? Uh, but if you're
+[25:52] kind of like more in like kind of like a
+[25:54] experimental prototyping phase when
+[25:56] you're first building the thing where
+[25:58] you're not quite sure what it's going to
+[25:59] look like in the end, then it can be
+[26:00] pretty annoying to have to like, you
+[26:02] know, keep on updating those tests. Um,
+[26:04] so yeah, I I think it's great if you if
+[26:06] you have a strict enough definition
+[26:08] going started with to do trust driven um
+[26:11] development. uh but you know now a lot
+[26:13] of people are doing uh you know using
+[26:15] LMS to be able to prototype things
+[26:17] faster and so I would imagine there so I
+[26:20] do when I'm using LMS I do use uh what's
+[26:22] called like PRD driven development where
+[26:24] I'll like write um ask the LM to help me
+[26:26] like write the docs for it. So like this
+[26:28] one I think um I did do so like because
+[26:31] I use LMS to write the code for this one
+[26:33] and so I had it like write the docs
+[26:37] first. I don't know if I checked them in
+[26:38] or not. Um uh but uh but yeah, so you
+[26:42] can you can you know I think more people
+[26:44] are going to be doing like that sort of
+[26:46] development to get the app running and
+[26:47] then when you're like okay you know this
+[26:49] is a nice app then uh then it's nice to
+[26:51] write test. So it just depends on how
+[26:53] concrete your um product is defined.
+[26:56] >> In that in that those cases maybe the
+[26:59] LLMs can write better unit tests if if
+[27:01] you have a test uh and failing test
+[27:04] before maybe uh with all the things that
+[27:06] you mentioned like fixtures and all
+[27:08] those things uh built into it. Sorry,
+[27:11] what was
+[27:12] >> in those cases if we are doing
+[27:14] testdriven development is is LLM a
+[27:16] oneshot approach maybe in that case or
+[27:18] it still requires all the things that uh
+[27:21] you know you talked about like
+[27:22] hypothesis and all those uh great things
+[27:25] >> um uh I I think it's always good to use
+[27:29] use all those tools um it depends on
+[27:32] what you're building but yeah kind of
+[27:35] Okay, thank you.
+[27:45] >> Check, check, check. I just wanted your
+[27:47] opinion on what you see being the future
+[27:50] of writing tests, especially with like
+[27:53] um like different user interfaces,
+[27:55] different user experiences to make it
+[27:57] easier to write tests, easier to manage
+[27:59] tests.
+[28:01] >> Um like [clears throat] future writing
+[28:03] tests. It is it is hard to hear.
+[28:05] >> Yeah, this is like an ideation thing.
+[28:06] It's like are there
+[28:07] >> I feel like um uh generally I think that
+[28:11] people are moving away from unit tests
+[28:13] and more towards end to end and
+[28:14] integration tests. So I do feel like
+[28:16] that's a feature of test is that for
+[28:18] like userfacing web applications uh it's
+[28:20] probably more worth it to spend your
+[28:22] time on like the playright tests that
+[28:24] are testing the whole experience versus
+[28:26] like the little um individual units. um
+[28:29] especially as like if you imagine if
+[28:31] people do move more towards vibe coding
+[28:33] where they're not looking at the code
+[28:34] well then what matters is the end facing
+[28:35] user experience uh so I think like going
+[28:38] more towards end to end and integration
+[28:40] is the general trend if that answer
+[28:46] thank Thank you.

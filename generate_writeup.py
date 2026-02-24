@@ -27,7 +27,7 @@ import yaml
 from dotenv import load_dotenv
 from rich.logging import RichHandler
 
-from writing_utils import generate_annotated_talk_post
+from writing_utils import generate_annotated_talk_post, fetch_slides_from_url
 
 # Set up logger with RichHandler
 logging.basicConfig(
@@ -37,6 +37,11 @@ logging.basicConfig(
     handlers=[RichHandler(rich_tracebacks=True)]
 )
 logger = logging.getLogger(__name__)
+
+
+def is_url(s: str) -> bool:
+    """Check if a string is a URL."""
+    return s.startswith('http://') or s.startswith('https://')
 
 
 @dataclass
@@ -103,13 +108,38 @@ def generate_writeup(
     else:
         raise ValueError("No video source specified in presentation.yaml")
     
-    # Resolve slides path
+    # Resolve slides path (local file or URL)
     slides_path = None
+    slides_html_content_path = None
+    
+    # Set up outputs directory early (needed for URL fetching)
+    output_dir = folder / 'outputs'
+    output_dir.mkdir(exist_ok=True)
+    
     if config.slides:
-        slides_path = folder / config.slides
-        if not slides_path.exists():
-            raise FileNotFoundError(f"Slides not found: {slides_path}")
-        logger.info(f"Found slides: {slides_path}")
+        if is_url(config.slides):
+            # URL - fetch PDF (handles both direct PDFs and RevealJS)
+            cached_pdf = output_dir / 'slides.pdf'
+            cached_html = output_dir / 'slides_content.md'
+            if cached_pdf.exists():
+                logger.info(f"Using cached slides PDF: {cached_pdf}")
+                slides_path = cached_pdf
+                if cached_html.exists():
+                    slides_html_content_path = cached_html
+            else:
+                logger.info(f"Fetching slides from: {config.slides}")
+                slides_path, slides_html_content_path = fetch_slides_from_url(config.slides, str(output_dir))
+                slides_path = Path(slides_path)
+                if slides_html_content_path:
+                    slides_html_content_path = Path(slides_html_content_path)
+        else:
+            # Local file
+            slides_path = folder / config.slides
+            if not slides_path.exists():
+                raise FileNotFoundError(f"Slides not found: {slides_path}")
+        logger.info(f"Using slides: {slides_path}")
+        if slides_html_content_path:
+            logger.info(f"Using slide HTML content: {slides_html_content_path}")
     else:
         raise ValueError("No slides specified in presentation.yaml")
     
@@ -122,10 +152,6 @@ def generate_writeup(
             transcript_path = None
         else:
             logger.info(f"Found transcript: {transcript_path}")
-    
-    # Set up outputs directory for all generated content
-    output_dir = folder / 'outputs'
-    output_dir.mkdir(exist_ok=True)
     
     # Generate the annotated write-up
     logger.info("Generating annotated write-up...")
@@ -140,6 +166,7 @@ def generate_writeup(
         video_source=video_source,
         output_dir=str(output_dir),
         transcript_path=str(transcript_path) if transcript_path else None,
+        slides_html_content_path=str(slides_html_content_path) if slides_html_content_path else None,
     )
     
     # Save the write-up in outputs folder

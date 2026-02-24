@@ -1,0 +1,1592 @@
+[00:05] Hello everyone and thank you for joining
+[00:07] our live session today. My name is
+[00:09] Lissa. I'm an event planner at Reactor
+[00:12] joining you from Brazil. Before we
+[00:14] start, I have some quick housekeeping.
+[00:17] Please take a moment to read our code of
+[00:19] conduct. We seek to provide a respectful
+[00:21] environment for both our audience and
+[00:24] presenters. While we absolutely
+[00:26] encourage engagement in the chat, we ask
+[00:28] that you please be mindful of your
+[00:29] coming pairing, remain professional and
+[00:31] on topic.
+[00:33] The session is being recorded and will
+[00:35] be available to view on demand here on
+[00:37] the Reactor YouTube channel within 48
+[00:39] hours. Keep an eye on the chat. We'll be
+[00:41] dropping help helpful links and checking
+[00:43] for questions for presenters to answer.
+[00:47] I will now turn it over to our speaker
+[00:48] for today. Thank you and let's welcome
+[00:50] Pamela.
+[00:53] >> All right. Hello everyone. Welcome to
+[00:57] our Python plus agents live stream
+[01:01] series. This is the first session in the
+[01:05] series and we're really excited to see
+[01:08] so many people watching from all over
+[01:11] the world who are excited to build
+[01:14] agents with us together. Uh so this is a
+[01:17] six-part series. We're doing Tuesday,
+[01:19] Wednesday, Thursday over a two-eek
+[01:21] period. Uh I'm teaching it in English
+[01:24] and my colleague Gwen is teaching a
+[01:26] version in Spanish about five hours from
+[01:30] now. Uh so if you're more comfortable in
+[01:33] Spanish or you are both English and
+[01:35] Spanish then you can you know watch both
+[01:37] of them. Uh you know whatever works for
+[01:40] you. It's uh it's just really fun to
+[01:42] connect with people from all over the
+[01:44] world and multiple languages. Uh so
+[01:46] these will all be live but then also
+[01:48] recorded and available on YouTube. uh
+[01:50] all the code is available the slides
+[01:53] everything uh to serve as a resource for
+[01:56] you to keep learning. So basically week
+[02:00] one is going to be all about building
+[02:02] agents and how you can add tools to them
+[02:05] context memory and then how do you
+[02:07] evaluate and monitor them and then week
+[02:09] two is when we get into workflows and
+[02:12] that's where you get into you know
+[02:14] complicated workflows with conditionals
+[02:16] and uh multiple uh agents working
+[02:19] together sometimes concurrently and uh
+[02:22] you know reaching a consensus like all
+[02:23] sorts of interesting things like that.
+[02:25] also adding a human in the loop to those
+[02:27] workflows which is uh you know really
+[02:28] important to gain confidence in the
+[02:30] results from workflows. Uh so hopefully
+[02:33] you can join us for both week one and
+[02:35] week two. Uh for all of them we are
+[02:37] using Python with the new Microsoft
+[02:40] agent framework which is a package
+[02:43] that's available in both Python and net
+[02:45] to help you build agents and workflows.
+[02:48] and uh you know it it makes it possible
+[02:51] to build all sorts of applications on
+[02:54] top of all this new generative AI
+[02:56] technology.
+[02:58] So if you're not registered yet, you can
+[03:00] register uh at this link here uh that
+[03:03] we'll put in the chat and that way
+[03:05] you'll get notified whenever uh you know
+[03:07] the next stream is coming up and you'll
+[03:09] get emailed the links afterwards so that
+[03:12] they're in your inbox and easy for you
+[03:13] to use.
+[03:16] So now let's get into it. our very first
+[03:18] session building your first agent in
+[03:21] Python with the Microsoft agent
+[03:23] framework. Uh these slides are available
+[03:25] for uh you to reference online. Uh so we
+[03:29] can put that link in the chat and uh you
+[03:33] are also welcome you know if you're
+[03:34] inspired afterwards to deliver this
+[03:36] series yourself to colleagues or
+[03:38] communities meetup groups etc. Feel free
+[03:41] to build on these slides. That's why we
+[03:44] make them available for your learning
+[03:45] and teaching.
+[03:48] So today we're going to be talking about
+[03:49] what actually is an agent, right? Have
+[03:51] we come up with a definition that we
+[03:53] finally agree on? Um you know what are
+[03:56] tools? How does tool calling work? Like
+[03:57] this is the foundation of agents that we
+[03:59] need to really understand first. And
+[04:01] then how do we build these tool using
+[04:03] agents with Microsoft agent framework?
+[04:06] How do we integrate them with MCP server
+[04:08] tools because that's increasingly uh a
+[04:10] really important form of integration.
+[04:12] How do we add middleware so we can
+[04:14] intercept things happening with our
+[04:16] agents and then how we do a really basic
+[04:18] multi- aent architecture.
+[04:21] So that is our plan for today.
+[04:25] Let's get into it. Now we have made it
+[04:28] so that all of you can follow along. If
+[04:31] you want to if you want to run the code
+[04:33] while I'm running the code, almost all
+[04:36] of our examples are runnable for free
+[04:38] using GitHub code spaces with GitHub
+[04:40] models. as long as you have a GitHub
+[04:42] account. So the first thing is to open
+[04:44] this GitHub repository and we will put
+[04:47] the link in the chat aka.ms/python-agent
+[04:50] framework-demos. So I have that open in
+[04:53] my browser here. So here it is open and
+[04:58] you can see um the you know it's got a
+[05:02] big code button here. So the easiest way
+[05:05] to get started is to use GitHub code
+[05:07] spaces to open this. So I'm going to
+[05:09] click code create code space on main.
+[05:12] That means I want a code space on the
+[05:14] main branch. And so that pops open a new
+[05:17] window. And this new window is a code
+[05:21] space which is basically VS Code in the
+[05:24] browser running a containerized
+[05:27] environment that has everything that we
+[05:29] need in order to run these examples. So
+[05:32] it's got all the Python dependencies.
+[05:34] It's got agent framework. It's got uh UV
+[05:37] which we're going to use to run them. Um
+[05:40] it's it's got some other fun stuff that
+[05:42] we'll use later this week like Postgress
+[05:44] and Reddus. Uh so it has everything that
+[05:46] we need in this environment. Uh it takes
+[05:48] about a minute or two minutes to load.
+[05:51] You can actually see it's already loaded
+[05:53] up here. Um we'll just wait till so we
+[05:57] see the terminal and the terminal's
+[05:59] open. Okay.
+[06:01] And now it looks like it's all opened
+[06:04] up. Let me make this bigger here. So
+[06:06] once you can see, you know, everything
+[06:08] here, you see your explorer, you see
+[06:10] your terminal, you see the read me. Once
+[06:11] it's all come in, that's when you know
+[06:13] that your code space is is ready. So if
+[06:17] you do want to follow along, then go
+[06:20] ahead and open the repo in GitHub code
+[06:23] spaces and uh they'll use GitHub models
+[06:27] which are free. Basically, it's a free
+[06:30] version of Foundry models. So, F
+[06:32] Microsoft Foundry models, we have lots
+[06:34] and lots of models um from different
+[06:36] partners. So, we've got uh you know,
+[06:38] OpenAI,
+[06:40] uh we've got FI, the ones we'll be using
+[06:41] today are the OpenAI ones um
+[06:46] because they're quite good for for
+[06:48] agents. And they're these are free for a
+[06:52] certain amount per day. It's a it's like
+[06:54] not very much, but it's enough to get
+[06:55] through the examples. I actually ran
+[06:57] through every single example in a loop
+[07:00] to verify I could get through them. Um,
+[07:02] and uh, they should all work in GitHub
+[07:05] models today.
+[07:08] So, the first step for anyone who missed
+[07:10] it, you're going to open this repo.
+[07:11] You're going to go to the code button.
+[07:13] You're going to see a big button that
+[07:14] says create code space on main. You're
+[07:16] going to click it. It's going to open
+[07:17] the code space and then you're going to
+[07:18] wait two minutes for it to load up.
+[07:22] All right.
+[07:24] So now, you know, we showed that at the
+[07:27] beginning just to give people time to
+[07:29] get that get that set up. So now let's
+[07:32] do a little agents 101.
+[07:35] What is an agent? This is a question
+[07:38] that we spent a lot of time debating
+[07:40] over the last one to two years, I guess
+[07:42] I'd say. Uh especially last year in
+[07:45] 2025, right? And then uh finally uh we
+[07:49] came upon a definition that most of us
+[07:52] agree on and this was a great blog post
+[07:55] from Simon Willis. Uh if you don't read
+[07:57] his blog yet, you definitely should.
+[07:58] He's a big uh well-known Python
+[08:00] developer uh in the Python space and
+[08:02] also in the LLM space. And this is the
+[08:05] definition that uh that he came up with
+[08:09] here. An LLM agent runs tools in a loop
+[08:12] to achieve a goal.
+[08:14] And it sounds like actually kind of
+[08:17] simple but in fact like that is what
+[08:20] agents are. And with that simple
+[08:23] mechanism agents can do so much because
+[08:26] if they have the tools they need and if
+[08:28] they have the ability to loop they can
+[08:30] just keep on looping and keep on calling
+[08:33] more tools until they reach their goal.
+[08:37] Right? So the key with an agent is you
+[08:39] know you have a good enough model that
+[08:40] knows how to select the right tools. Do
+[08:42] you have the right tools? Do those tools
+[08:44] have the right knowledge so that
+[08:46] eventually if the agent figures out
+[08:47] which tool to call and with which
+[08:49] arguments it'll get back the results it
+[08:52] needs in order to get to the goal. Right
+[08:53] now if an agent isn't successful that
+[08:55] means it doesn't have the right tools.
+[08:58] It doesn't have um you know enough
+[09:01] tools. It doesn't have good quality
+[09:02] tools. The tools are giving back wrong
+[09:04] response. It's doing a bad job calling
+[09:05] them. Right? Um, but you can accomplish
+[09:07] so much with an LLM calling tools in a
+[09:11] loop in order to achieve a goal.
+[09:15] Now, there's additional things that we
+[09:17] often add to our agents that we are
+[09:19] going to talk about like how do we add
+[09:20] more context? How do we add memory, you
+[09:23] know, across different conversations and
+[09:25] for more long-term memory, how do we add
+[09:27] more explicit planning? How do we add
+[09:30] humans into this loop to give feedback
+[09:33] during this process? Right? Um, so these
+[09:35] are ways that we often augment our
+[09:37] agents and need to make them more
+[09:39] powerful. And we are going to talk
+[09:40] about, you know, these um, this week,
+[09:43] but today we're really going to focus on
+[09:45] an agent using an LLM to run tools in a
+[09:49] loop to achieve a goal.
+[09:53] And now, why do we even need agents? Now
+[09:56] if we go over here at this point
+[09:57] probably you know we know but just to
+[09:59] show um one of the examples here uh here
+[10:04] I have an agent but it has no tools. See
+[10:08] this agent here it says you are
+[10:09] anformational agent. Answers question
+[10:12] cheerfully. Okay. This is an agent that
+[10:14] has no no tools. And we could argue even
+[10:16] that an agent without tools maybe isn't
+[10:18] even an agent. It's just an LM. Um but
+[10:22] you know we can call it an agent, a
+[10:23] toolless agent. And here we say, "Hey,
+[10:27] agent, what is the weather today in San
+[10:29] Francisco?" Right? So, uh, in order to
+[10:32] run this, we're going to say, "UV run."
+[10:34] We're using uv, which is a Python, um,
+[10:37] environment manager, and it makes it
+[10:38] easy to run our examples. So, we're
+[10:40] going to say UV run examples agent
+[10:42] basic.
+[10:44] py. Okay.
+[10:46] So, here I'm running it. And the first
+[10:50] time you do UV, you are going to see
+[10:51] that it makes sure that your UV
+[10:53] environment is up to date. So it's
+[10:55] creating this um virtual environment.
+[10:57] It's making sure that it's got all the
+[10:59] right packages.
+[11:00] So this does take uh what is it about a
+[11:03] minute. UV is very fast. It's written in
+[11:05] Rust which makes it very fast and that's
+[11:07] why uh many of us are use moving from
+[11:10] pip to UV. Okay. So now it's got the
+[11:14] agent framework packet. Okay. So it's
+[11:17] maybe two minutes here. Uh so this will
+[11:19] only happen the first time that you do
+[11:21] uh UV run. Remember for all of our
+[11:23] examples today when we run them, you're
+[11:25] going to put UV run in first in front of
+[11:27] it. So UV run example slash and then the
+[11:30] file name. And the very first time is
+[11:32] when it's going to create that virtual
+[11:34] environment and make sure that all the
+[11:36] packages are installed in it.
+[11:43] Okay. So here
+[11:48] and when you just to see so I know
+[11:49] people still looking for the code space
+[11:50] but when you click on code there's a
+[11:52] local tab and then there's a code spaces
+[11:54] tab. So hopefully you should all see the
+[11:57] code spaces tab but it might default to
+[12:00] local in which case you'll want to go
+[12:01] over to code spaces.
+[12:03] All right, so it finally ran. So I'm
+[12:05] just going to you know run it again just
+[12:07] to have it be uh cleaner output here.
+[12:11] Um, but here you can see it says I can't
+[12:13] fetch live data from here, but I can
+[12:15] help you get it quickly. So, it ends up
+[12:16] telling me where to go get the
+[12:19] information, right? Because it doesn't
+[12:20] have it doesn't have a weather tool,
+[12:23] right? So, this example of an agent that
+[12:25] is actually as a weather agent, it is
+[12:27] not a useful agent because we haven't
+[12:29] given it any tools to look up the
+[12:31] weather, right? It needs tools where it
+[12:34] can go to, you know, weather.com or, you
+[12:36] know, the US weather site or whatever in
+[12:39] order to find out what the weather is
+[12:40] and accurately answer the question. And
+[12:43] some LLMs, if you say, "What's the
+[12:44] weather today?" They won't even admit
+[12:46] that they don't know. They'll simply
+[12:47] say, "Oh, it's sunny." And it's always
+[12:49] sunny, right? So tools are also really
+[12:52] important to reduce hallucinations from
+[12:55] LMS. Um, so if users are ask constantly
+[12:58] asking an agent a question, you ideally
+[13:00] want that agent to have the tools to
+[13:02] answer that question in a way that is
+[13:04] grounded in reality, right?
+[13:09] Okay. So that's why we need, you know,
+[13:12] that's why we need agents with tools,
+[13:14] uh, is to to be able to really
+[13:16] accomplish a goal and not just be
+[13:19] answering questions based off what's in
+[13:21] the LLM's weights, right? I mean, the
+[13:23] LMS, they can do a lot based off what's
+[13:25] in their weights, right? Very good at
+[13:26] cooking, actually. Um, but to really
+[13:29] make them powerful and to make them work
+[13:31] for our specific domains, like our
+[13:33] internal private domains and our niche
+[13:35] domains, we really need to equip them
+[13:37] with domain specific tools.
+[13:43] Uh, all right. So, how do we build an
+[13:46] agent? There are many, many Python AI
+[13:50] agent frameworks out there. This slide
+[13:52] only has four of them listed, but I'm
+[13:54] sure there's some that uh you know, some
+[13:56] of you have used as well. There's
+[13:58] there's just so many. Uh sometimes we
+[14:00] joke that there's more AI agent
+[14:02] frameworks than agents in the world. Uh
+[14:05] everybody wants to build an agent
+[14:07] framework, right? Um so, uh yeah. So,
+[14:10] but here are some of the top four that I
+[14:12] work with the most that you may have
+[14:13] heard of, right? So, the one that we're
+[14:15] focusing on this series is the agent
+[14:17] framework from Microsoft. This is the
+[14:19] successor to autogen and semantic
+[14:21] kernel. So if you were previously using
+[14:24] autogen or semantic kernel, you should
+[14:26] be moving everything over to agent
+[14:28] framework um because it has basically
+[14:31] all the features of those and uh and
+[14:34] more right and it is more modern and
+[14:38] more flexible.
+[14:41] And then there's link chain v1. So lots
+[14:43] of people knew no link chain because it
+[14:44] was basically the first LLM framework
+[14:46] that came out there and that was lang
+[14:49] chain v 0ero uh earlier this year like
+[14:52] October 2025 they announced langchain v1
+[14:55] and that is an agent centric framework
+[14:57] uh that's built on top of their langraph
+[14:59] package uh that makes it easy to uh
+[15:02] monitor in their lang product right so
+[15:04] it is open source um but it does
+[15:05] integrate with their um you know their
+[15:08] deployed linksmith products uh so that's
+[15:09] a very good framework as well it's
+[15:11] actually quite similar to the agent
+[15:13] framework that we're using for this
+[15:14] series and uh you know a lot of the
+[15:17] concepts that we're learning here uh
+[15:19] you'll find very similar concepts in
+[15:22] lane chain v1 and actually really all
+[15:23] the agent frameworks right uh pidantic
+[15:26] AI that's from the creators of paidantic
+[15:28] so if you're you know very much into
+[15:29] type safety you know they have a lot of
+[15:31] types agent framework also has a lot of
+[15:33] types because we like types at Microsoft
+[15:34] having you know made typescript um so
+[15:37] you're going to find a lot of type
+[15:38] safety in both of them uh then there's
+[15:40] open eye agents that is from OpenAI and
+[15:44] that's a lot uh less flexible than the
+[15:47] other ones I would say. Um but it can
+[15:49] work for some basic agents with open eye
+[15:52] models. So those are just a handful of
+[15:54] agent frameworks. Uh there's there's
+[15:56] more out there. Uh you can mention the
+[15:57] chat if there's other ones that you've
+[15:59] used you really like. Uh but we are
+[16:01] going to be using agent framework for
+[16:02] Microsoft in this series.
+[16:07] Now,
+[16:10] you might be wondering like, do we even
+[16:11] need why do we even need an agent
+[16:14] framework? So, first we're going to see
+[16:17] how do we call tools from an LLM without
+[16:20] a framework? What does that look like,
+[16:22] right? Is it actually, you know, is it
+[16:24] is it is it something that's, you know,
+[16:26] doable? You know, is it hard to do? So,
+[16:29] um, so yeah. So, let's talk about tool
+[16:31] calling. So agents are based on the
+[16:34] ability of LMS to call tools. So for and
+[16:39] when you're building an agent and you
+[16:41] pick an LLM to use with that agent, that
+[16:43] LLM has to specifically support this
+[16:46] ability called tool calling. And that
+[16:49] means that the LLM needs to be able to
+[16:52] respond to a question and with a
+[16:55] suggestion of what function name and
+[16:58] arguments would best answer that
+[17:00] question. Right? So when the user says,
+[17:02] "Hey, what's the weather in Paris?" The
+[17:04] LM says, "Oh, I see I have a get weather
+[17:06] function." I think that in order to
+[17:08] answer this question, we should call
+[17:11] that get weather function and pass in
+[17:13] the string Paris. So this tool calling
+[17:17] ability is a special ability that the
+[17:19] LLM has been trained with, right? So
+[17:23] it's something that only occurred um in
+[17:25] in the more recent LLMs over the last
+[17:27] two years. So if you were doing like
+[17:29] GBD35 Turbo, you simply could not use
+[17:31] GBD35 Turbo for an agent because GBD35
+[17:35] Turbo does not know how to call tools.
+[17:38] It was not trained for that, right? But
+[17:40] the most recent LLMs in the last year,
+[17:42] they all support tool calling uh and
+[17:45] they know like okay, if somebody gives
+[17:48] me a bunch of tool definitions and says
+[17:50] I can call them, then if I think the
+[17:52] best way to answer this question is a
+[17:53] tool, I'm going to say the name of that
+[17:56] tool and the arguments, right? So, it's
+[17:57] the ability of the LM to pick from a
+[18:00] bunch of tools and say here's the here's
+[18:02] the tool name and here's the arguments.
+[18:04] Uh, and then the code itself, our code
+[18:06] is going to be the one actually calling
+[18:08] that function, right? The LLM is just
+[18:10] saying here's the tool name and here's
+[18:11] the argument. That's all the LLM is
+[18:13] saying.
+[18:17] So, here is the um here is the tool
+[18:21] calling flow, right? Um so what we do on
+[18:25] the developer side is we we declare our
+[18:28] tools and say hey we've got all these
+[18:30] tools right one of them is a get weather
+[18:32] tool and it takes a single argument
+[18:34] which is the location argument right so
+[18:36] we send the LM our all of our tool
+[18:38] definitions plus the user's question uh
+[18:41] and then the LM responds and says oh
+[18:43] okay you should call this tool with this
+[18:44] argument then in our code we execute
+[18:47] that function and get back the response
+[18:49] and then we send that to the LM and say
+[18:51] hey here was the response response to
+[18:53] that tool call, you know, what would you
+[18:55] like to do with that? And the LM says,
+[18:56] okay, great. Based on that response, I'm
+[18:58] going to give uh, you know, a natural
+[19:00] language response to the user, right?
+[19:02] So, key thing here is that the LLM is
+[19:04] not the one actually calling the the
+[19:07] function. We our code is calling the
+[19:10] function. The LM is simply telling us
+[19:12] which function to call and with which
+[19:13] arguments.
+[19:17] So, the first step is that we need to
+[19:18] tell the LM what functions it can call.
+[19:20] And this is done but with a uh schema a
+[19:23] JSON schema definition of the function.
+[19:26] Um so here I'll go ahead and open up the
+[19:30] example in uh in code spaces here.
+[19:37] So open AI tool calling. Let me try and
+[19:42] pick
+[19:45] I want better. Ah okay. All right. So
+[19:48] here's the example. Now, I saw there's
+[19:50] some comments here. So, at the top of
+[19:51] the example, you can see it sets up our
+[19:53] connection to the OpenAI model. It looks
+[19:55] like some people's are having problems
+[19:57] with code spaces and um GPD5 mini. Um so
+[20:01] if you are having issues with this model
+[20:04] what you can do is change this to GBD40
+[20:08] or um another thing that might be easier
+[20:10] is if you just make a EMB file and then
+[20:15] um say GitHub model equals GBD40 then
+[20:18] that should be used for
+[20:21] uh all the rest of the examples because
+[20:22] you can see this code here checks if
+[20:24] there is a GitHub model uh variable
+[20:26] defined. Uh so this should pull it from
+[20:29] there. Uh so yeah if you are having you
+[20:32] know I was saying there are a bunch of
+[20:33] models available. Um it's possible GP5
+[20:35] mini might be capped uh for for some uh
+[20:39] for some developers. Uh so GBD40 it also
+[20:44] supports tool calling. So we can try
+[20:46] with that one.
+[20:48] Okay. Uh so here you can see in you know
+[20:52] so this is just defining a tool using a
+[20:55] schema. So ultimately this is basically
+[20:57] what the LMC sees. It's a call it's JSON
+[21:00] schema format here which says hey it's a
+[21:02] function. It has a name. It has a
+[21:05] description. These are the parameters it
+[21:07] takes. Uh it takes a city name which is
+[21:08] a string and here's a description of it.
+[21:10] It takes a zip code which is a string.
+[21:12] Here's a description of it. Right? So
+[21:14] this is a JSON schema that defines the
+[21:17] functions that are available. And this
+[21:19] corresponds to this function here. But
+[21:22] the LLM does not see this function. the
+[21:25] LLM is only going to see this function
+[21:27] definition that corresponds to our
+[21:29] actual function.
+[21:33] Uh so then we have the uh then we have
+[21:36] our messages. Okay, you are a weather
+[21:38] chatbot. Is it sunny in Los Angeles,
+[21:40] California? Um we send that request to
+[21:43] the model. We send the messages. We send
+[21:44] the tools and we say, "Hey, you can pick
+[21:47] whatever tool you think will answer the
+[21:48] job."
+[21:51] So then it's up to the LM to decide um
+[21:55] you know which tool it's going to call.
+[21:56] So when we get back the response here,
+[21:59] we look to see if it if the LLM has
+[22:01] suggested any tool calls
+[22:04] and if so we look at that suggested tool
+[22:07] call and we extract out the name and the
+[22:11] arguments. And this is all like
+[22:13] serialized JSON. So we have to do some
+[22:15] like deserialization.
+[22:17] Um and this remember this is all lowle.
+[22:19] So, I'm showing you what it looks like
+[22:20] to do tool calling without an agent
+[22:22] framework. This is going to get much
+[22:23] easier once we move to a framework, but
+[22:25] I'm showing you how how much work it is
+[22:28] so you understand what's going on behind
+[22:29] the scenes, right? Um, so we get back
+[22:32] the response. Okay, so if the function
+[22:34] name is lookup weather, good. We know
+[22:37] about that function. So, we're going to
+[22:39] go ahead and send the suggested
+[22:41] arguments to our local function. Then,
+[22:43] we're going to get back the response.
+[22:44] We're going to send that to the LM.
+[22:46] we're going to send it another call and
+[22:49] then we're going to get back a response.
+[22:50] Right? So this is if we are doing the
+[22:53] tool calling ourself uh just using the
+[22:57] open AI SDK with no agent uh agent
+[23:00] framework. So let me go ahead and run
+[23:03] this.
+[23:06] All right. And we can see uh that it got
+[23:08] back the response from the function. So
+[23:10] it it called look up weather with these
+[23:13] arguments. It looked up the weather and
+[23:16] it says uh it gets that response from
+[23:19] GBD40
+[23:21] uh from GitHub models and says yes uh
+[23:24] based off of that response. Now this
+[23:26] response was actually lying because I
+[23:28] just put 75 here. It's always 75 degrees
+[23:31] in Los Angeles, right? I was born there
+[23:33] so I can claim that maybe in my in my
+[23:36] head in my memories it was always 75.
+[23:40] Um okay. So this is what it looks like
+[23:43] you know on the low level like if you
+[23:45] were doing like an HP call it would look
+[23:46] very similar to this too right you're
+[23:48] sending that JSON schema and you're
+[23:50] getting back a response and you're
+[23:52] extracting out from that response what's
+[23:54] the tool call does that correspond to a
+[23:56] local function okay let's call it let's
+[23:58] response d right so you can totally you
+[24:01] can totally do it yourself if you want
+[24:04] but it is like a fair amount of code and
+[24:08] this is actually like the simpler
+[24:10] version of the code I have a version of
+[24:11] this that is much more complicated that
+[24:13] accounts for a lot more errors and edge
+[24:15] cases that can happen um especially as
+[24:17] you move across models and you have to
+[24:19] worry about exception handling and
+[24:21] whatnot. So this is actually the
+[24:22] simplest version of it. So that is at
+[24:27] least one reason why you may want to
+[24:30] move to an agent framework, right? um
+[24:33] like the Microsoft agent framework
+[24:35] because at the bare minimum it makes it
+[24:38] much much easier to use tools and we'll
+[24:42] we'll see that right um so the first
+[24:44] thing we need to do is install agent
+[24:47] framework right and agent framework it
+[24:49] both has like a big package which is
+[24:51] just agent framework uh itself but it
+[24:54] also has a bunch of like sub packages so
+[24:56] we usually install just the sub packages
+[24:58] because that way we only install what we
+[25:01] need um so for today We only need agent
+[25:03] framework core and agent framework dev
+[25:05] UI and that's all defined in the pi
+[25:08] project.toml.l.l.l. So that's already
+[25:10] defined in the code space. So when you
+[25:12] did UV run it, you know, pulled all all
+[25:14] in. So you can see these two are the
+[25:16] ones we're using today. We're going to
+[25:17] use these other ones uh later this week.
+[25:20] Um and you'll also notice that instead
+[25:22] of specifying like a version, we're
+[25:24] actually pulling it directly from the
+[25:26] GitHub repo. Normally
+[25:29] I wouldn't recommend that. Um but in
+[25:33] this case agent framework it is moving
+[25:36] very quickly and it had a lot of changes
+[25:39] just in the last week and we really
+[25:42] wanted to show you the most recent code
+[25:44] so that you know when you're developing
+[25:47] them like that you know you can look at
+[25:49] our code and hopefully our code is
+[25:51] what's going to be the in the like
+[25:52] official released version. So um you
+[25:55] know they will make an official release
+[25:57] version with a version number on pi uh
+[25:59] that you where the code is similar to
+[26:01] what we're using. Um but for now just to
+[26:04] give you the most recent like this was I
+[26:05] updated this last night. So this was
+[26:07] like the hash from last night. So we are
+[26:10] really tracking agent framework at its
+[26:13] most recent version to make sure you
+[26:14] have the most up-to-date code. Um and
+[26:17] this is pinned here too. So um you know
+[26:20] if I wanted to pull in even more later
+[26:22] versions I would have to change this. Uh
+[26:23] but in the future uh you would want to
+[26:26] you know bring in uh you know once once
+[26:29] we're they're fully released you would
+[26:32] want to bring in an actual version. You
+[26:34] can see that they did cut a release
+[26:35] candidate two days ago. Um but already
+[26:38] that one's out of date so we're not
+[26:39] using it. Uh but there'll be like a
+[26:42] proper 1.0. You can see these are all
+[26:43] beta versions of 1.0. Uh so pretty soon
+[26:46] there should be a very proper 1.0 um uh
+[26:51] very soon. So that is what you would end
+[26:53] up pulling and the code should look
+[26:54] really similar to the code we're using
+[26:56] here.
+[26:58] Okay. So that's how that's how we're
+[27:00] installing today is we're installing the
+[27:02] sub packages we need and we are
+[27:04] installing from this git commit. You
+[27:06] should just be able to run UV run and
+[27:08] it'll figure that out. You can also do
+[27:10] um
+[27:12] u does the same thing UV run did. UV
+[27:14] sync updates the environment. Uh so
+[27:16] it'll bring in all of that.
+[27:20] So now we've got that installed. We can
+[27:23] actually build an agent with a tool,
+[27:26] right? So we're going to build an agent
+[27:28] that can use a single tool to answer a
+[27:30] user's question. Uh similar to that
+[27:32] weather one, right? Uh so you know what
+[27:34] gets asked the weather, it's going to
+[27:35] call that and give back the response.
+[27:38] So the way this looks in agent framework
+[27:41] is that we're going to write our
+[27:42] function. We're going to add a
+[27:45] decorator. You see this here? This at
+[27:47] tool. This is what's called a decorator
+[27:49] in Python. It is we decorate our
+[27:52] function with it. So we say hey this
+[27:54] function is a tool. Oh uh this function
+[27:59] is a tool and so and this decorator
+[28:01] comes from agent framework. So uh so now
+[28:04] agent framework sees oh okay this is a
+[28:06] tool that uh you know I I'm going to
+[28:08] treat it a certain way. I'm going to you
+[28:10] know be able to um pass it LM. So we
+[28:13] declare our functions and we mark them
+[28:15] as tools and you can see in the
+[28:18] arguments
+[28:20] um I try to like really give as much
+[28:22] information as I can when I'm writing
+[28:24] this function because what's going to
+[28:25] happen is that this this function here
+[28:28] is going to get turned into that JSON
+[28:31] schema we saw before. So we want that
+[28:33] JSON schema of the tools to have as much
+[28:36] information as possible. So that means
+[28:38] you know when I do an argument I don't
+[28:40] just have an argument name right I could
+[28:42] just write city um you know that would
+[28:44] be valid Python you you in Python you
+[28:46] don't have to write types or anything
+[28:48] like that but I really want to give
+[28:49] information so I say city and then it's
+[28:52] a string and then I use this thing
+[28:54] called annotated to say hey this is a
+[28:56] string and this is the description so
+[28:59] that way when uh agent framework builds
+[29:02] out the JSON schema it's going to say
+[29:03] hey this function get weather takes a
+[29:05] single argument it's a city that city is
+[29:07] a string and here's the description of
+[29:09] that. Right? So that's why you're going
+[29:11] to see in our tools that we pretty much
+[29:13] always have argument name colon
+[29:16] annotated, you know, data type field
+[29:20] description, right? We want to give as
+[29:21] much information to the agent as
+[29:23] possible, right? Like equip it with
+[29:25] everything it needs to know about how to
+[29:27] call your function and how to call it.
+[29:30] Well
+[29:31] uh and yeah this decorator here uh it is
+[29:34] actually it's we call it a decorator but
+[29:36] it is in fact a higher order function in
+[29:38] Python. So it is basically like if you
+[29:41] want to write your own decorator you're
+[29:42] basically writing a higher order
+[29:43] function that um wraps a function and
+[29:46] returns it. Uh so um sometimes when you
+[29:49] call a tool there is actually you can
+[29:51] pass in arguments to the tool just like
+[29:53] a function. Uh so let me open that. Let
+[29:56] me open that over here. Agent tool.
+[29:59] Okay. So you can see here we're
+[30:00] importing the agent class from agent
+[30:03] framework and we're importing the tool
+[30:06] decorator and you can see that is indeed
+[30:08] um you know that is indeed a function.
+[30:10] So um we can actually um do things like
+[30:14] approval mode right so approval mode
+[30:17] right you could if you want to if you're
+[30:18] doing adding a little human in the loop
+[30:20] like you can say hey you always have to
+[30:22] approve this right so you'll see this
+[30:24] sometimes too with these decorators is
+[30:25] adding additional um arguments uh in
+[30:29] order to customize them but for for this
+[30:31] we can just say tool and that's enough
+[30:35] uh and we also have the return type here
+[30:37] so this is useful too to say what the
+[30:38] return type here in this case it is
+[30:40] returning a dictionary uh instead of
+[30:42] just a straight string. And then we
+[30:45] create our agent. So we say okay here's
+[30:47] the agent and um you know the agent we
+[30:50] pass it the client. The client is the
+[30:52] configuration that connects either to
+[30:54] Azure or to GitHub models or to OpenAI
+[30:57] models. Uh so that's the client. So we
+[31:00] pass in the client. We pass in the
+[31:02] instructions which is the system prompt.
+[31:04] And then we uh pass in the tools. And
+[31:08] the tools is a list of functions in our
+[31:12] code.
+[31:14] And then finally, we run the function
+[31:16] and and output the response. Right? So
+[31:19] let's go ahead and run this. UV run uh
+[31:23] examples agent tool.py.
+[31:31] Oops. Uh sorry. UV run. UV run examples
+[31:35] agent tool. py.
+[31:44] So now it's gonna go and
+[31:47] okay so we can see that it is calling
+[31:49] the function. This log came from the
+[31:51] function getting weather for San
+[31:52] Francisco. And here I've randomized it a
+[31:56] bit. So in this case it says it's 60 and
+[31:58] rainy. So it got this condition here and
+[32:02] it gave us a nice response here. Um so
+[32:05] this you know you can contrast this to
+[32:08] that example where we weren't using the
+[32:10] framework and we weren't using the
+[32:11] framework we had to you know maintain
+[32:14] our function separate from our
+[32:15] definition we had to do all this you
+[32:18] know response parsing here in order to
+[32:20] process the response and this is just
+[32:24] much much nicer right so you know this
+[32:26] is the the first reason why you may want
+[32:28] to you move to an agent framework is
+[32:30] like hey you want to use tool call and
+[32:32] you've got some tools there's some local
+[32:33] tools tools and uh it makes it just way
+[32:37] easier to equip an agent with uh the
+[32:40] ability to call functions that are in
+[32:42] your code.
+[32:47] All right, so that is our basic agent
+[32:51] with a single a single tool.
+[32:56] Now
+[32:58] let's add more tools because when things
+[33:01] get really interesting is when you have
+[33:02] more than one tool, right? If you only
+[33:04] ever had a single tool, well, you know,
+[33:07] you may not you may not need a
+[33:09] framework. But as soon as you've got
+[33:10] multiple tools, that's when your agents
+[33:13] become more powerful, the code gets more
+[33:15] interesting, where you're benefiting
+[33:17] more from the agent framework because
+[33:18] now the LM is deciding, okay, I've got
+[33:21] three different tools. Which am I going
+[33:24] to call first? Uh, am I going to call
+[33:26] some of them multiple times? What order
+[33:28] am I going to call them in? Right? And
+[33:29] it can, you know, it can go back and
+[33:30] forth and and uh, you know, get really
+[33:33] interesting results. So here we're going
+[33:35] to make a weekend planner agent that has
+[33:37] a get current date, get activities, and
+[33:40] get weather.
+[33:42] Uh, so let's go ahead and open up this
+[33:44] example. This is agent_tools.
+[33:46] py. And so this one, um, we've got that
+[33:50] get weather tool again. And then we've
+[33:52] got get cities, uh, sorry, get
+[33:55] activities. So that takes a city and a
+[33:57] date. Um,
+[34:00] and then we have get current date.
+[34:04] Okay. And that one doesn't take any
+[34:06] arguments.
+[34:08] So, here's the agent. It says you help
+[34:09] users plan their weekends. Um, include
+[34:12] date of the weekend. Only suggest
+[34:14] activities that are good for the
+[34:15] weather. And we give it a list of all
+[34:16] the tools. So, now that we're going to
+[34:18] run this and see what order does it
+[34:21] choose to call these tools in, right?
+[34:24] So, if it's smart, it's going to realize
+[34:25] that the first thing it needs to know is
+[34:28] what is the current date, right? Because
+[34:30] it can't it can't call
+[34:33] um it can't call get activities until it
+[34:35] knows the current date, right? So, you
+[34:36] can see the first thing it does is gets
+[34:37] the current date, then it gets the
+[34:39] weather. Um then it gets I probably
+[34:43] should actually change the weather
+[34:44] function to accept a date, too.
+[34:47] Um uh but you know what's cool here? So
+[34:49] it says okay getting activities for San
+[34:51] Francisco on February 28th and that is
+[34:55] actually like so it both looked at the
+[34:57] current date and then figured out that
+[35:00] um that for the weekend the dates of the
+[35:03] weekend is actually February 28th and
+[35:04] March 1st and that's correct and it
+[35:06] always actually impresses me that it it
+[35:08] figures that out um that it is able to
+[35:11] do the math to realize like okay this is
+[35:13] today uh how far uh ahead is the
+[35:16] weekend. So it figures it out somehow.
+[35:19] Um might want to give it even more tools
+[35:21] there. But uh it does it does often
+[35:23] figure out when the you know what the
+[35:24] weekend dates are and so it gets
+[35:25] activities for those dates specifically.
+[35:27] And you can see it called that get
+[35:29] activities twice because it realized
+[35:30] like wait the the weekend is two dates
+[35:33] and this get activities only takes one
+[35:35] date. So therefore I'm going to have to
+[35:38] call it twice. Right? So you can see
+[35:40] what's interesting is it figures out
+[35:41] what it's going to call first. um and
+[35:44] the fact that it's going to call things
+[35:45] multiple times.
+[35:49] So here in order to add these tools, the
+[35:51] important things we did is that we
+[35:53] decorated all of them with at tool,
+[35:55] right? So you see they all have at tool
+[35:57] and then here when we
+[36:00] um specified the tools, we gave a list
+[36:02] of all the tools. So that's it. That's
+[36:05] what you need to do is you make a
+[36:07] function, you you know um put everything
+[36:11] in that function that it needs, right?
+[36:12] So what's important here is that
+[36:13] remember the LLM is only going to see
+[36:15] what's in that tool definition. So it's
+[36:18] only going to see this what I've
+[36:19] highlighted here. See what I've
+[36:20] highlighted is it's going to see the
+[36:23] name of the function. It's going to see
+[36:24] the arguments. It's going to see their
+[36:26] types. It's going to see their
+[36:27] description. It's going to see the
+[36:28] return type and it's going to see the
+[36:30] doc string.
+[36:33] So you need all of those. The the LLM
+[36:36] itself is never going to see the code of
+[36:38] the function. That's never going to be
+[36:39] part of what the LLM sees. it is only
+[36:42] going to see what I've highlighted here.
+[36:43] So, you want to do a really nice job
+[36:46] with everything here, right? Think
+[36:48] really carefully through that function
+[36:50] name, the args, um the field
+[36:52] descriptions, the doc string, uh because
+[36:54] that is how the LM is going to decide
+[36:56] what tools to call and how to call them.
+[37:03] And so, you can and so you can do all
+[37:04] kinds of things in right like this. This
+[37:06] is all just a demo example, but uh you
+[37:08] know you can change your tools to take
+[37:10] different arguments. Uh you can change
+[37:12] the types of them. Like you you know
+[37:14] it's it's it's all up to you. Um you
+[37:17] know this could actually take a daytime
+[37:18] instead as well. Like there's there's a
+[37:21] lot of capabilities of these of the tool
+[37:23] schema.
+[37:26] All right. Uh so there we go. So that is
+[37:29] in um you know an agent with tools. I
+[37:31] see in the chat people are getting
+[37:33] different results. Of course, the result
+[37:35] is going to vary on based on many
+[37:37] things. Uh and it's going to based off
+[37:39] the model you're using. Uh it's based
+[37:42] off of, you know, just the fact that
+[37:43] LLMs have some degree of non-determinism
+[37:46] in them. So I can send the same prompt
+[37:49] five times and get different results. Uh
+[37:51] it is possible with, you know, with the
+[37:53] open models to set a seed so that they
+[37:57] tend to not the answers don't change as
+[38:00] much, but that's only possible with some
+[38:02] of the models. uh it doesn't really even
+[38:03] work as well with the reasoning model.
+[38:05] So yeah, so we will get different
+[38:07] responses, right? So that's why when
+[38:08] you're like, you know, when you're
+[38:09] developing tools, it is really important
+[38:11] to do evaluations with your model that
+[38:14] you're using and see is it doing well?
+[38:16] Is it doing well across lots of
+[38:17] different inputs, right? So we're going
+[38:19] to talk about evaluations on um Thursday
+[38:22] this week uh to give you an idea for how
+[38:24] you could set up evaluations uh to make
+[38:26] sure that your agents are giving back
+[38:28] high quality responses.
+[38:33] Okay. So
+[38:36] now what I want to show you is this cool
+[38:38] thing called debui. Debui it's uh you
+[38:41] know one of the packages we installed
+[38:43] was agent-framework-devui.
+[38:45] And devui is this local development UI
+[38:49] um that uh makes it easy to chat with
+[38:52] your agents and see what's going on. Um
+[38:56] and yeah, it's really fun. So let's just
+[38:57] see how it works. Um, I've added DebUI
+[38:59] support to almost all of the examples in
+[39:01] this repo. So, all you have to do is
+[39:03] just add d-dewi
+[39:05] when you're running it. So, here I'm
+[39:07] going to say d-devui.
+[39:10] And what that will do is we'll pop up a
+[39:14] tab in the browser. Uh, and this should
+[39:17] also work from code spaces. I tried it
+[39:18] this morning. Uh, so now what you see
+[39:21] here is that we have this playground
+[39:23] basically to
+[39:25] send messages to our agent, right? be
+[39:27] like, "Okay, what's the weather in
+[39:30] Berkeley, CA?" Okay, so I send off a
+[39:32] question and we can see that it's
+[39:35] thinking. It's thinking, it's thinking.
+[39:38] Um, and what's cool over here is that we
+[39:41] get back all the tool calls over here.
+[39:43] So, we can see, okay, I decided call get
+[39:45] weather and it got back this response
+[39:48] and then it called get current date with
+[39:50] no arguments because there's no
+[39:51] arguments. Then it got back this result,
+[39:53] right? Um, and so it shows you
+[39:57] it shows you everything that it does.
+[39:59] Um, oh, and right, I asked what's the
+[40:00] weather. Okay. Okay. Tell me what I can
+[40:03] do this weekend.
+[40:06] I forgot this is a activity planner. I
+[40:08] was like, why didn't you call the other
+[40:09] one? Well, I didn't tell last thing.
+[40:10] Like, it's only going to call the tools
+[40:11] it needs to call, right? Um, so now,
+[40:15] uh, let's see. So, now we're going to
+[40:17] get hopefully another call to the get
+[40:19] activities.
+[40:21] All right. Uh, Uh, tools. Okay. Yeah, it
+[40:25] says tools six. Okay.
+[40:29] Where did the new one go?
+[40:32] Wait, I'm going to go back to events
+[40:34] and then refresh. Okay. Let me do I
+[40:38] don't I lost track of the tools. Okay.
+[40:40] What activities can I do in Berkeley CA
+[40:45] this weekend? Okay. All right. Let's do
+[40:48] that way. So, you also see the events.
+[40:50] These are the agent framework events.
+[40:52] Um, but it's helpful to see these events
+[40:54] because if you are building any sort of
+[40:56] thing that's like tying into the events,
+[40:57] it's really helpful to see like, oh,
+[40:59] okay, so as a agent framework is going
+[41:01] along, these are the events that it
+[41:03] streams out because then you can kind of
+[41:04] decide if if there's if you are doing
+[41:07] any sort of um, you know, event based
+[41:10] processing, you can see everything that
+[41:13] happens in their event stream. Okay, so
+[41:15] here we've got the tools. So this time
+[41:16] we got the date, we got the weather, we
+[41:18] got activities, we get the results,
+[41:20] right? Uh we can see the number of
+[41:22] tokens that it took here. We can see the
+[41:25] tool calls. Uh so yeah so this is so
+[41:28] this is pretty pretty helpful. Uh so you
+[41:32] can just quickly instead of having to
+[41:33] modify your code you can just interact
+[41:35] with your agent here. Um, and the way
+[41:37] that we started this up is that in the
+[41:39] example here at the bottom, I check to
+[41:42] see if we pass in devi. And if so, then
+[41:45] I bring in the devi package. And then I
+[41:48] call serve and I pass in the agent
+[41:51] itself because this agent is a global
+[41:53] variable in this function, right? In
+[41:54] this module. So I just pass in the agent
+[41:57] and say, hey, this is the agent and uh
+[42:01] and then told it to automatically open,
+[42:03] right? Um so that way I can either run
+[42:06] the example directly uh if I want to
+[42:09] just with this example query here or I
+[42:12] can run debui with the agent and then I
+[42:15] can just put an arbitrary input. Uh, so
+[42:18] I think this is just a nice thing to do
+[42:20] when you're developing agents is to make
+[42:22] it really easy to open up Dev UI because
+[42:25] you might find that that's a really
+[42:26] helpful playground for you when you're,
+[42:28] you know, when you're experimenting. Um,
+[42:30] especially all this logging, right? Like
+[42:32] I, you know, I add lots of logging
+[42:34] often, but, you know, this is just, this
+[42:37] is just nice. This is just better.
+[42:41] And, uh, so there we go. We can see all
+[42:44] those all those calls going out. I see a
+[42:47] question. What model am I using? Great
+[42:50] question. I am using an Azure model and
+[42:56] it's deployed from the infra. It is GD5
+[42:58] mini. So that's the one that I'm using.
+[43:04] All right, that's our dev UI. Okay,
+[43:07] let's talk about integrating agents with
+[43:09] MCP server tools. So, we've shown it how
+[43:13] to point our agents at like tools that
+[43:16] are local functions, but many of you
+[43:18] might be thinking about integrating with
+[43:20] MCP servers. So, if you haven't heard
+[43:23] about MCP, uh it stands for model
+[43:25] context protocol. It is a open standard
+[43:28] and open protocol. It was first created
+[43:30] by Enthropic and then adopted by like
+[43:32] everyone. Basically, the first protocol
+[43:34] that in the AI generative AI space that
+[43:37] really got standardized. Um and it
+[43:39] standardizes how an LLM interacts with
+[43:42] external tools and data sources. How it
+[43:45] can you know collaborate more with all
+[43:47] these existing sources of information.
+[43:52] So the general architecture of MCP is
+[43:54] that you have clients and servers right
+[43:57] so the servers they have tools and
+[44:00] prompts and resources mostly uh tools is
+[44:03] what people think of but you know they
+[44:04] can have other capabilities as well. So
+[44:06] the server exposes some tools and then
+[44:08] our client uses the MC protocol in order
+[44:10] to interact with the server and its
+[44:12] tools, right? So you might be using VS
+[44:15] code um the to interact with MC servers
+[44:18] or cloud code. Uh but now when you're
+[44:20] developing agents, your agent itself can
+[44:23] act as an MCP client in order to
+[44:25] interact and use tools from MCP servers.
+[44:28] So that's what we're going to see today
+[44:30] is how can our agents act as MCP
+[44:33] clients.
+[44:36] So the way it generally basically works
+[44:38] is that our agent is first going to ask
+[44:40] the MCB server like hey what tools do
+[44:43] you even have available right like what
+[44:45] what tools am I going to be able to use
+[44:47] and so the MCB server responds oh okay
+[44:48] I've got you know these two tools and
+[44:50] then it so it's going to ask all of its
+[44:51] connected MCB servers hey what tools do
+[44:53] you have so it has a list of all the
+[44:55] potential tools right because it needs
+[44:56] to know all those tool definitions so it
+[44:58] can send the LM right so then when the
+[45:01] agent gets a user input it's going to
+[45:03] tell the LM M like hey LLM here's your
+[45:06] user input and then also here's all
+[45:08] these tools we have available
+[45:10] which of these do you want to call right
+[45:13] and so then the LM comes back it might
+[45:15] suggest a tool from the MCV server and
+[45:17] in that case the the agent is going to
+[45:20] you know the agent code will go and make
+[45:22] a request to that MCP server tool.
+[45:26] So let's actually try this out. So first
+[45:29] we're going to run a local MCP server.
+[45:32] Um, and if you do want to learn way more
+[45:35] about MCPC, we did a whole three-part
+[45:37] series about MCP. This is just a very
+[45:39] short version of uh MCP. Uh, but first
+[45:42] we're going to run this MCP server. And
+[45:44] MCP server is using fast MCP in order to
+[45:48] do this expense server. And um, you
+[45:51] know, and and it has the server has this
+[45:53] add expense tool here that it can add
+[45:55] expenses to a to a expenses file. Okay.
+[45:59] So now that server is running. Um so now
+[46:02] we can open up this agent SP local and
+[46:06] you can see this one we create we you
+[46:09] know define our MP server and say hey
+[46:12] this is our MCP server it is running at
+[46:14] this URL which is just localhost 8000
+[46:18] uh and then we say agent like hey you
+[46:21] know here's your tools and so we
+[46:22] actually just pass in that MCP server as
+[46:25] a tool right uh so this is how it looks
+[46:28] in agent framework to use tools from MCP
+[46:30] servers You set it up this way and then
+[46:32] you just pass in that server
+[46:35] uh as in your tools list. Right? So
+[46:38] we're going to say UV run examples
+[46:41] uh agent MCP local.
+[46:44] Okay. So what should happen is that the
+[46:48] agent is going to ask our uh local
+[46:51] running server. You can see lots of
+[46:52] things are happening over here. So it's
+[46:54] asking uh it found out the tools and
+[46:56] then it used the tools and said got it.
+[46:59] I recorded the expense
+[47:02] uh blah blah blah, right? I told it to I
+[47:04] bought a laptop. Uh and so it recorded
+[47:07] that expense. So basically this agent
+[47:10] communicated with this server that's
+[47:12] running here over localhost, right? Uh
+[47:16] but this server could be running
+[47:17] anywhere. It could be running on a
+[47:19] deployed endpoint, right? On HPS on like
+[47:22] Azure container apps or whatever. Um it
+[47:25] just, you know, the agent just needs to
+[47:27] know where is that server. uh if you
+[47:29] have any off headers like keys or
+[47:31] whatever, you would pass these in here
+[47:32] as well and so that it's able to say,
+[47:35] "Hey server, tell me your tools." Great.
+[47:38] Now I can call them.
+[47:41] It's a good question. If multiple MC
+[47:43] servers expose tools with overlapping
+[47:44] purposes, how does the agent decide
+[47:46] which to use? Yeah, it's a really good
+[47:49] question because it's going to have a
+[47:50] hard time. That's why there's a lot of
+[47:52] thought that should go into uh
+[47:55] connecting agents to MCP servers and a
+[47:56] lot of thought that should go into MCP
+[47:58] server design. So if you yourself are
+[48:00] the ones designing those servers, you do
+[48:02] want to be really specific with the tool
+[48:05] names and descriptions to make it really
+[48:07] clear when they should be called, right?
+[48:09] Um it's, you know, what you can do is if
+[48:12] you don't control the MCB servers, you
+[48:13] know, you put stuff in your system
+[48:14] prompt that says, hey, for such and such
+[48:16] task, you're gonna do this. For such and
+[48:18] such task, you're gonna use this, right?
+[48:19] So you can if you need to you can be
+[48:22] specific in your system prompt and tell
+[48:24] it like hey use this tool from this
+[48:26] server for this job. Um ideally you
+[48:28] don't have to but sometimes you do need
+[48:30] to do that. So you can put that in your
+[48:31] system prompt.
+[48:36] All right. We can also point an agent at
+[48:39] a remote MP server as saying um you know
+[48:41] that MP servers can be all sorts of
+[48:44] places. So uh one that we like using a
+[48:46] lot is the Microsoft learn server. It's
+[48:49] really good um if you're trying to learn
+[48:52] about how to use anything on Microsoft
+[48:53] because all of our documentation is here
+[48:55] and they've got this learn server here
+[48:56] and it does not require authentication.
+[48:58] So we don't have to pass in any O
+[49:00] header. Uh so we say we help with
+[49:02] Microsoft documentation questions use
+[49:04] the tools. Here's the tool and then I'm
+[49:06] asking how do I create an Azure storage
+[49:08] account using the Azure CLI. So let me
+[49:10] go ahead and run this one. Now this is
+[49:14] the one this is the one this is the
+[49:17] example that uses the most number of
+[49:19] tokens because this MCP server
+[49:21] definition actually the schema for it is
+[49:24] quite large and requires a lot of
+[49:25] tokens. So we did have to change you'll
+[49:28] notice that it says GBD41 mini. Um so we
+[49:32] we did actually explicitly use 41 mini
+[49:34] here because I had the most success
+[49:37] using more tokens with that model. Um,
+[49:40] but I will warn you that when I first
+[49:42] ran it, um, I got a token like basically
+[49:45] over token error because GitHub models,
+[49:47] if you're using GitHub models, it's not
+[49:48] a problem for Azure. But with GitHub
+[49:50] models, they do tap the number cap the
+[49:52] amount of tokens that can go in. And MCV
+[49:55] server definitions, those tool
+[49:57] definitions can potentially be really
+[49:59] large. And in this case, they're so
+[50:01] large um, that they went over the token
+[50:03] limit. So um, yeah, if you are using
+[50:05] GitHub models, you may see that issue.
+[50:09] Uh, so here we go. We got back a
+[50:11] response and it's based off of what it
+[50:14] found in that learn documentation there.
+[50:21] Okay. So now we've seen how to connect
+[50:24] to local tools. We've seen how to
+[50:26] connect to MCB servers, both ones we
+[50:28] define ourselves and ones that exist um,
+[50:31] you know, in in deployment. Uh, if you
+[50:33] want to get deeper in MCP, do check out
+[50:34] the series we did in December. Um but
+[50:38] that's going to you know that is going
+[50:39] to cover a lot of your kinds of tools.
+[50:41] So now let's look at a different concept
+[50:44] which is agent middleware
+[50:47] and this is how we're going to be able
+[50:49] to uh make agents that are more have
+[50:54] more interesting functionality in there.
+[50:56] Um so basically middleware is something
+[50:58] that you know sits in the agent at
+[51:01] different stages of the process of the
+[51:03] agent running. And with the agent
+[51:05] framework, there's actually three
+[51:07] different places that middleware can
+[51:09] sit. So they have this notion of the
+[51:11] agent middleware, the chat middleware,
+[51:13] and the function middleware. So
+[51:14] depending on where you want middleware,
+[51:17] you're going to pick one of these one of
+[51:19] these places for it to sit, right? And
+[51:21] each of them get passed different
+[51:22] context, right? And the reason there's
+[51:24] these three places because agents, an
+[51:26] agent is like a highlevel concept,
+[51:28] right? agent has this notion that it has
+[51:31] associated LM that is calling tools. Um
+[51:34] but it is the highest level concept
+[51:36] right it is an abstraction layer on top
+[51:38] of these other layers. So this agent
+[51:41] context you know it does have access to
+[51:43] the messages um and to the response of
+[51:46] the agent and it doesn't have access to
+[51:48] much else. The chat middleware that
+[51:51] one's really interesting if you're
+[51:52] trying to like specifically alter
+[51:54] something having to do with the LLM. Um,
+[51:57] so if you're trying to, you know, change
+[51:59] the options getting sent to the LLM or
+[52:01] monitor what's happening to the LLM, you
+[52:03] may want to put something at the chat
+[52:05] middleware layer. And then we have the
+[52:07] function middleware and that's really
+[52:09] watching to see all the function calls
+[52:10] that happen. So if you wanted to do
+[52:12] some, you know, um, you know, auditing
+[52:15] or like you if you want to watch and see
+[52:17] what's happening to those functions and
+[52:18] like change what's happening when it's
+[52:19] calling functions, you would put
+[52:21] something at the function middleware
+[52:22] layer, right? Um and this is more of an
+[52:25] advanced topic like you may not need
+[52:27] middleware but the thing is once you
+[52:29] need it it's really really helpful right
+[52:31] you're going to see that it can actually
+[52:32] it can open up uh it can make agent
+[52:35] framework much more flexible than than
+[52:38] otherwise right so uh it's I think it's
+[52:40] really important for every agent
+[52:42] framework to have some notion of
+[52:43] middleware I know langchain B1 has a lot
+[52:45] of great middleware as well so I think
+[52:47] you need this middleware concept so that
+[52:49] you can really make your agents flexible
+[52:52] enough for your scenarios
+[52:56] Uh so here is so let's walk through this
+[53:00] agent middleware example.
+[53:03] Um
+[53:05] uh so uh we have this so what we do is
+[53:09] we define a function
+[53:11] and this function so for agent
+[53:13] middleware this function is going to
+[53:15] take an agent context and it's going to
+[53:17] take this call next basically like call
+[53:20] back function um and first the agent
+[53:24] middleware is going to do whatever it
+[53:25] wants to do before the agent starts.
+[53:28] Then you call next and that's going to
+[53:30] basically run the run the agent and then
+[53:34] you can do whatever you want to do after
+[53:35] the agent runs. Right? So you basically
+[53:37] you define this function you can you do
+[53:40] whatever you want to do before you call
+[53:42] next which actually executes that agent
+[53:45] and does a single run of it and then you
+[53:47] do whatever you want to do after.
+[53:51] Now we're going to see similar stuff for
+[53:52] each of the kinds of middleware. So for
+[53:54] chat middleware, the difference here is
+[53:55] it takes a chat context instead. But
+[53:58] once again, we do whatever we want to do
+[53:59] before the chat completion goes out.
+[54:02] Then we call next and then we do
+[54:05] whatever we want to do after. Okay. Uh
+[54:08] function middleware very similar. We get
+[54:10] a different kind of context. We do
+[54:12] whatever we want to do before the
+[54:13] function gets called. Then we call next
+[54:15] and the function actually gets called.
+[54:17] And then uh we do whatever we want to do
+[54:19] after. And this time we have answer we
+[54:21] have access to the result of the
+[54:23] function. Right? So before the
+[54:25] function's called we don't have the
+[54:26] result but after the function's called
+[54:27] we do have the result. So you see this
+[54:29] is the general pattern of middleware.
+[54:30] Right? You have a function it gets a
+[54:32] context it gets a callable you do the
+[54:35] pre-process you do the next step and
+[54:38] then you do whatever you want to do for
+[54:39] post-processing.
+[54:42] You can also do class-based middleware
+[54:45] um which is similar but instead of a
+[54:46] function you're going to inherit from
+[54:49] the middleware class and that way you
+[54:51] can do like a whole initialization
+[54:53] function uh and then you just have to
+[54:54] define process and the process is going
+[54:56] to look like what we saw before
+[55:00] and then you can do you can actually
+[55:02] have the middleware terminate for so if
+[55:04] for some reason you really need to
+[55:06] terminate the entire run then you can
+[55:09] actually do that by setting this
+[55:11] terminate um variable here. So that can
+[55:14] be really interesting if like if you
+[55:16] realize that there's like a safety issue
+[55:18] or um there's a quota issue, you can
+[55:20] just say we're just going to stop it
+[55:22] right there.
+[55:24] So we set up all this middleware and
+[55:26] then we need to register it, right? So
+[55:28] in order to register the middleware when
+[55:30] we create the agent, we just pass in a
+[55:33] whole list of middleware here, right? So
+[55:35] we have middleware and then there's a
+[55:36] list which is says like here this
+[55:38] middleware, this middleware, this
+[55:39] middleware, this middleware, right? So
+[55:40] here we have a list of six different
+[55:41] middleware. So let me actually open this
+[55:44] middleware. This middleware file here is
+[55:46] doing a lot. Um let me run it and okay.
+[55:51] So UV run examples agent middleware.
+[55:58] All right.
+[56:00] Okay. So you can see basically we have
+[56:03] all these logs out here from different
+[56:06] kinds of middleware. So I've added like
+[56:07] a logging middleware. I've added a
+[56:10] middleware that can count the number of
+[56:11] messages. I've added a timing middleware
+[56:14] that's checking to see how long a um you
+[56:18] know how long does an actual function
+[56:19] take. That could be useful. Um I've
+[56:22] added a blocking middleware and the
+[56:24] blocking one says, hey, we're just going
+[56:26] to completely block any request that
+[56:29] contains the word nuclear. Right? So
+[56:30] that's an example where we actually
+[56:32] terminate if it um you know if it
+[56:34] includes a word
+[56:37] and and yeah. So a lot of these really I
+[56:39] was just doing logging but u but you can
+[56:43] actually change things about the
+[56:45] requests as they're happening and you
+[56:47] can even terminate the request using
+[56:49] middleware.
+[56:53] Yeah, that one it's I will say this
+[56:56] example it helps to actually go through
+[56:59] you know the whole all the middleware
+[57:01] here and see what each of them doing.
+[57:03] Maybe I should have split these up into
+[57:04] multiple files. Maybe it's a a little
+[57:06] much, but I wanted to put them all in
+[57:07] one file so that I could actually see
+[57:08] the order of them so that we could see
+[57:10] like what you know what order they go
+[57:12] in, right? Because the first thing we
+[57:13] get is the pre-process of the agent.
+[57:15] Then we get the pre-process of the chat.
+[57:17] Then we get the pre-process of the
+[57:19] function. Then you see it goes all the
+[57:21] way through the function. We get to the
+[57:22] end of that. Then we go to the
+[57:23] post-process of the chat. Then the
+[57:26] post-process of the agent. Right? So
+[57:28] that's why I did put them all in the
+[57:30] same file even though it's kind of
+[57:31] crazy. um so that we could see the order
+[57:34] that they happen in. Okay. And I'm
+[57:36] realizing we're getting uh close to the
+[57:37] end here. So these as middleware is
+[57:41] actually incredibly helpful, right? I
+[57:42] use middleware all the time in my actual
+[57:44] agents. So I put here a bunch of ideas
+[57:46] for how you might want to use
+[57:47] middleware, right? for uh you know agent
+[57:50] middleware uh logging and timing uh
+[57:53] timing blocking summarization dynamic
+[57:56] system prompts chat middleware all sorts
+[57:58] of tracking PII redaction model fallback
+[58:01] uh token you know token limiting
+[58:04] function middleware is where you can do
+[58:06] a lot of interesting security related
+[58:07] things right um and also doing like tool
+[58:09] call retry stuff like that and the cool
+[58:12] thing about middleware is that then you
+[58:13] build a middleware once you could use it
+[58:14] across agents right so if you're working
+[58:16] at an organization you might imagine you
+[58:18] just have a repo that just has a bunch
+[58:19] of useful middleware and you're all just
+[58:21] reusing each other's middleware, right?
+[58:23] So, I'd imagine seeing like kind of like
+[58:25] a middleware gallery, like a middleware
+[58:27] ecosystem come up. Um, uh, because this
+[58:30] middleware can be really generically
+[58:32] useful if you design it well.
+[58:37] All right, so we have two minutes to
+[58:39] talk about a really basic uh,
+[58:42] multi-agent architecture, right? So with
+[58:45] an agent, you can easily set up this
+[58:48] sort of architecture where a supervisor
+[58:50] agent decides which specialist agents
+[58:54] should handle a task. Right? So here I'm
+[58:57] making this parenting helper agent that
+[58:59] I need
+[59:01] and it's a supervisor agent and it has
+[59:04] access to two different agents, the
+[59:05] weekend planning agent and the meal
+[59:06] planning agent. And it's basically just
+[59:08] going to route a task to each of these
+[59:11] agents, right?
+[59:14] And the way this works in agent
+[59:17] framework is that actually we basically
+[59:18] what we do is we set up our three agents
+[59:20] and we just wrap the sub agents as tools
+[59:24] right so we have this at tool that says
+[59:27] okay when you're call plan weekend it's
+[59:29] just going to call this agent right so
+[59:31] we're actually using a pretty simple um
+[59:34] you know way of setting this up in in
+[59:36] code uh so let me open up that
+[59:38] supervisor one right so
+[59:42] uh you know the difference here is that
+[59:44] we just say okay you know this this tool
+[59:48] is actually just wrapping an agent. So
+[59:51] this is basically the simplest way that
+[59:53] you can do a multi- agent architecture
+[59:56] if this particular
+[59:58] approach works for you like this works
+[01:00:00] when you know the based off the question
+[01:00:02] like there's it's you know it clearly
+[01:00:04] can pick which of the which of these sub
+[01:00:06] aents to run right the tasks are pretty
+[01:00:08] discreet planning meal versus planning
+[01:00:11] uh planning a weekend right so it can
+[01:00:13] decide where to go uh this is not going
+[01:00:15] to work for all sort of situations but I
+[01:00:18] wanted to show this because this is
+[01:00:19] something we can build just based off of
+[01:00:21] what we've seen today, right? We create
+[01:00:23] an agent and then we just create tool
+[01:00:25] functions that wrap the sub agents and
+[01:00:27] then we have a simple supervisor with
+[01:00:30] specialist agent architecture.
+[01:00:36] Okay. So then it's you know it's calling
+[01:00:38] plan wheel and then that one's doing
+[01:00:39] just act that one is just operating the
+[01:00:41] way it would normally operate.
+[01:00:44] Now, we're going to talk way more about
+[01:00:46] multi-agent architectures in week two
+[01:00:48] when we talk about workflows because a
+[01:00:50] lot of times you're going to want to use
+[01:00:52] workflows uh when you're involving
+[01:00:54] multiple agents. So, this is a plug to
+[01:00:57] join us for week two. All right, it is
+[01:00:59] now 11:30. So, we are in the final slide
+[01:01:02] final next steps here. Uh let's see. I
+[01:01:05] saw a comment that the slides were not
+[01:01:08] working. Let me just double check the
+[01:01:12] the slides uh link. I think this was the
+[01:01:16] link for it and see. Okay, so that one
+[01:01:20] just worked for me. Um
+[01:01:24] I'll paste it there. Um uh maybe it's
+[01:01:28] maybe I didn't update it correctly. Oh,
+[01:01:30] I didn't even put it there. I'll put it
+[01:01:32] here. Um but go ahead and check out that
+[01:01:34] for the slides. And uh yeah, we do have
+[01:01:36] this resources page here. And um I'll go
+[01:01:40] through I think some of these YouTube
+[01:01:41] links are wrong too. So I'll go through
+[01:01:43] I'll add the slides link for today. I'll
+[01:01:44] check all these YouTube links and make
+[01:01:47] sure this is all um all up to date here.
+[01:01:51] Uh so yeah, check out that for all the
+[01:01:53] links. Uh if you haven't registered yet,
+[01:01:55] do register for the series. And most
+[01:01:58] importantly, we have office hours right
+[01:02:00] now in the Discord. So, I know there
+[01:02:02] were probably tons of questions that I
+[01:02:04] didn't answer. Um, because, you know, it
+[01:02:08] was jam-packed today. Uh, so if you have
+[01:02:11] questions about what we talked about
+[01:02:12] today, uh, do come over to the discord.
+[01:02:16] So, I will close up the session here and
+[01:02:19] then jump over to the discord. It's
+[01:02:21] it'll be on the the stage in the foundry
+[01:02:24] discord. Um, this is the link for it.
+[01:02:26] Um, putting in the chat. Uh, we'll put
+[01:02:29] in the chat here as well. do we have in
+[01:02:32] the chat? Let me make sure. And
+[01:02:35] let me get this in the chat. Get this in
+[01:02:37] the chat. Um, here we go.
+[01:02:41] So, I hope to see you all in the Discord
+[01:02:43] or see you tomorrow for adding context
+[01:02:49] and memory to agents.
+[01:02:51] All right. Thank you everyone. See you
+[01:02:53] soon. Bye.
+[01:02:58] >> Thank you Pamela. Thank you Gwen for the
+[01:03:01] supporting the chat with answering the
+[01:03:02] questions and thank you all for joining
+[01:03:05] our session. Uh we are always looking to
+[01:03:08] improve your experience. So if you have
+[01:03:09] any feedback for us, we would love to
+[01:03:11] hear what you have to say. You can find
+[01:03:13] the link to our survey on the screen or
+[01:03:15] in the chat and we'll see you in the
+[01:03:17] next one.

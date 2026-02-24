@@ -1,0 +1,28 @@
+Summary:  
+This video is a comprehensive live session introducing the Microsoft Agent Framework for building AI agents in Python. The presenter, Pamela, covers foundational concepts such as what agents are, tool calling, integrating with MCP servers, using middleware for enhanced functionality, and creating multi-agent architectures. The session also includes practical demonstrations using GitHub Codespaces, running example code, and utilizing a developer UI for testing agents.
+
+Chapters:  
+00:05 - Introduction and Housekeeping  
+00:53 - Overview of Python + Agents Live Stream Series  
+03:16 - Building Your First Agent with Microsoft Agent Framework  
+07:24 - Agents 101: What is an Agent?  
+09:53 - Why Do We Need Agents with Tools?  
+13:43 - Overview of Popular Python AI Agent Frameworks  
+16:07 - Tool Calling Without a Framework  
+19:17 - Tool Calling Flow Explained  
+24:27 - Benefits of Using an Agent Framework  
+25:20 - Installing Microsoft Agent Framework Packages  
+27:20 - Building an Agent with a Single Tool  
+32:56 - Adding Multiple Tools to an Agent  
+38:33 - Introduction to DevUI: Developer UI for Agents  
+43:07 - Integrating Agents with MCP Server Tools  
+45:29 - Running a Local MCP Server Example  
+48:36 - Connecting to Remote MCP Servers  
+50:21 - Challenges with Large MCP Server Definitions and Token Limits  
+53:00 - Agent Middleware: Concepts and Types  
+55:00 - Middleware Implementation Examples  
+56:53 - Use Cases and Benefits of Middleware  
+58:37 - Basic Multi-Agent Architecture with Supervisor and Specialist Agents  
+01:00:36 - Demonstration of Multi-Agent Setup  
+01:01:02 - Final Slides, Resources, and Next Steps  
+01:02:58 - Closing Remarks and Thanks

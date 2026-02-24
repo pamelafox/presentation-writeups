@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "azure-identity",
+    "httpx",
+    "jinja2",
     "openai",
+    "playwright",
     "python-dotenv",
     "pyyaml",
     "rich",

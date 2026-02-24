@@ -1,0 +1,30 @@
+1. Title slide introducing the topic of AI writing tests and questioning if it should be done.
+2. Introduction to Large Language Models (LLMs) as general-purpose language understanding and generation models.
+3. Example of LLMs writing Python tests starting from a testless codebase with a sample prompt.
+4. Example of a test written by GPT-5 for a specific API endpoint, showing partial test coverage results.
+5. Example of a test written by Claude Sonnet 4.5 for the same API endpoint, showing full test coverage results.
+6. Summary table comparing overall test results, coverage, tokens used, and time taken by different LLMs.
+7. Identification of the first problem: LLM-generated tests do not achieve enough coverage.
+8. Explanation of how humans achieve 100% coverage by reviewing coverage reports and prompting LLMs to do the same.
+9. Details of the prompt used to instruct the LLM to generate tests covering all lines of code.
+10. Example of LLM-generated tests failing due to redundant code, fake data, and missing edge cases.
+11. Suggestion to parameterize variables in tests to reduce redundancy, with an example.
+12. Recommendation to use pytest fixtures for common test components, with an example fixture.
+13. Problem of LLMs generating simplistic fake data that does not reflect real-world complexity.
+14. Solution to use the Faker library to generate realistic fake data for tests.
+15. Problem that LLM-generated tests often do not check the full output of API responses.
+16. Solution to use snapshot testing with pytest-snapshot to store and compare full API response outputs.
+17. Questioning if LLMs can achieve 100% coverage, with an example of Sonnet 4.5 reaching 98% and explaining missing edge cases.
+18. Problem that 100% coverage is not enough because tests may miss edge cases and unexpected inputs.
+19. Introduction to property-based testing using Hypothesis to automatically generate a wide range of input cases.
+20. Example of property-based tests for API endpoints using Hypothesis strategies.
+21. Hypothesis test results finding a failure case due to invalid input causing a database error.
+22. Introduction to Schemathesis for generating API tests from OpenAPI specs, including edge cases.
+23. Example of using Schemathesis with pytest to test an API based on its OpenAPI specification.
+24. Introduction to bees as specialists in pollination, highlighting different types of bees and plants they pollinate.
+25. Explanation of the Western Honey Bee as a generalist pollinator and the plants it pollinates.
+26. Explanation of the Yellow-faced Bumble Bee as a specialist pollinator more effective than honey bees for certain plants.
+27. Introduction to the speaker, Pamela Fox, with contact information and affiliations.
+28. Encouragement to use honeybees but also remember specialist bees for effective pollination.
+29. Promotion of iNaturalist and a demo app for finding and identifying native bees.
+30. Final slide encouraging the audience to decide for themselves whether to use LLMs to write tests, emphasizing community inclusivity and responsible use of AI.

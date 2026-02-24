@@ -9,6 +9,7 @@ import base64
 import logging
 import subprocess
 from pathlib import Path
+from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from rich.logging import RichHandler
 
@@ -23,6 +24,341 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+def is_onedrive_url(url: str) -> bool:
+    """Check if URL is a OneDrive sharing link."""
+    return 'onedrive.live.com' in url or '1drv.ms' in url
+
+
+def get_onedrive_download_url(url: str) -> str:
+    """
+    Convert a OneDrive sharing URL to a direct download URL.
+    
+    OneDrive sharing URLs like:
+    https://onedrive.live.com/:p:/g/personal/...
+    
+    Can be converted to download URLs by adding ?download=1
+    
+    Args:
+        url: OneDrive sharing URL
+        
+    Returns:
+        Direct download URL
+    """
+    parsed = urlparse(url)
+    query_params = parse_qs(parsed.query)
+    query_params['download'] = ['1']
+    new_query = urlencode(query_params, doseq=True)
+    return urlunparse(parsed._replace(query=new_query))
+
+
+def convert_pptx_to_pdf(pptx_path: str, output_path: str) -> str:
+    """
+    Convert a PPTX file to PDF using LibreOffice.
+    
+    Requires LibreOffice installed:
+    - macOS: brew install --cask libreoffice
+    - Ubuntu: apt-get install libreoffice
+    
+    Args:
+        pptx_path: Path to the PPTX file
+        output_path: Path for the output PDF file
+        
+    Returns:
+        Path to the generated PDF file
+    """
+    import shutil
+    
+    pptx_path = Path(pptx_path)
+    output_path = Path(output_path)
+    output_dir = output_path.parent
+    
+    # Find LibreOffice binary
+    soffice_paths = [
+        '/Applications/LibreOffice.app/Contents/MacOS/soffice',  # macOS
+        '/usr/bin/soffice',  # Linux
+        '/usr/bin/libreoffice',  # Linux alternative
+        shutil.which('soffice'),  # PATH lookup
+        shutil.which('libreoffice'),  # PATH lookup
+    ]
+    
+    soffice = None
+    for path in soffice_paths:
+        if path and Path(path).exists():
+            soffice = path
+            break
+    
+    if not soffice:
+        raise FileNotFoundError(
+            "LibreOffice not found. Install it:\n"
+            "  macOS: brew install --cask libreoffice\n"
+            "  Ubuntu: apt-get install libreoffice"
+        )
+    
+    logger.info(f"Converting PPTX to PDF using LibreOffice: {soffice}")
+    
+    # LibreOffice outputs to the same directory with .pdf extension
+    cmd = [
+        soffice,
+        '--headless',
+        '--convert-to', 'pdf',
+        '--outdir', str(output_dir),
+        str(pptx_path)
+    ]
+    
+    try:
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        logger.info(f"LibreOffice conversion output: {result.stdout}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"LibreOffice conversion failed: {e.stderr}")
+        raise RuntimeError(f"Failed to convert PPTX to PDF: {e.stderr}")
+    
+    # LibreOffice creates PDF with same base name as input
+    generated_pdf = output_dir / f"{pptx_path.stem}.pdf"
+    
+    if not generated_pdf.exists():
+        raise FileNotFoundError(f"Expected PDF not found: {generated_pdf}")
+    
+    # Rename to the requested output path if different
+    if generated_pdf != output_path:
+        generated_pdf.rename(output_path)
+    
+    logger.info(f"Saved PDF to: {output_path}")
+    return str(output_path)
+
+
+def fetch_slides_from_url(url: str, output_dir: str) -> tuple[str, str | None]:
+    """
+    Fetch slides from a URL, detecting whether it's a PDF, PPTX, or HTML (RevealJS).
+    
+    Supports:
+    - Direct PDF URLs
+    - OneDrive sharing links (PPTX)
+    - RevealJS HTML presentations
+    
+    Args:
+        url: URL of the slides (PDF, PPTX, or RevealJS HTML)
+        output_dir: Directory to save the output files
+        
+    Returns:
+        Tuple of (pdf_path, html_content_path or None)
+    """
+    import httpx
+    
+    output_path = Path(output_dir)
+    pdf_path = output_path / 'slides.pdf'
+    pptx_path = output_path / 'slides.pptx'
+    html_content_path = output_path / 'slides_content.md'
+    
+    # Check if this is a OneDrive URL (needs special handling)
+    if is_onedrive_url(url):
+        download_url = get_onedrive_download_url(url)
+        logger.info(f"Detected OneDrive URL, using download URL: {download_url}")
+        
+        # Download the file
+        response = httpx.get(download_url, follow_redirects=True, timeout=60.0)
+        content_type = response.headers.get('content-type', '').lower()
+        
+        if 'presentationml' in content_type or 'pptx' in content_type:
+            # PPTX file - download and convert
+            logger.info("Detected PPTX, downloading and converting to PDF...")
+            pptx_path.write_bytes(response.content)
+            logger.info(f"Saved PPTX to: {pptx_path}")
+            convert_pptx_to_pdf(str(pptx_path), str(pdf_path))
+            return str(pdf_path), None
+        elif 'application/pdf' in content_type:
+            # Direct PDF
+            logger.info("Detected PDF from OneDrive, downloading...")
+            pdf_path.write_bytes(response.content)
+            logger.info(f"Saved PDF to: {pdf_path}")
+            return str(pdf_path), None
+        else:
+            raise ValueError(f"Unexpected content type from OneDrive: {content_type}")
+    
+    # Make a HEAD request to check content type
+    logger.info(f"Checking content type for: {url}")
+    response = httpx.head(url, follow_redirects=True)
+    content_type = response.headers.get('content-type', '').lower()
+    
+    if 'application/pdf' in content_type:
+        # Direct PDF download
+        logger.info("Detected PDF, downloading directly...")
+        response = httpx.get(url, follow_redirects=True)
+        pdf_path.write_bytes(response.content)
+        logger.info(f"Saved PDF to: {pdf_path}")
+        return str(pdf_path), None
+    elif 'presentationml' in content_type or 'pptx' in content_type:
+        # PPTX file - download and convert
+        logger.info("Detected PPTX, downloading and converting to PDF...")
+        response = httpx.get(url, follow_redirects=True)
+        pptx_path.write_bytes(response.content)
+        logger.info(f"Saved PPTX to: {pptx_path}")
+        convert_pptx_to_pdf(str(pptx_path), str(pdf_path))
+        return str(pdf_path), None
+    elif 'text/html' in content_type:
+        # HTML - assume RevealJS
+        logger.info("Detected HTML, treating as RevealJS presentation...")
+        fetch_revealjs_pdf(url, str(pdf_path))
+        extract_revealjs_content(url, str(html_content_path))
+        return str(pdf_path), str(html_content_path)
+    else:
+        # Unknown - try RevealJS approach
+        logger.warning(f"Unknown content type '{content_type}', attempting RevealJS fetch...")
+        fetch_revealjs_pdf(url, str(pdf_path))
+        return str(pdf_path), None
+
+
+def extract_revealjs_content(url: str, output_path: str) -> str:
+    """
+    Extract text content and links from RevealJS slides.
+    
+    Detects section slides (class="heading") to indicate hierarchy.
+    
+    Args:
+        url: URL of the RevealJS presentation
+        output_path: Path to save the extracted content
+        
+    Returns:
+        Path to the saved content file
+    """
+    import httpx
+    from html.parser import HTMLParser
+    
+    logger.info(f"Extracting RevealJS slide content from: {url}")
+    
+    response = httpx.get(url, follow_redirects=True)
+    html = response.text
+    
+    # Simple parser to extract slide content
+    class SlideExtractor(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.slides = []
+            self.current_slide = []
+            self.in_slides = False
+            self.in_section = False
+            self.is_heading_slide = False
+            self.section_depth = 0
+            self.current_tag = None
+            self.links = []
+            
+        def handle_starttag(self, tag, attrs):
+            attrs_dict = dict(attrs)
+            self.current_tag = tag
+            
+            if tag == 'div' and 'slides' in attrs_dict.get('class', ''):
+                self.in_slides = True
+            elif tag == 'section' and self.in_slides:
+                if self.section_depth == 0:
+                    self.in_section = True
+                    self.current_slide = []
+                    self.links = []
+                    # Check if this is a heading/section slide
+                    classes = attrs_dict.get('class', '')
+                    self.is_heading_slide = 'heading' in classes
+                self.section_depth += 1
+            elif tag == 'a' and self.in_section:
+                href = attrs_dict.get('href', '')
+                if href and not href.startswith('#'):
+                    self.links.append(href)
+            elif tag == 'img' and self.in_section:
+                alt = attrs_dict.get('alt', '')
+                if alt:
+                    self.current_slide.append(f"[Image: {alt}]")
+                    
+        def handle_endtag(self, tag):
+            if tag == 'section' and self.in_slides:
+                self.section_depth -= 1
+                if self.section_depth == 0 and self.in_section:
+                    self.in_section = False
+                    slide_content = ' '.join(self.current_slide).strip()
+                    if slide_content or self.links:
+                        self.slides.append({
+                            'content': slide_content,
+                            'links': self.links.copy(),
+                            'is_heading': self.is_heading_slide
+                        })
+                    self.is_heading_slide = False
+            elif tag == 'div':
+                # Could be end of slides div, but we don't track that precisely
+                pass
+                
+        def handle_data(self, data):
+            if self.in_section:
+                text = data.strip()
+                if text:
+                    self.current_slide.append(text)
+    
+    parser = SlideExtractor()
+    parser.feed(html)
+    
+    # Format output
+    lines = ["# RevealJS Slide Content\n"]
+    for i, slide in enumerate(parser.slides, 1):
+        slide_type = "SECTION HEADING" if slide['is_heading'] else "Slide"
+        lines.append(f"## {slide_type} {i}\n")
+        if slide['content']:
+            lines.append(slide['content'])
+            lines.append("")
+        if slide['links']:
+            lines.append("**Links:**")
+            for link in slide['links']:
+                lines.append(f"- {link}")
+            lines.append("")
+    
+    content = '\n'.join(lines)
+    Path(output_path).write_text(content)
+    logger.info(f"Saved slide content to: {output_path}")
+    return output_path
+
+
+def fetch_revealjs_pdf(url: str, output_path: str) -> str:
+    """
+    Fetch a RevealJS presentation as PDF using Playwright.
+    
+    Appends ?print-pdf to the URL and uses the browser's print-to-PDF feature.
+    
+    Args:
+        url: URL of the RevealJS presentation
+        output_path: Path to save the PDF file
+        
+    Returns:
+        Path to the saved PDF file
+    """
+    from playwright.sync_api import sync_playwright
+    
+    # Add ?print-pdf to the URL
+    parsed = urlparse(url)
+    query_params = parse_qs(parsed.query)
+    query_params['print-pdf'] = ['']
+    new_query = urlencode(query_params, doseq=True).replace('print-pdf=', 'print-pdf')
+    print_url = urlunparse(parsed._replace(query=new_query))
+    
+    logger.info(f"Fetching RevealJS PDF from: {print_url}")
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        
+        # Load the page and wait for RevealJS to render
+        page.goto(print_url, wait_until='networkidle')
+        
+        # Wait a bit more for any animations/transitions
+        page.wait_for_timeout(2000)
+        
+        # Save as PDF with print settings optimized for slides
+        page.pdf(
+            path=output_path,
+            format='Letter',
+            print_background=True,
+            prefer_css_page_size=True,
+        )
+        
+        browser.close()
+    
+    logger.info(f"Saved PDF to: {output_path}")
+    return output_path
 
 
 def pdf2imgs(pdf_path: str, output_dir: str = ".", prefix: str = "slide") -> list[str]:
@@ -152,25 +488,72 @@ def gather_urls(urls: list[str]) -> str:
     return "<examples>\n" + "\n\n".join(examples) + "\n</examples>"
 
 
-def outline_slides(slide_path: str, image_dir: str) -> str:
+def outline_slides(slide_path: str, image_dir: str, max_images_per_request: int = 50) -> str:
     """
     Generate a numbered outline of slides with one-sentence summaries.
     
     Args:
         slide_path: Path to the PDF file
         image_dir: Directory containing slide images (already converted)
+        max_images_per_request: Maximum images per LLM request (default: 50)
         
     Returns:
         Numbered list of slides with summaries
     """
     # Get slide images from image_dir (assumes pdf2imgs was already called)
     image_path = Path(image_dir)
-    image_files = sorted(image_path.glob("slide_*.png"))
+    image_files = sorted(image_path.glob("slide_*.png"), key=lambda x: int(x.stem.split("_")[-1]))
     
     if not image_files:
         raise ValueError(f"No slide images found in {image_dir}. Run pdf2imgs first.")
     
-    # Build content with all slide images
+    # If we have more images than the limit, batch them
+    if len(image_files) > max_images_per_request:
+        logger.info(f"Batching {len(image_files)} slides into multiple requests (max {max_images_per_request} per request)")
+        all_outlines = []
+        
+        for batch_start in range(0, len(image_files), max_images_per_request):
+            batch_end = min(batch_start + max_images_per_request, len(image_files))
+            batch_files = image_files[batch_start:batch_end]
+            start_num = batch_start + 1
+            end_num = batch_end
+            
+            logger.info(f"Processing slides {start_num}-{end_num}...")
+            
+            content = [
+                {
+                    "type": "text",
+                    "text": f"Provide a numbered list of each slide with a one sentence summary of each. These are slides {start_num} through {end_num}. Start numbering at {start_num}. Just a numbered list please, no other asides or meta explanations of the task are required."
+                }
+            ]
+            
+            for img_path in batch_files:
+                img_bytes = img_path.read_bytes()
+                img_base64 = base64.b64encode(img_bytes).decode('utf-8')
+                content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{img_base64}"
+                    }
+                })
+            
+            messages = [
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that analyzes presentation slides."
+                },
+                {
+                    "role": "user",
+                    "content": content
+                }
+            ]
+            
+            batch_outline = chat_completion(messages, temperature=0.3)
+            all_outlines.append(batch_outline)
+        
+        return "\n".join(all_outlines)
+    
+    # Single request for <= max_images_per_request slides
     content = [
         {
             "type": "text",
@@ -242,6 +625,7 @@ def generate_annotated_talk_post(
     video_source: str,
     output_dir: str,
     transcript_path: str | None = None,
+    slides_html_content_path: str | None = None,
     user_prompt: str | None = None,
 ) -> str:
     """
@@ -260,6 +644,7 @@ def generate_annotated_talk_post(
         video_source: YouTube URL or path to local MP4
         output_dir: Directory to save all generated outputs
         transcript_path: Optional path to pre-made transcript (in source folder)
+        slides_html_content_path: Optional path to extracted HTML content from RevealJS
         user_prompt: Additional context/instructions
         
     Returns:
@@ -274,8 +659,11 @@ def generate_annotated_talk_post(
     outline_file = output_path / "outline.txt"
     transcript_file = output_path / "transcript.txt"
     
-    # Check if video_source is a local MP4 or YouTube URL
-    is_local_video = Path(video_source).exists() and Path(video_source).suffix.lower() == '.mp4'
+    # Load HTML content if available
+    slides_html_content = None
+    if slides_html_content_path and Path(slides_html_content_path).exists():
+        slides_html_content = Path(slides_html_content_path).read_text()
+        logger.info(f"Loaded slide HTML content from {slides_html_content_path}")
     
     # Generate or load video chapters
     if chapters_file.exists():
@@ -321,108 +709,29 @@ def generate_annotated_talk_post(
         transcript_file.write_text(transcript)
         logger.info(f"Saved transcript to {transcript_file}")
     
-    # Build the prompt
-    if is_local_video:
-        timestamp_note = "Note: For local MP4 files, timestamps cannot be linked directly. Just provide the timestamp in [MM:SS] format."
-    else:
-        timestamp_note = f"Additionally, reference the correct timestamp in the form of a timestamped linked to the youtube video that corresponds to the start of each slide. The link to this presentation is {video_source} (so use this when adding timestamps please)."
+    # Check if we have section headings from RevealJS
+    has_section_headings = slides_html_content and "SECTION HEADING" in slides_html_content
     
-    prompt = f"""Attached is the transcript (in <transcript> tags) of a technical talk. Create an annotated blog post that explains the content of each slide.
-
-STRUCTURE REQUIREMENTS:
-1. Start with a level-1 heading (#) containing the talk title
-2. Follow with an overview paragraph introducing the talk (e.g., "This talk introduces...")
-3. Do NOT include a table of contents - it will be generated automatically
-4. For each slide, create a section with:
-   - A level-2 heading (##) with a descriptive title for that slide's content
-   - The slide image reference immediately after the heading
-   - A timestamp link to the video
-   - The explanatory text
-5. End with a "## Q&A" section containing questions and answers from the talk, each question as a level-3 heading (###)
-
-HEADING CAPITALIZATION: Capitalize the first letter of headings like a normal sentence. Only capitalize proper nouns (product names, acronyms) elsewhere.
-- CORRECT: "Hybrid search combines keyword and vector retrieval"
-- CORRECT: "How Azure AI Search handles embeddings"
-- CORRECT: "Introduction to RAG architecture"
-- WRONG: "hybrid search combines keyword and vector retrieval" (missing capital)
-- WRONG: "Hybrid Search Combines Keyword And Vector Retrieval" (title case)
-
-Example structure:
-
-# Building intelligent agents with RAG
-
-This talk introduces techniques for building AI agents using retrieval-augmented generation...
-
-## Hybrid search combines multiple retrieval methods
-
-![Diagram showing hybrid search architecture](slide_images/slide_8.png)
-[Watch from 04:12](https://www.youtube.com/watch?v=VIDEO_ID&t=252s)
-
-Hybrid search combines keyword search and vector search to leverage the strengths of both...
-
-## Understanding the Azure AI Search architecture
-
-![Azure AI Search overview](slide_images/slide_9.png)
-[Watch from 05:30](https://www.youtube.com/watch?v=VIDEO_ID&t=330s)
-
-Azure AI Search provides enterprise-grade vector search capabilities...
-
-## Q&A
-
-### How do I configure specific indexes as knowledge sources?
-
-Answer text here...
-
----
-
-For each slide, provide a detailed synopsis of the information to maximize understanding for the reader. Each section should provide enough commentary and info to understand the full context of that particular slide. The idea is that the reader will not have to watch the video and can instead read the material, so the writing + slide should stand alone. Do not simply repeat the information on each slide. Capture supplementary information from the talk that is NOT visible on the slides. Be thoroughly detailed and capture useful asides or commentary as well, such that the notes you generate should be a legitimate value add on top of the slides.
-
-IMPORTANT: Write in an expository style that directly explains the concepts. Do NOT narrate what the speakers said or did (e.g., avoid "Matt explains that..." or "She describes..."). Instead, directly state the information (e.g., "RAG is a technique that..." or "Hybrid search combines...").
-
-Note that images for this post will be placed in slide_images/
-
-Refer to slides with naming convention (slide_1.png, slide_2.png, etc)
-
-{timestamp_note}
-
-The Q&A section is REQUIRED if there is any question-and-answer discussion in the transcript. Include timestamps for each question if possible.
-
-<transcript>
-{transcript}
-</transcript>
-
-Here is the video description with chapters from the talk. Use timestamps from the transcript when constructing timestamped links.
-<video-chapters>
-{video_chapters}
-</video-chapters>
-
-Below is a brief slide outline:
-<slide-outline>
-{slide_outline}
-</slide-outline>
-
-Writing guidelines:
-
-1. Write in direct expository style. State facts and explanations directly.
-2. Never narrate what speakers said or did. No "The speaker explains..." or "Matt shows..."
-3. Make every sentence information-dense without repetition.
-4. Get to the point while providing necessary context.
-5. Use short words and fewer words.
-6. Avoid multiple examples if one suffices.
-7. Remove sentences that restate the premise.
-8. Cut transitional fluff like "This is important because…"
-9. Combine related ideas into single statements.
-10. Avoid overusing bullet points. Prefer flowing prose.
-11. Trust the reader's intelligence.
-12. Use direct statements. Avoid hedge words unless exceptions matter.
-13. No emojis in professional writing.
-14. Use simple language. Present information objectively.
-15. Capitalize headings like sentences: first letter uppercase, then lowercase except for proper nouns.
-
-Please go ahead and draft the post."""
-
-    if user_prompt:
-        prompt += f"\n\nAdditional context/instructions from the user:\n{user_prompt}"
+    # Check if video_source is a local MP4 or YouTube URL
+    is_local_video = Path(video_source).exists() and Path(video_source).suffix.lower() == '.mp4'
+    
+    # Load and render the prompt template
+    from jinja2 import Environment, FileSystemLoader
+    
+    template_dir = Path(__file__).parent
+    env = Environment(loader=FileSystemLoader(template_dir), trim_blocks=True, lstrip_blocks=True)
+    template = env.get_template("writeup_prompt.jinja2")
+    
+    prompt = template.render(
+        has_section_headings=has_section_headings,
+        is_local_video=is_local_video,
+        video_source=video_source,
+        transcript=transcript,
+        video_chapters=video_chapters,
+        slide_outline=slide_outline,
+        slides_html_content=slides_html_content,
+        user_prompt=user_prompt,
+    )
     
     logger.info("Generating annotated write-up (this may take a while)...")
     messages = [
