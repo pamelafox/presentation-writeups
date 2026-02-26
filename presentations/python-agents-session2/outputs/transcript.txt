@@ -1,0 +1,1665 @@
+[00:05] Hello everyone. Thank you for joining
+[00:07] our live session today and welcome to
+[00:10] the s the second session in the Python
+[00:13] and agent series. My name is Lissa
+[00:15] Maniva planner at reenter joining you
+[00:17] from Brazil. Before we start, I have
+[00:20] some quick housekeeping. Please take a
+[00:23] moment to read our code of conduct. We
+[00:25] seek to provide a respectful environment
+[00:27] for both our audience and presenters.
+[00:30] While we absolutely encourage engagement
+[00:32] in the chat, we ask that you please be
+[00:33] mindful of your commentary. Remain
+[00:35] professional and on topic.
+[00:38] The session is being recorded and will
+[00:40] be available to view on demand here on
+[00:42] the Reactor YouTube channel within 48
+[00:45] hours. Keep an eye on the chat. We'll be
+[00:47] dropping helpful links and checking for
+[00:49] questions for our presenters to answer.
+[00:52] I'll now turn it over to our speaker for
+[00:54] today. Thank you and welcome Pamela.
+[00:58] >> Hello. Hello. Welcome everyone to our
+[01:00] Python plus agent series. This is a
+[01:03] six-part series where we are learning
+[01:05] how to build agents using the Microsoft
+[01:07] agent framework. Uh so we're doing this
+[01:10] series over two weeks. If you haven't
+[01:12] registered yet, you can still register
+[01:14] and that way you'll get emails and
+[01:15] notifications about the upcoming
+[01:17] sessions and links afterwards for them.
+[01:20] uh we are in the second session of the
+[01:23] series so we still have lots to learn.
+[01:27] So for today's topic we are going to
+[01:30] discuss how we can add context and
+[01:32] memory to our agents which is going to
+[01:35] make them more powerful and you know
+[01:37] smarter because they're remembering
+[01:39] things and more capable.
+[01:42] So we're going to be talking about you
+[01:44] know first what is this word context? It
+[01:46] means a lot of things in a lot of
+[01:48] situations. It is context dependent.
+[01:51] That's a joke someone came up with in
+[01:53] our office hours yesterday. So we're
+[01:55] going to talk about that generally.
+[01:56] We're going to dig into memory,
+[01:58] different kinds of memory, and then talk
+[02:00] about knowledge providers for RAG, and
+[02:03] then go over context management
+[02:04] techniques. Uh we do have a lot to cover
+[02:07] today. Uh it is going to be jam-packed
+[02:10] and we're going to try and squeeze it
+[02:11] all in. If there are questions that we
+[02:14] don't answer during the session, we do
+[02:16] have office hours right after in the
+[02:18] discord. So, please, you know, save
+[02:20] your, you know, any questions that don't
+[02:22] get answered in the chat, save them for
+[02:24] office hours and we'll answer them
+[02:26] there.
+[02:28] So, if you'd like to follow along, we
+[02:30] have created this repo that has all the
+[02:33] examples and uh the majority of them you
+[02:36] can run for free in GitHub code spaces.
+[02:39] So, what you want to do is visit this
+[02:42] repo and we're going to put this URL in
+[02:45] the chat and in the banner so you can uh
+[02:49] you can go get to this URL. So, you're
+[02:51] going to go to this this repo here and
+[02:54] you're going to create a GitHub code
+[02:56] space. Uh so, I'll show you what that
+[02:59] looks like. When you're over here,
+[03:02] you're going to click on the code button
+[03:05] and then you're going to see a big old
+[03:08] mount. I don't have the button here
+[03:09] because I already made my code space,
+[03:10] but you'll see a big button here that
+[03:11] says create code space on main. And
+[03:13] you're going to click that and make the
+[03:15] code space. And that is going to open up
+[03:18] a browser uh tab with a VS Code in the
+[03:22] browser that has all the files and the
+[03:25] environment set up.
+[03:27] Now, if you already actually for
+[03:29] everyone, I'm going to recommend that
+[03:30] once the code space starts up and
+[03:32] everything's looking good, I do want you
+[03:35] to run git pull just to make sure that
+[03:38] you have the very latest changes. I
+[03:40] actually already ran it here, so it got
+[03:41] it. Um, we noticed that the code space
+[03:44] is uh it's like a little out of date.
+[03:46] It's got some of the older files and we
+[03:49] did make a few improvements to today's
+[03:51] examples. So once you have it all
+[03:53] started, just run that gitpool just to
+[03:55] make sure you have the very latest
+[03:57] files. Right? So here's our
+[03:58] instructions. You're going to open the
+[04:00] repo, create a code space, wait a few
+[04:02] minutes for it to start up, and then get
+[04:04] pull to get the latest changes.
+[04:07] All right? And if you have any issues or
+[04:09] questions with that, uh, do post in the
+[04:11] chat and, uh, hopefully my colleague
+[04:13] Gwen can help out with technical
+[04:16] problems. You can also do it locally,
+[04:19] but if you do it locally, you're going
+[04:20] to have to read that readme in order to
+[04:22] configure uh connections to models. So,
+[04:24] it is much easier to do it in the code
+[04:26] space.
+[04:28] All right, so let's get into it. We're
+[04:31] going to start with a recap because
+[04:33] yesterday we talked about agents and how
+[04:35] to build an agent. If you missed
+[04:36] yesterday, you can still watch that
+[04:38] later. But basically, what is an agent?
+[04:40] It is a it you know it's an AI agent
+[04:44] uses an LLM to run tools in a loop in
+[04:47] order to achieve a goal. So yesterday we
+[04:50] saw many examples of agents using tools
+[04:52] like local functions also agents using
+[04:54] tools from MCP servers uh you know
+[04:57] agents using one tool three tools five
+[04:59] tools right and basically the agent
+[05:02] decides which of those tools it's going
+[05:04] to call uh in order to get the answer
+[05:07] that it needs. So that is the basic
+[05:10] agent and an agent on its own with the
+[05:12] right tools is very very powerful.
+[05:15] Right? However, what we're going to see
+[05:17] today is that we can improve agents by
+[05:20] giving them even more context to help
+[05:23] them answer the questions. Right? So we
+[05:26] different kinds of context. Uh one kind
+[05:28] of context is knowledge. If we're
+[05:30] building the agent that's already
+[05:31] operating a certain domain, we can
+[05:33] either give them tools for that domain
+[05:36] or we can just always equip them um with
+[05:39] knowledge pulled from that domain. So,
+[05:41] we're going to see today uh ways of
+[05:43] providing knowledge that aren't just
+[05:46] about tools. Uh then there's also
+[05:48] memory. So, that giving the agent the
+[05:50] ability to remember things that the user
+[05:52] said before both in the current
+[05:55] conversation and in past conversations.
+[05:58] So, we're going to see actually three
+[05:59] different kinds of memory today. Uh, and
+[06:02] that can make the the agent seem like
+[06:04] it's learning. It's not ex really
+[06:07] learning. It's remembering, but it it
+[06:09] will feel a bit like it's learning, like
+[06:11] at least that it's learning about you
+[06:12] and your preferences. And that's really
+[06:14] helpful, right? And then humans can also
+[06:17] provide more context. We're going to
+[06:18] talk about that more next week when we
+[06:20] bring humans into the loop.
+[06:22] Um, so, so here we go. So, what is
+[06:26] context?
+[06:28] And I think there's many definitions of
+[06:30] context out here, but what I went with
+[06:32] is that context is everything.
+[06:35] So I say that the context to an agent is
+[06:38] all the inputs that help the agent
+[06:40] decide what action it will take next and
+[06:44] how it will respond. Right? So really
+[06:46] the context is everything getting sent
+[06:49] to the agent, right? And everything
+[06:51] includes a lot of different things,
+[06:53] right? So you know at the very top we
+[06:54] have our system prompt, right? This one
+[06:56] is you're a friendly weather assistant,
+[06:58] right? So that's like our standard
+[07:00] system prompt, right? Then we can have
+[07:03] environment information, right? So a
+[07:05] really helpful thing to tell all your
+[07:06] agents is what is today's date. It can
+[07:08] be so much so much more helpful when it
+[07:11] knows today's date instead of thinking
+[07:13] that the date is, you know, whatever it
+[07:15] was trained with. Uh right like you know
+[07:17] it's it's training cut off, right? So
+[07:19] environment information today's date is
+[07:21] this you are you know you're you're on a
+[07:23] Mac machine, right? like whatever sort
+[07:25] of information you can give about the
+[07:26] environment, you can put that in there.
+[07:28] And then domain specific knowledge,
+[07:30] right? This is a weather assistant. It
+[07:32] might always need to know that, oh my
+[07:34] god, there's like a huge earthquake
+[07:35] going on in Japan, right? That that
+[07:37] might be the kind of knowledge you want
+[07:38] to just put in that initial message uh
+[07:41] because it's just so relevant that it
+[07:43] needs to always be there, right? So
+[07:45] domain specific knowledge that you want
+[07:46] always to be there. Then we have
+[07:49] memories from previous conversations.
+[07:51] Hey, by the way, the current user you're
+[07:53] talking to lives in California, right?
+[07:55] That's something that it learned about
+[07:56] the user from a previous conversation
+[07:58] and it can use that to personalize the
+[08:00] current conversation.
+[08:02] Uh then finally we have this com like
+[08:05] you know that's that all gets stuffed
+[08:07] into the system message right and then
+[08:10] finally you're you know it's actually
+[08:12] the agent is having the conversation
+[08:13] with the user right the user asks a
+[08:15] question it the LM answers and maybe it
+[08:18] answers with a tool call maybe it
+[08:19] answers with actual natural language
+[08:21] test text and that entire you know
+[08:24] conversation is also part of the context
+[08:27] right so you know all of this
+[08:30] information is what gets sent to the LM
+[08:33] and helps the LM do a better job
+[08:36] answering the user's questions and
+[08:38] achieving the goal.
+[08:40] So, we're going to look at uh how how we
+[08:44] can provide all these kinds of context
+[08:46] today.
+[08:48] We're going to start with memory uh
+[08:52] which is actually a it's a big topic and
+[08:54] also has a lot of definitions. Um so,
+[08:57] this is the way that I like to think of
+[09:00] memory, right? So first we have the
+[09:02] simplest kind of memory which is can the
+[09:04] LLM even remember the past messages in
+[09:07] the thread. uh you know and and this
+[09:10] sounds simple but it actually does
+[09:11] require some coding in order to make
+[09:14] sure that the LM is seeing past messages
+[09:16] in the thread and and that is important
+[09:18] right if it if a user is having a
+[09:20] conversation with the LM they want the
+[09:22] conver the LM to know about what they've
+[09:25] talked about in the past right um so
+[09:28] that's just remembering all the messages
+[09:29] and tool calls that went out a lot of
+[09:31] times this is stored purely in memory um
+[09:33] but it can also be persisted to a
+[09:35] database as as part of like a chat
+[09:36] history and sometimes you may want to uh
+[09:40] have truncation or summarization if a
+[09:42] thread gets really really long, right?
+[09:44] You're having this like hour-long
+[09:46] conversation with the LM and you're just
+[09:49] giving it so much information that it
+[09:51] can't fit all in its context window,
+[09:54] then you know you're going to have to do
+[09:55] some truncation of that of that thread.
+[09:58] And we will look at truncation
+[10:00] techniques uh later today.
+[10:05] The next step of memory is can the
+[10:07] application remember past conversations.
+[10:10] So this isn't as much about the LLM, but
+[10:12] this is just when you're designing an a
+[10:13] userfacing application where a user can
+[10:16] chat with an agent. Uh they do expect
+[10:20] that app to have chat history, right? so
+[10:23] that if they had a conversation
+[10:24] yesterday, they can go back and find
+[10:27] that conversation and they could like
+[10:29] renew a conversation that they were
+[10:31] having, you know, the week before,
+[10:33] right? Um, and so that kind of ties into
+[10:35] this is that you want to be able to like
+[10:37] find your previous thread and then keep
+[10:39] adding on to that thread, right? Like
+[10:41] I've got some long running threads with
+[10:43] um with like chat GBT where I will
+[10:46] revisit them once a week and just add a
+[10:48] new message to the thread, right? So
+[10:49] these two are very much related where
+[10:51] you you know you want to be able to um
+[10:54] remember a session in a chat history and
+[10:56] then keep building on that session too.
+[10:58] So you're going to like take it from
+[10:59] your database, load into memory and keep
+[11:01] building on it. And so that you're going
+[11:03] to want to store in some sort of
+[11:04] database.
+[11:06] And then finally, the really interesting
+[11:08] kind of memory is can the LM remember
+[11:12] facts? I'll call them facts. facts,
+[11:14] preferences, you know, important things
+[11:16] from past conversations that would
+[11:18] affect, you know, future actions, right?
+[11:21] So, I call this dynamic memory. This
+[11:23] would need to be stored in a persistent
+[11:25] database because it's be remembering
+[11:27] this over time. And you often want some
+[11:30] ability to search through the memories
+[11:32] if if you're accumulating quite a bit of
+[11:34] memories, right? Um, but a very at the
+[11:37] very minimum, you need a way to retrieve
+[11:38] retrieve those memories, right? So we
+[11:41] have these three kinds of memory here
+[11:46] and now we're going to see how we can
+[11:48] actually implement these three kinds of
+[11:50] memory using agent framework.
+[11:55] So first we'll talk about the simplest
+[11:56] which is just remembering the current
+[11:58] conversation. Right? So here we've got
+[12:00] the agent. The agent is answering a
+[12:03] user's question using a bunch of tools
+[12:05] and then coming up with a response.
+[12:07] Right? So we've got the system prompt.
+[12:09] The user asks a question. LM makes a
+[12:11] tool call, gets a response. LM makes a
+[12:13] tool call or LM gives an answer. The
+[12:16] user asks another question. We get
+[12:18] another tool call, another response, and
+[12:20] the LM answers. Right? So, we want to
+[12:23] store all of this in a session's memory
+[12:27] so that the LM remembers everything that
+[12:30] happened, right? All the tool calls, all
+[12:32] the responses, and all the user
+[12:33] inquiries.
+[12:35] So the way we can do that in agent
+[12:37] framework is we're using the concept of
+[12:40] a session. Okay. So what we do is we say
+[12:43] you know when a user starting up a new
+[12:45] session we're going to use agent.create
+[12:48] session and that creates a session that
+[12:50] has a unique ID and then whenever we run
+[12:53] that agent with input from the user
+[12:56] we're just going to pass in that same
+[12:58] session. Right? So let's go ahead and
+[13:02] try that out. So I'm going to go and
+[13:06] open this one agent session
+[13:09] and uh just look down
+[13:13] uh here. So this one actually we have a
+[13:15] few examples in in this code here. So
+[13:18] first we have an example without a
+[13:19] session to prove to you that in fact you
+[13:22] can do it without a session and it's
+[13:23] going to be weird, right? So if we just
+[13:25] say.run run and we do not pass in a
+[13:28] session and the first the user asked
+[13:30] like oh what's the weather like in
+[13:31] Seattle and then asked what was the last
+[13:33] city I asked about the agent will have
+[13:36] forgotten uh so we can uh see that let
+[13:40] me actually just comment out these two
+[13:44] in comparison
+[13:47] uh so that we can see what it's like
+[13:50] without a session and really motivate
+[13:53] the the fact that we do want to be using
+[13:55] this concept cept of of sessions and
+[13:59] this is an you know another reason why
+[14:00] we use agent frameworks is that you know
+[14:02] they have built in this idea of threads
+[14:05] sessions um you know otherwise you have
+[14:08] to code this up yourself
+[14:11] all right so the user asks um what's the
+[14:14] weather like in Seattle the tool this is
+[14:16] the tool call here and now the agent
+[14:18] replies the user asks okay what was the
+[14:20] last city I asked about and then the
+[14:23] agent says I don't see an earlier city
+[14:25] right and this is a horrible user
+[14:26] experience, right? The user is like,
+[14:28] "What the heck? What happened? You
+[14:30] forgot." Right? Uh I've had that
+[14:32] experience with a few agents where I'm
+[14:33] like, "Ah, it's just so frustrating." So
+[14:36] now the next thing we can do is create a
+[14:38] session. So we're going to say create
+[14:39] session. And now this time we're going
+[14:41] to pass that session into both of these
+[14:43] calls, right? Uh so this time we should
+[14:46] see that it is going to remember, you
+[14:51] know, what it's talking about, right?
+[14:52] Because here the follow-up question is,
+[14:54] oh, how about London? And they haven't
+[14:56] really given any context. Like they're
+[14:57] just it's just a follow-up question. How
+[14:59] about London? But it knows, it's going
+[15:00] to know that we're talking about what's
+[15:02] the weather like, right? Because it's
+[15:03] going to see that that um the previous
+[15:06] question was about weather, right? And
+[15:08] then I ask, oh, which of these cities
+[15:09] has better weather? And that's really
+[15:11] showing that it knows what we're talking
+[15:13] about. It says, oh, both are cloudy, but
+[15:14] Tokyo is warm. London is cool. Blah blah
+[15:17] blah. Right? So it definitely has seen
+[15:20] um the past history. Now what's really
+[15:23] interesting is that you could actually
+[15:25] share a session across agents, right? So
+[15:28] um you know the session is actually it's
+[15:30] a conversation history. It's it's not
+[15:32] necessarily tied to the agent. So if you
+[15:34] want you can create a session then
+[15:36] create another agent and you can pass
+[15:39] that session to the other agent. So
+[15:41] there is portability of of sessions
+[15:43] here. So that's uh this final example
+[15:46] here.
+[15:48] And and this is also just helps you know
+[15:50] you to realize that sessions can be
+[15:52] restored right sessions are portable
+[15:54] sessions can be restored you know once
+[15:56] you have this concept of a session as
+[15:58] long as it can be serialized and
+[16:00] deserialized then you can restore it and
+[16:03] use it um across you know uh you know
+[16:06] multiple days and even across different
+[16:08] agents right
+[16:10] so there we go so that is the idea of um
+[16:15] you know of sessions
+[16:18] So that brings us to the next concept
+[16:22] which is persistent chat history. How
+[16:25] does the application remember those
+[16:27] sessions over time so the user can you
+[16:30] know find find a list of their previous
+[16:32] sessions and potentially even you know
+[16:35] uh keep building on a past session.
+[16:38] >> Uh so what's that going to look like?
+[16:39] Okay, we have this session. We need a
+[16:41] way of storing that session in a
+[16:43] database, right? So if whatever database
+[16:45] we pick, we're going to have to decide
+[16:47] for that database h you know how are we
+[16:49] going to identify each session? How are
+[16:51] we going to store the messages? Right?
+[16:53] We could store the entire thread in a
+[16:54] single row. We might split the thread up
+[16:56] over multiple rows depending on database
+[16:58] constraints. Right? So that's just what
+[17:00] you have to figure out for your
+[17:01] particular database. You know like will
+[17:03] entire threads fit in one row? Like
+[17:05] what's the maximum size of your doc um
+[17:06] database? How do you tie the sessions to
+[17:09] users? You want to be really careful
+[17:10] about um you know user privacy and not
+[17:13] uh leaking things across users and
+[17:14] making sure um you know identifiers are
+[17:17] unique. And then you also want to think
+[17:18] about whether you're going to want to
+[17:20] search those sessions, right? If you
+[17:21] want to be able to search those
+[17:22] sessions, well then you want to stick
+[17:23] them in a database that supports search,
+[17:26] right?
+[17:27] So the first example we're going to look
+[17:29] at is um a simple storage using Reddus
+[17:34] as the um as the history store. uh
+[17:39] history storage mechanism. And this is
+[17:40] something that actually has built-in
+[17:42] support in agent framework. So that's
+[17:44] why we're starting with it. And for
+[17:45] this, we're gonna be pretty simple about
+[17:47] it and say here's the key. It's going to
+[17:50] the key is just per each session and the
+[17:52] value is the entire
+[17:54] uh list of messages and we're storing
+[17:56] this list type in Reddus.
+[17:59] So in order to do that, we can use the
+[18:02] built-in history provider. That's what
+[18:04] agent framework calls it is a history
+[18:06] provided. So, we're going to build it.
+[18:08] Use that built-in Reddis history
+[18:09] provider. We point it at our local
+[18:12] Reddus and uh give it a little ID just
+[18:16] to identify it. And then here, the
+[18:19] crucial thing is when we make this
+[18:21] agent, we're going to say context
+[18:22] providers and pass in a list. And one of
+[18:25] those providers is a history provider.
+[18:28] Okay? So, we're going to see this
+[18:29] context provider used quite a bit over
+[18:32] today. Um, but this is our first time
+[18:34] seeing it with providing the uh chat
+[18:38] history.
+[18:39] And then when we create a session, uh,
+[18:42] we're going to make sure that session
+[18:43] has a unique ID so that it's unique
+[18:46] across all of our sessions.
+[18:51] So, let's go ahead and check out that
+[18:53] example. It is agent history.
+[18:58] Um, and we're going to try it out. Agent
+[19:04] history
+[19:06] reddus. py. So I say ub run examples
+[19:10] agent history reddus
+[19:13] and uh it's going to create the session
+[19:16] ID
+[19:18] set up the context provider here with
+[19:20] reddis provider. Create that session
+[19:22] with that session ID.
+[19:25] Pass that in to these agents. And then
+[19:28] we also do a simulated restart where we
+[19:30] recreate the history writer and recreate
+[19:32] the agent and verify that we can resume
+[19:34] it. Right? So if we look back here, you
+[19:37] know, we say what's the weather like?
+[19:39] How about Paris? Okay. And then we
+[19:42] completely restart, create a new
+[19:44] history, you know, a new instance of our
+[19:45] history provider and our agents and I
+[19:47] say, oh, which of the cities I asked
+[19:48] about had better weather? And it
+[19:50] completely remembers, right? It is
+[19:52] actually restarting that that
+[19:55] conversation, right? All we had to do
+[19:58] was pass in the, you know, the the same
+[20:01] session ID from before. So those session
+[20:03] IDs are really important because those
+[20:05] are being used for your history provider
+[20:09] and are being used when you say, "Hey,
+[20:11] this is the session we're using." So if
+[20:13] you want to renew a session uh based off
+[20:16] of something in your history, you want
+[20:18] to remember that session ID.
+[20:21] Um so great, it was able to resume it.
+[20:23] We can also go ahead. I've got like a
+[20:25] little Reddus viewer script so we can
+[20:28] see what's in our Reddus database
+[20:30] locally. Uh, and this is using a local
+[20:32] database to clarify. So if you are in
+[20:34] the code spaces, the code spaces has
+[20:36] should have a Reddus running um here and
+[20:39] that's because of how we set it up with
+[20:41] this docker compose file. So we are
+[20:43] running a local Reddus in this case. In
+[20:45] production you could use uh like Azure
+[20:48] Azure Reddus or or another production
+[20:49] Reddus. uh but in this case we are using
+[20:51] a local reddus and storing everything
+[20:54] there uh for our development our
+[20:57] development needs. Uh so we can see it
+[20:59] found one key which is the this is the
+[21:02] session ID for the chat history and we
+[21:05] can look at the values being stored in
+[21:07] that key uh just the value right so what
+[21:10] we can see in that key is that it is
+[21:12] storing the entire conversation right
+[21:14] the you see the user message and at the
+[21:18] end we see the new message when we
+[21:21] renewed the thread right so it's you
+[21:24] know uh you know pretty straightforward
+[21:26] where the key is the session ID and the
+[21:29] value is the entire conversation.
+[21:35] All right. So that is the Reddus
+[21:39] example.
+[21:41] Now you might want to implement your own
+[21:43] provider, right? Like maybe you you know
+[21:45] I'm going to show a SQLite example, but
+[21:46] you could use Postgress, you could use
+[21:48] Cosmos, you could use Azure SQL, right?
+[21:51] You could use any of your favorite
+[21:53] databases in order to store chat
+[21:55] history. Uh you could use local storage.
+[21:56] I was actually doing that last night for
+[21:58] a clientside only um example although
+[22:01] that was not in Python but the idea is
+[22:04] that you know you could you could in
+[22:06] theory use any database uh so in here
+[22:10] we're doing SQLite right um and for
+[22:13] SQLite I'm going to store it a different
+[22:15] way just to show you a different way of
+[22:16] storage so in this case I'm going to
+[22:18] actually store each message as a
+[22:20] separate row and this is helpful in
+[22:22] cases where your databases have
+[22:24] constraints on the size for example
+[22:25] Cosmos DB has a constraint on the size
+[22:27] of the documents. So whenever I store
+[22:29] chat history in Cosmos DB, I do only
+[22:31] store like one message per row. And then
+[22:34] I'm going to have the um thread ID, you
+[22:37] know, be uh stored in a column. And then
+[22:39] the ID is going to be, you know, um
+[22:42] increasing for for each new message in
+[22:45] the thread. So if I want to get
+[22:46] everything in a thread, I'm going to,
+[22:48] you know, do a select where the thread
+[22:50] ID is this, you know, session ID. uh I'm
+[22:53] going to order by ID and then that'll
+[22:55] get me back the entire conversation.
+[22:57] Right? So this is another way you could
+[22:59] lay out your database schema uh when
+[23:01] you're you know storing in a database.
+[23:06] Uh so in order to implement this SQLite
+[23:09] history provider since it is not built
+[23:11] into agent framework all I need to do is
+[23:14] make a subclass of base history provider
+[23:17] uh which is from agent framework and in
+[23:19] that subclass I need to implement a few
+[23:22] methods. Uh so let's just look at that
+[23:25] in agent history um SQLite.py. So if we
+[23:29] go up here we can see here is our
+[23:34] subclass
+[23:36] and the first thing we do in the init is
+[23:39] we create a and create and connect to a
+[23:42] SQLite database
+[23:45] then we if the you know create table if
+[23:47] not exists and we can see ID session id
+[23:49] and message JSON right so that's what
+[23:51] we're storing in this then we need to
+[23:54] implement get messages that's required
+[23:56] uh so that there's a way of getting all
+[23:58] the messages meages by based off session
+[24:00] ID. So, we're just doing aware and order
+[24:02] by ID.
+[24:04] Then, we need a way of saving the
+[24:06] messages based off of session ID and uh
+[24:08] a list of messages. So, we're going to
+[24:10] insert
+[24:12] uh insert that into into messages. And
+[24:15] this one's an insert many because it's
+[24:17] receiving many messages.
+[24:19] And uh and then we need to just close
+[24:22] the connection here. Um so but the
+[24:24] important thing for a history writer is
+[24:26] get messages and save messages.
+[24:29] So now let's try running this one. So UV
+[24:32] run examples agent history sql light.
+[24:36] py. I see a question. How about a blob
+[24:39] storage history provider? You know I've
+[24:41] never done that myself. Um, it's that
+[24:46] would be a lot of updates to a blob
+[24:50] unless you're doing like a new blob for
+[24:51] every message, but that also feels like
+[24:53] a lot of tiny little blobs. So, I
+[24:55] wouldn't inherently think that that
+[24:57] would be the best use of blob storage,
+[24:58] but also, you know, maybe I I don't
+[25:01] understand like how incredibly flexible
+[25:02] blob storage is. So, I would just
+[25:04] consider like the number of read
+[25:05] operations and write operations you're
+[25:07] doing and whether it's a good fit for
+[25:08] the database.
+[25:10] Um, okay. So, you know, we see it's
+[25:14] exact same, you know, the user
+[25:16] experience is the same here, right? So,
+[25:17] what's different is how it stored it.
+[25:19] So, I'll go ahead and open up my SQL
+[25:20] light viewer. And in the SQL light
+[25:23] viewer, we can see that this time
+[25:25] there's um there's actually a bunch of
+[25:28] uh a bunch of keys here. Uh so, let me
+[25:32] uh look at a key. Uh six sessions. Oh, I
+[25:36] wonder if I didn't clear out my SQL
+[25:38] light. Um here, let me go ahead. I'm
+[25:41] going to delete
+[25:43] my local databases. Okay. And then I'm
+[25:46] going to rerun uh nope. Rerun
+[25:50] the history example
+[25:52] just to start my SQLite database from
+[25:54] scratch. That's the nice thing about
+[25:55] SQLite. You can just yolo delete your
+[25:57] database when you feel like it.
+[26:01] I wouldn't do that with production.
+[26:04] Okay. So now it's rerunning. So it
+[26:06] should be you can see it created the new
+[26:08] do thesqlite 3 file. created it fresh uh
+[26:12] so we can see what it looks like um just
+[26:15] from scratch here
+[26:20] and I see a question what's the
+[26:22] difference between using a SQL like
+[26:23] database versus a vector database like
+[26:25] Chroma yeah that's a good question so
+[26:26] this was my you know thing about do you
+[26:29] need to have do you want to have a
+[26:31] search on your history provider if you
+[26:33] want a good search on your history
+[26:34] provider then you want to see like hey
+[26:36] does my database support search does
+[26:38] have a very good full text search, but
+[26:40] it doesn't have a good vector search
+[26:42] last I checked. Um, I think there's like
+[26:44] a new community extension, but I haven't
+[26:45] tried it yet. Uh, obviously Chroma has a
+[26:48] vector search. Uh, Postgress has a
+[26:50] fantastic vector search and a full text
+[26:52] search, which isn't actually as good as
+[26:54] your AI search. We're going to see that
+[26:55] one. That one actually does have um
+[26:58] really really good uh search of all
+[27:00] kinds. So, if you are going to want
+[27:02] search, then you just need to think
+[27:03] about what kind of search do I want to
+[27:05] support and does that database have
+[27:08] that. um Cosmos DB, Azure SQL, they both
+[27:11] support hybrid search at this point, so
+[27:12] they're good uh they're good picks for
+[27:14] it. So yeah, lots of database options.
+[27:17] Um SQLite is more for development. I I
+[27:19] actually would not use it in production.
+[27:21] Um I just wanted something that was easy
+[27:23] to run locally here.
+[27:26] Um so here we have Okay, so this time we
+[27:29] see that there's one session with 10
+[27:31] rows, right? So each of those is a is a
+[27:34] row. Uh so now if we look um each of
+[27:37] those is actually a row. So this is a
+[27:39] row here. This is a row here. Uh this is
+[27:43] a row here. So it's being stored a
+[27:45] little bit differently than Reddus. And
+[27:47] that's just a design decision that
+[27:48] you're going to make when you're making
+[27:50] your history provider.
+[27:54] And we are going to talk a little bit
+[27:55] about vector search when we get to
+[27:56] knowledge. Uh I didn't implement search
+[27:59] on top of those memory providers but you
+[28:00] know if I'm sure if you all ask like hey
+[28:03] can you show us an example uh we can
+[28:05] code something up for you uh maybe in
+[28:08] office hours. All right so that is chat
+[28:10] history. So that is definitely something
+[28:12] you're going to want to add to a lot of
+[28:14] applications if they are userfacing and
+[28:16] the user is having persistent um you
+[28:18] know chats over time. Now let's talk
+[28:21] about another thing that is helpful for
+[28:24] userfacing agents and that is dynamic
+[28:27] memory.
+[28:29] So the idea here is that you know the
+[28:32] agent receives an input they use they
+[28:35] based off that input they go and
+[28:37] retrieve relevant memories from the
+[28:39] memory store. So they actually often
+[28:40] will search the memory store for the
+[28:42] most relevant memory memories and then
+[28:45] give those memories to the LLM along
+[28:48] with the user input and any other
+[28:50] context right and so then it's just the
+[28:52] LLM can make a better you know do a
+[28:55] better job uh deciding how to answer a
+[28:57] question based off those retrieved
+[28:59] memories. Um so you have some design
+[29:02] questions here as well like are you
+[29:04] going to retrieve all the memories? some
+[29:06] some memory implementations will go
+[29:07] ahead and just retrieve all the memories
+[29:09] because they presume there's not that
+[29:10] many uh or are you going to do a like a
+[29:13] search a filter just to find the ones
+[29:15] relevant to that conversation and then
+[29:17] there's a question of how you're going
+[29:18] to store the memory right so after the
+[29:19] LM gets a response then that's the this
+[29:22] time at which you decide whether you're
+[29:24] going whether you you know it's learned
+[29:25] something from this interaction so you
+[29:27] have to decide am I going to store you
+[29:30] know how often am I going to store
+[29:31] memories what is that memory going to
+[29:33] look like am I just storing the entire
+[29:35] conversation Like some memories are just
+[29:37] the whole conversation, but that's not
+[29:38] very smart, right? Like ideally, you
+[29:40] know, to be really smart, you're looking
+[29:42] at the conversation and saying, "Aha, I
+[29:44] learned something new from this
+[29:46] something that's relevant and unique and
+[29:48] different and and surprising, and I'm
+[29:50] going to store this new fact in the
+[29:52] memory store." Right? And then there's a
+[29:55] question of forgetting memories, right?
+[29:56] Do you keep all memories around forever?
+[29:59] Do you render do you decide some of them
+[30:01] are obsolete at some point? Do you
+[30:02] update the memories? Like that's that's
+[30:05] a whole thing as well, right? Because
+[30:06] things facts change over time, right?
+[30:08] Like for example, when I use Chachi, it
+[30:10] thinks I have like, you know, a
+[30:12] three-year-old and six-year-old, but as
+[30:13] soon as one of them has a birthday,
+[30:15] that's not going to be true anymore,
+[30:16] right? Like it has to be able to update
+[30:18] its memories over time.
+[30:22] So, first let's look at um the the
+[30:25] simplest memory provider we dynamic
+[30:28] memory provider we have and that is with
+[30:30] Reddus. Um so in this case we are going
+[30:33] to send the input to Reddus and that is
+[30:36] going to use a hybrid search. So Reddus
+[30:38] does actually support full text vector
+[30:40] and hybrid search which combines all of
+[30:42] those. Uh so we can use a hybrid search
+[30:44] to search Reddis based off those
+[30:46] memories and then retrieve them just the
+[30:49] relevant ones and send them to the LM.
+[30:52] Now that that step of this is like you
+[30:56] know that's that's nice. We're only
+[30:57] retrieving the relevant memories in this
+[30:59] implication. When we store the memory,
+[31:01] the memory, we're actually just going to
+[31:02] restore every single message that is
+[31:04] ever every every response that's
+[31:06] happened with this user. And so that's a
+[31:09] very naive storage mechanism, but we
+[31:12] compensate for that naive storage
+[31:13] mechanism by having this nice search in
+[31:16] front. Right? So it's, you know, it's an
+[31:19] interesting combination here where we're
+[31:20] being very naive about what we store,
+[31:22] but we're being, you know, more clever
+[31:24] about what we retreat.
+[31:27] Uh so we're going to use the builtin
+[31:29] context provider. Uh so it's built into
+[31:31] agent framework in the reddus module and
+[31:35] uh when we set that up we're going to
+[31:36] point at our our local Reddus. We're
+[31:38] going to you know give it a particular
+[31:40] um index that it's going to use and
+[31:42] prefix and uh we're going to give it the
+[31:45] information about the user. All right?
+[31:47] Because remember memory is user
+[31:49] specific. It's about personalizing for
+[31:51] this certain user. So we actually need
+[31:54] to pass in a unique user ID and you got
+[31:56] to make sure that this user ID is
+[31:58] constant to that user over time. Uh so
+[32:00] typically you'd have like a login maybe
+[32:02] with Entra. So if you were doing like
+[32:03] Microsoft Entra, the user ID would be
+[32:06] the Entra um identifier, the oid of
+[32:09] Entra, right? So just depending on how
+[32:11] you're building in, you know, how you're
+[32:13] building user login that that's going to
+[32:15] determine your user ID. Uh and then
+[32:18] we're going to pass that memory provider
+[32:20] as a context provider. So this is
+[32:22] another kind of context provider that we
+[32:24] can give to agents.
+[32:27] So let's go ahead and um check out that
+[32:32] example. So agent memory reddus
+[32:36] and
+[32:37] here we go. So that's what we were just
+[32:40] showing that we have all that set up
+[32:42] there using the built-in reddis context
+[32:46] provider.
+[32:48] Okay, we're going to run that and we're
+[32:53] going to show you know in this case I'm
+[32:55] just saying remember right generally
+[32:57] like I mean in this case the reddest one
+[33:00] is going to store every every single
+[33:02] thing. So we don't have to cue it with
+[33:05] remember but a lot of times when you're
+[33:06] using memory systems that uh are
+[33:08] dynamically deciding what to store it
+[33:10] helps to say remember because then the
+[33:12] LM's really like oh okay you told me to
+[33:14] remember I'm going to remember that.
+[33:16] Right? I do this all the time with like
+[33:17] M365 copilot and GitHub copilot if I
+[33:20] really want it to remember I will
+[33:22] straight up tell it hey remember this
+[33:24] right um and but for the Reddus the you
+[33:27] know the way the Reddus provider is
+[33:29] implemented it will remember everything
+[33:31] right u but the agent says okay got it
+[33:33] I'll remember of course it's going to
+[33:35] remember everything uh recalling a
+[33:37] preference what's my favorite city your
+[33:38] favorite city is Tokyo so we can see
+[33:40] here that it was able to recall that
+[33:42] memory so it was able to search and find
+[33:44] that relevant memory Okay. And then um
+[33:48] we ask what's the weather in Paris and
+[33:51] then we see what city did I just ask
+[33:53] about? What was the weather? And it
+[33:55] remembers that as well. Uh so let's go
+[33:57] ahead and check out what the Reddus
+[33:59] database looks like. Now
+[34:02] uh and here you can see a bunch of u
+[34:06] memories. So this time it stored a
+[34:08] memory for every message in the thread.
+[34:11] Uh so let's see when I do the values
+[34:14] what you can see is that this memory
+[34:16] here is just a single message in the
+[34:20] thread right so we are we are storing
+[34:23] these memories in a very naive way um
+[34:25] which is just one uh you know one
+[34:29] message
+[34:30] uh you know one row in in our reddus per
+[34:34] message um but uh it's surprisingly
+[34:37] effective because we are filtering when
+[34:39] we retrieve memories So, I don't think I
+[34:42] would go use I don't think I would
+[34:43] personally use this approach for a
+[34:46] production agent because I don't really
+[34:47] like the way that it's storing every
+[34:49] single message, but it's interesting to
+[34:51] see that it actually does it does work.
+[34:53] Um, so, you know, it's cool to see that
+[34:57] that works. Uh, it's it wouldn't be my
+[35:00] preference. So, you know, let's, you
+[35:02] know, let's use something a little
+[35:03] different.
+[35:05] Uh so the big uh the the the fancier
+[35:08] approach to memory is this package
+[35:10] called mem zero. It is an open source
+[35:12] package as well as a hosted service and
+[35:14] it's one of the uh well-known memory
+[35:18] solutions out there for agents. They've
+[35:20] been around for a while. Um so here when
+[35:24] you know when the agent gets input it's
+[35:26] going to search the memories and it's
+[35:28] going to use the connected database. Now
+[35:30] this database can be anything. uh by
+[35:33] default it's quadrant just the local
+[35:34] in-memory quadrant but you can connect
+[35:36] it to azure ai search you can connect it
+[35:38] to postgress you can connect it to lots
+[35:40] of different databases right so it
+[35:42] provides an abstraction layer on top of
+[35:44] databases right so happens to be using
+[35:46] quadrant in memory by default um so I
+[35:49] didn't change that but we could totally
+[35:50] point it at other databases as well it's
+[35:54] an abstraction layer on top of that
+[35:55] right and now what's really interesting
+[35:57] is that when we get the response it's
+[36:00] going to use an LLM M in order to
+[36:02] decide, hey, is this a new memory? Is it
+[36:06] an updated memory? Or is it a does it
+[36:08] mean we need to delete a memory? Right?
+[36:10] So, it's going to say like, okay, based
+[36:12] off this response, um I'm going to
+[36:15] recommend that we add, update, or delete
+[36:17] particular memories. Right? So, this
+[36:19] part, this is the part that's really
+[36:20] interesting and and clever. Uh and just
+[36:23] to break down this part more, right? So
+[36:25] we get the response and then mem zero
+[36:29] says hey LLM you're going to review this
+[36:31] response and suggest related memories
+[36:34] right so it actually does a retrieval at
+[36:35] this point to say hey you know what
+[36:38] memories what existing memories are
+[36:40] similar to this response right so it
+[36:44] does this retrieval step here and says
+[36:45] oh okay like um uh you know the new
+[36:49] memories u well first it's going okay
+[36:52] first it's going to extract potential
+[36:54] potential new memories. Okay, so we, you
+[36:57] know, we extract potential new memories
+[36:59] like the user hates snow, they live in
+[37:00] New York, and love his son. All right,
+[37:02] and then we search the database based
+[37:05] off of those like those potential new
+[37:07] memories, find any related old memories.
+[37:09] So in this case, lives in California,
+[37:11] loves his son, and then it makes another
+[37:14] call to an LM that says, hey, compare
+[37:16] the potential new memories to the old
+[37:18] memories and recommend action. Right? So
+[37:21] for each potential new memory, you know,
+[37:23] for hate snow is say, oh, okay, that's a
+[37:25] new memory. We're gonna add lives in New
+[37:26] York, that's an update to an existing
+[37:28] memory because we went from lives in
+[37:30] Seattle to live in New York and we can't
+[37:32] or live in New York. Live in Seattle,
+[37:33] live in New York, you can't live in both
+[37:35] places. Uh, and then loves the sun. That
+[37:38] is a redundant memory. So we can do we
+[37:40] don't have to do anything with it,
+[37:41] right? Uh, so you can see this is a
+[37:43] multi-step process. I it's a really
+[37:45] interesting process and um you know it
+[37:48] results in memories that are kept up to
+[37:51] date and uh you know only are storing
+[37:54] you know what they need to store in
+[37:56] order to be really relevant.
+[37:59] Uh so then you know it applies those
+[38:00] actions to the database and so then we
+[38:03] have the updated memories. Right now we
+[38:05] know that the user lives in New York,
+[38:07] loves the sun and hates snow.
+[38:12] So how do we actually use this? This is
+[38:14] another built-in memory provider to
+[38:16] agent framework. So we can import it
+[38:18] from the mem zero module and um you know
+[38:21] we're going to set it up and it does
+[38:22] take a little bit of setup which we'll
+[38:24] see because we have to specify our LLM
+[38:26] our embedding model and um if we wanted
+[38:29] override database we would specify that
+[38:30] as well. So let's check that out. All
+[38:34] right so that's agent memory mem zero.
+[38:38] Um so there's this quite a bit of
+[38:40] configuration up here. So first we have
+[38:43] to set up our LLM connection. So we have
+[38:45] to do that separately from our how we
+[38:47] did agent because we're we're you know
+[38:49] configuring me zero. Um but we can point
+[38:52] it at many different LLMs. So in this
+[38:54] case you know if it's Azure we can point
+[38:56] it at Azure. Um if it's GitHub models we
+[38:59] can point it at GitHub models. Uh this
+[39:01] was code I actually added this morning.
+[39:02] So if you don't see it, you're going to
+[39:04] need to run git pull in your code space
+[39:07] u because I just set it up and it I did
+[39:10] a test and it seemed to work. Um and
+[39:12] then OpenAI, it's just got built-in
+[39:14] support for that based on environment
+[39:16] variables, right? And you could you
+[39:18] could point at other LMS is right. So
+[39:19] mem zero, it's an abstraction layer. It
+[39:22] supports many, you know, many different
+[39:23] model providers.
+[39:25] And I didn't customize the database in
+[39:27] this case, but if you did want to point
+[39:28] at a different database like Postgress
+[39:30] or AI search, you could do that in your
+[39:32] configuration as well. So we set up
+[39:34] that, you know, set up that whole mem
+[39:36] client and configuration. We pass in our
+[39:38] user ID and then to the agent, we pass
+[39:42] in that mem provider here as a context
+[39:45] provider.
+[39:49] and uh and the agent's going to make
+[39:51] sure it runs that context provider
+[39:52] before each interaction and after each
+[39:54] interaction.
+[39:58] So then let's go ahead and try it out.
+[40:01] Okay, so we're going to run agent memory
+[40:05] mem0
+[40:07] py.
+[40:13] I see a question. Are memories like
+[40:15] single data? If you hate the sun and
+[40:17] then you love the sun, will it store the
+[40:19] reason or update the data? Well, if it
+[40:21] sees a previous memory that says you
+[40:23] hate the sun and it sees a new memory
+[40:24] saying that you love the sun, it's in
+[40:26] this case, the LM's probably going to
+[40:28] say, well, this user has changed their
+[40:30] preference, right? They now love the
+[40:32] sun. Um, so it's not going to store the
+[40:35] reason. It's just going to say like,
+[40:36] well, it seems like the user has changed
+[40:37] their preference, right? And this is all
+[40:39] just how mem zero you know implements
+[40:42] the the the you know the the the system
+[40:45] prompt that it sends to LM when it's
+[40:47] deciding reasoning about memories. Uh
+[40:49] you could come up with your own memory
+[40:51] system or you know override um probably
+[40:53] override how it how it does that
+[40:55] decision-making process. Uh but I think
+[40:58] it's quite clever the way it does it.
+[40:59] Okay. Um so it's doing you know we're
+[41:02] we're teaching it things. Remember my
+[41:04] favorite city. Uh what's my favorite
+[41:06] city? your favorite city is Tokyo.
+[41:08] What's the weather in my favorite city?
+[41:10] Um your favorite city blah blah blah.
+[41:12] And then here at the very end, just to
+[41:14] show um what's in me zero, I got all the
+[41:18] memories for the user. And you can see
+[41:20] that what Mem decided to store was like
+[41:24] literally these values in the database.
+[41:25] Prefer Celsius, asked about the weather
+[41:28] in their favorite city. Doesn't seem
+[41:30] like the most useful memory, but it's
+[41:32] there. And then favorite city is Tokyo,
+[41:34] right? Uh so those are the exact
+[41:37] memories the exact rows in the database
+[41:39] that it decided to store based off this
+[41:42] conversation. Um it's it's really
+[41:44] interesting to see what uh what memory
+[41:47] systems will choose to store. You know,
+[41:50] it's I think it's very different about
+[41:52] different than what we as humans choose
+[41:54] to store when we're storing memories
+[41:56] because sometimes it's like, oh, you
+[41:57] know, that really is not important at
+[41:59] all. But then sometimes, you know, it
+[42:01] gets it right. Right. Like these, you
+[42:02] know, favorite city and prefer Celsius.
+[42:04] Those are very relevant things. Like you
+[42:05] can imagine with a coding agent, you
+[42:07] really wanted to know like, oh, this
+[42:08] user prefers Python and they prefer
+[42:11] piest and, you know, they hate unit
+[42:13] test, right? That's the kind of thing
+[42:14] you really want your coding agent to
+[42:17] remember. um and um you know and and and
+[42:21] be able to store for the future.
+[42:25] Oh, who doesn't love the sun? My partner
+[42:27] hates the sun. He wants to move to
+[42:28] Seattle because they don't have the sun.
+[42:31] So, it is irrelevant.
+[42:33] It is something relevant that uh you
+[42:35] know, memory systems need to remember.
+[42:38] Might be the only one. Vampires.
+[42:41] Um, so talking about coding agents, uh,
+[42:44] I an article I found really interesting
+[42:46] was how GitHub Copilot implements their
+[42:49] memory system and they wrote the
+[42:51] engineering team wrote this whole blog
+[42:54] post about how the new GitHub Copilot
+[42:58] memory feature works. So definitely
+[43:00] recommend checking out that uh that blog
+[43:03] post because it's just really really
+[43:04] interesting to see um and and also to
+[43:07] see about how they decide when to make
+[43:10] an uh memory obsolete. They actually tie
+[43:12] each memory to citations like to line
+[43:15] numbers in the source code so that they
+[43:17] can verify whether that source code
+[43:18] still exists. So that's a super
+[43:21] interesting way of seeing whether a
+[43:23] memory should be obsoleted. Right? very
+[43:25] specific to coding agent memory but uh
+[43:27] especially repo specific memory but I
+[43:30] thought it was really interesting so
+[43:31] definitely check out that article to see
+[43:34] how they implemented that
+[43:38] okay so uh I see some great questions
+[43:41] about memory let's bring those to office
+[43:43] hours and move on to to knowledge
+[43:46] because we still have a lot to cover
+[43:47] today actually
+[43:49] probably have too many things to cover
+[43:51] so let's talk about knowledge retrieval
+[43:53] right Now interesting thing here is
+[43:55] we've already done lots of knowledge
+[43:56] retrieval using tools but there might be
+[44:00] some situations where you're building
+[44:01] agents that should always be retrieving
+[44:04] knowledge before even going to the
+[44:06] tools. If you're building very domain
+[44:08] specific agents which where you know you
+[44:11] always need to retrieve knowledge then
+[44:15] uh then you can actually implement a
+[44:16] context provider in order to always
+[44:18] retrieve knowledge before going to the
+[44:21] tools right. Um so we're going to look
+[44:24] at how how we can do that. But just keep
+[44:26] in mind that you may not need to do
+[44:29] this. You may simply implement knowledge
+[44:30] retrieval via tools. Uh this is just an
+[44:33] option if you're building a very domain
+[44:35] specific agent that always needs to
+[44:37] retrieve particular kinds of knowledge.
+[44:39] Uh and it's just another kind of
+[44:40] context, right? Instead of the user
+[44:42] specific context, we're grabbing this
+[44:44] domain specific context. Uh so the
+[44:46] general idea is that there's this base
+[44:48] context provider and we subclass that so
+[44:51] that before an agent runs it gets the
+[44:54] query and then add some more information
+[44:57] to the conversation. That's generally
+[44:59] how we provide context is we um we we
+[45:03] get some we get the current messages. We
+[45:05] decide what we're going to what context
+[45:07] we're going to grab based off of them
+[45:09] and then we can add additional
+[45:10] information to uh to the conversation if
+[45:14] there's anything useful. Right. So my
+[45:17] first example here is with SQLite. So I
+[45:20] have like a really basic SQLite database
+[45:22] that just has a bunch of like out deer
+[45:25] out outdoor gear in it. And then I have
+[45:28] this basic SQLite knowledge provider
+[45:31] that implements uh the before run. And
+[45:34] in the before run we get the user's
+[45:37] question. we use that to search and if
+[45:41] we get back results then we add back we
+[45:44] add a message to the conversation that
+[45:46] has the results. Uh so let me go ahead
+[45:50] and um run this.
+[45:53] And this is also the same way we
+[45:55] implement uh implement memory. They're
+[45:57] both different kinds of context
+[45:59] providers. So if you were going to
+[46:00] implement your own custom memory, you
+[46:02] would also be making a subclass of a
+[46:04] context provider.
+[46:07] And it's just something that runs before
+[46:09] the agent itself, you know, continues
+[46:12] running.
+[46:15] All right. So it is and here you can see
+[46:17] we pass it in once again as a context
+[46:20] provider, right? So the user says, "Oh,
+[46:21] I'm going hiking. What boots and poles
+[46:23] you recommend?" And the SQL light
+[46:25] database found three matching products.
+[46:27] And then gives that to the agent and the
+[46:29] agent replies, right? Uh do you have any
+[46:32] surfboards? And it didn't find any
+[46:33] matching products. So the agent says,
+[46:34] "Sorry, I don't have information."
+[46:36] Right?
+[46:38] And so once again just want to clarify
+[46:40] you could also build this as a tool.
+[46:42] Right? Instead of a context provider you
+[46:43] could build it as a tool and say hey
+[46:45] tools equals search SQLite database. The
+[46:48] difference is that a context provider is
+[46:50] always run whereas a tool is run only
+[46:53] sometimes right and there might be
+[46:56] situations where you want a context
+[46:58] provider to always be run. And that's
+[47:00] your that's your going to be your
+[47:01] decision- making process for you know is
+[47:04] it gonna be a context provider or is it
+[47:06] going to be a tool.
+[47:08] Now let's talk about retrieval. Um you
+[47:10] know we talked a lot about vector and
+[47:12] search today right? So we get a you know
+[47:14] we get some user input right the best
+[47:17] way to do a search is with what we call
+[47:19] hybrid search where we do we take that
+[47:21] user input we use it to do a keyword
+[47:22] search we do a vector search we get back
+[47:25] results for you know matching the
+[47:27] keywords and also just semantically
+[47:28] simmer results using vectors then we
+[47:30] combine those together using um this
+[47:33] reciprocal rank fusion algorithm that
+[47:35] merges the results and now we get the
+[47:37] best of both worlds right so I've
+[47:40] implemented a hybrid search using
+[47:42] Postgress So that's uh agent knowledge
+[47:45] Postgress
+[47:46] and uh you know Postgress has the
+[47:49] ability to um do both full text and
+[47:53] vector search. So you can see here I've
+[47:55] got a vector search query, I've got a
+[47:57] keyword search query and then I merge
+[48:00] those results together. Uh so you know
+[48:03] we're not going to go deep into a hybrid
+[48:05] search today. We've definitely talked
+[48:07] about that in past sessions, but this is
+[48:09] just to say if you are implementing
+[48:11] search, you want to think about the best
+[48:13] practices in order to get the best
+[48:14] retrieval and hybrid search is one of
+[48:17] those best practices uh so that you can
+[48:20] both match match keywords but also match
+[48:22] semantically similar things um when the
+[48:25] keywords don't match. Right?
+[48:28] Okay. So, we got back some good results
+[48:29] there. Uh now another thing you want to
+[48:32] keep in mind is that if you're passing
+[48:34] in a whole conversation and we are in
+[48:36] this case because the this context
+[48:37] provider receives a whole conversation,
+[48:40] you don't want to just pass in the most
+[48:41] recent user message. What you actually
+[48:43] want to do as a best practice is to
+[48:45] rewrite this conversation
+[48:47] into a optimal search query based off
+[48:50] the whole conversation. And so then
+[48:52] you're going to do this re um query
+[48:54] writing step and use that to search the
+[48:56] knowledge store. So I have another
+[48:58] example here um which does implements
+[49:00] that using
+[49:03] uh using Postgress
+[49:06] um and that's going to add in an
+[49:08] additional that does add in an
+[49:10] additional LLM call right so you know
+[49:13] we're adding adding more steps here and
+[49:15] once again if you implemented this as a
+[49:17] tool the LLM would just kind of
+[49:19] naturally do that query writing so if
+[49:21] you're implementing this like search
+[49:23] Postgress as a tool you don't even have
+[49:25] to think about the query writing because
+[49:27] the LM will naturally do that when it's
+[49:28] deciding on the query. This is just
+[49:31] something you have to implement if
+[49:32] you're implementing as a context
+[49:34] provider, right? Um, so you can see that
+[49:38] it did a little query rewrite into
+[49:40] something better based off the users
+[49:42] thing. And so that way it gets better
+[49:44] results from the conversation.
+[49:47] Now, if we want to get really fancy, I
+[49:49] just wanted to show off uh the amazing
+[49:52] knowledge base feature from Azure AI
+[49:54] search, which has all this built in. So
+[49:56] it's got query writing. It's got hybrid
+[49:58] search. It's got the ability to search
+[50:00] from multiple sources and run your query
+[50:03] in parallel across multiple s searches.
+[50:05] It's got this optional reflection step
+[50:07] where it does an iterative retrieval. So
+[50:09] it has all this stuff built in and uh
+[50:12] it's it's it's a really nice production
+[50:14] solution if you need this sort of
+[50:17] knowledge provider that you know does
+[50:19] all of this for you and it is in fact
+[50:22] built into agent framework. That's the
+[50:23] other reason I wanted to show it because
+[50:25] it is actually built into agent
+[50:26] framework. Um, now this does require you
+[50:29] to set up the AI search uh database.
+[50:32] So, it won't work in GitHub code spaces.
+[50:35] Um, I've got one that I've set up on my
+[50:37] Azure account. Um, but I did want to
+[50:40] mention it because if you really are
+[50:41] using a context provider um instead of a
+[50:44] tool, then you really want to like have,
+[50:47] you know, a really good setup. And so I
+[50:50] think the you know the AI search
+[50:52] integration is uh is a good a great
+[50:55] inter integration here where you only
+[50:57] have to you know five lines of code
+[50:59] point it at your knowledge base and it's
+[51:02] going to do all that fancy stuff for
+[51:04] you.
+[51:06] Uh but this won't work unless you
+[51:08] actually have it have it set up. So you
+[51:10] can see I have it I have one set up here
+[51:13] and that's why it's able to pull from
+[51:15] there.
+[51:18] Okay. All right. I know I'm go I'm
+[51:21] blasting through things because we only
+[51:22] have 10 minutes left, but takeaways for
+[51:25] knowledge brighter, right? I just want
+[51:26] to keep emphasizing that you can totally
+[51:29] get knowledge from your tools as well.
+[51:33] All everything we showed there,
+[51:34] searching Postgress, AI search, those
+[51:36] could all be done via tools. The
+[51:38] difference here is that a context
+[51:39] provider is always run and a tool is
+[51:43] sometimes run. Okay? So you just have to
+[51:46] decide for your scenario. Do I need to
+[51:49] always retrieve this context or is this
+[51:52] something I want to empower the agent to
+[51:54] decide whether to retrieve this context?
+[51:58] All right, you have the power to decide
+[52:00] that. You've got the option. You can do
+[52:02] context dividers or you can do tools.
+[52:05] All right, we've got a few minutes left
+[52:07] to talk about context management. Right,
+[52:09] we've talked about all these different
+[52:10] forms of context and it's like uh oh,
+[52:12] like now we're getting all this context.
+[52:15] Can we fit it all? Can we proc can we
+[52:17] send all this context at an LM? So,
+[52:20] every LM has a context window, which is
+[52:22] the amount of input tokens that it can
+[52:24] process at a given time. And when LM
+[52:27] first came out, their context windows
+[52:29] were like really tiny. They were like
+[52:31] 4,000, 8,000, 12,000. And we were like
+[52:34] barely able to fit, you know, even like
+[52:36] a multi-turn conversation in there,
+[52:38] right? These days, our context windows
+[52:40] are more around 128,000 to even a
+[52:42] million. And so they are much bigger. So
+[52:45] we're able to have these longer
+[52:46] conversations with more context, you
+[52:48] know, like point them at our entire
+[52:49] 300page, you know, gamer's manual or
+[52:52] whatever, right? Um but there is it is
+[52:55] still finite, right? It is still
+[52:57] limited. And the other issue is that uh
+[52:59] even if we are able to fit all the
+[53:01] context inside a context window, the LLM
+[53:04] quality, the answer quality goes down as
+[53:07] the context window goes up. Right?
+[53:08] There's a lot of research about this. I
+[53:10] linked to some of the good research
+[53:12] here, but generally as the, you know, as
+[53:14] you send more context to an LLM, it's
+[53:17] going to miss some details, right? Uh
+[53:20] especially if there's a lot of
+[53:21] distracting details in there that aren't
+[53:23] relevant or old information. So, you
+[53:25] really ideally are only sending relevant
+[53:28] context to the LLM, right? The the you
+[53:30] know, the better you can be about
+[53:31] filtering down to only the relevant
+[53:33] context, the much better responses
+[53:35] you're going to get. Also, it's cost,
+[53:38] right? If you send a million tokens to
+[53:40] the model, you are paying for a million
+[53:42] tokens. And those tokens uh generally
+[53:44] aren't free. Uh they're free today
+[53:46] because they're running in GitHub
+[53:47] models, but also we're limited on the
+[53:49] number of tokens we can send there. So,
+[53:51] you know, in production, you're going to
+[53:53] be spending more the more tokens you
+[53:55] spend.
+[53:58] Now, um what can we do? Right? So, one
+[54:01] technique is context compaction. Uh if
+[54:04] you've used GitHub copilot, you've
+[54:06] probably seen this where it says, you
+[54:07] know, compacting conversation, right?
+[54:09] This is a very common technique in
+[54:11] agents is that when they realize that
+[54:13] they're getting too close to the context
+[54:14] window of a particular LM, they will
+[54:17] compact that conversation into a smaller
+[54:19] amount. Right? So here, you know, if the
+[54:21] context window is 200K and we're at 75%
+[54:23] of that context window, then we send
+[54:26] that entire conversation to an LM, tell
+[54:28] it to summarize, and then that summary,
+[54:30] you know, takes up much less space,
+[54:32] right? And you can just keep doing this
+[54:34] um and you know just keep going and
+[54:37] having what looks like an infinitely
+[54:39] long conversation because really that
+[54:41] conversation keeps getting compacted
+[54:43] into summaries, right? But if you when
+[54:46] you implement this you do have to decide
+[54:47] how often are you going to summarize,
+[54:49] what is the most important to summarize
+[54:51] um and do you actually store the
+[54:52] originals anywhere for later or you just
+[54:55] discard them. Right?
+[54:58] So the way we're going to implement uh
+[55:00] summarization for agent framework is
+[55:02] we're going to use middleware. Uh we
+[55:04] talked about middleware yesterday and I
+[55:07] realized in retrospect that I did not do
+[55:09] a good job introducing the concept of
+[55:11] middleware. Generally m the idea of
+[55:14] middleware for framework is that it
+[55:16] makes the middle moreware more flexible.
+[55:19] The middleware gives us a way to
+[55:20] intercept stages of the framework and do
+[55:24] things at um different points in the
+[55:26] framework. Right? So for the agent
+[55:27] framework, it lets us intercept as
+[55:29] messages are going through and decide
+[55:31] that we're going to do something else,
+[55:33] right? So in this case, we're going to
+[55:35] uh intercept our agent and say, oh, our
+[55:38] our context wind, you know, are, you
+[55:40] know, as the tokens gone over the
+[55:41] threshold, okay, then we're going to go
+[55:43] and um ask LM to summarize. We're and
+[55:46] then we're going to replace the messages
+[55:48] of this agent with this summarize
+[55:50] summary, right? We're actually going to
+[55:52] override it. uh and then you know the
+[55:54] agent's going to proceed with this new
+[55:56] summarize message uh and then we're just
+[55:58] going to keep track of our number of
+[56:00] tokens right um so in this case this
+[56:02] middleware is going to use an LLM in
+[56:04] order to summarize so let's look at this
+[56:08] um summarization middleware here
+[56:13] so um here's our summarization
+[56:15] middleware okay so we in this case we're
+[56:17] subclassing agent middleware
+[56:20] and um we're keeping track of how many
+[56:23] tokens we're currently using and what
+[56:25] our token threshold is. So we deter we
+[56:27] you know we're saying like oh our token
+[56:29] threshold is like in this case it is
+[56:31] we're setting it really low just so we
+[56:32] can demonstrate so just a thousand
+[56:34] tokens. Um and then in this process
+[56:39] method and this is called each time an
+[56:41] agent runs uh we're going to check to
+[56:43] see if we are over our token threshold.
+[56:46] We're going to get all the messages in
+[56:48] memory. We're going to send those to an
+[56:50] LLM. we're going to replace our memory
+[56:54] with this summary message instead. Uh
+[56:58] we're going to reset the amount of
+[57:00] tokens and then um and then we're going
+[57:03] to actually proceed with the agent.
+[57:06] Right? So all of this happens before the
+[57:08] agent run. Then we'll proceed with the
+[57:10] agent and then after the agent runs,
+[57:13] we're going to just remember what the
+[57:16] current token size of our conversation
+[57:18] is.
+[57:19] So that is the summarization middleware
+[57:22] and down here when we set up the agent
+[57:24] we pass that in as middleware.
+[57:27] All right. And we've set the token
+[57:29] threshold really really low here because
+[57:32] uh because we want to demonstrate it.
+[57:33] Normally you would set the token
+[57:34] threshold to like some percentage of the
+[57:36] context window like maybe 75%
+[57:39] of uh and you'd have to know the context
+[57:42] window size for the LM that you're using
+[57:44] to make sure that you're adapting
+[57:45] correcting. So here, you know, we're
+[57:47] setting it really low. Oh, so we have to
+[57:49] even set it to 500. Super low. Okay. Um,
+[57:53] so each time when it gets when the agent
+[57:56] is called, each time we call agent with
+[57:59] agent.run, it's going to check. So in
+[58:01] this case, it says, uhoh, token usage
+[58:03] exceeds the threshold. We're going to
+[58:05] summarize for history messages. We get
+[58:07] back this summary, and we replace the
+[58:10] entire conversation history with this
+[58:13] summary message instead.
+[58:19] And uh and then we can see that's
+[58:21] compacted.
+[58:23] And so this takes time. So that's why
+[58:24] when you're ever using something like
+[58:25] GitHub copilot, you see compacting
+[58:27] conversation, it takes some amount of
+[58:29] time because it's sending a huge amount
+[58:31] of history to an LLM and asking for a
+[58:33] summary. Uh so this one's doing it quite
+[58:35] a bit. And but with these larger models,
+[58:37] you can you you know, you can actually
+[58:40] you know, you don't have to do it this
+[58:41] often. Okay. So that is summarization
+[58:45] middleware. Uh so this is you know one
+[58:47] of the first kinds of middleware that
+[58:49] you might consider adding uh if you're
+[58:50] building this sort of uh you know
+[58:52] userfacing agent.
+[58:55] Now, one other technique is to reduce
+[58:57] context using sub agents, right? Um, you
+[59:01] know, so you could have an agent that is
+[59:03] using LM and has access to a bunch of
+[59:06] files and every time it calls, you know,
+[59:09] it calls a tool, it gets back the
+[59:11] response from those tools, right? So,
+[59:13] you know, you know, and these responses
+[59:14] could be quite large, right? Like I've
+[59:16] got an agent that searches through a
+[59:17] codebase and it'll grab entire files and
+[59:20] some of those files are like 10,000
+[59:21] lines long, right? So all of those tool
+[59:24] call results add to the agent's context
+[59:28] and can become um you know it the
+[59:31] context grows which each tool call
+[59:33] result right
+[59:35] so that can mean that you're you know
+[59:36] you're dealing with um a very large
+[59:38] context window over time.
+[59:41] Another a different approach is to have
+[59:43] a coordinator agent that's in charge of
+[59:46] calling sub agents and that sub aent is
+[59:48] just going to return a summary of those
+[59:51] tool calls. Right? So, we're just
+[59:52] sticking an agent on top and that agent
+[59:55] is, you know, asking it to do something,
+[59:57] getting back the summary and sending it,
+[59:59] right? And the idea here is that if this
+[01:00:02] agent's job is to do something like
+[01:00:04] summar like to answer a question, it can
+[01:00:07] do a better job based off of a summary
+[01:00:10] than of having just all that straight
+[01:00:12] context set at it, right? And it's just
+[01:00:16] um and as soon as we have like multiple
+[01:00:17] agents, it it can be really helpful. Um,
+[01:00:21] so this looks similar. It's basically
+[01:00:23] like the supervisor agent that we showed
+[01:00:25] last time. Um, but you know, we're you
+[01:00:27] know, we're uh, you know, just using it
+[01:00:30] in order to reduce context. So here
+[01:00:32] we've got a coordinator agent that
+[01:00:34] answers questions about code and it you
+[01:00:37] have this research sub agent. So this is
+[01:00:39] a very common pattern with research
+[01:00:41] because research can get like can get
+[01:00:44] these huge files and uh you know it can
+[01:00:47] really overwhelm the main agent if you
+[01:00:49] send it this huge file. So general best
+[01:00:52] practice is to use a sub agent for doing
+[01:00:54] research and then returning back the
+[01:00:56] summary to the agent that actually has
+[01:00:58] to answer the question so that they can
+[01:00:59] answer the questions based on the
+[01:01:01] summary instead of being like super
+[01:01:03] overwhelmed by potentially distracting
+[01:01:05] context. Right?
+[01:01:07] And I did an example here um you know
+[01:01:10] comparing a you know the single agent
+[01:01:12] versus coordinator with sub agent. And
+[01:01:15] what you see is the coordinator agent
+[01:01:17] got past way less tokens in the end,
+[01:01:19] only a thousand versus 8,000, and was
+[01:01:21] still able to answer the question
+[01:01:23] accurately based off of that, right? Um,
+[01:01:27] so I think the total number of tokens
+[01:01:30] was actually pretty much the same across
+[01:01:31] there, but the coordinator agent got way
+[01:01:34] less and so was able to give a more
+[01:01:36] focused response. Um so this is
+[01:01:37] something to consider and something you
+[01:01:39] want to evaluate to see does your you
+[01:01:41] know whether it it's it's a useful
+[01:01:43] technique um for what you're doing but
+[01:01:45] it is very common especially with
+[01:01:46] research.
+[01:01:48] Uh so you know here we have examples of
+[01:01:51] when to use sub agents like really when
+[01:01:53] tools return large outputs. Um and you
+[01:01:56] know that main agent might have multiple
+[01:01:58] responsibilities besides just
+[01:01:59] researching. Right? So this is very
+[01:02:00] common with code agents.
+[01:02:03] Um but there's many times where you
+[01:02:04] don't want to use sub agents. Okay. All
+[01:02:07] right. We're at the final slide. I'm
+[01:02:10] sure there's lots of questions because
+[01:02:12] we had a jam-packed session and I didn't
+[01:02:15] get to answer uh all the great questions
+[01:02:17] I saw in the chat. But the good news is
+[01:02:19] that we do have office hours right now.
+[01:02:22] So, what we're going to do is head over
+[01:02:24] to Discord for the office hours. So,
+[01:02:27] come there and bring your questions and
+[01:02:29] we'll also record those office hours and
+[01:02:31] post them afterwards if you miss it. Um,
+[01:02:34] and you can find them all in the
+[01:02:36] resources thread. And I even like here's
+[01:02:39] the recording like from yesterday. And I
+[01:02:40] even post the um the questions that come
+[01:02:44] up in office hours too. Uh, and I also
+[01:02:47] even for each presentation I do a write
+[01:02:49] up now. Um, this is all LLM uh
+[01:02:52] generated. But if you do want to recap
+[01:02:54] what we, you know, what we review for
+[01:02:56] every session, there will also be this
+[01:02:57] writeup of the slides and and what we
+[01:03:00] talked about. Um, and I also even added
+[01:03:02] the office hour questions to the bottom
+[01:03:04] of this. So, we're trying to give you as
+[01:03:05] many resources as we can in order to uh,
+[01:03:09] you know, learn from everything we're
+[01:03:10] sharing here. And we'll just, you know,
+[01:03:13] I'll just be putting everything in this
+[01:03:14] resources thread. Uh, so definitely
+[01:03:16] bookmark this resources thread. Uh, but
+[01:03:19] also come to our office hours right now.
+[01:03:22] And if you don't come, uh, we hope to
+[01:03:24] see you tomorrow for monitoring and
+[01:03:27] evaluating agents.
+[01:03:29] All right.
+[01:03:30] Thank you everyone. Hope to see you soon
+[01:03:33] in the discord.
+[01:03:35] >> Thank you. Thank you Pamela. Thank you
+[01:03:37] all for joining. Uh we are always we are
+[01:03:41] always looking to improve our sessions
+[01:03:42] and our experience. So if you have any
+[01:03:44] feedback for us, we would love to hear
+[01:03:46] your opinion. Uh you can find the survey
+[01:03:48] in the chat or on the screen

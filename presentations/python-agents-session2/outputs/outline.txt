@@ -1,0 +1,34 @@
+1. Overview of the Python + Agents series with session dates and topics.
+2. Title slide for the session on adding context and memory to agents.
+3. Agenda slide covering types of context, memory, knowledge providers, and context management.
+4. Instructions for following along with the session using a GitHub repository and Codespaces.
+5. Recap of what an AI agent is and how context improves agents.
+6. Explanation of what context is and examples of inputs that provide context to an agent.
+7. Title slide introducing the topic of memory in agents.
+8. Overview of different types of memory: session, chat history, and dynamic memory.
+9. Title slide introducing conversation sessions.
+10. Explanation of conversation sessions including an example dialogue.
+11. Code example showing how to create an in-memory conversation session.
+12. Title slide introducing persistent chat history.
+13. Explanation of persistent chat history with an example of storing sessions in a database.
+14. Explanation of storing persistent chat history in Redis with implementation details.
+15. Code example of using RedisHistoryProvider for persistent chat history.
+16. Explanation of storing persistent chat history in SQLite with an example schema.
+17. Code example of a custom SQLiteHistoryProvider implementation.
+18. Title slide introducing dynamic memory.
+19. Diagram explaining dynamic memory concepts including retrieving and storing memories.
+20. Explanation of dynamic memory implementation using Redis with details on retrieval and storage.
+21. Code example of using RedisContextProvider for dynamic memory.
+22. Title slide about knowledge in agents.
+23. Explanation of knowledge retrieval and why agents retrieve knowledge before calling tools.
+24. Code example of knowledge retrieval using SQLite database.
+25. Explanation of improving retrieval with hybrid search combining keyword and vector search.
+26. Code example of knowledge retrieval using PostgreSQL with hybrid search.
+27. Explanation of knowledge retrieval using Azure AI Search with query rewriting and multi-source selection.
+28. Title slide introducing context management.
+29. Explanation of context reduction using subagents to manage large tool call results.
+30. Code example of a coordinator agent calling sub-agents for specialized tasks.
+31. Explanation of query rewriting in a context provider to improve retrieval for multi-turn conversations.
+32. Code example of a PostgresQueryRewriteProvider implementation.
+33. Explanation of the importance of context window size and a table showing increasing token limits over time.
+34. Summary slide of next steps and session topics with links to recordings and office hours.

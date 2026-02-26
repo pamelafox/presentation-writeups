@@ -1,0 +1,20 @@
+title: "Python + Agents: Adding context and memory to agents"
+date: 2026-02-25
+
+# Video source: YouTube URL or local MP4 path (relative to this folder)
+video: "https://www.youtube.com/watch?v=BMzI9cEaGBM"
+
+# Slides: PDF or RevealJS HTML path (relative to this folder)
+slides: "PythonAgents-ContextMemory.pdf"
+
+notes: |
+  In the second session of our Python + Agents series, we’ll extend agents built with the Microsoft Agent Framework by adding two essential capabilities: context and memory.
+
+  We’ll begin with context, commonly known as Retrieval‑Augmented Generation (RAG), and show how agents can ground their responses using knowledge retrieved from local data sources such as SQLite or PostgreSQL.
+
+  This enables agents to provide accurate, domain‑specific answers based on real information rather than model hallucination. Next, we’ll explore memory—both short‑term, thread‑level context and long‑term, persistent memory.
+
+  You’ll see how agents can store and recall information using solutions like Redis or open‑source libraries such as Mem0, enabling them to remember previous interactions, user preferences, and evolving tasks across sessions.
+
+  By the end, you’ll understand how to build agents that are not only capable but context‑aware and memory‑efficient, resulting in richer, more personalized user experiences.
+

@@ -408,6 +408,7 @@ A supervisor agent manages multiple specialist agents by wrapping them as tools:
 3. The supervisor can potentially call multiple specialist agents, even in parallel
 
 Key observations from the live demo:
+
 - **Parallel tool calling** can happen — OpenAI models support suggesting multiple tool calls in a single response by default
 - If the agent doesn't have enough information, it may ask follow-up questions instead of completing the task. You need either a conversation loop or enough detail in the initial prompt.
 - Sub-agents are also useful for **reducing the context window**, which will be covered in the session on context and memory.
