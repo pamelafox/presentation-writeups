@@ -1,4 +1,4 @@
-# Python + Agents (Session 2): 🧠 Adding context and memory to agents
+# Python + Agents (Session 2): Adding context and memory to agents
 
 📺 [Watch the full recording on YouTube](https://www.youtube.com/watch?v=BMzI9cEaGBM) |
 📑 [Download the slides (PPTX)](https://aka.ms/pythonagents/slides/contextmemory)
