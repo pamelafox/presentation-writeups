@@ -1,38 +1,37 @@
-Summary:  
-This video is a detailed session on building, monitoring, evaluating, and ensuring the safety of AI agents using the Microsoft Agent Framework and OpenTelemetry. Pamela walks through setting up observability with OpenTelemetry, exporting telemetry data to platforms like Aspire and Azure Application Insights, and using the Azure AI Evaluation SDK to rigorously evaluate agent performance and safety, including automated red teaming to test for unsafe outputs.
+This session covers monitoring and evaluating AI agents built with the Microsoft Agent Framework. It demonstrates how to use OpenTelemetry for observability—exporting traces, metrics, and logs to platforms like Aspire and Azure Application Insights. It then covers automated evaluation using the Azure AI Evaluation SDK, including tool call accuracy, intent resolution, task adherence, and response completeness evaluators. The session concludes with safety evaluation through automated red teaming.
 
-Chapters:  
-00:06 - Introduction and Housekeeping  
-00:58 - Overview of Python Plus Agents Series and Today's Topic  
-02:20 - What is an Agent? Recap  
-06:20 - Monitoring Agents with Observability and OpenTelemetry  
-08:14 - Setting up OpenTelemetry in Agent Framework  
-10:33 - Exporting Telemetry Data and Latency Considerations  
-12:04 - Viewing OpenTelemetry Traces Locally  
-13:59 - Overview of OpenTelemetry-Compatible Observability Platforms  
-15:18 - Exporting to Aspire Dashboard Setup and Demo  
-18:23 - Exploring Aspire Dashboard Features and Trace Details  
-23:28 - Exporting to Azure Application Insights Setup and Demo  
-26:28 - Viewing Traces in Azure Application Insights  
-28:12 - Importance of GenAI OpenTelemetry Standard  
-29:22 - Using Dashboards and Alerts in App Insights  
-30:01 - Agent Framework Metrics and Custom Instrumentation  
-31:40 - Transition to Evaluating Agents  
-32:00 - Challenges of Non-Deterministic LLM-Based Agents  
-33:06 - Human Grading for Agent Evaluation  
-35:16 - Automated Evaluation Benefits and Frameworks Overview  
-37:22 - Azure AI Evaluation SDK Introduction  
-38:02 - High-Level and Granular Agent Evaluation Metrics  
-41:33 - Detailed Walkthrough of Tool Call Accuracy Evaluator  
-44:03 - Intent Resolution and Task Adherence Evaluators  
-46:22 - Running Agent Evaluation Code Demo  
-48:47 - Tips for Running Evaluations and Model Selection  
-50:47 - Viewing Evaluation Results and Bulk Evaluation  
-53:17 - Saving and Using Real User Data for Evaluation  
-56:01 - Viewing Evaluation Results Locally and in Foundry  
-57:24 - Introduction to Safety Evaluation and Red Teaming  
-58:09 - Automated Red Teaming with Adversarial LLMs  
-59:16 - Running Red Team Scans and Reviewing Results  
-01:00:49 - Best Practices for Red Teaming and Model Changes  
-01:02:27 - Conclusion and Next Steps in the Series  
-01:03:41 - Closing Remarks and Feedback Invitation
+00:00 - Introduction and housekeeping
+00:58 - Series overview and session introduction
+02:41 - Following along with the GitHub repo and Codespaces
+04:23 - Recap: what is an AI agent
+06:20 - Why monitoring and observability matter for agents
+06:57 - Introduction to OpenTelemetry
+08:14 - Agent Framework built-in OpenTelemetry support
+10:16 - Demo: console exporter for local traces
+12:51 - Understanding spans and traces
+13:59 - OpenTelemetry exporters overview
+15:18 - Exporting to the Aspire dashboard
+18:00 - Demo: viewing traces in Aspire
+21:48 - Aspire metrics: token usage and duration
+23:28 - Exporting to Azure Application Insights
+25:05 - Demo: viewing traces in App Insights
+28:02 - Gen AI OpenTelemetry standard attributes
+29:22 - Setting up dashboards and alerts in App Insights
+31:40 - Introduction to evaluating agents
+33:06 - Why evaluation matters when changing models or prompts
+33:47 - Approaches to evaluation: human grading
+35:16 - Automated evaluation frameworks overview
+37:59 - Evaluating agents: high-level and granular evaluators
+41:33 - Tool call accuracy evaluator
+44:03 - Intent resolution evaluator
+45:10 - Task adherence evaluator
+45:57 - Response completeness evaluator with ground truth
+46:22 - Demo: running evaluations locally
+51:43 - Bulk evaluation with data sets
+53:43 - Viewing evaluation results in AI Foundry
+56:30 - The full dev loop: observability + evaluation
+57:24 - Introduction to safety evaluation
+58:09 - Automated red teaming with Azure AI Evaluation SDK
+01:00:01 - Attack strategies: URL encoding and tense transformation
+01:01:49 - When to run red team scans
+01:02:27 - Closing remarks and next steps

@@ -14,6 +14,10 @@ dependencies = [
     "pyyaml",
     "rich",
     "youtube-transcript-api",
+    "agent-framework-core @ git+https://github.com/microsoft/agent-framework.git@0d6b9d61a5a7b02a8ca5e60daebc95478bf918aa#subdirectory=python/packages/core",
+    "agent-framework-devui @ git+https://github.com/microsoft/agent-framework.git@0d6b9d61a5a7b02a8ca5e60daebc95478bf918aa#subdirectory=python/packages/devui",
+    "agent-framework-orchestrations @ git+https://github.com/microsoft/agent-framework.git@0d6b9d61a5a7b02a8ca5e60daebc95478bf918aa#subdirectory=python/packages/orchestrations",
+    "aiohttp>=3.13.3",
 ]
 
 [project.scripts]

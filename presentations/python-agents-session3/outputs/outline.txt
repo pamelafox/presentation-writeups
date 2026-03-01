@@ -1,34 +1,39 @@
-1. Overview of the Python + Agents series with session dates and topics.
-2. Title slide for the "Monitoring and evaluating agents" session by Pamela Fox.
-3. Agenda covering monitoring tools, evaluation methods, and safety considerations.
-4. Instructions for following along using a GitHub repository and Codespace.
-5. Recap of what an AI agent is and the importance of monitoring and evaluation.
-6. Introduction to monitoring agents with a link to more resources.
-7. Explanation of observability using OpenTelemetry (OTel) with traces, metrics, and logs.
-8. How to use OpenTelemetry with the Agent Framework including example code.
-9. Table of OTel-compliant observability platforms, both open source and managed.
-10. Instructions for exporting telemetry data to Aspire dashboard with environment variables.
-11. Example of monitoring an agent in the Aspire dashboard showing traces, metrics, and logs.
-12. Standard trace format for agent executions with example attributes and values.
-13. Instructions for exporting OpenTelemetry data to Azure Application Insights with example code.
-14. Viewing traces in Azure Application Insights portal with navigation tips.
-15. Introduction to evaluating agents with a link to more resources.
-16. Explanation of agent output non-determinism and factors affecting output quality.
-17. Human grading for evaluating agent outputs with an example interface.
-18. Automated evaluation of AI apps using Azure AI Foundry with example metrics.
-19. Table of automated evaluation frameworks with authors, languages, and cloud hosting info.
-20. Using the azure-ai-evaluation package with features and a link to the SDK.
-21. Built-in evaluators for AI agents covering tool call accuracy, intent resolution, and more.
-22. Tool call accuracy evaluator example with code and scoring explanation.
-23. Intent resolution evaluator example with code and scoring explanation.
-24. Task adherence evaluator example with code and scoring explanation.
-25. Response completeness evaluator example with code and scoring explanation.
-26. Viewing evaluation results locally as JSON or with a custom CLI viewer.
-27. Viewing evaluation results in AI Foundry portal with example output.
-28. Safety evaluation introduction with a link to AI red-teaming agent concepts.
-29. Safety evaluation process diagram showing automated red-teaming workflow.
-30. Configuring the red-teaming agent with example code and risk categories.
-31. Running the red-teaming scan with example code and attack strategies.
-32. Reviewing red-teaming results locally or in AI Foundry with warnings about content.
-33. Recommendations on when to run red team scans based on model changes and prompt updates.
-34. Closing slide with next steps and a recap of the Python + Agents series schedule.
+1. Series overview slide showing the six-session Python + Agents schedule with session 3 highlighted.
+2. Title slide: "Monitoring and evaluating agents" for this session.
+3. Agenda slide listing three topics: monitoring with OpenTelemetry, evaluation with Azure AI Evaluation SDK, and safety evaluation.
+4. Instructions for following along with the GitHub repo and Codespaces setup.
+5. Recap slide defining what an AI agent is: uses an LLM with tools in a loop to achieve goals.
+6. Introduction to monitoring/observability for agents and why it matters for non-deterministic systems.
+7. OpenTelemetry overview: open standard for traces, metrics, and logs across the industry.
+8. Agent Framework's built-in OpenTelemetry support with configure_otel_providers function.
+9. Code example showing the agent_otel_aspire.py file with configure_otel_providers setup.
+10. Demo slide showing console exporter output with spans and metrics in JSON format.
+11. Overview of OpenTelemetry-compliant observability platforms: Aspire, App Insights, Datadog, Grafana, Prometheus, Jaeger, Logfire.
+12. Setting up the Aspire dashboard exporter with OTEL_EXPORTER_OTLP_ENDPOINT environment variable.
+13. Code example showing the Aspire exporter configuration and environment variable setup.
+14. Demo of the Aspire dashboard showing trace spans and timeline visualization.
+15. Aspire trace detail view showing agent conversation rendering and span attributes.
+16. Aspire metrics view showing token usage, duration, and function invocation metrics.
+17. Setting up Azure Application Insights exporter with azure-monitor-opentelemetry package.
+18. Code example showing agent_otel_app_insights.py with configure_azure_monitor setup.
+19. Demo of App Insights trace view showing similar span visualization to Aspire.
+20. Gen AI OpenTelemetry standard attributes (gen_ai.*) enabling rich rendering in observability platforms.
+21. Agent Framework observability documentation showing built-in spans and metrics.
+22. Transition slide to evaluation section: ensuring agents produce high-quality outputs.
+23. Why evaluation matters: non-determinism, risk from LLM calls, need for confidence in tool selection and responses.
+24. Evaluation approaches: human grading with domain expertise and automated evaluation.
+25. Overview of evaluation frameworks: Azure AI Evaluation, Tau, Ragas, Deepeval, Langsmith, OpenAI evals.
+26. Evaluating agents at high level (intent resolution, task adherence) and granular level (tool call accuracy, response completeness).
+27. Tool call accuracy evaluator: checks tools, arguments, and unnecessary calls with LLM-as-judge scoring 1-5.
+28. Intent resolution evaluator: checks if the agent achieved the user's goal based on full conversation.
+29. Task adherence evaluator: checks if agent followed prompt constraints and tool use rules.
+30. Response completeness evaluator: checks alignment with ground truth answer.
+31. Demo of running evaluation code locally showing scores and reasons for each evaluator.
+32. Bulk evaluation with evaluate() function using JSONL data files of previous agent runs.
+33. Viewing evaluation results in AI Foundry portal with pass rates and detailed scoring.
+34. The full development loop: build agent, evaluate, deploy to production, monitor with OpenTelemetry, improve.
+35. Safety evaluation introduction: preventing hate speech, violence, jailbreaks, and unsafe outputs.
+36. Automated red teaming: adversarial LLM generates attacks with transformation strategies.
+37. Code example showing RedTeam class setup with attack strategies (URL encoding, tense transformation).
+38. Viewing red team results in Foundry showing attack success/failure rates by category.
+39. Closing slide with resources, Discord office hours, and next session preview on multi-agent workflows.

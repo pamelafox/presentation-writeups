@@ -1,313 +1,357 @@
-# Monitoring and evaluating agents
+# Python + Agents (Session 3): Monitoring and evaluating agents
 
-This talk provides a comprehensive guide on building robust AI agents using the Microsoft Agent Framework, focusing on monitoring, evaluating, and ensuring the safety of agents in production environments. It covers setting up observability with OpenTelemetry, exporting telemetry data to platforms like Aspire and Azure Application Insights, and performing rigorous evaluations with the Azure AI Evaluation SDK, including automated red teaming to detect unsafe outputs. These processes enable developers to gain insight into agent behavior, measure output quality, and maintain safety standards.
+📺 [Watch the full recording on YouTube](https://www.youtube.com/watch?v=3yS-G-NEBu8) |
+📑 [Download the slides (PDF)](PythonAgents-MonitoringEvaluating.pdf)
+
+This write-up includes an annotated version of the presentation slides with timestamps to the video plus a summary of the live Q&A sessions.
 
 ## Table of contents
 
-- [Overview of the Python + Agents series and session topics](#overview-of-the-python-agents-series-and-session-topics)
-- [Introducing monitoring and evaluating agents session](#introducing-monitoring-and-evaluating-agents-session)
-- [Agenda covering monitoring, evaluation, and safety](#agenda-covering-monitoring-evaluation-and-safety)
-- [Following along with GitHub repo and Codespace setup](#following-along-with-github-repo-and-codespace-setup)
-- [Recap of what an AI agent is and importance of monitoring and evaluation](#recap-of-what-an-ai-agent-is-and-importance-of-monitoring-and-evaluation)
-- [Monitoring agents with observability and OpenTelemetry](#monitoring-agents-with-observability-and-opentelemetry)
-- [Using OpenTelemetry with the Agent Framework including example code](#using-opentelemetry-with-the-agent-framework-including-example-code)
-- [Overview of OpenTelemetry-compliant observability platforms](#overview-of-opentelemetry-compliant-observability-platforms)
-- [Exporting telemetry data to Aspire dashboard with environment variables](#exporting-telemetry-data-to-aspire-dashboard-with-environment-variables)
-- [Monitoring an agent in Aspire dashboard showing traces and metrics](#monitoring-an-agent-in-aspire-dashboard-showing-traces-and-metrics)
-- [Exporting OpenTelemetry data to Azure Application Insights with example code](#exporting-opentelemetry-data-to-azure-application-insights-with-example-code)
-- [Viewing traces in Azure Application Insights portal](#viewing-traces-in-azure-application-insights-portal)
-- [Importance of GenAI OpenTelemetry standard](#importance-of-genai-opentelemetry-standard)
-- [Using dashboards and alerts in Application Insights](#using-dashboards-and-alerts-in-application-insights)
-- [Agent framework metrics and custom instrumentation](#agent-framework-metrics-and-custom-instrumentation)
-- [Evaluating agents: challenges of non-deterministic LLM-based agents](#evaluating-agents-challenges-of-non-deterministic-llm-based-agents)
-- [Human grading for agent evaluation](#human-grading-for-agent-evaluation)
-- [Automated evaluation of AI apps using Azure AI Foundry](#automated-evaluation-of-ai-apps-using-azure-ai-foundry)
-- [Automated evaluation frameworks overview](#automated-evaluation-frameworks-overview)
-- [Using azure-ai-evaluation package with features](#using-azure-ai-evaluation-package-with-features)
-- [Built-in evaluators for AI agents](#built-in-evaluators-for-ai-agents)
-- [Tool call accuracy evaluator example with code and scoring](#tool-call-accuracy-evaluator-example-with-code-and-scoring)
-- [Intent resolution and task adherence evaluators example code](#intent-resolution-and-task-adherence-evaluators-example-code)
-- [Response completeness evaluator with ground truth comparison](#response-completeness-evaluator-with-ground-truth-comparison)
-- [Running agent evaluation code demo](#running-agent-evaluation-code-demo)
-- [Tips for running evaluations and model selection](#tips-for-running-evaluations-and-model-selection)
-- [Viewing evaluation results locally and bulk evaluation](#viewing-evaluation-results-locally-and-bulk-evaluation)
-- [Saving and using real user data for evaluation](#saving-and-using-real-user-data-for-evaluation)
-- [Safety evaluation introduction and AI red teaming concepts](#safety-evaluation-introduction-and-ai-red-teaming-concepts)
-- [Automated red teaming with adversarial LLMs](#automated-red-teaming-with-adversarial-llms)
-- [Configuring and running red teaming scans](#configuring-and-running-red-teaming-scans)
-- [Reviewing red teaming results and handling offensive content](#reviewing-red-teaming-results-and-handling-offensive-content)
-- [Best practices for red teaming and model changes](#best-practices-for-red-teaming-and-model-changes)
-- [Closing slide with next steps and series recap](#closing-slide-with-next-steps-and-series-recap)
-- [Q&A](#qa)
+- [Session description](#session-description)
+- [Annotated slides](#annotated-slides)
+  - [Overview of the Python and Agents series](#overview-of-the-python-and-agents-series)
+  - [Monitoring and evaluating agents](#monitoring-and-evaluating-agents)
+  - [Agenda: monitoring, evaluation, and safety](#agenda-monitoring-evaluation-and-safety)
+  - [Following along with the GitHub repo and Codespaces](#following-along-with-the-github-repo-and-codespaces)
+  - [Recap: what is an AI agent](#recap-what-is-an-ai-agent)
+  - [Monitoring agents](#monitoring-agents)
+  - [Observability with OpenTelemetry](#observability-with-opentelemetry)
+  - [Using OpenTelemetry with Agent Framework](#using-opentelemetry-with-agent-framework)
+  - [OTel-compliant observability platforms](#otel-compliant-observability-platforms)
+  - [Exporting to the Aspire dashboard](#exporting-to-the-aspire-dashboard)
+  - [Monitoring agent traces and metrics in Aspire](#monitoring-agent-traces-and-metrics-in-aspire)
+  - [Standard trace format for agent executions](#standard-trace-format-for-agent-executions)
+  - [Exporting OpenTelemetry to Azure Application Insights](#exporting-opentelemetry-to-azure-application-insights)
+  - [Viewing traces in Azure Application Insights](#viewing-traces-in-azure-application-insights)
+  - [Evaluating agents](#evaluating-agents)
+  - [Agent output is non-deterministic](#agent-output-is-non-deterministic)
+  - [Evaluating agent outputs: human grading](#evaluating-agent-outputs-human-grading)
+  - [Automated evaluation with LLMs](#automated-evaluation-with-llms)
+  - [Automated evaluation frameworks](#automated-evaluation-frameworks)
+  - [Using the azure-ai-evaluation package](#using-the-azure-ai-evaluation-package)
+  - [Built-in evaluators for AI agents](#built-in-evaluators-for-ai-agents)
+  - [Tool call accuracy evaluator](#tool-call-accuracy-evaluator)
+  - [Intent resolution evaluator](#intent-resolution-evaluator)
+  - [Task adherence evaluator](#task-adherence-evaluator)
+  - [Response completeness evaluator](#response-completeness-evaluator)
+  - [Bulk evaluation of a dataset](#bulk-evaluation-of-a-dataset)
+  - [Viewing evaluation results locally](#viewing-evaluation-results-locally)
+  - [Viewing evaluation results in AI Foundry](#viewing-evaluation-results-in-ai-foundry)
+  - [CI/CD evaluation with GitHub Actions](#cicd-evaluation-with-github-actions)
+  - [Dev loop for AI agents](#dev-loop-for-ai-agents)
+  - [Safety evaluation](#safety-evaluation)
+  - [What makes an agent's output safe?](#what-makes-an-agents-output-safe)
+  - [Automated red teaming process](#automated-red-teaming-process)
+  - [Configuring the red-teaming agent](#configuring-the-red-teaming-agent)
+  - [Running the red-teaming scan](#running-the-red-teaming-scan)
+  - [Reviewing red team results](#reviewing-red-team-results)
+  - [When to run red team scans](#when-to-run-red-team-scans)
+  - [Next steps and resources](#next-steps-and-resources)
+- [Live Chat Q&A](#live-chat-qa)
 
-## Overview of the Python + Agents series and session topics
+## Session description
 
-![Overview slide of the Python + Agents series](slide_images/slide_1.png)  
-[Watch from 00:06](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=6s)
+In the third session of the Python + Agents series, we shifted focus to two essential components of building reliable agents: observability and evaluation.
 
-The Python + Agents series spans multiple sessions that progressively build knowledge on creating AI agents. The first week focuses on building agents with the Microsoft Agent Framework. Subsequent weeks explore multi-agent workflows and more advanced orchestration. This particular session addresses monitoring and evaluating agents—key practices needed to manage agents effectively in production. It sets the foundation for understanding how agents operate and how developers can observe and improve their behavior.
+We began with observability, using OpenTelemetry to capture traces, metrics, and logs from agent actions. We showed how to instrument agents built with the Microsoft Agent Framework and export telemetry to local dashboards (Aspire) and managed platforms (Azure Application Insights), using the standard `gen_ai` OpenTelemetry attributes to get rich trace rendering.
 
-## Introducing monitoring and evaluating agents session
+From there, we explored how to evaluate agent behavior using the Azure AI Evaluation SDK. We covered four built-in evaluators—tool call accuracy, intent resolution, task adherence, and response completeness—running them both individually and in bulk against data sets, with results viewable locally or in Azure AI Foundry.
 
-![Title slide for monitoring and evaluating agents](slide_images/slide_2.png)  
+We concluded with safety evaluation through automated red teaming, using adversarial LLMs to test whether agents could withstand attacks like URL encoding, tense transformation, and other jailbreak strategies.
+
+## Annotated slides
+
+### Overview of the Python and Agents series
+
+![Series overview slide](slide_images/slide_1.png)  
 [Watch from 00:58](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=58s)
 
-This session zeroes in on three pillars: monitoring agent activity via observability tools, evaluating agent output quality using evaluation frameworks, and ensuring safety through guardrails and red teaming. Monitoring reveals agent decisions and tool usage in real time, evaluation quantifies output effectiveness, and safety checks prevent harmful or undesirable responses. Together, these capabilities form a comprehensive approach for managing AI agents reliably.
+This series consists of six sessions teaching how to build AI agents using the Microsoft Agent Framework. Session 3 marks the end of week one, which covers building individual agents. Week two focuses on building multi-agent workflows. Recordings, write-ups, and slides from previous sessions are available through the series resources link, and registering for the series provides email notifications for upcoming sessions.
 
-## Agenda covering monitoring, evaluation, and safety
+### Monitoring and evaluating agents
 
-![Agenda slide listing monitoring, evaluation, safety topics](slide_images/slide_3.png)  
-[Watch from 01:24](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=84s)
+![Session title slide](slide_images/slide_2.png)  
+[Watch from 01:42](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=102s)
 
-The agenda outlines three main content areas: first, monitoring agents by integrating OpenTelemetry for trace, metrics, and log collection; second, evaluating agents using automated and human-in-the-loop methods to measure correctness and adherence to goals; and third, ensuring agent safety via automated red teaming techniques that simulate adversarial attacks. These topics collectively address the lifecycle of agent management.
+This session covers monitoring and evaluating agents—two essential capabilities for production agent systems. Monitoring provides visibility into what an agent is doing, while evaluation ensures the agent is producing high-quality outputs.
 
-## Following along with GitHub repo and Codespace setup
+### Agenda: monitoring, evaluation, and safety
 
-![Instruction slide for GitHub repo and Codespace](slide_images/slide_4.png)  
-[Watch from 03:00](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=180s)
+![Agenda slide](slide_images/slide_3.png)  
+[Watch from 01:53](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=113s)
 
-The session’s code examples are hosted in a GitHub repository with support for VS Code Codespaces, allowing users to run and test samples in a cloud-hosted development environment preconfigured with dependencies. While many LLM-based examples run freely, integrating Azure resources requires an Azure subscription due to associated costs. Users are encouraged to clone the repo, open a Codespace for instant access, and configure their own Azure credentials to execute all examples fully.
+The agenda covers three topics: monitoring agents using OpenTelemetry and exporting telemetry to platforms like Aspire and Azure Application Insights; evaluating agents using the Azure AI Evaluation SDK with built-in evaluators for tool call accuracy, intent resolution, task adherence, and response completeness; and safety evaluation through automated red teaming to ensure agents do not produce harmful outputs.
 
-## Recap of what an AI agent is and importance of monitoring and evaluation
+### Following along with the GitHub repo and Codespaces
 
-![Slide defining an AI agent and importance of monitoring](slide_images/slide_5.png)  
+![Instructions for following along](slide_images/slide_4.png)  
+[Watch from 02:41](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=161s)
+
+All code for the session is in the same GitHub repository used throughout the series. Creating a GitHub Codespace from the repository provides a preconfigured VS Code environment with Python dependencies and examples. A `git pull` is recommended after starting the Codespace to get the latest changes. Unlike previous sessions, some examples in this session require Azure resources that are not free—specifically Azure Application Insights and Azure AI Foundry—so not all examples can be run entirely for free in Codespaces.
+
+### Recap: what is an AI agent
+
+![Agent definition recap](slide_images/slide_5.png)  
 [Watch from 04:23](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=263s)
 
-An AI agent combines a large language model (LLM) with a set of tools to accomplish a user-specified goal. The LLM dynamically decides which tools to invoke, possibly iterating multiple times to gather information or perform actions before producing a final output. Because agents behave non-deterministically—varying in tool calls, sequence, and length—monitoring is essential to trace their decision paths and tool usage. Evaluation complements monitoring by assessing output correctness and alignment with user intent to ensure high-quality results.
+An AI agent uses an LLM to achieve a goal by calling tools in a loop. The LLM decides which tools to invoke and continues calling tools until it has enough information to produce a response. Agent runs are non-deterministic—some complete with zero tool calls, others may need twenty. This variability in behavior is precisely why monitoring and evaluation are essential: you need to see what the agent actually did and verify it was correct.
 
-## Monitoring agents with observability and OpenTelemetry
+### Monitoring agents
 
-![Monitoring agents using OpenTelemetry](slide_images/slide_6.png)  
+![Monitoring agents section slide](slide_images/slide_6.png)  
 [Watch from 06:20](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=380s)
 
-Observability is crucial for understanding what an agent is doing, especially given its non-deterministic nature. OpenTelemetry is an open industry standard for collecting telemetry data—including traces, metrics, and logs—that facilitates consistent, structured monitoring across systems. Employing OpenTelemetry enables developers to record detailed information about agent events, resource usage, and errors, which can then be exported to various observability platforms for visualization and analysis.
+Observability is critical for any user-facing application, but even more important for agents because of their non-deterministic nature. Agents have agency—they choose which tools to call, in what order, and with what arguments. Monitoring lets you observe what the agent actually chose to do and whether those choices led to good outcomes.
 
-## Using OpenTelemetry with the Agent Framework including example code
+### Observability with OpenTelemetry
 
-![Code example showing OpenTelemetry setup in Agent Framework](slide_images/slide_7.png)  
+![OpenTelemetry overview](slide_images/slide_7.png)  
+[Watch from 06:57](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=417s)
+
+OpenTelemetry (OTel) is an open standard for observability and the most widely supported standard across the industry. It defines how applications should emit three types of signals: **traces** (sequences of spans showing how a request moves through services, including timing and dependencies), **metrics** (numerical measurements like CPU usage, request counts, and latency for graphing), and **logs** (structured log records with message, severity, timestamp, and contextual attributes). Using OpenTelemetry means you can export to many different observability platforms without vendor lock-in.
+
+### Using OpenTelemetry with Agent Framework
+
+![Agent Framework OTel code](slide_images/slide_8.png)  
 [Watch from 08:14](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=494s)
 
-The Microsoft Agent Framework natively supports OpenTelemetry tracing. By importing its `configure_otel_providers` function, developers can easily enable telemetry data emission with options to include sensitive data like tool calls. Since logging tool calls may expose private information, users must balance observability benefits against privacy risks, potentially filtering sensitive data via middleware. The configuration relies on environment variables to customize exporters and sampling rates, allowing flexible integration with different telemetry backends.
+The Microsoft Agent Framework has built-in support for generating OpenTelemetry traces. Enabling it requires importing `configure_otel_providers` from the agent framework and calling it with configuration options. The `enable_sensitive_data` parameter controls whether detailed data like tool call arguments and messages is included in traces—this involves a privacy trade-off where more data enables better debugging but may include private user information. Setting `ENABLE_CONSOLE_EXPORTERS=true` as an environment variable outputs traces directly to the terminal, which is useful for verifying instrumentation works before configuring an external exporter. The demo shows spans for each tool execution, LLM chat completion calls, and metrics for token usage—though reading raw JSON in a console is not practical for real development.
 
-## Overview of OpenTelemetry-compliant observability platforms
+### OTel-compliant observability platforms
 
-![Table of OpenTelemetry-compatible platforms](slide_images/slide_8.png)  
+![OTel-compliant platforms table](slide_images/slide_9.png)  
 [Watch from 13:59](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=839s)
 
-Numerous observability platforms support OpenTelemetry data ingestion. Open source options like Aspire (used locally) and managed services like Azure Application Insights are common choices. Other popular platforms include DataDog, Grafana (now with Application Insights support), Prometheus, Jaeger, and Logfire. Selecting a platform depends on deployment needs, whether local development or production-grade monitoring, and personal or organizational preferences.
+Many observability platforms support OpenTelemetry. **Aspire** is an open-source local dashboard without a managed version. **Azure Application Insights** is a managed service commonly used for Azure deployments. Other options include Datadog, Grafana (now integrated within App Insights), Prometheus, Jaeger, and **Logfire** from the creators of Pydantic, which has a particularly nice UI. All are OpenTelemetry-compliant, so switching between them requires only changing the exporter configuration.
 
-## Exporting telemetry data to Aspire dashboard with environment variables
+### Exporting to the Aspire dashboard
 
-![Setup instructions for Aspire dashboard export](slide_images/slide_9.png)  
+![Aspire dashboard setup](slide_images/slide_10.png)  
 [Watch from 15:18](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=918s)
 
-Aspire is a local, open source observability dashboard compatible with OpenTelemetry. To export telemetry to Aspire, an environment variable specifying the OTLP endpoint must point to the locally running Aspire server. The required OpenTelemetry OTLP gRPC exporter package must be installed, as reflected in the project dependencies. Aspire runs as a service within the development container (for example, in GitHub Codespaces) and listens on a dedicated port exposed to the user environment.
+Exporting to the Aspire dashboard requires setting the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable to the Aspire server's address and the `OTEL_EXPORTER_OTLP_PROTOCOL` to `grpc`. The `opentelemetry-exporter-otlp-proto-grpc` package must be installed (already included in the project's `pyproject.toml`). In the session's GitHub Codespace, Aspire runs as a Docker service inside the dev container with the endpoint already configured. The code simply calls `configure_otel_providers` as before—the function reads the environment variables automatically.
 
-## Monitoring an agent in Aspire dashboard showing traces and metrics
+### Monitoring agent traces and metrics in Aspire
 
-![Aspire dashboard showing agent traces with spans and metrics](slide_images/slide_10.png)  
-[Watch from 18:23](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1103s)
+![Aspire dashboard monitoring](slide_images/slide_11.png)  
+[Watch from 18:00](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1080s)
 
-The Aspire dashboard visualizes agent telemetry as traces composed of spans, representing discrete operations such as LLM calls or tool invocations. Each trace’s duration and sequence are displayed, highlighting that LLM calls typically consume the most time. A special agent-oriented view reconstructs the conversational flow, showing user inputs, tool calls, and agent outputs. Aspire also tracks metrics like token usage and function invocation durations, enabling performance monitoring. This setup is ideal for local development and debugging.
+The Aspire dashboard displays three types of data: **traces** (agent executions, LLM calls, and tool calls), **metrics** (tool call durations, LLM call durations, and token usage), and **logs** (Python logging calls). Clicking on a trace reveals its spans in a timeline view—a typical agent trace shows an initial chat completion call where the LLM decides which tools to call, the individual tool execution spans, and a final chat completion call where the LLM generates its response. The timeline makes it clear that LLM calls dominate total duration. Aspire also renders LLM conversations in a developer-friendly format by recognizing the `gen_ai` OpenTelemetry standard attributes—clicking the sparkle icon shows the full conversation including system prompt, user query, tool call decisions, and assistant response. The metrics tab graphs token usage and operation durations over time, useful for identifying patterns and slow tools.
 
-## Exporting OpenTelemetry data to Azure Application Insights with example code
+### Standard trace format for agent executions
 
-![Azure Application Insights export setup code snippet](slide_images/slide_11.png)  
+![Gen AI standard trace attributes](slide_images/slide_12.png)  
+[Watch from 28:02](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1682s)
+
+Agent Framework uses the standard `gen_ai` span attribute names and values for agent executions, LLM calls, and tool calls. For example, a tool call span includes attributes like `gen_ai.operation.name`, `gen_ai.tool.name`, `gen_ai.tool.call.arguments`, and `gen_ai.tool.call.result`. This is an OpenTelemetry standard specifically for generative AI applications—both Aspire and App Insights can render rich, conversational views of traces because they recognize this standard, not because they have specific knowledge of Agent Framework. Any observability platform that supports the Gen AI OpenTelemetry standard will provide similar rich rendering. The Agent Framework documentation lists the specific spans it generates (`invoke_agent`, `chat`, `execute_tool`) and built-in metrics (operation duration, token usage, invocation duration), with the ability to add custom spans and metrics using standard OpenTelemetry APIs.
+
+### Exporting OpenTelemetry to Azure Application Insights
+
+![App Insights OTel setup](slide_images/slide_13.png)  
 [Watch from 23:28](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1408s)
 
-For production monitoring, exporting telemetry to Azure Application Insights provides a managed cloud service with rich visualization and alerting features. This requires adding the Azure Monitor OpenTelemetry exporter package and configuring it with an Application Insights connection string via environment variables. The agent framework’s instrumentation functions are called to enable telemetry export. Unlike Aspire, Azure Application Insights is typically set up locally during development with credentials or in production environments with secure configurations.
+Azure Application Insights is a managed observability platform for production use. It requires the `azure-monitor-opentelemetry` package (already in the project's `pyproject.toml`). The setup imports `configure_azure_monitor` and calls it with the Application Insights connection string from environment variables, a resource name from the agent framework's `create_resource()`, and `enable_live_metrics=True`. Then `enable_instrumentation` from the agent framework wires up the exporter with an option to include sensitive data. This configuration means whenever Agent Framework generates OpenTelemetry traces, they automatically get exported to App Insights. Unlike the free GitHub Models used in previous sessions, App Insights requires an Azure resource that is not free.
 
-## Viewing traces in Azure Application Insights portal
+### Viewing traces in Azure Application Insights
 
-![Azure Application Insights portal showing agent trace and spans](slide_images/slide_12.png)  
-[Watch from 26:28](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1588s)
+![App Insights trace view](slide_images/slide_14.png)  
+[Watch from 25:05](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1505s)
 
-Within the Azure Application Insights portal, agent telemetry traces appear under performance or dependencies tabs. Traces show a hierarchical breakdown of agent operations, including LLM calls and tool executions, similar to Aspire’s visualization. Application Insights renders traces in a developer-friendly conversational style rather than raw JSON, making it easier to interpret agent behavior. Each span includes attributes that conform to the GenAI OpenTelemetry standard, enabling specialized rendering for AI-based applications.
+The App Insights trace view looks similar to Aspire, showing the same pattern: an invoke agent parent span, initial chat completion call, tool call spans, and final chat completion call. The Performance tab with Dependencies view is the easiest way to find recent traces. App Insights also renders LLM conversations in a friendly format rather than raw JSON, thanks to the Gen AI OpenTelemetry standard. There may be up to a five-minute lag between an event occurring and it appearing in App Insights. Once telemetry data is flowing, you can set up dashboards, alerts, and custom queries to monitor agent behavior in production.
 
-## Importance of GenAI OpenTelemetry standard
+### Evaluating agents
 
-![GenAI OpenTelemetry standard attributes and example](slide_images/slide_13.png)  
-[Watch from 28:12](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1692s)
-
-The GenAI OpenTelemetry standard defines attributes specific to generative AI applications, such as operation names, tool names, and token usage, prefixed with `gen_ai`. Adhering to this standard allows observability platforms to recognize AI-specific telemetry and render it with enhanced clarity, such as conversational views. Both Aspire and Azure Application Insights rely on this standard to provide meaningful visualizations. Using GenAI-compliant telemetry is critical for gaining actionable insights into agent internals.
-
-## Using dashboards and alerts in Application Insights
-
-![Sample dashboards and alert configuration in Application Insights](slide_images/slide_14.png)  
-[Watch from 29:22](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1762s)
-
-Once telemetry data flows into Azure Application Insights, users can create custom dashboards to track key metrics like token usage, response times, and error rates. Alerts can be configured to notify teams of anomalies or performance degradations. This facilitates proactive monitoring and operational insight into agent health. Coupled with the GenAI standard, these dashboards provide a comprehensive picture of agent activity and quality in production.
-
-## Agent framework metrics and custom instrumentation
-
-![Agent framework spans and metrics overview](slide_images/slide_15.png)  
-[Watch from 30:01](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1801s)
-
-The Agent Framework automatically emits spans such as `invoke_agent`, `chat`, and `execute_tool`, along with metrics like operation duration and token usage. Developers can extend this by instrumenting additional components—such as FastAPI endpoints or Azure SDK calls—to capture a full observability picture. OpenTelemetry’s flexibility allows custom spans and metrics to be defined, ensuring comprehensive monitoring that spans all relevant parts of an agent-based application.
-
-## Evaluating agents: challenges of non-deterministic LLM-based agents
-
-![Challenges of evaluating non-deterministic agents](slide_images/slide_16.png)  
+![Evaluating agents section slide](slide_images/slide_15.png)  
 [Watch from 31:40](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1900s)
 
-LLM-based agents exhibit inherent non-determinism due to stochastic model behavior and variable tool usage. Each LLM call adds uncertainty, complicating assurance of output quality. Evaluating agents involves verifying that they select appropriate tools in the correct sequence with proper arguments and produce responses grounded in tool outputs without hallucinations. Establishing rigorous evaluation processes is critical to maintaining confidence in agent reliability and performance.
+Evaluation ensures agents produce high-quality outputs. While it is easy to build agents, it is harder to build agents that consistently perform well. Evaluation provides the rigor needed to verify quality and catch regressions when changing models, prompts, or tools.
 
-## Human grading for agent evaluation
+### Agent output is non-deterministic
 
-![Human grading interface for agent responses](slide_images/slide_17.png)  
+![Non-determinism in agent output](slide_images/slide_16.png)  
 [Watch from 33:06](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=1986s)
 
-Human evaluators with domain expertise provide valuable qualitative feedback by reviewing agent outputs and indicating correctness or errors. They can diagnose why an output is wrong, guiding the development of automated evaluation criteria. However, human grading is limited by scale and time, making it impractical for extensive datasets but essential for initial calibration and complex cases where nuanced judgment is required.
+Each LLM call increases non-determinism and risk. A high-quality agent must choose the right tools, in the right order, with the right arguments, and then generate a response grounded in those tool call results without missing or fabricating information. Any change to the model version, temperature, or prompt can affect output quality—sometimes for better, sometimes for worse. "Vibe checks" are fine initially, but must be verified with automated evaluation to detect regressions.
 
-## Automated evaluation of AI apps using Azure AI Foundry
+### Evaluating agent outputs: human grading
 
-![Automated evaluation metrics and framework overview](slide_images/slide_18.png)  
+![Human grading approach](slide_images/slide_17.png)  
+[Watch from 33:47](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2027s)
+
+Human grading involves domain experts spot-checking agent output performance on small data sets, rating responses with thumbs up/down and annotating issues. Humans are particularly valuable for explaining *why* something is wrong, which informs what automated evaluations to build. Human evaluators must have domain expertise—LLMs can be convincingly wrong, and only experts can catch subtle hallucinations. Some form of human evaluation is always recommended alongside automated approaches.
+
+### Automated evaluation with LLMs
+
+![Automated evaluation overview](slide_images/slide_18.png)  
 [Watch from 35:16](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2116s)
 
-Automated evaluation frameworks enable scalable, repeatable quality assessment of agent outputs. Azure AI Evaluation SDK offers built-in evaluators that leverage LLMs as judges to score outputs on intent resolution, task adherence, response completeness, and tool call accuracy. Results can be exported to Azure AI Foundry for collaborative review. Automated evaluation accelerates iteration, regression detection, and continuous improvement with quantitative metrics.
+Automated evaluation uses LLMs to measure output performance at scale across a broader range of risks. Once set up, automated evaluation can run whenever the system changes, enabling confident model and prompt changes. It scales to much larger data sets than human grading. The combination of human annotation to identify issues and automated evaluation to prevent regressions is the recommended approach.
 
-## Automated evaluation frameworks overview
+### Automated evaluation frameworks
 
-![Table of evaluation frameworks including Azure AI Evaluation SDK](slide_images/slide_19.png)  
+![Evaluation frameworks table](slide_images/slide_19.png)  
 [Watch from 35:54](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2154s)
 
-Besides Azure AI Evaluation SDK, other frameworks include Tao (Python for customer service agents), Ragos (research-focused Python), DeepEval (Python with hosted service), Langsmith (for Langchain users), and OpenAI’s eval package. Most use LLMs as judges and support exporting results for visualization. Framework choice depends on ecosystem, use case, and integration needs.
+Multiple frameworks support automated evaluation:
 
-## Using azure-ai-evaluation package with features
+- **Azure AI Evaluation / Microsoft.Extensions.AI.Evaluation** (Python and .NET) — the focus of this session, with optional cloud hosting via AI Foundry
+- **Tau** (Python) — from Sierra, specifically designed for customer service agents
+- **RAGAS** (Python) — from ExplodingGradients, a research-based startup
+- **DeepEval** (Python) — from ConfidentAI, includes an optional hosted evaluation service
+- **Langsmith** (Python) — from LangChain, requires their cloud platform
+- **OpenAI evals** (Python) — built into the OpenAI package, now integrates with both openai.com and Azure AI Foundry
 
-![Azure AI Evaluation SDK architecture and features](slide_images/slide_20.png)  
+### Using the azure-ai-evaluation package
+
+![Azure AI Evaluation package overview](slide_images/slide_20.png)  
 [Watch from 37:22](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2242s)
 
-The Azure AI Evaluation SDK, installable via Python package, provides a suite of evaluators, bulk evaluation capabilities, red teaming tools, and optional integration with Foundry. It supports custom evaluator creation to target specific failure modes. The SDK streamlines evaluation workflows, enabling consistent scoring and feedback mechanisms essential for high-quality agent development.
+Installing the `azure-ai-evaluation` package provides access to built-in evaluators for quality and safety, the ability to build custom evaluators for any criteria, bulk evaluation functionality, an automated red-teaming agent, and the option to save results in AI Foundry. The package is installed in `pyproject.toml`, including the `[redteam]` sub-package for red teaming later in the session. Evaluations use tokens and take time since they rely on LLM-as-a-judge, so they should be run thoughtfully rather than on every code change.
 
-## Built-in evaluators for AI agents
+### Built-in evaluators for AI agents
 
-![List of built-in agent evaluators: tool call accuracy, intent resolution, etc.](slide_images/slide_21.png)  
-[Watch from 38:02](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2282s)
+![Built-in evaluators diagram](slide_images/slide_21.png)  
+[Watch from 37:59](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2279s)
 
-Key evaluators include:
+Agents should be evaluated at multiple levels using four built-in evaluators. **ToolCallAccuracyEvaluator** checks whether the agent invoked the right tools with the right arguments. **IntentResolutionEvaluator** checks whether the agent achieved the user's goal. **TaskAdherenceEvaluator** checks whether the agent followed prompt constraints and tool-use rules. **ResponseCompletenessEvaluator** checks whether the response includes all required information from a ground truth response. All use LLM-as-a-judge, where another LLM evaluates the agent's output. Running multiple evaluators is important because they catch different types of issues—the same problem may be scored differently by different evaluators.
 
-- Tool call accuracy: Checks if the agent invoked correct tools with appropriate arguments without unnecessary calls.
+### Tool call accuracy evaluator
 
-- Intent resolution: Assesses whether the agent achieved the user’s intended goal.
-
-- Task adherence: Verifies compliance with system prompt constraints and tool usage rules.
-
-- Response completeness: Measures alignment with ground truth responses to detect hallucinations.
-
-Each evaluator uses an LLM judge to score outputs and provide reasoning.
-
-## Tool call accuracy evaluator example with code and scoring
-
-![Code snippet demonstrating tool call accuracy evaluator usage](slide_images/slide_22.png)  
+![Tool call accuracy code](slide_images/slide_22.png)  
 [Watch from 41:33](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2493s)
 
-The tool call accuracy evaluator requires detailed input: system prompts, user queries, tool call logs, tool definitions (as JSON schemas), and agent responses. It uses an LLM judge to assign a score from 1 to 5 with an explanatory reason. This granular evaluation helps identify specific mistakes such as incorrect tool usage or argument errors, enabling targeted improvements.
+The `ToolCallAccuracyEvaluator` from the Azure AI Evaluation SDK checks whether the agent invoked the right tools with the right arguments and didn't make unnecessary calls. It requires the most detailed input: the system prompt, user query, all tool calls and results in the conversation, JSON schema definitions of available tools, and the final response. The LLM judge scores from 1 to 5 and provides a reason. This granular evaluator is especially useful for diagnosing why high-level evaluators gave low scores—if the agent failed to achieve the user's goal, tool call accuracy can reveal whether the root cause was calling the wrong tool or using incorrect arguments.
 
-## Intent resolution and task adherence evaluators example code
+### Intent resolution evaluator
 
-![Code snippets for intent resolution and task adherence evaluators](slide_images/slide_23.png)  
+![Intent resolution code](slide_images/slide_23.png)  
 [Watch from 44:03](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2643s)
 
-Intent resolution evaluates overall goal achievement by analyzing the full conversation without needing tool definitions. Scores range from 1 to 5, with 4 or 5 typically considered passing. Task adherence focuses on whether the agent respected prompt constraints and tool rules, flagging violations that might still achieve the goal but break system policies. These evaluations complement each other by covering different aspects of agent correctness.
+The `IntentResolutionEvaluator` assesses how well the agent identified and fulfilled the user's request, including how well it scoped the user's intent, asked clarifying questions, and reminded end users of its capabilities. It takes the full conversation and response as input but does not require tool call definitions. It scores from 1 to 5. There is an ongoing debate about whether scores should be 1-to-5 or binary (pass/fail)—with 1-to-5 scoring, most people consider 4 and 5 to be passing, but binary scoring eliminates ambiguity about what counts as a pass.
 
-## Response completeness evaluator with ground truth comparison
+### Task adherence evaluator
 
-![Example of response completeness evaluator comparing to ground truth](slide_images/slide_24.png)  
-[Watch from 46:22](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2782s)
+![Task adherence code](slide_images/slide_24.png)  
+[Watch from 45:10](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2710s)
 
-Response completeness requires a ground truth reference answer for comparison. The evaluator judges whether the agent’s output includes all necessary information and avoids hallucinations. Ground truth-based evaluation is preferred for detecting factual inaccuracies and ensuring comprehensive responses, critical for high-stakes domains.
+The `TaskAdherenceEvaluator` checks whether the agent followed the constraints specified in the system message and tool-use rules. In the session's demo, both intent resolution and task adherence detected the same issue (an inconsistent travel date), but scored it differently: intent resolution gave a 4 (mostly achieved the goal), while task adherence gave a 0 (violated a constraint). This demonstrates why running multiple evaluators matters—different evaluators weight the same issue differently based on what they're measuring.
 
-## Running agent evaluation code demo
+### Response completeness evaluator
 
-![Screenshot of running agent evaluation script](slide_images/slide_25.png)  
-[Watch from 46:30](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2790s)
+![Response completeness code](slide_images/slide_25.png)  
+[Watch from 45:57](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2757s)
 
-Running evaluation scripts involves executing agents to generate responses, then feeding those interactions into the evaluators. Since evaluators use LLMs as judges, each evaluation consumes tokens and time. This process can be slow and resource-intensive, especially for large datasets, requiring careful orchestration such as asynchronous or cloud-based batch processing to avoid blocking development.
+The `ResponseCompletenessEvaluator` compares the agent's response against a ground truth—the ideal answer for a given question. This requires a data set where each query has a known correct response. Ground truth evaluation is the strongest check against hallucinations because it verifies that all expected information is present. Building evaluation data sets with ground truth is strongly recommended, as it provides the most reliable quality signal.
 
-## Tips for running evaluations and model selection
+### Bulk evaluation of a dataset
 
-![Slide with tips on evaluation runtime and choosing models](slide_images/slide_26.png)  
-[Watch from 48:47](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2927s)
+![Bulk evaluation code](slide_images/slide_26.png)  
+[Watch from 51:43](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3103s)
 
-Evaluations consume tokens and may exceed free-tier limits on some models like GitHub-hosted ones. Using Azure-hosted models such as GPT-4 or GPT-3.5 variants is recommended for reliability. Selecting lighter models (e.g., GPT-3.5 Turbo Mini) may help with token limits but can affect judgment quality. Running evaluations in the background, in the cloud, or as part of CI pipelines improves workflow efficiency.
+For production evaluation, use the `evaluate()` function to process a JSONL file containing previous agent runs against all desired evaluators at once. A typical evaluation data set should have around 200 runs to be thorough and representative. The data can be generated by running the agent and saving outputs, or captured from real production interactions. It is critical to continuously add production examples—especially failed cases found through OpenTelemetry monitoring—to prevent model drift where evaluations no longer reflect real-world usage.
 
-## Viewing evaluation results locally and bulk evaluation
+### Viewing evaluation results locally
 
-![CLI and Foundry views of evaluation results](slide_images/slide_27.png)  
-[Watch from 50:47](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3047s)
+![Local evaluation results](slide_images/slide_27.png)  
+[Watch from 56:00](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3360s)
 
-Evaluation results can be viewed as raw JSON locally or through custom CLI viewers built with libraries like Rich or Textual. More sophisticated analysis and collaboration use Azure AI Foundry, which displays passes, fails, scores, and detailed reasons for each evaluator. Bulk evaluation involves running large datasets (e.g., 200+ agent calls) to comprehensively assess performance and detect regressions.
+Evaluation results are saved as JSON files that can be viewed locally. For a nicer experience, you can build a custom CLI viewer using Python libraries like Rich or Textual—the presenter suggests asking GitHub Copilot to help build one. Individual evaluations (like the `agent_evaluation.py` demo shown earlier at [46:22](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=2782s)) display each evaluator's score and reason directly in the terminal, which is useful for quick checks during development.
 
-## Saving and using real user data for evaluation
+### Viewing evaluation results in AI Foundry
 
-![Slide describing saving evaluation data and using real user inputs](slide_images/slide_28.png)  
-[Watch from 53:17](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3197s)
+![AI Foundry evaluation results](slide_images/slide_28.png)  
+[Watch from 53:43](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3223s)
 
-Capturing real user interactions from production logs enriches evaluation datasets to reflect actual use cases and edge conditions. This practice prevents model drift by ensuring evaluation data matches live traffic characteristics. Until sufficient real data accumulates, simulated inputs generated by LLMs like GitHub Copilot can bootstrap evaluation sets. Continuous updating of datasets improves robustness.
+Passing an `azure_ai_project` parameter to `evaluate()` exports results to an Azure AI Foundry project for viewing and sharing. The Foundry portal (currently only the classic UI supports viewing locally-run Python evaluation results) shows pass rates across all evaluators, individual scores with reasons, and drill-down into each run. This enables collaboration—share evaluation runs with colleagues to review failures and discuss improvements.
 
-## Safety evaluation introduction and AI red teaming concepts
+### CI/CD evaluation with GitHub Actions
 
-![Safety evaluation and red teaming introduction slide](slide_images/slide_29.png)  
+![CI/CD evaluation setup](slide_images/slide_29.png)  
+[Watch from 56:11](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3371s)
+
+Evaluations can run from a GitHub Actions workflow and display results directly in pull requests. However, evaluations are expensive (they require many LLM calls) and slow (hundreds of runs with multiple evaluators can take an hour). A practical approach is to trigger evaluations with a specific PR comment (e.g., `/eval`) rather than running on every PR, giving developers control over when to invest in a full evaluation pass.
+
+### Dev loop for AI agents
+
+![Dev loop diagram](slide_images/slide_30.png)  
+[Watch from 56:30](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3390s)
+
+The complete agent development loop progresses through three stages: **ideating/exploring** (identifying the use case, connecting tools, customizing prompts), **building/augmenting** (running the agent against sample questions, trying different parameters, evaluating against larger datasets), and **productionizing** (deploying to users, collecting feedback, running online evaluations, and A/B experiments). The key insight is that observability and evaluation work together—OpenTelemetry monitoring reveals what agents are doing in production, and evaluation ensures changes improve rather than regress quality. Online evaluations (running evaluators on a subset of live traffic without ground truth) can also be configured for continuous monitoring.
+
+### Safety evaluation
+
+![Safety evaluation section slide](slide_images/slide_31.png)  
 [Watch from 57:24](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3444s)
 
-Safety evaluation ensures agents avoid producing harmful outputs such as hate speech, violence, illegal instructions, or biased content. Human red teaming traditionally involves experts attempting to provoke unsafe behavior. Automated red teaming simulates this using adversarial LLMs to generate challenging prompts designed to bypass guardrails, allowing systematic safety testing at scale.
+Beyond quality, agents must also produce safe outputs. Safety evaluation ensures that adversarial users cannot manipulate the agent into generating harmful content.
 
-## Automated red teaming with adversarial LLMs
+### What makes an agent's output safe?
 
-![Diagram illustrating automated red teaming workflow](slide_images/slide_30.png)  
+![Safety risks overview](slide_images/slide_32.png)  
+[Watch from 57:55](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3475s)
+
+An agent should not produce output that harms users, reduces trust in the organization, or breaks laws. Specific risks include generating hateful or unfair speech, encouraging violence or self-harm, producing sexual content (though acceptable levels may vary for health/medical apps), allowing access to protected materials, and changing behavior due to jailbreak attacks.
+
+### Automated red teaming process
+
+![Red teaming architecture diagram](slide_images/slide_33.png)  
 [Watch from 58:09](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3489s)
 
-Automated red teaming employs an adversarial LLM with disabled safety filters to produce harmful or tricky inputs. These inputs are transformed using attack strategies like text reversal, Morse code, Caesar cipher, or URL encoding to mimic real-world evasion attempts. The hostile inputs are sent to the agent, and a separate LLM judge evaluates the agent’s responses for safety. Successful attacks identify vulnerabilities in agent guardrails.
+Automated red teaming simulates human red teaming using the `azure-ai-evaluation` SDK. An adversarial LLM with all guardrails removed generates harmful questions and transforms them with common attack strategies (text reversal, Morse code, Caesar cipher, URL encoding). These are sent to the target agent, and a separate Risk and Safety evaluator LLM judges whether the response was safe. A safe response means the attack failed; an unsafe response means the attack succeeded. The goal is zero successful attacks.
 
-## Configuring and running red teaming scans
+### Configuring the red-teaming agent
 
-![Code example configuring red teaming agent and running scan](slide_images/slide_31.png)  
+![RedTeam class configuration](slide_images/slide_34.png)  
 [Watch from 59:16](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3556s)
 
-The Azure AI Evaluation SDK’s red team module requires a Foundry project due to the sensitive adversarial LLM. Developers specify risk categories of concern (e.g., sexual content, violence) and select attack transformations to apply. Running the scan executes multiple adversarial queries with transformations, producing results that highlight successful and failed attacks. This process takes time similar to evaluation and is best run periodically.
+The `RedTeam` class requires an Azure AI Foundry project because the adversarial LLM is only accessible through Foundry—its guardrails are removed, so access is restricted to this evaluation purpose. Configuration includes the Foundry project endpoint, credential, risk categories to test (Violence, HateUnfairness, Sexual, SelfHarm), and the number of adversarial questions per category.
 
-## Reviewing red teaming results and handling offensive content
+### Running the red-teaming scan
 
-![Foundry UI showing red teaming results with warnings](slide_images/slide_32.png)  
-[Watch from 01:00:49](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3649s)
+![Red team scan execution](slide_images/slide_35.png)  
+[Watch from 01:00:01](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3601s)
 
-Red teaming results are reviewed in Foundry, filtering for successful attacks requiring remediation. The adversarial inputs can be highly offensive and triggering, so reviewers should prepare mentally. Detailed inspection of failures informs prompt engineering, model choice, or tool adjustments to improve safety. This review is essential before deploying models in sensitive or public-facing applications.
+The `scan` method runs the red-teaming attack with specified strategies. **Baseline** sends unmodified adversarial questions. **URL encoding** uses `%20`-style encoded text—a surprisingly effective attack. **Tense transformation** rephrases questions as historical queries. Strategies can be composed together for more complex attacks. The scan runs multiple attacks with different transformations against the target callback function and saves results to a JSON file.
 
-## Best practices for red teaming and model changes
+### Reviewing red team results
 
-![Recommendations for when to run red team scans](slide_images/slide_33.png)  
+![Red team results review](slide_images/slide_36.png)  
+[Watch from 01:00:33](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3633s)
+
+Red team results can be viewed locally or in AI Foundry's evaluation tab under red teaming. Results show attack success rates by category—for example, 3 out of 50 sexual content attacks might succeed. Individual results can be inspected to see the adversarial prompt and the agent's response. Be warned: reviewing successful attacks means reading offensive and potentially triggering content—the adversarial prompts are deliberately harmful and disturbing.
+
+### When to run red team scans
+
+![When to run red teams](slide_images/slide_37.png)  
+[Watch from 01:01:49](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3709s)
+
+Red teaming scans take time, so don't run them on every code change. Do run them on model changes or non-trivial prompt changes. Results vary significantly across models—the presenter's blog post comparing models showed GPT-4o-mini on Azure OpenAI with 0% attack success rate, Llama 3.1 8B on Ollama with 2%, and Hermes 3 3B on Ollama with 13%. Changes to tool definitions and prompts can also affect safety, so rerunning scans after significant changes is recommended.
+
+### Next steps and resources
+
+![Next steps closing slide](slide_images/slide_38.png)  
 [Watch from 01:02:27](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3747s)
 
-Red team scans should be run whenever models or prompts undergo significant changes, as these can introduce new vulnerabilities. It is unnecessary to run red teams on every code change but recommended after upgrading models, modifying tool definitions, or altering safety constraints. Results guide iterative improvements to maintain robust safety postures over time.
+The session concludes with an invitation to Discord office hours for additional questions. Next week (sessions 4–6) covers multi-agent workflows with the Agent Framework. All previous session recordings, write-ups, and slides are available through the series resources page, and registration provides notifications for upcoming sessions.
 
-## Closing slide with next steps and series recap
+## Live Chat Q&A
 
-![Closing slide summarizing next steps and upcoming sessions](slide_images/slide_34.png)  
-[Watch from 01:03:41](https://www.youtube.com/watch?v=3yS-G-NEBu8&t=3821s)
+### Does OpenTelemetry add latency to the agent?
 
-The session concludes with a preview of upcoming topics, including building multi-agent workflows with the Microsoft Agent Framework. Attendees are encouraged to join office hours for questions and to access recordings and resources through the provided links. Continuous learning and community engagement are emphasized to master AI agent development.
+Exporting telemetry does add some latency because it involves a network request to the observability platform. However, these requests are fast compared to LLM calls, and observability platforms are designed for high throughput. To reduce overhead in high-traffic environments, set a sampling rate—for example, only export 1% or 5% of traces. The overhead is low relative to the dominant cost of LLM calls.
 
-## Q&A
+### Is the Agent Framework setting up the metrics automatically?
 
-### Does enabling OpenTelemetry add latency to agent execution?  
-OpenTelemetry exporting involves network requests to observability platforms, which introduces some latency. However, these calls are typically fast and optimized for minimal impact. Sampling strategies can reduce overhead by sending only a subset of traces, balancing observability with performance.
+Yes. The Agent Framework generates spans (`invoke_agent`, `chat`, `execute_tool`) and metrics (operation duration, token usage, invocation duration) automatically when `configure_otel_providers` is called. Additional custom spans and metrics can be added using standard OpenTelemetry APIs. If using other frameworks (FastAPI, Azure Python SDK), their OpenTelemetry instrumentations should also be enabled for complete coverage.
 
-### Can the Agent Framework automatically set up all necessary spans and metrics?  
-Yes, the Agent Framework emits standard spans such as invoking the agent, chat completions, and tool executions, along with metrics like operation duration and token usage. Developers can also instrument additional components or create custom spans and metrics for comprehensive monitoring.
+### Should scores be binary or 1-to-5?
 
-### How do token consumption and model choice affect evaluation runtime?  
-Evaluations use LLMs as judges, which consume tokens and time proportional to conversation length. Free-tier models like GitHub-hosted LLMs have stricter token limits and rate limits, potentially causing errors. Azure-hosted models (e.g., GPT-4, GPT-3.5) handle larger token counts more reliably. Choosing lighter models can help but may reduce evaluation accuracy.
+There is active debate in the evaluation community. The Azure AI Evaluation SDK uses 1-to-5 scoring, where most people consider 4 and 5 as passing. Some practitioners argue binary (pass/fail) is better because it eliminates ambiguity about what score constitutes a pass. For custom evaluators, either approach works—choose based on whether the granularity of 1-to-5 scores provides useful signal for your use case.
 
-### What is the best way to build evaluation datasets?  
-Starting with simulated user inputs generated by LLMs can bootstrap datasets. Over time, incorporating real production data, especially examples of poor agent behavior identified via monitoring, improves evaluation relevance. Maintaining datasets aligned with live traffic prevents model drift.
+### How did you generate the evaluation data set?
 
-### How should red teaming be integrated into development workflows?  
-Red team scans are resource-intensive and should run when models or prompts change significantly. They simulate adversarial attacks to identify safety vulnerabilities. Results inform prompt tuning, model selection, and safety guardrail improvements. Running red teams regularly ensures ongoing safety compliance.
+The `agent_evaluation_generate.py` script runs the agent on a set of queries and saves the full conversation (including tool calls) to a JSONL file. For the demo, the queries were generated using GitHub Copilot. In production, the best evaluation data comes from real user interactions—especially examples where the agent performed poorly. Until production data is available, LLM-generated synthetic data is a reasonable starting point that should be replaced over time.
 
-### Can evaluation results be shared with team members?  
-Yes, exporting evaluation results to Azure AI Foundry enables collaborative review with detailed scores and reasoning. Custom dashboards and reports facilitate transparency and joint decision-making on agent improvements.
+### Can evaluations run in CI/CD?
 
----
-
-This annotated post distills the talk’s detailed guidance on monitoring, evaluating, and safely operating AI agents, providing a roadmap for developers deploying agents with Microsoft’s Agent Framework and supporting tools.
+Yes. The Azure AI Evaluation SDK can be used in GitHub Actions. However, evaluations are expensive (they require many LLM calls) and slow (hundreds of runs with multiple evaluators can take an hour). A practical approach is to trigger evaluations with a specific pull request comment (e.g., `/eval`) rather than running them on every PR. This gives developers control over when to invest in a full evaluation pass.
