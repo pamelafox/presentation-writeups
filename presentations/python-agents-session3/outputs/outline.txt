@@ -1,0 +1,34 @@
+1. Overview of the Python + Agents series with session dates and topics.
+2. Title slide for the "Monitoring and evaluating agents" session by Pamela Fox.
+3. Agenda covering monitoring tools, evaluation methods, and safety considerations.
+4. Instructions for following along using a GitHub repository and Codespace.
+5. Recap of what an AI agent is and the importance of monitoring and evaluation.
+6. Introduction to monitoring agents with a link to more resources.
+7. Explanation of observability using OpenTelemetry (OTel) with traces, metrics, and logs.
+8. How to use OpenTelemetry with the Agent Framework including example code.
+9. Table of OTel-compliant observability platforms, both open source and managed.
+10. Instructions for exporting telemetry data to Aspire dashboard with environment variables.
+11. Example of monitoring an agent in the Aspire dashboard showing traces, metrics, and logs.
+12. Standard trace format for agent executions with example attributes and values.
+13. Instructions for exporting OpenTelemetry data to Azure Application Insights with example code.
+14. Viewing traces in Azure Application Insights portal with navigation tips.
+15. Introduction to evaluating agents with a link to more resources.
+16. Explanation of agent output non-determinism and factors affecting output quality.
+17. Human grading for evaluating agent outputs with an example interface.
+18. Automated evaluation of AI apps using Azure AI Foundry with example metrics.
+19. Table of automated evaluation frameworks with authors, languages, and cloud hosting info.
+20. Using the azure-ai-evaluation package with features and a link to the SDK.
+21. Built-in evaluators for AI agents covering tool call accuracy, intent resolution, and more.
+22. Tool call accuracy evaluator example with code and scoring explanation.
+23. Intent resolution evaluator example with code and scoring explanation.
+24. Task adherence evaluator example with code and scoring explanation.
+25. Response completeness evaluator example with code and scoring explanation.
+26. Viewing evaluation results locally as JSON or with a custom CLI viewer.
+27. Viewing evaluation results in AI Foundry portal with example output.
+28. Safety evaluation introduction with a link to AI red-teaming agent concepts.
+29. Safety evaluation process diagram showing automated red-teaming workflow.
+30. Configuring the red-teaming agent with example code and risk categories.
+31. Running the red-teaming scan with example code and attack strategies.
+32. Reviewing red-teaming results locally or in AI Foundry with warnings about content.
+33. Recommendations on when to run red team scans based on model changes and prompt updates.
+34. Closing slide with next steps and a recap of the Python + Agents series schedule.

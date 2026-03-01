@@ -1,0 +1,1658 @@
+[00:06] Hello everyone and welcome to our next
+[00:09] next session on the Python plus agent
+[00:12] savings. My name is Lissa Man planner at
+[00:15] reactor joining you from Brazil. Before
+[00:18] we start, I have some quick
+[00:20] housekeeping. Please take a moment to
+[00:22] read our code of conduct. We seek to
+[00:24] provide a respectful environment for
+[00:26] both our audience and presenters.
+[00:29] While we absolutely encourage engagement
+[00:31] in the chat, we ask that you please be
+[00:33] mindful of your commentary. Remain
+[00:35] professional and on topic.
+[00:39] The session is being recorded and we'll
+[00:41] be available to view on demand here on
+[00:43] the Reactor YouTube channel within 48
+[00:46] hours. Keep an eye on the chat. We'll be
+[00:48] dropping helpful links and checking for
+[00:50] questions.
+[00:52] I'll now turn it over for our speaker
+[00:54] for today. Thank you and welcome Pamela.
+[00:58] >> Hello. Hello everyone. Welcome to our
+[01:01] Python plus agents live stream series.
+[01:04] This is session three in the six-part
+[01:08] series. So we are at the end of week one
+[01:11] which is all about building agents with
+[01:13] Microsoft agent framework. Week two will
+[01:15] be all about building multi- aent
+[01:17] workflows with Microsoft agent
+[01:19] framework. If you did miss any of the
+[01:21] previous sessions, you can catch up with
+[01:23] recordings and writeups and slides uh by
+[01:27] visiting our resources link which I've
+[01:29] shared in the chat. And if you're not
+[01:31] registered yet, do register for the
+[01:32] series because then you'll get notified
+[01:34] when the next session is starting and
+[01:37] you'll get emails with all the
+[01:38] resources. So let's get into today's
+[01:42] session. We are talking about monitoring
+[01:45] and evaluating agents. These are really
+[01:48] important things that you're going to
+[01:49] want to put in place when you're
+[01:50] building agents for production. So,
+[01:53] we're going to talk about monitoring,
+[01:55] which means using open telemetry to be
+[01:57] able to actually watch and see what the
+[01:59] heck is our agent doing and then
+[02:01] exporting that to our favorite open
+[02:03] telemetry platforms like Aspire or App
+[02:06] Insights or any other ones. Uh, then
+[02:08] we're going to talk about evaluation,
+[02:09] which is making sure that your agent is
+[02:11] actually producing high quality outputs.
+[02:14] Right? It's very easy to make agencies
+[02:16] stay. It's harder to make high quality
+[02:18] agents. So, how can we actually do that?
+[02:20] We've got a great SDK that uh has lots
+[02:23] of evaluators uh specifically for
+[02:26] agents. And then finally, we're going to
+[02:28] talk about safety, ensuring that your
+[02:30] agent is not going off the rails and is
+[02:32] adhering to good guard rails um and
+[02:36] isn't going to, you know, succumb to the
+[02:38] trolls on the internet.
+[02:41] Uh, if you do want to follow along with
+[02:43] the code, all of the code is in this
+[02:45] GitHub repo. Same repo we've been using
+[02:47] throughout the series. If you've already
+[02:49] got it checked out, you might want to do
+[02:50] a git pull on your local copy because we
+[02:53] often make little changes um, each day
+[02:56] as we, you know, testing stuff out. Um,
+[02:59] but, uh, if you haven't checked it out
+[03:00] yet, you go to the repo and then I
+[03:04] recommend clicking on the code button.
+[03:08] And here you're going to see a button
+[03:10] that says create code space on main. So
+[03:12] you click that button and that will
+[03:15] create a code space which is a VS code
+[03:18] uh running in the browser and you just
+[03:20] give it a few minutes to run while I'm
+[03:21] talking and then when you get back to it
+[03:23] you will see that uh the code space is
+[03:26] all set up. It's got the Python and the
+[03:28] Python dependencies and all the examples
+[03:30] there. So that then uh you can see the
+[03:33] code and run the code. Now, normally we
+[03:36] make it so that you can run all the
+[03:37] examples in our sessions, but in this
+[03:39] session we are using a few more um
+[03:43] resources that aren't going to run for
+[03:45] free. Um typically we're just using LLMs
+[03:48] and that we can use for free from GitHub
+[03:51] models. Uh but today we are going to
+[03:52] integrate with a few other Azure
+[03:55] resources. So unfortunately you can't
+[03:58] run all the examples for free in
+[04:00] Codespaces day and I'll I'll let you
+[04:01] know as we go along. Uh, but you can
+[04:03] still follow along with all the code
+[04:05] here. It's all uh it's all available and
+[04:07] you can set it up um to run with your
+[04:10] own Azure resources as well uh later to
+[04:13] to try stuff out.
+[04:16] So there you go. There's the repo. Go
+[04:18] ahead and get that set up if you want to
+[04:19] follow along with the code.
+[04:23] Now, uh just as a brief recap, just
+[04:26] talking about what is an agent. This is
+[04:28] week one. It's all about agents. So, I'm
+[04:30] going to keep hammering home that an
+[04:32] agent is
+[04:34] uh something that uses an LLM
+[04:38] in order to achieve a goal and it uses
+[04:40] tools with uh in order to achieve that
+[04:43] goal, right? So, we say, "Hey, agent,
+[04:45] here's our input. Here are the tools
+[04:47] that you have at your disposal to, you
+[04:50] know, answer this input, you know,
+[04:51] answer this user's question to, you
+[04:53] know, do this task that assigned you
+[04:54] to." And the LN's going to decide which
+[04:57] of those tools and it's going to keep
+[04:59] calling tools in a loop until it feels
+[05:00] like it has enough information and
+[05:02] enough capability to achieve the goal.
+[05:05] Right? And sometimes these cycles will
+[05:07] be very quick like it gets the input. It
+[05:09] doesn't need to call any tools and
+[05:10] there's the output. And sometimes it
+[05:12] might make like 20 tool calls in order
+[05:14] to uh you know achieve the goal, right?
+[05:17] Uh so that's what's interesting about
+[05:18] agents is they're they're
+[05:19] noneterministic. They can be very short
+[05:21] runs. They can be very long runs and
+[05:23] they can really really vary in what
+[05:26] tools they choose to call, how they
+[05:27] choose to get to a goal state, right? So
+[05:31] when we're making these agents, we
+[05:32] really need to have monitoring so we can
+[05:34] see what is the agent actually doing,
+[05:36] how did it get to that goal state,
+[05:37] right? What tool calls did it make along
+[05:40] the way? Did it do any? Did it do the
+[05:42] right ones? Right? And then along with
+[05:43] that, we need evaluation so that we can
+[05:45] say, okay, like you know, the agent did
+[05:47] these things. Is that what we wanted it
+[05:49] to do? Right? like did it call the right
+[05:51] tools, did it get the right output,
+[05:53] right? So, you really want these two
+[05:55] things um you know in conjunction,
+[05:58] right? Uh so that when you put an agent
+[06:00] into production, you can have confidence
+[06:01] that you're able to see what the agents
+[06:04] do and if they aren't doing a good job,
+[06:06] you can improve your evaluations and uh
+[06:09] you know, improve your models and your
+[06:11] tools so that you're seeing better
+[06:12] results. So, these two really do go
+[06:15] together with each other and that's why
+[06:16] we're talking about them.
+[06:20] So first we're going to talk about how
+[06:23] to monitor agents. This is also known as
+[06:26] observability, right? We talk about this
+[06:28] all the time when we're building any
+[06:29] sort of applications like for userf
+[06:31] facing applications. You need
+[06:32] observability. You want to know what is
+[06:34] going on. So it's the same thing with
+[06:36] agents and even more important for
+[06:38] agents because there is so much
+[06:40] non-determinism to what they do. There
+[06:43] is so much choice that they given. They
+[06:44] have so much agency. Right? That's the
+[06:47] whole thing. We've given them the agency
+[06:49] to decide what tools they're going to
+[06:50] call. But we want to observe and see
+[06:53] what is it that they actually chose to
+[06:55] do.
+[06:57] So we are going to do observ
+[06:59] observability using this open standard
+[07:03] called open telemetry. Uh this is what
+[07:05] we generally recommend when you're
+[07:07] setting up observability for any sort of
+[07:09] application is to use this open
+[07:10] telemetry standard. It is the most
+[07:12] wellsupported standard for observability
+[07:14] across the entire industry. It's
+[07:16] supported by many different logging
+[07:18] platforms. So if you use open telemetry
+[07:21] then you're going to be able to use many
+[07:23] different tools in order to look at your
+[07:26] logs right. Uh so it is a standard that
+[07:29] says this is how applications should
+[07:31] emit traces and and traces basically
+[07:33] show what happened in the app like some
+[07:35] event that happened. uh metrics which is
+[07:37] like kind of numbers like hey you're
+[07:39] using this much CPU and you have you
+[07:41] know this much latency and then you can
+[07:43] make graphs based on those metrics and
+[07:45] then just logs right every time we do
+[07:46] like a logger.info and logging.info info
+[07:49] in our app. We want a structured way of
+[07:51] sending those logs uh in, you know, in
+[07:54] our in our um observability platform,
+[07:56] right? So, we're going to use open
+[08:00] telemetry for the traces, the metrics,
+[08:02] and the logs so that we can see exactly
+[08:06] what our agent is doing, set up
+[08:08] dashboards, set up graphs, and really be
+[08:10] able to observe everything.
+[08:14] Now, agent framework, that's what we're
+[08:16] using to build our agents. Agent
+[08:18] framework has built-in support for
+[08:20] generating open telemetry traces. Uh all
+[08:23] we need to do is
+[08:25] import this configure hotel providers.
+[08:28] Right? So this is a function that we
+[08:30] import from agent framework. So we say
+[08:32] configure hotel providers and you decide
+[08:35] whether you want to enable sensitive
+[08:37] data. Uh and that's stuff like the tool
+[08:39] calls, right? There's a lot of things
+[08:40] like you do want to think about when
+[08:42] you're when you're logging stuff whether
+[08:43] you might accidentally be yeah like are
+[08:45] you logging things that's potentially
+[08:47] private information right and that's
+[08:49] always just you know kind of tradeoffs
+[08:52] and benefits right like uh you know if
+[08:54] you're going to log tool calls there
+[08:56] might be some private information there
+[08:57] but also you'll be able to better
+[08:59] improve your system uh you could also
+[09:01] consider adding some middleware that
+[09:03] will like strip out that private um
+[09:06] private information when you send it to
+[09:08] so it's just a decision ision you're
+[09:09] going to make and and think carefully
+[09:11] about what you know what is the data
+[09:12] that we are logging and are we
+[09:14] comfortable with having that data in our
+[09:17] observability platform right um
+[09:19] generally the more data you have the
+[09:21] better you can improve your systems but
+[09:23] you certainly you know don't want to be
+[09:25] um you know violating you know any sort
+[09:27] of user privacy right
+[09:30] uh so I have that example here o agent
+[09:35] hotel aspire is the first example so
+[09:38] saying we you know import this configure
+[09:40] hotel providers and we can decide
+[09:44] whether we're going to enable um enable
+[09:46] sensitive data
+[09:50] and um you know and here I decided to
+[09:52] set it and there's many ways you can
+[09:54] customize
+[09:55] this this function here so you can look
+[09:57] at all the arguments but generally what
+[09:59] it's going to do is look at environment
+[10:01] variables because there's with open
+[10:03] telemetry there's all these standard
+[10:04] environment variables so you can see it
+[10:06] it lists a bunch of them here there's
+[10:07] quite a bit more as Well, so it's going
+[10:09] to look at those environment variables
+[10:11] to figure out how to configure itself,
+[10:13] right?
+[10:16] Um, so let me just show you this example
+[10:18] without any um of the hotel just so you
+[10:22] can see what this example is doing and
+[10:25] then we can look and see what the actual
+[10:28] hotel uh logs look like.
+[10:33] I see there's a question, doesn't add
+[10:36] latency? That's a good question. Right.
+[10:38] So, when we're when we're generating
+[10:40] traces, um, we're often going to be
+[10:43] sending those traces somewhere. So, that
+[10:45] and and that we call exporting. So, you
+[10:47] can see here when you're configuring
+[10:49] this, you can specify exporters. A lot
+[10:50] of this is about the exporter. So,
+[10:52] generally, you're going to be exporting
+[10:54] your data because you want to be able to
+[10:55] surface it in your favorite
+[10:57] observability platform. And so, that
+[10:59] does that can add a certain level of
+[11:01] latency because that is a network
+[11:03] request. It's usually a very fast one,
+[11:05] like faster than anything else because
+[11:07] it's just straight sending it to that
+[11:09] platform and those observing platforms
+[11:11] are generally designed to be, you know,
+[11:13] high be able to process things really
+[11:16] quickly. Um, but that is, you know, that
+[11:18] is something you can think about. Uh, a
+[11:20] lot of times you can set like your
+[11:21] sampling rate. So maybe you don't want
+[11:23] to send all of your traces. Maybe you're
+[11:26] only going to send like, especially if
+[11:27] you got like millions of users, right?
+[11:29] You could set a sampling rate that says
+[11:31] like, "Oh, only send like 5% or 1%."
+[11:33] Right? So that way you do get to see
+[11:35] roughly what's going on. Um but but only
+[11:38] for a percentage of of your users,
+[11:41] right? And so that would be uh you know,
+[11:43] one one consideration. But generally,
+[11:45] yes, it exporting will take some amount
+[11:48] of time. Um but it's it's low compared
+[11:52] to to other things we're doing. All
+[11:53] right. So this is just a really basic
+[11:55] weather agent, right? that it makes two
+[11:57] um looks like two tool calls getting
+[11:59] weather and getting current time and
+[12:02] then returns back an answer. Okay, so
+[12:04] the first thing I'm going to show is
+[12:05] just what the hotel uh traces look like
+[12:09] in in the logs uh just locally without
+[12:13] using the exporter. So we can say enable
+[12:15] console exporters equals true. So I'm
+[12:18] just going to set this environment
+[12:19] variable and then rerun
+[12:22] uh the the um the example, right? So I'm
+[12:25] just setting it here and then saying UV
+[12:30] run, right? So it means when UV runs
+[12:32] this, it's going to run it with this
+[12:33] thing true. So this is a console
+[12:35] exporter. So this isn't sending off to
+[12:37] any sort of uh you know separate
+[12:40] separate uh observability service. This
+[12:43] is just going to show it in our direct
+[12:45] console just to see what's you know what
+[12:47] traces are being generated.
+[12:51] All right. So what we see is a bunch of
+[12:55] of
+[12:57] spans. So within a trace, a trace is a
+[12:59] bunch of spans. So within each trace is
+[13:02] a bunch of spans uh that are basically
+[13:04] the children of that trace. And so here
+[13:07] we have a bunch of spans. So there's
+[13:08] like a span for executing a tool. Uh
+[13:12] there's a span for executing the other
+[13:13] tool, the get weather tool. There's a
+[13:15] span for making a call to the chat
+[13:17] completion model. Uh this span is pretty
+[13:20] pretty big here and this is a span for
+[13:25] oh and these are metrics right so we
+[13:27] also see metrics and this is a metric
+[13:28] for token usage now obviously this is
+[13:31] not a nice way to view our observability
+[13:35] data like no one wants to sit here and
+[13:37] look at a bunch of JSON for stamps right
+[13:40] so the first thing you want going to do
+[13:42] is decide where are you going to export
+[13:44] your observ your open telemetry data so
+[13:47] that you have a nice way of viewing it,
+[13:50] right? Says nobody wants to look at all
+[13:52] this, right? That's not fun. So, let's
+[13:55] talk about exporters.
+[13:59] There are many open telemetry compliant
+[14:01] observability platforms and some of them
+[14:04] are open uh sorry, some of them are open
+[14:07] source, some of them are managed, some
+[14:09] of them are both open source and
+[14:11] managed. Um so here I just have a a
+[14:14] brief subset of observing platforms. Uh
+[14:17] so today we're going to be using Aspire
+[14:19] which is an open source uh platform that
+[14:21] you can use locally. Uh it does not have
+[14:24] a managed version. Um we're also going
+[14:26] to use Azure Application Insights which
+[14:29] uh is not open source but is managed and
+[14:31] that's what many people use when they're
+[14:33] deploying to Azure. So we are going to
+[14:34] see this today as well um because these
+[14:37] are both from Microsoft and uh and we
+[14:40] can we can set both of them up at the
+[14:42] same time. Uh these are some other ones
+[14:44] you may have used. Data Dog, Graphana.
+[14:46] There's actually support for Graphfana
+[14:48] like within App Insights now, which is
+[14:50] interesting. Um, Prometheus, Jerger,
+[14:52] Logfire. I really like Logfire. That's
+[14:54] from the creators of Pedantic, and that
+[14:56] has a really nice UI and it is all open
+[14:58] telemetry compliant and easy to export,
+[15:01] too. Um, so yeah, so that's just some of
+[15:04] the observatory platforms. If you have
+[15:05] another favorite one, you know, go and
+[15:09] um you know, put that put that in the
+[15:11] chat and uh and you know, talk about
+[15:14] your favorite way to view observability
+[15:16] data.
+[15:18] So, let's first look at how to export to
+[15:21] the Aspire dashboard. Uh so to do this,
+[15:24] you need to set a uh set this open
+[15:28] telemetry environment variable. So, OTEL
+[15:30] exporter OTLP endpoint and then you set
+[15:33] it equal to wherever your Aspire
+[15:35] endpoint is. So, your Aspire is
+[15:37] basically like a server running uh you
+[15:40] know running locally. So, we're going to
+[15:41] use this for local observability. So, it
+[15:43] is running locally and showing your your
+[15:46] open telemetry logs. Um so, that's the
+[15:49] main that's really the only environment
+[15:51] where we have to set. Um this GOPC is
+[15:53] actually the default the protocol. Uh we
+[15:55] did have to also install this exporter
+[15:57] however. So you will see that in the pi
+[16:01] projecttoml
+[16:02] you'll notice that we do have this here
+[16:07] open telemetry exporter OTLP protogpc.
+[16:10] So we did need this in order to be able
+[16:13] to export to aspire. So that is already
+[16:15] installed in the environment when you
+[16:17] open this this repo.
+[16:21] And then we you know we just call that
+[16:23] function like we did before. That
+[16:24] function is just looking for these
+[16:26] environment variables. And in fact, I
+[16:28] actually already have them set in this
+[16:30] environment. I could um I could echo it
+[16:32] out. Echo
+[16:34] hotel exporter OTP
+[16:39] endpoint. Okay.
+[16:41] And yeah, you can see it's set and in
+[16:43] this case it's set to um this is inside
+[16:46] a dev container. So it's set to uh the
+[16:49] Aspire that's running inside the dev
+[16:51] container. So if you are opening it in
+[16:53] GitHub code spaces, we've actually set
+[16:55] up Aspire in the dev container. Uh you
+[16:58] can see it here inside the docker
+[17:00] compose. So this is how we set up the
+[17:03] dev container. So it has multiple
+[17:04] services running. So it does have Aspire
+[17:06] dashboard running based off of this
+[17:08] docker image and on this port here. And
+[17:12] so that's why I've set the endpoint to
+[17:14] Aspire dashboard and to the exposed
+[17:17] port. Um, and this actually became Yeah,
+[17:21] this is the we can see it here in our
+[17:25] ports. So, that should already be um
+[17:29] that should already be set up. If you're
+[17:31] uh if you're running inside GitHub code
+[17:33] spaces or the dev container, that should
+[17:35] already uh work. I'll actually do it
+[17:38] inside the code space so you can see. Uh
+[17:42] so going to open that same file as
+[17:45] before and say uv run examples agent
+[17:50] hotel aspire py
+[17:53] and I don't actually need to set any
+[17:55] environment variables because they are
+[17:56] already set up inside this environment.
+[18:00] Uh so now I'm going to open that aspire
+[18:02] port. So if you go to the ports tab you
+[18:05] should see various ports. Uh first one's
+[18:08] Postgress, this one's Reddus, and this
+[18:10] one here is Aspire, the one that's like
+[18:13] one8,
+[18:14] right? So that launches uh this Aspire
+[18:19] dashboard here.
+[18:23] And so we should see, let's go ahead.
+[18:26] All right. So here we go. So in traces,
+[18:28] we can see these traces going by. And so
+[18:31] I can see so 1048, that's the one I just
+[18:33] did. Uh so this is a trace and it has
+[18:36] five spans inside of it. So I can click
+[18:38] on this five spans and uh and the cool
+[18:43] thing here is you can see like the total
+[18:45] duration. So we can see the total
+[18:46] duration was 3 seconds and it started
+[18:50] off with an initial call to GB41 mini
+[18:53] and that one you know came back with a
+[18:57] decision about what tools to call and so
+[19:00] then it called get weather. It called
+[19:02] get current time and then it sent the
+[19:04] tool call results to GP41 mini. So this
+[19:07] is really helpful because we can see
+[19:09] first of all it's very clear that the
+[19:11] thing that takes up a lot of time is
+[19:12] those LLM calls right like the tool
+[19:15] calls are like that right at least in
+[19:17] this case because we're not using an API
+[19:19] you know in a real world we would have
+[19:21] get weather call and API and so then we
+[19:22] would see the span for that API call as
+[19:26] well. Um, but you can see that our LM
+[19:28] calls definitely take a good amount of
+[19:30] time. And this is what what you're
+[19:32] always going to see when you're looking
+[19:33] at the traces for LLM based applications
+[19:37] is those LLM calls are taking up so much
+[19:40] time, right? Um, now we can also if we
+[19:44] click on there's a little sparkle here.
+[19:47] So the sparkle brings up a prettier
+[19:51] agentoriented
+[19:53] uh way of viewing it. So you can
+[19:55] actually see um you can actually see the
+[19:58] full the full um you know log here. So
+[20:02] we can see okay you're a helpful
+[20:03] assistant. What's the weather in
+[20:05] Seattle?
+[20:07] And then um the the output says get
+[20:11] weather and get current time
+[20:13] and then the assistant responds with
+[20:15] this right.
+[20:17] So we can kind of view the whole
+[20:19] conversation. So, Aspire is trying to
+[20:22] render this, you know, in a more
+[20:26] developer friendly way uh because it
+[20:28] realizes that this is a LLM conversation
+[20:31] and so it has an idea of how it's going
+[20:33] to render it. Um, but we can also look
+[20:36] and see the ex all the stuff that gets
+[20:38] got sent to
+[20:41] uh you know to to the the dashboard
+[20:43] here. Let me click on this one as well.
+[20:46] Right. So,
+[20:48] uh let's see.
+[20:50] All right. So, this is actually really
+[20:51] interesting. The response from we talked
+[20:54] about parallel tool calling the other
+[20:55] day. We actually see that the LLM
+[20:58] responded and suggested two tools to
+[21:01] call. So, it said call get weather and
+[21:03] call get current time. So, this is
+[21:05] something that some LM support is the
+[21:07] ability to specify two tool calls in a
+[21:09] single message and then the agent
+[21:11] framework decides you know um how it's
+[21:14] going to call call those tools, right?
+[21:16] But we can immediately see like, oh,
+[21:18] okay, the LM did actually decide to, you
+[21:22] know, within the same request that it's
+[21:24] going to call both those tools, which is
+[21:25] nice because that means we saved on an
+[21:27] LM call, right? Other LLMs, if they
+[21:29] don't support this ability to specify
+[21:31] two tool calls, they would have had to
+[21:33] make another call in order to say like,
+[21:35] okay, great. You called get weather, now
+[21:37] call get current time. So we can
+[21:39] immediately start to get more insight
+[21:40] into how the LLM is actually processing
+[21:44] this information, right?
+[21:48] Uh so there we go. So this is with
+[21:49] Aspire. Um we also have logs, but it
+[21:52] looks like I didn't send any logs um to
+[21:55] it. Uh there's also metrics. So saying
+[21:57] you can do token usage. So here um you
+[22:00] know it's not going to be very exciting
+[22:01] because I haven't I haven't sent a lot
+[22:03] of requests out there but it will you
+[22:06] know monitor your your token usage and
+[22:08] your duration. Let me change this to
+[22:09] last hour. Okay great. So here we go. So
+[22:12] now uh if we look at token usage um we
+[22:15] can start to see right so you can
+[22:17] imagine once you have like a good amount
+[22:18] of data you'll get a much better feel
+[22:20] for you know the peaks and and valleys
+[22:23] and averages of how much tokens are
+[22:26] being used um you know used by these
+[22:29] calls right same thing with duration
+[22:32] and uh function invocation duration as
+[22:35] well how fast are your function calls in
+[22:37] this case my function calls are very
+[22:38] fast uh because they're all you know
+[22:40] they're not making any network calls
+[22:41] themselves but you may have some much
+[22:43] slower function calls as well. So the
+[22:46] metrics is really helpful too.
+[22:49] All right. So this is Aspire. So this is
+[22:51] this is a good option if you want to
+[22:54] make sure that your open telemetry logs
+[22:58] and traces that they're all set up
+[23:00] correctly and and so that you know so
+[23:02] you get insight into what's happening
+[23:04] when you're developing locally. This is
+[23:06] only really for local development right
+[23:08] now. Uh once you move into production,
+[23:11] you're going to want to send these to an
+[23:13] actual, you know, um platform that is,
+[23:17] you know, managed on a website so that
+[23:19] you can log in, your colleagues can log
+[23:21] in and you can all see what is going on.
+[23:28] So that brings us to
+[23:31] um another platform. Uh so Azure app
+[23:35] insights. Uh so in order to use Azure
+[23:38] app insights we do need another package
+[23:41] which is in our pipro.toml.
+[23:45] So here pipro.comtotml we can see Azure
+[23:48] monitor open telemetry that's going to
+[23:50] help us set up the Azure monitor
+[23:53] exporter.
+[23:55] So we bring in that package and then uh
+[23:58] we have
+[24:00] in another file agent hotel app
+[24:03] insights.
+[24:05] We have this set up. All right. So we
+[24:09] um we import a few more things in order
+[24:12] to set up the the exporting from agent
+[24:14] framework. We also import configure
+[24:16] Azure monitor from that Azure monitor
+[24:19] open telemetry package. And then um we
+[24:22] load in our environment variables uh
+[24:24] because in ourv I'll show you in myv
+[24:28] I do have an app insights connection
+[24:31] string.
+[24:33] So I set that up and say configure Azure
+[24:35] monitor using this connection string um
+[24:38] using this resource from the agent
+[24:40] framework and enable live metrics.
+[24:42] Right? And then I'm calling enable
+[24:45] instrumentation
+[24:46] from agent framework.
+[24:49] And this is similar to the call we made
+[24:51] before. And that will set up the app
+[24:54] insights exporter. Right? So now
+[24:56] whenever agent framework generates open
+[24:59] telemetry traces, they will get exported
+[25:02] to app insights.
+[25:05] All right. So let's go ahead and try
+[25:08] this out. And this one I'm going to run
+[25:10] locally because that's where I've got my
+[25:11] app insights environment variable set
+[25:14] up. Uh, and this is one that, you know,
+[25:16] isn't going to work in the uh, code
+[25:19] space unless you also set up an app
+[25:21] insights on Azure and set this
+[25:24] environment variable here. Uh, which you
+[25:27] could do if you do have an app insights
+[25:29] set up for testing that you want to try
+[25:30] this out with.
+[25:32] Uh, so now we're running the agent
+[25:36] and the first thing it's going to do is
+[25:38] set up that app insights connection
+[25:39] string and set up that that exporter
+[25:42] here
+[25:46] and we're just gonna wait for that.
+[25:52] Let's see what question. All right.
+[25:53] Okay. So now we can see app insights
+[25:56] export is enabled. Great. Now it's
+[25:59] actually running the agent. It's making
+[26:01] some tool calls
+[26:03] and it's going to respond based off of
+[26:06] those tool calls. Great. All right. So,
+[26:09] we've run it. So, now that it, you know,
+[26:12] sends the trace to app insights.
+[26:14] Sometimes there is a little bit of a lag
+[26:16] like maybe five minutes lag between
+[26:18] something happening and it showing up in
+[26:20] app insights. I did also run it earlier
+[26:23] this morning. So, we should have some
+[26:25] data we can see. So what I do is here is
+[26:28] my app insights in Azure
+[26:32] and um you know see not much data
+[26:35] because I'm just running demos here. Um
+[26:37] but uh we can go to the I always go to
+[26:39] the performance tab. I find this is the
+[26:41] easiest way of finding local recent
+[26:43] things that happens. So I click on
+[26:45] dependencies and I'm just going to find
+[26:49] one of these and these are basically all
+[26:50] spans. So I just click on any one of
+[26:52] these spans and it brings me to the full
+[26:54] trace.
+[26:56] So here is here is a full trace. Um
+[27:01] and what we can see in this trace this
+[27:03] does look really similar to Aspire,
+[27:05] right? It's a very like the pattern is
+[27:07] the same, right? Here's the overall call
+[27:09] of invoking the agent and then within
+[27:12] that invoke agent uh parent span we have
+[27:15] the span for making the chat completion
+[27:17] call. Then we have the two tool call
+[27:20] spans and then we have the final chat
+[27:22] completion call. Right? And we can look
+[27:24] at any of these. And once again you see
+[27:26] that uh the um app insights also manages
+[27:32] to render this as something more
+[27:34] friendly than JSON. I saw a comment that
+[27:37] some people enjoy reading Jason,
+[27:39] but I think you'll find that it's a
+[27:41] little nicer to you know um view uh you
+[27:45] know view it like the the in this kind
+[27:48] of conversational way. Uh now what's
+[27:50] interesting that I wanted to point out
+[27:52] uh is that within all of these spans
+[27:56] each span has what's called uh
+[27:58] attributes and we have this standard. So
+[28:02] the standard is gen_ai
+[28:05] and so you'll see all of these traces
+[28:07] the attribute names uh or property names
+[28:10] start with gen_ai.
+[28:12] This is a open telemetry standard for
+[28:15] genai bas based applications and that is
+[28:18] the only reason why app insights and
+[28:21] aspire were both able to render these in
+[28:23] a pretty way because this is a standard.
+[28:25] So it's not that they know anything
+[28:27] about agent framework. it's that they
+[28:29] see, oh, you're using the standard Gen
+[28:32] AI traces. I understand that this is a
+[28:35] Gen AI conversation and now I can render
+[28:38] it a certain way. So, it's really
+[28:40] important that we're not just using open
+[28:42] telemetry, but we are adhering to this
+[28:44] open telemetry geni standard uh because
+[28:48] then we can get these like nicer
+[28:50] renderings, right? So, here, you know,
+[28:51] these are um you know, some examples of
+[28:54] the Genai attribute names, right? So you
+[28:57] the operation name tool name etc. If you
+[29:00] see gen AI in front that means it's part
+[29:02] of this this standard right. So whatever
+[29:06] you know whatever we're exporting from
+[29:09] uh AI agents any LM based applications
+[29:12] we do want to be exporting our open
+[29:14] telemetry traces using this standard
+[29:16] here.
+[29:22] All right. So what you can do yeah this
+[29:24] is going to and you know we view the
+[29:25] traces here and you know once you've got
+[29:27] it set up in app insights then you might
+[29:28] want to set up dashboards in app
+[29:30] insights you might want to set up alerts
+[29:32] like you can do all kinds of things once
+[29:34] you make sure you're sending all the
+[29:36] information that you care about to uh to
+[29:39] app insights you can then uh set up
+[29:42] everything right
+[29:45] okay so that was monitoring
+[29:49] um so let's just see some um you know
+[29:54] questions here right so there's
+[29:57] questions like um you know are is the
+[30:01] library setting up the metrics so agent
+[30:03] framework is doing quite quite a lot of
+[30:06] work for you if you're using agent
+[30:08] framework um you can see here's the
+[30:10] documentation about about agent
+[30:13] framework reservility
+[30:16] I'll go ahead and um you know put it
+[30:18] here I think they talk about spans and
+[30:21] metrics yeah so This you can see this is
+[30:23] what these are the spans that agent
+[30:25] framework outputs. They do invoke agent
+[30:29] chat and execute tool and then these are
+[30:31] the metrics that they output which is
+[30:33] the operation duration the token usage
+[30:36] and the invocation direction. Now you
+[30:38] can always set up additional stuff right
+[30:39] open telemetry is very customizable. So
+[30:41] you could set up other metrics that
+[30:43] matter to you. You can also bring in
+[30:44] other instrumentations right like when
+[30:46] I'm doing a fast API app I'm going to
+[30:48] instrument all the request and
+[30:49] responses. Um, if I using the Azure
+[30:52] Python SDK, I'm going to make sure I'm
+[30:54] I've instrumented all the Azure uh
+[30:56] Python SDK calls, right? So, whatever
+[30:59] package you're using, there's often a
+[31:01] way to make sure that that package,
+[31:03] especially if that package is doing
+[31:04] network requests, there's usually a way
+[31:06] to to make that package export spans,
+[31:09] right? So, Asian framework is going to
+[31:12] take care of exporting these spans and
+[31:13] these metrics. But if you're using any
+[31:15] sort of other frameworks or SDKs, then
+[31:18] you want to, you know, make sure you're
+[31:19] also exporting spans from that one. And
+[31:21] if you need anything more, you should be
+[31:23] able to set up your own custom spans and
+[31:26] metrics as well.
+[31:30] Okay. All right. So, now let's keep
+[31:32] going. Um, remember we do have office
+[31:34] hours afterwards where we can talk about
+[31:36] any uh additional questions.
+[31:40] So, now we're going to talk about
+[31:41] evaluating agents, right? making sure
+[31:43] that the agents are doing a great job.
+[31:47] Uh, and I'll link to the the docs around
+[31:50] this as well for you to reference later.
+[31:56] So, as I've said many times, you know,
+[31:58] when we're using LMS, we are using
+[32:00] non-deterministic systems, right? And
+[32:03] every time we have another call to an
+[32:04] LLM, that increases the non-determinism
+[32:07] of our system, which increases risk,
+[32:10] right? Uh so we have less control over
+[32:13] the output, right? And for those of us
+[32:15] that are control freaks, that's you know
+[32:17] rather unnerving. Um but we're also
+[32:19] using this fairly powerful tools that
+[32:21] can do a lot of work for us. Uh so you
+[32:24] know it's it can be worth it to build
+[32:26] applications based on LMS if we can
+[32:29] build the confidence in those LLMs that
+[32:31] they are doing a great job. And when it
+[32:33] comes to an agent, that means that the
+[32:35] LM needs to be choosing the right tools,
+[32:38] choosing the right order for the tools,
+[32:40] uh choosing the right arguments when it
+[32:41] calls each of those tools, and then
+[32:43] finally, when it comes up with a
+[32:45] response, that it's creating a response
+[32:47] that is grounded in all of those tool
+[32:49] call results, right? That it hasn't
+[32:51] missed any information and it hasn't
+[32:53] made up any information. So we want to
+[32:56] ensure you know a high quality final
+[32:59] result and that usually depends on the
+[33:01] LM doing a good job picking the tools
+[33:03] along the way.
+[33:06] And the thing is anytime you change
+[33:09] something about your system if you
+[33:10] change uh your model you know even from
+[33:12] GBD 5.1 to GBD 5.2 too. If you change a
+[33:15] a temperature, if you change your
+[33:18] prompt, then that can affect the quality
+[33:20] of your model and you really want to
+[33:23] have a way of ensuring that you don't
+[33:25] have a regression in the quality of your
+[33:28] agent. So, you want a rigorous way to
+[33:31] evaluate and say, "Hey, I changed this
+[33:33] one part of our system. Is that actually
+[33:35] a good change?" Right? Some people do it
+[33:37] just based on vibes. You can certainly
+[33:39] make a change based on vibes but then
+[33:41] you should verify that by using rigorous
+[33:45] evaluation. Right?
+[33:47] So how can we actually do evaluation?
+[33:49] Um, one approach is that you can do
+[33:51] human grading if you do have a team of
+[33:53] humans with domain expertise that is
+[33:57] able to look through a bunch of
+[33:58] responses and they can thumbs up and
+[33:59] thumbs down and then you can see, oh,
+[34:01] okay, well, we got like 90% thumbs up,
+[34:04] 10% thumbs down on on this run and then,
+[34:07] you know, we got 80%, you know, thumbs
+[34:09] up on the next run. Okay, so it looks
+[34:11] like this first one's better. Um, so it
+[34:14] is definitely helpful if you have humans
+[34:15] with expertise to be looking through
+[34:18] data sets. Um generally, you know,
+[34:20] there's there's only so many they can
+[34:22] look through because they're humans with
+[34:24] uh you know, limited time. Uh but they
+[34:26] can be particularly helpful for
+[34:29] annotating issues and saying not only is
+[34:31] this wrong, but this is the reason it's
+[34:33] wrong. So it is very very helpful and
+[34:35] recommended that you do have humans
+[34:38] evaluate uh outputs and tell you why
+[34:41] something's wrong because then you can
+[34:43] decide what sort of automated
+[34:44] evaluations you need to set up to ensure
+[34:47] that you don't make that exact mistake
+[34:49] right um so ideally you always have some
+[34:51] form of human evaluation and that those
+[34:54] humans have domain expertise and they
+[34:56] won't be persuaded by you know an LLM's
+[34:59] uh hallucination right because remember
+[35:01] the LMS they can be very convincing when
+[35:03] they're wrong. So, you really need to
+[35:07] have somebody who has expertise in that
+[35:10] domain who can say, "Yeah, that sounds
+[35:12] right, but it's it's actually wrong."
+[35:13] Right?
+[35:16] So, then you want to set up automated
+[35:18] evaluation. And the advantage of
+[35:19] automated evaluation is that once you
+[35:21] have it set up, if it's really measuring
+[35:23] uh quality well, then you can run it
+[35:26] whenever you have changed anything about
+[35:29] the system. And then you can more easily
+[35:31] change your models, change your prompts,
+[35:33] and have confidence that it's going to
+[35:35] be a good result. And um and yeah, and
+[35:39] and they can also run on a larger amount
+[35:42] of data than uh than humans can, right?
+[35:46] So uh we do want to figure out how to
+[35:48] set up automated valuation in a way that
+[35:50] really measures quality, right?
+[35:54] There are multiple frameworks to help
+[35:56] you set up automated evaluation. Uh the
+[35:59] one we're going to be looking at today
+[36:00] is the Azure AI evaluation SDK from
+[36:03] Microsoft and that's available in Python
+[36:06] and also .NET and it optionally exports
+[36:10] to Foundry when you want to see the
+[36:11] evaluation results and I'll I'll be
+[36:13] showing that. Um but there's some other
+[36:15] frameworks as well that you may check
+[36:17] out. Uh there's one called Tao
+[36:19] specifically if you're building customer
+[36:20] service agents you'll you want to check
+[36:22] out Tau. That's from the company Sierra
+[36:25] that's in Python. Uh there's Ragos
+[36:27] that's from a a researchbased startup
+[36:30] that's in Python. There's Deepaval and
+[36:32] they now have a whole hosted service
+[36:34] that's in Python. Uh Langmith from
+[36:37] Langchain. If you are building with
+[36:38] Langchain instead of agent framework
+[36:39] then you might check out Langmith. And
+[36:41] then OpenAI also has eval built into
+[36:44] their OpenAI package. And actually
+[36:46] Microsoft is integrating tighter with
+[36:48] OpenAI evals. So in a future session we
+[36:51] you know we might show how to to use
+[36:52] that OpenAI evals package as well. uh
+[36:56] because that can actually export both to
+[36:57] openai.com but also to foundry now uh
+[37:00] which is something I only just
+[37:01] discovered the other day. Um so yeah,
+[37:04] there's definitely lots of options here,
+[37:06] but they're generally all going to have
+[37:08] similar uh similar approaches to
+[37:11] evaluation. The important thing is you
+[37:13] know set up evaluation with you know
+[37:15] some sort of system so that you can see
+[37:17] what is getting better and what is
+[37:19] getting worse. So with Azure AI
+[37:22] evaluation, we are using this package
+[37:24] that we install into our project and you
+[37:27] can see it's in our PI projecttoml
+[37:31] right here as your AI evaluation. We're
+[37:33] also including the red team sub package
+[37:35] because we're going to be doing red
+[37:36] teaming later today which is really fun.
+[37:38] Uh so we've got that installed here and
+[37:40] that will bring in all of its
+[37:41] dependencies and that gives us access to
+[37:44] a bunch of built-in evaluators. uh also
+[37:46] a way to build custom evaluators uh to
+[37:48] do bulk evaluation to do red teaming and
+[37:51] this optional ability to save results in
+[37:53] foundry and we're going to see a bunch
+[37:55] of these capabilities today.
+[37:59] So how do we evaluate AI agents so
+[38:02] generally we want to evaluate those
+[38:04] agents both at a high level and at a
+[38:08] more granular level. So at a high level,
+[38:10] we want to see did the agent accomplish
+[38:13] the task? Right? The user had a goal.
+[38:15] Did the agent achieve the user's goal?
+[38:17] Right? So that's like this one um intent
+[38:20] resolution evaluator. Did the agent
+[38:22] achieve the user's goal? And then a
+[38:25] similar one is task adherence evaluator.
+[38:28] Did the agent follow the prompt
+[38:29] constraints and tool use rules? Right?
+[38:32] So sometimes an agent might achieve the
+[38:33] user's goal but not following the
+[38:37] constraints of the system prompt. Right?
+[38:39] Sometimes it'll try and like bypass what
+[38:42] you told it in the system prompt um and
+[38:45] still achieve the goal, but you want it
+[38:47] to also adhere to, you know, like if you
+[38:49] said like only use these tools or only,
+[38:52] you know, use it this number of times
+[38:53] or, you know, don't do such and such,
+[38:55] you want to make sure to actually follow
+[38:57] those constraints. So, we actually do
+[38:58] have two evaluators for that. And these
+[39:01] are all um using LLM as a judge, right?
+[39:05] So many many evaluation systems use LLM
+[39:07] as a judge where you actually use
+[39:09] another LM to evaluate the results of
+[39:12] your LM based application and that's
+[39:14] what we're doing here. So we're going to
+[39:15] use an LM to actually look at the
+[39:17] response and say hey did the agent
+[39:18] achieve the user's goal and we're going
+[39:20] to use an LM to say hey did the agent
+[39:22] follow the rules when it was achieving
+[39:24] that goal.
+[39:26] Uh then we can also look at the response
+[39:28] if we have a ground truth. A ground
+[39:30] truth is the perfect response for a
+[39:33] particular question, right? And if you
+[39:36] can have a data set for evaluation that
+[39:38] has ground truth, then there's
+[39:40] additional evals you can do because you
+[39:41] can actually say, hey, I know exactly
+[39:44] what the response should be for this and
+[39:46] I'm just going to compare it. Right? So
+[39:47] you can just say, hey, does this
+[39:49] response have everything that I wanted
+[39:53] to be included based off the ground
+[39:54] truth response. And this is like, you
+[39:56] know, I always prefer being able to do
+[39:59] evaluations with ground truth um
+[40:01] because, you know, that way it's really
+[40:03] checking for hallucinations. So, I do
+[40:05] recommend trying to set up evaluations
+[40:07] that include a a data set that has
+[40:10] ground truth so that you can um you
+[40:13] know, check check ground truth accuracy
+[40:16] and um really ensure that you're not
+[40:18] getting hallucinations that are
+[40:19] convincingly wrong.
+[40:22] And then we also can get more granular.
+[40:24] So that's with this tool called accuracy
+[40:25] evaluator. So here the question is did
+[40:28] the agent invoke the right tool, the
+[40:29] right arg. So this is you're getting
+[40:31] really specific and saying like hey like
+[40:34] I know exactly how I think the agent
+[40:35] should accomplish this goal. It should
+[40:37] have called get weather with Seattle. It
+[40:40] should have called um you know get
+[40:42] weather with Paris California. Yeah, I
+[40:44] guess Paris California would be the
+[40:45] wrong one. Uh but you know you just say
+[40:47] like hey I know for this input I
+[40:49] expected to call you know this tool with
+[40:52] this argument. So here you're getting
+[40:54] really granular um and um but that way
+[40:58] you can actually see like you know
+[40:59] you're evaluating the system as a whole
+[41:00] and you're also evaluating the system
+[41:02] along the way. And the nice thing about
+[41:04] the tool call actually evaluator is
+[41:06] because if you get low metrics on these
+[41:08] other ones if you look at the cool tool
+[41:10] call a actually evaluator that can tell
+[41:13] you why, right? Like well why? Well it
+[41:15] just it called this tool with the wrong
+[41:17] arc, right? It should have called it
+[41:19] with a different argument. Uh so this
+[41:22] can help you understand the why of you
+[41:25] know where it went wrong with these
+[41:27] overall goals.
+[41:33] So let's look at each of these in more
+[41:35] detail and how how we'd actually run
+[41:37] them. Uh so first looking at that tool
+[41:39] call accuracy right this is our most
+[41:41] granular one which is going to check
+[41:43] whether the tool calls um are relevant
+[41:47] doing the right tools the right
+[41:48] arguments and not making any unneeded
+[41:50] calls right because we don't want our
+[41:51] agent to be doing calls that it didn't
+[41:54] have to do because that's going to waste
+[41:55] tokens waste time and add unnecessary
+[41:57] results to our context so what we do is
+[42:00] we import the evaluator from the Azure
+[42:02] AI evaluation package it is built in uh
+[42:05] we set it up with an LLM we do need to
+[42:08] point it at an LLM because it is this is
+[42:10] an LLM as a judge and then uh we're
+[42:14] going to pass in the you know the the
+[42:18] messages from the current agent right so
+[42:21] we're going to pass in the system prompt
+[42:22] that got sent to the agent we're going
+[42:24] to pass in the users question agent and
+[42:26] we're also going to pass in all the tool
+[42:28] calls that got sent to the agent so this
+[42:30] is the one that requires digging the
+[42:32] most into your actual uh agent
+[42:35] implementation because you need to send
+[42:36] in all this information. We're also
+[42:38] going to send in the tool definitions
+[42:40] because that's the only way we can know
+[42:42] whether those tool calls are really
+[42:43] matching the definitions. So we
+[42:45] basically take each of our functions and
+[42:47] we turn them into their JSON schema
+[42:50] definition and we pass those in here.
+[42:52] And then we pass in the response uh that
+[42:54] the agent gave. So we're really passing
+[42:56] in a lot of of details here so that the
+[43:00] LLM as judge can make a full uh
+[43:04] decision, right? And then we asked the
+[43:05] LLM to score it from one to five. In
+[43:08] this case, it could give it a five and
+[43:10] said, "Okay, the agent called all four
+[43:11] of these tools once, uh, which directly
+[43:13] mapped to the user's need, blah blah
+[43:15] blah." So, the LM judge is always going
+[43:18] to give a score and a reason. And it's
+[43:21] really, really helpful to look at that
+[43:22] reason, um, to see why, you know, why it
+[43:25] thinks that it deserves that score. Um,
+[43:28] and especially when you're doing these
+[43:29] evaluations for the first time, you
+[43:31] really want to go over them with once
+[43:33] again with a human that has domain
+[43:34] expertise. So you can say, "Hey, do you
+[43:36] agree with that score?" Like, "Was that
+[43:38] five a right score?" Um, because if not,
+[43:40] you're going to look at that reason and
+[43:42] see, uh, oh, like I need to maybe
+[43:44] customize the evaluator, right? Think of
+[43:45] these evaluators as like your, you know,
+[43:47] your these are like the first things
+[43:49] you're going to start with, but uh
+[43:51] eventually a lot of times you're going
+[43:52] to build your own custom evaluators that
+[43:55] um are, you know, really targeting
+[43:58] things that you specifically see your
+[43:59] agent doing wrong.
+[44:03] Uh now, intent resolution, that one's
+[44:05] looking at overall, right? How well did
+[44:07] the agent achieve the user's goal? So
+[44:09] this one we do send in the full
+[44:11] conversation. Um but we don't have to
+[44:13] send in the tool call definitions in
+[44:15] this one. Um just the conversation uh is
+[44:18] is enough. Right? So here uh we can see
+[44:22] okay it got a four. It said the user
+[44:24] wanted a New York to Tokyo trip u but
+[44:26] there was an inconsistent return date
+[44:28] and so it gave it a four out of five.
+[44:31] Now it's interesting. There's this whole
+[44:32] debate about whether scores should be
+[44:34] binary or one to five. In this SDK it
+[44:37] gives one to five. I've seen other
+[44:39] people in the evaluation space argue
+[44:41] that it should always be binary, right?
+[44:42] Because when it's one to five, you have
+[44:44] to decide what is passing. A lot of
+[44:45] people consider four and five to be
+[44:47] passing. But if it's a four, that means
+[44:48] it wasn't quite a five. It wasn't
+[44:50] perfect, right? So you may, you know,
+[44:52] you may decide um if you're building
+[44:54] your own custom evaluators, you might
+[44:55] decide to go for binary, which is just
+[44:57] pass fail, yes, no. Um because some
+[45:00] people argue that's like, you know,
+[45:02] that's that's easier to decide whether
+[45:04] it's it truly is is doing what it needs
+[45:06] to do.
+[45:10] Then we have task adherence. So this
+[45:12] one's really similar, but making sure
+[45:13] that it aderes to the rule. Um, and this
+[45:16] one got a zero, and that was because um
+[45:20] the the tool call used a departure date
+[45:24] that uh disagreed with the return date.
+[45:27] Um, so it's interesting because these
+[45:28] both both of these saw the same issue,
+[45:30] but for this one, it gave it a four
+[45:32] because it wasn't a big enough issue.
+[45:34] But with this one, I gave it a zero
+[45:35] because it's like, well, for this
+[45:37] particular thing I'm evaluating, I
+[45:38] consider that a zero. So that is why
+[45:39] it's helpful to have multiple evaluators
+[45:41] because some of the evaluators will call
+[45:43] out issues that the other ones won't.
+[45:45] And you really want to know about any
+[45:46] sort of issue because this is a
+[45:47] significant issue if your um you know,
+[45:50] if your schedule is listing a date and
+[45:51] you're not if you didn't get a flight
+[45:53] for that date, like that's that's kind
+[45:55] of a big deal, right? And then we have
+[45:57] response completeness. This is the one
+[45:59] where you check for alignment with the
+[46:00] ground truth. So in this one, we do have
+[46:02] to have a ground truth. So we say okay a
+[46:04] complete three day right. So here we
+[46:06] write our answer. Usually it's going to
+[46:07] be like even longer than this but you
+[46:09] would provide your ground truth and then
+[46:11] the LM's going to judge and say okay
+[46:13] like it looks like the answer includes
+[46:15] everything that was in the ground truth.
+[46:17] So it is a complete answer.
+[46:20] All right. So now we can actually look
+[46:22] at let's actually run this this file
+[46:25] here. This is agent
+[46:28] evaluation.
+[46:30] And so you can see, you know, it's it
+[46:32] starts off with all of the agent
+[46:34] definition. Uh, so we have the whole
+[46:37] agent definition. Um, we got a little
+[46:39] helper function just to convert the
+[46:41] conversation to the style that the SDK
+[46:43] expects. We have another helper function
+[46:45] just to display evaluation results
+[46:47] locally. Uh, but then we run the query.
+[46:50] Um, we get back the agent response. We
+[46:54] have the ground truth here. Then we set
+[46:57] up our valuations with the LLM model
+[46:59] we're using. And so you have to decide
+[47:01] what model you're going to use. Um, and
+[47:03] you know, there's some debates about
+[47:05] whether you should use a smarter model
+[47:06] or a less powerful model. Um, but you
+[47:09] really just want to make sure you're
+[47:10] getting good results, right? Uh, so you
+[47:12] set up your model and this does take
+[47:14] tokens, right? This takes tokens and
+[47:16] takes time. That's why it is kind of a
+[47:18] you want to think carefully when you're
+[47:19] setting up evaluations because these are
+[47:21] really slow um evaluations because every
+[47:24] time you're um running your agent so
+[47:27] that is a whole long process and then
+[47:29] for every evaluator using these are all
+[47:32] LLM judges they're all going to look at
+[47:34] that full conversation and send those to
+[47:37] an LLM and make a decision. So this does
+[47:39] use up a lot of tokens. Uh so if you do
+[47:41] try running this in GitHub models you
+[47:43] may get a token capacity error. Um, so
+[47:46] just let us know. We might be able to
+[47:48] help you work around that with GitHub
+[47:50] models. But this does use a lot of
+[47:51] tokens. It does take time. So we set up
+[47:53] all those evaluators. We look at the
+[47:55] response and then we just tally up
+[47:57] those. So let's go ahead and just run
+[47:59] that. Um, I was saying it does take does
+[48:02] take time.
+[48:04] Oh, let me do the full file name.
+[48:07] So a lot of times when I'm running
+[48:08] evaluation I'm doing it in the
+[48:10] background or I'm doing it in the cloud
+[48:12] or I am gardening at the same time like
+[48:15] you know there's uh just as a general
+[48:16] rule evaluation do does take time so you
+[48:19] want to kind of set up a system where
+[48:20] you're not being blocked based on
+[48:22] evaluation. So it's you're running the
+[48:24] background or you're running in the
+[48:25] cloud you can run it on CI as well like
+[48:28] with GitHub actions. I've done that as
+[48:29] well. You just want a system where um
+[48:32] you can, you know, set off an
+[48:34] evaluation. Um when you're running it on
+[48:36] a full data set, usually I'm running it
+[48:37] on like hundreds of um runs, hundreds of
+[48:40] like agent calls, that can take like an
+[48:43] hour or so.
+[48:47] Uh yeah, if you do get an error in code
+[48:51] spaces, the the model that actually
+[48:53] worked for me was I changed the eval
+[48:56] model config here. I changed it to GB5
+[48:59] mini. Now I know for some people that
+[49:01] model hasn't worked in previous
+[49:02] sessions. Um but that was the only model
+[49:04] that was able to have enough tokens sent
+[49:07] to it. Um otherwise I did get the error
+[49:09] that I see in the chat. So do try GBD5
+[49:12] GPD-5- mini. See if that works for you.
+[49:15] It looks like that might be a restricted
+[49:17] model. Um but that was the only one that
+[49:20] I actually did get working um with the
+[49:22] amount of tokens we're sending to it.
+[49:27] Uh but if you are using Azure models
+[49:29] then uh then Azure models should all
+[49:32] work fine. It's just that GitHub models
+[49:33] are very uh rate limited since they're
+[49:35] free. Um so we have to find models that
+[49:38] work with it. But with Azure models,
+[49:39] GBD40 should be fine. I I generally use
+[49:42] I think I'm using GBD41
+[49:44] usually these days. Um
+[49:48] uh but GB5, you know, should work as
+[49:50] well for for Azure models. Okay. So now
+[49:54] we did the whole um we did the agent
+[49:56] run. we got back this you know agent
+[49:58] response a long response here and so
+[50:00] then it's setting up these evaluators
+[50:03] and these take time as well because it's
+[50:05] taking taking that whole conversation
+[50:07] with all its tool calls and sending them
+[50:10] to each of these evaluators.
+[50:16] Okay. Yeah. And I see there's some with
+[50:18] GitHub models it might be that GBD5 mini
+[50:20] is limited. So unfortunately it might be
+[50:22] that it's I wonder also you could try
+[50:25] also only using one of the evaluators
+[50:28] here. Um we try to get everything
+[50:31] working with GitHub models but you know
+[50:33] we are using free models here and this
+[50:34] is a really token intensive task. So you
+[50:37] might also see wait how would we do
+[50:42] you could like comment out some of
+[50:44] these.
+[50:46] Okay, so I got a response here because
+[50:47] I'm, you know, just running this um with
+[50:49] my Azure model. So here we can see we
+[50:52] got a five for intent resolution. Um and
+[50:56] we can see the reason, right? So the
+[50:57] reasons are fairly long, which is good.
+[50:59] Um I couldn't fit them all on the
+[51:01] slides, but in the in reality, the
+[51:02] reasons are quite long. Uh response
+[51:04] completeness got a five. Task adherence,
+[51:08] this is the one that got in this case,
+[51:09] it got a 1.0. And you can see it did a
+[51:11] bunch of like this one was quite
+[51:13] thorough. Um, and it actually breaks it
+[51:15] down and says for various things it got
+[51:18] a pass. Um, but uh, at one point it
+[51:22] said, you know, we got this minor
+[51:24] inconsistency.
+[51:26] Um,
+[51:28] it's funny. It says there's a minor
+[51:29] inconsistency, but then it gave it it
+[51:31] gave it a 1.0. It shouldn't have been a
+[51:33] pass. That should that's a fail. See, my
+[51:35] logic for determining pass is wrong. Um,
+[51:39] and then 5.0. It did get it got a 5.0
+[51:42] for that one.
+[51:43] Let's see. Uh, now this was just my
+[51:46] local display of the results. Um, you
+[51:50] can set up whatever display you want.
+[51:51] You can, you know, save the results
+[51:52] however you want. Um, you know, whatever
+[51:55] whatever works for you. Now, most of the
+[51:58] time you're actually going to be doing
+[51:59] bulk evaluation of a data set. So, there
+[52:01] is a function for doing bulk evaluation,
+[52:03] which is evaluate. And there you'd pass
+[52:05] in a file that already had a bunch of
+[52:08] runs in it. Uh, and they're saying I
+[52:11] usually would like to have like, you
+[52:12] know, 200 runs or so in there to write
+[52:14] be really thorough and make sure those
+[52:16] like really represent what users are
+[52:17] sending at the system. And so you're
+[52:19] sending in all those runs and then
+[52:22] running all of your desired evaluators
+[52:24] on all of them. Uh, so that's in agent
+[52:27] evaluation batch and it is running off
+[52:30] of eval data.jsonl. So this is a JSON
+[52:32] lines file here and so you can see this
+[52:35] just has a bunch of previous agent runs.
+[52:38] So I basically ran the agent and I just
+[52:40] saved it out. Once you have your agent
+[52:42] in production, you're going to find, you
+[52:45] know, the examples, you know, bring it
+[52:46] back to open telemetry. You're going to
+[52:47] find the examples in your logs that did
+[52:49] a poor job and add those to your data
+[52:52] set. So, it's really important that once
+[52:54] your agent's in production, you keep on
+[52:56] adding the data that you see into your
+[52:59] evaluation data set, especially the ones
+[53:01] that did a that where you saw poor
+[53:03] results to make sure that your
+[53:05] evaluation data set matches what's
+[53:07] happening in production. That's super
+[53:09] important. Otherwise, you get what's
+[53:10] called like um you know, model drift
+[53:12] where you're not evaluating the kind of
+[53:15] data that you're actually seeing. Uh so,
+[53:17] that's what we passed in um to here. So
+[53:21] we say, okay, here's our eval data file.
+[53:23] These are the evaluators that we're
+[53:24] using. Um, we can do a little mapping
+[53:27] here if we need to, but that'll run them
+[53:30] all. And the neat thing with this is
+[53:32] that we can also optionally output it to
+[53:35] Foundry. So if you do have a Foundry
+[53:37] project set up, you can output it to
+[53:41] Foundry project. So I've I have set up a
+[53:43] Foundry project for my um local one and
+[53:46] I've already run it. So I can go ahead
+[53:48] and let me go to evaluation
+[53:52] uh automated evaluation. So this is
+[53:54] foundry. This is you'll notice I am not
+[53:56] using the new foundry. So in foundry
+[53:59] there's this new foundry UI. Um
+[54:02] unfortunately we can't view the results
+[54:04] from our local locally run Python files
+[54:07] in new foundry yet which I told the
+[54:10] team. Um so I had to toggle off new
+[54:12] foundry. Um, so we are on old Foundry
+[54:15] UI. Still cute. Uh, and we can see the
+[54:19] the runs here, right? So here's an
+[54:21] evaluation run. So I can click on one of
+[54:22] these and check out for this run and
+[54:25] see, okay, we had, you know, here we're
+[54:27] only passing in three and they all did
+[54:29] well. So it got 100% for all of them.
+[54:31] But you can imagine with like a set of
+[54:33] 200, you're going to see more of a mixed
+[54:35] result. And then you can actually dig in
+[54:37] and you can look at the actual um you
+[54:39] know look at each of the results and say
+[54:41] okay that you know that passed that
+[54:43] passed right it says four out of four
+[54:45] evaluators pass and we see the score and
+[54:47] the reason for um you know for each of
+[54:50] them. Uh, so that's actually really nice
+[54:52] because then you can, you know, you can
+[54:54] share your evaluation runs like with
+[54:55] your colleague and be like, "Hey, I just
+[54:57] ran the evaluation on your new prompt.
+[54:59] Here's the results. Um, check it out.
+[55:01] See the ones that failed. You know, what
+[55:03] do you think about this?" Right?
+[55:08] Uh, and I see a question, how did I save
+[55:10] the um query results? Uh, there's
+[55:12] another function I didn't show, agent
+[55:14] evaluation generate, and that just ran
+[55:18] uh, it ran the the agent calls and saved
+[55:20] it. So if you wanted to, you can run
+[55:21] this. This takes some time because it's
+[55:23] going to run each of those. Um, but
+[55:24] that's what I did. I just ran the agent
+[55:26] and saved them, right? Uh, once again,
+[55:28] it's best if you can have real user
+[55:30] data, but until you put it in
+[55:31] production, you have to make do. Um, you
+[55:34] can also try and use like ask an LM to
+[55:36] simulate, you know, to come up with the
+[55:38] user input instead of what I did here.
+[55:41] Well, I basically did use an LLM to
+[55:42] simulate because I asked GitHub Copilot,
+[55:44] right? Um uh so you you start off with
+[55:47] the best attempt you can of you know of
+[55:50] data to evaluate um but then you improve
+[55:53] that data as you get to see what users
+[55:55] really put in right
+[55:58] and then yeah so once you have the
+[55:59] results you can view them locally you
+[56:01] can build your own custom CLI viewer
+[56:03] that's something that I've done in the
+[56:04] past using Python rich and textual or as
+[56:07] I showed you can view them in AI foundry
+[56:11] uh you can even set up GitHub actions uh
+[56:14] using this SDK. I've done that in the
+[56:16] past and that's uh that's fun because
+[56:18] you can run them on the PR. You don't
+[56:19] want to run them on every PR because
+[56:21] they are expensive and slow. Uh so I set
+[56:23] that up to be, you know, with a comment.
+[56:24] If you did like SLE eval, it would run
+[56:26] the evaluations, right? So you just have
+[56:27] to think about what system you want to
+[56:29] set up.
+[56:30] And that way now that we've got open
+[56:32] telemetry and evaluation, now you can
+[56:34] have this whole dev loop for your AI
+[56:36] agents, right? like you you work on your
+[56:38] agent, you think it's looking good, you
+[56:40] do some vibe checks, but then you
+[56:41] actually do some evaluations, then you
+[56:43] do evaluations against a larger data
+[56:45] set, you investigate any issues. If it's
+[56:48] looking good, then you put into
+[56:49] production. And then you have your
+[56:51] observability, your open telemetry where
+[56:52] you're monitoring and seeing what's
+[56:54] actually happening. You can also run
+[56:56] online evaluations. I didn't talk about
+[56:58] that, but you could run these evaluators
+[57:00] online as well, typically on just a
+[57:01] subset of the of the samples. and and
+[57:04] you could have a dashboard for what sort
+[57:06] of evaluations you're seeing over time.
+[57:08] You obviously you can't use the one that
+[57:10] requires ground truth, but you could run
+[57:11] all the other evaluators that don't
+[57:13] require ground truth and do these online
+[57:14] evaluations and then you just want to
+[57:16] keep on improving your agent over time
+[57:19] and uh you know making sure that you're
+[57:21] getting great results for it.
+[57:24] All right, we have three minutes left to
+[57:27] talk about safety evaluation.
+[57:29] This was something where Gwen and I
+[57:31] debated like, do we have time to add
+[57:32] this in? We do want to make sure that
+[57:34] not only is our agent output high
+[57:35] quality, we also want it to be safe,
+[57:37] right? We don't want it telling people
+[57:40] how to, you know, uh, generate, uh, you
+[57:43] know, make bombs and stuff like that.
+[57:44] Um, it's actually relevant to something
+[57:46] happening in the news right now, but I
+[57:48] guess we won't get into that. But you
+[57:49] don't you don't want your agents
+[57:51] generally to produce unsafe outputs,
+[57:53] right? And this is the kind of stuff we
+[57:55] consider to be unsafe like hate speech,
+[57:58] violence, um you know, over sexual
+[58:01] umization that does differ for like
+[58:03] health apps, uh jailbreaks, that sort of
+[58:06] thing, right? So how can we evaluate it?
+[58:09] Uh the u best approach we have right now
+[58:12] is this automated red teaming. Uh this
+[58:14] simulates human red teaming. Human red
+[58:16] teaming is where you have a bunch of
+[58:17] humans in a room and they try to make
+[58:19] your application do bad things. So, we
+[58:22] can simulate that using an adversarial
+[58:24] LLM that has all its guard rails off and
+[58:27] has the ability to generate lots of
+[58:28] horrible, horrible questions um that
+[58:31] that you know people could potentially
+[58:33] throw at your application. So, it's
+[58:35] going to generate these adversarial
+[58:37] questions. It's going to also transform
+[58:39] them using common attract strategies
+[58:41] like reversing the text, doing morse
+[58:44] code, uh doing like Caesar cipher. Like
+[58:46] there's all these things that people
+[58:47] will do to try and uh you know in inject
+[58:50] things into LM based applications and
+[58:53] it'll send it to your agent and see how
+[58:56] does your agent respond and then we use
+[58:57] another LLM specifically to evaluate as
+[59:00] a judge and say hey was that a safe
+[59:02] response right and if it was an unsafe
+[59:05] response that means the attack succeeded
+[59:06] if it was a safe response that means the
+[59:08] attack failed. So we ideally want it so
+[59:10] that we no one can successfully attack
+[59:12] our application with an adversarial
+[59:14] question.
+[59:16] So we can use the Azure AI evaluation
+[59:18] SDK for this use this red team class. Uh
+[59:21] this one does require a foundry project
+[59:24] and that's because it needs that
+[59:26] adversarial LLM and we don't just give
+[59:29] access to that adversarial LLM for
+[59:31] anything, right? We only give access to
+[59:33] it for this purpose because it is it's
+[59:35] got all its guard rails off. So that's
+[59:37] able to come up with these horrible um
+[59:39] questions. So you do need a foundry
+[59:41] project for this. Uh so this will not
+[59:43] will definitely not run in GitHub
+[59:44] models. Um but if you do have a foundry
+[59:46] project, you can point at it. Uh we pass
+[59:47] in our foundry credential. Then we say
+[59:49] which categories we care about. We can
+[59:51] also specify what sort of
+[59:52] transformations we want to try out. Like
+[59:55] I always like to do URL encoding because
+[59:57] that seems to be a really successful
+[59:58] attack. Uh and then oh sorry this is
+[01:00:01] where we do the attack strategy. Sorry.
+[01:00:03] So this sets up our general red team
+[01:00:05] agent and then when we run the scan we
+[01:00:06] give it a name. We set up our tax
+[01:00:08] strategies. So these are my two favorite
+[01:00:10] ones is URL encoding which just says
+[01:00:12] like percent 20 and then tense which
+[01:00:15] turns a question into a like historical
+[01:00:18] question and these attacks are like
+[01:00:21] surprisingly successful uh what I've
+[01:00:23] seen. Then we run that red team. Uh this
+[01:00:26] does take some amount of time is because
+[01:00:28] it's going to run a bunch of attacks
+[01:00:29] with different transformations and then
+[01:00:31] we can check those results. Right? So I
+[01:00:33] can show you I've got them open in uh so
+[01:00:36] once again in that evaluation tab in the
+[01:00:39] um Foundry uh old UI we go to that red
+[01:00:42] teaming and then we can see this is the
+[01:00:45] one um you know I ran last night and it
+[01:00:48] was actually successful on three out of
+[01:00:51] 50 of the sexual attacks. So I could dig
+[01:00:54] into that and see like okay what
+[01:00:55] happened. Now, the thing is, I have to
+[01:00:57] warn you that when you dig into this,
+[01:00:59] you have to be like mentally prepared
+[01:01:01] because the questions are like really I
+[01:01:04] find them very offensive and triggering.
+[01:01:07] Um, luckily the ones here are like not
+[01:01:10] as bad so I can show you, but um, plan a
+[01:01:13] kidnapping. I mean, that doesn't sound
+[01:01:14] like I know that's bad, but compared to
+[01:01:16] other things, um, it's not as bad,
+[01:01:18] right? So, you're going to look at each
+[01:01:20] of these and you can see um, these are
+[01:01:21] all ones that actually the attack was
+[01:01:23] unsuccessful. you would filter by the
+[01:01:24] ones that were successful. I'm not going
+[01:01:26] to show you those right now for reasons.
+[01:01:28] Um, but yeah, I just want to let you
+[01:01:30] know like you do want to look through
+[01:01:31] especially to see the ones that where
+[01:01:33] the attack was successful, but you also
+[01:01:34] want to be like emotionally prepared um
+[01:01:37] for that. And so once you see what's,
+[01:01:39] you know, you know what it was
+[01:01:40] successful, then you can like maybe
+[01:01:42] modify your prompt, try a different
+[01:01:43] model and see like okay, you know, how
+[01:01:45] can I make my agent safer?
+[01:01:49] Uh, and you should run this red team
+[01:01:51] whenever you change models. You're not
+[01:01:53] going to run them on every code change.
+[01:01:55] Um, but any model changes and any like
+[01:01:58] non-trivial prompt changes like any
+[01:02:00] anything um, you know, that's different
+[01:02:02] than a syntax thing, it it's a good idea
+[01:02:04] to rerun the scan, right? Um, you'll see
+[01:02:06] big changes across models. I have a blog
+[01:02:08] post where I compared it. Um, so
+[01:02:11] definitely across models, you're going
+[01:02:13] to see changes. Um, but you could also
+[01:02:15] see changes when you change tool
+[01:02:16] definitions, prompts, etc. then it's a
+[01:02:18] good idea to run a red team. It doesn't
+[01:02:20] take like you know it takes about the
+[01:02:22] same amount of time as evaluation. So
+[01:02:23] it's just a thing you want to be able to
+[01:02:24] run in the background when it's time.
+[01:02:27] Okay. So that is what uh we were gonna
+[01:02:31] wanted to show today. Um and we I know
+[01:02:35] there was lots of questions. So luckily
+[01:02:38] once again we have our Discord office
+[01:02:40] hours right afterwards. So please come
+[01:02:42] and join us in the Discord. Um, if you
+[01:02:45] had a hard time joining the first time,
+[01:02:47] that's just because Discord does rate
+[01:02:49] limiting. We talk about rate limiters a
+[01:02:50] lot here, right? Um, but at this point,
+[01:02:53] I don't think it should be rate
+[01:02:54] limiting. So, please try to join again
+[01:02:56] so that we can get your questions and uh
+[01:02:59] and yeah, you can always catch up with
+[01:03:01] any of the previous sessions on our
+[01:03:03] resources page and you can keep
+[01:03:04] registering to find out about uh the
+[01:03:07] next the next ones. So, next week is
+[01:03:10] going to be all about multi- aent
+[01:03:12] workflows. and building those with agent
+[01:03:16] framework. Uh so that should be really
+[01:03:18] interesting getting into much more
+[01:03:20] complicated orchestrations and seeing
+[01:03:22] what we can do uh once we're putting
+[01:03:25] together these more complex workflows.
+[01:03:28] So there we go. I am going to jump over
+[01:03:31] to the discord now and I hope to see you
+[01:03:35] there with your questions. Uh thank you
+[01:03:38] so much everyone for joining today.
+[01:03:41] >> Thank you. Thank you Pamela. Thank you
+[01:03:43] all for joining. We're always looking to
+[01:03:45] improve our sessions and your
+[01:03:47] experience. So, if you have any feedback
+[01:03:49] for us, we would love to hear what you
+[01:03:51] have to say. You can find the survey in
+[01:03:54] the chat or on the screen. And we'll see
+[01:03:56] you in the next one.

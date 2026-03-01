@@ -745,7 +745,7 @@ def generate_annotated_talk_post(
         }
     ]
     
-    writeup = chat_completion(messages, temperature=0.7, max_tokens=16000)
+    writeup = chat_completion(messages, temperature=0.7)
     
     # Generate and insert table of contents
     writeup = insert_table_of_contents(writeup)
