@@ -1,0 +1,29 @@
+This session covers building AI-driven workflows using the Microsoft Agent Framework in Python. It introduces the core concepts of workflows—executors, edges, messages, and outputs—then progressively builds from basic sequential workflows to conditional branching with structured outputs, state management, and a full-stack application demo.
+
+00:54 - Series overview and registration
+02:07 - Today's agenda: building your first AI-driven workflows
+02:51 - Following along with the GitHub repo and Codespaces
+04:35 - Recap: what is an AI agent
+06:16 - What is an agentic workflow
+09:04 - Anatomy of a workflow: executors, edges, messages, outputs
+10:52 - Building a workflow with WorkflowBuilder
+12:00 - Demo: RAG ingestion workflow (no LLM)
+15:07 - Visualizing workflows with DevUI
+18:11 - Using agents as workflow executors
+19:55 - Demo: writer-reviewer workflow in DevUI
+22:12 - Streaming events from workflows
+25:28 - Built-in SequentialBuilder for linear pipelines
+30:36 - Branching workflows: conditional edges
+33:07 - Demo: conditional writer-reviewer-editor workflow
+35:20 - Text output is fragile for workflow control
+37:15 - Structured outputs for reliable decisions
+38:16 - Using structured outputs with agents
+43:07 - Demo: conditional workflow with structured outputs
+46:28 - Category-based routing with switch-case edges
+50:56 - State management in workflows
+52:34 - Storing and accessing state with set_state/get_state
+55:37 - Shared state and race conditions
+56:57 - Agent session history leaks across runs
+57:37 - State isolation via factory functions
+58:17 - Demo: full-stack retail app with agentic workflows
+59:55 - Next steps and resources

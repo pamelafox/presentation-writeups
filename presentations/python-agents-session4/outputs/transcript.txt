@@ -1,0 +1,1492 @@
+[00:05] Hello everyone and thank you for joining
+[00:07] our live session today. My name is
+[00:09] Lissa. I'm an event planner at Reactor
+[00:12] joining you from Brazil. Before we
+[00:14] start, I have some quick housekeeping.
+[00:16] Please take a moment to read our code of
+[00:18] conduct. We seek to provide a respectful
+[00:21] environment for both our audience and
+[00:23] presenters. While we absolutely
+[00:25] encourage engage engagement in the chat,
+[00:27] we ask that you please be mindful of
+[00:29] your commentary. Remain professional and
+[00:31] on topic.
+[00:34] The session is being recorded and will
+[00:36] be available to view on demand here on
+[00:38] the reactor YouTube channel within 48
+[00:40] hours.
+[00:43] Keep an eye on the chat. We'll be
+[00:44] dropping helpful links and checking for
+[00:46] questions for our presenter to answer.
+[00:49] I'll now turn it over to our speaker for
+[00:51] today. Thank you and welcome Pamela.
+[00:54] All right. Hello everyone. Welcome to
+[00:57] our Python plus agent series. This is a
+[01:01] six-part live stream series. We are now
+[01:04] halfway through. Week one was all about
+[01:07] building agents and we're using the new
+[01:09] Microsoft agent framework for this whole
+[01:11] series. And now for week two, it's going
+[01:14] to be all about building workflows where
+[01:18] you're piecing together agents with some
+[01:21] non-aggentic parts of your systems as
+[01:23] well. And workflows is what you know
+[01:26] many of you probably are going to be
+[01:27] using for actual production scenarios in
+[01:30] order to make these flows that go
+[01:33] through your system and do really useful
+[01:35] things. So, if you haven't registered
+[01:37] yet for the series, you can still
+[01:39] register. That way you'll get follow-up
+[01:41] emails and you'll get notified you know
+[01:43] when the next uh video is streaming. All
+[01:46] of these are recorded so if you missed
+[01:48] anything you can go back you can watch
+[01:50] the videos you can grab the slides you
+[01:52] can go through the code everything is
+[01:54] available for you to review and keep
+[01:57] learning from. And of course you can
+[01:59] also give this series yourself if you're
+[02:01] so inspired for your you know colleagues
+[02:03] friends family etc.
+[02:07] So for our workflow week, we're going to
+[02:10] start off with today's topic of building
+[02:12] your first AIdriven workflows. And we'll
+[02:15] be going through all the basics of
+[02:18] workflows. the anatomy of a workflow,
+[02:20] building basic sequential workflows,
+[02:22] using agents inside workflows,
+[02:24] visualizing workflows, adding
+[02:26] conditional edges to workflows, uh using
+[02:29] structured outputs to make those
+[02:30] conditional edges more reliable,
+[02:33] managing state in workflows, and finally
+[02:35] a little demo of a full stack app that
+[02:37] has a workflow. So that is the plan for
+[02:40] today is to get a solid foundation in
+[02:42] workflows and we're going to build on
+[02:44] that uh in the next two days adding even
+[02:47] more workflow features.
+[02:51] So if you do want to follow along with
+[02:53] the code, all of the code is available
+[02:55] in this repo that we've been using
+[02:57] throughout the session. So, we'll share
+[03:00] this uh this URL in the chat and this
+[03:03] will bring you to the repo
+[03:06] and uh you can see here when you open
+[03:09] the repo there's a big green code
+[03:12] button. So, what you want to do is click
+[03:14] on that code button and let me show you
+[03:17] let me actually delete my code space so
+[03:19] I can show you what it looks like. Let
+[03:21] me reload.
+[03:24] Okay. So, when you click on that code
+[03:25] button, you're going to see there's a
+[03:27] big button that says create code space
+[03:29] on main. So, you'll click on that button
+[03:32] there.
+[03:36] And what this does, it opens a new tab
+[03:39] that is running VS Code in the browser.
+[03:42] And that VS Code has the whole
+[03:44] environment set up for this project. So,
+[03:47] it's got Python dependencies, it's got
+[03:49] UV, which we're using from Azio's
+[03:51] dependencies. uh it's setting everything
+[03:53] up for you. So basically you wait a few
+[03:55] minutes for that to set up and you know
+[03:58] by the time we start running the code it
+[04:00] should be all set up for you.
+[04:03] Now once it does set up I do recommend
+[04:05] running gitpool just to make sure you
+[04:07] have the latest code especially if any
+[04:09] of you are you know still have your code
+[04:12] space from last week. We definitely have
+[04:15] added a lot of new code in the last day
+[04:18] to the repo. So if you do already have a
+[04:21] code space or if you already have the
+[04:23] repo checked out locally do run gitpool
+[04:26] to get all the latest workflow examples
+[04:29] in your repo.
+[04:35] So we are going to be building on what
+[04:38] we learned last week about what an agent
+[04:40] is. And I saw some questions chat like
+[04:42] do you need to know last week to
+[04:43] understand this week? Not necessarily.
+[04:46] You could try jumping in now. We'll
+[04:47] we'll have this one slide recap of what
+[04:50] is an agent, right? What did we talk
+[04:52] about last week? An AI agent uses an LLM
+[04:56] to run tools in a loop to achieve a
+[04:59] goal, right? So, we can build these
+[05:01] agents that have access to useful tools
+[05:04] and with those tools, they can help
+[05:06] answers users questions. They can do
+[05:08] what users want to do. Many of you have
+[05:10] probably used coding agents. coding
+[05:12] agents, you know, we talk to them and
+[05:13] say, "Hey, coding agent, I want help
+[05:15] refactoring this file or writing a
+[05:17] test." And the coding agent has access
+[05:19] to tools like to um write files, make
+[05:22] new files, edit files, has access to
+[05:25] maybe MCP servers, so it can go and grab
+[05:27] documentation and look at documentation,
+[05:29] right? Uh access to run tests. It has
+[05:32] all this ability to run tools so that it
+[05:34] can get to that goal of uh you know
+[05:36] achieving that that coding goal. Uh so
+[05:40] you can build agents for all kinds of
+[05:42] scenarios. You just have to equip them
+[05:43] with the right tools so that they're
+[05:46] able to do what they need to do to get
+[05:49] the right answer or to take the right
+[05:50] action.
+[05:52] So that is an agent. And if you missed
+[05:55] last week, you can go back and learn
+[05:57] much more about agents. We'll be using
+[05:59] agents today inside the workflows, but
+[06:01] we're really going to be focused on how
+[06:03] we can chain agents together along with
+[06:07] um you know other useful things in our
+[06:10] workflows in order to create these full
+[06:12] flows.
+[06:16] So now let's talk about workflows.
+[06:20] So an agentic workflow
+[06:23] is a flow that involves an agent at some
+[06:25] point, right? We've all we've all done
+[06:27] workflows for a long time, right? We
+[06:30] we've been building workflows in our
+[06:31] software and applications for a long
+[06:33] time. A workflow just, you know, goes
+[06:35] from one step the other to the other to
+[06:37] the other, right? The difference now is
+[06:39] that we're building these agentic
+[06:40] workflows or AI workflows, whatever you
+[06:42] want to call them. And these agentic
+[06:44] workflows are interesting because we can
+[06:46] bring agents in and those agents can uh
+[06:50] make our workflows more powerful because
+[06:52] you know agents can do quite a bit uh
+[06:55] once they have access to a powerful LM
+[06:57] and and useful tools right um so we can
+[07:01] bring an agent at a certain point and
+[07:02] that agent helps with decision making it
+[07:05] helps with content generation it helps
+[07:06] with anthsynthesis it helps with
+[07:08] research. Uh there's many ways that you
+[07:11] can use an agent, right? um at the very
+[07:13] least there's a lot of workflows where I
+[07:14] used to use regular expressions and now
+[07:17] I'm bringing in an agent because it you
+[07:19] know regular expressions are hard and
+[07:21] also agent can deal with fuzzy decision-
+[07:24] making better right so that's where I
+[07:27] find you know LLM might be particularly
+[07:29] helpful is if you had all these
+[07:30] workflows before where there was kind of
+[07:32] these um decision points where you've
+[07:35] you've you know you had to write all
+[07:37] this uh all this logic and maybe rejects
+[07:40] and some you know keyword checks and
+[07:41] whatnot That's the point where you might
+[07:43] want to bring in an LLM or an agent in
+[07:46] order to handle that decision- making
+[07:48] about what to do next in the workflow,
+[07:50] right? So, you can start to imagine the
+[07:52] workflows you have now and if there are
+[07:54] points in that workflow where it would
+[07:56] make sense to bring in LLMs or agents.
+[07:59] Now, you should keep in mind that not
+[08:01] all calls in your systems should be
+[08:04] agents, right? Or or should be LMS,
+[08:06] right? Every time that we add a call to
+[08:08] an LLM, we are increasing the
+[08:10] non-determinism our system and
+[08:12] increasing the possibility of a failure
+[08:14] or a safety risk, right? So, we do want
+[08:17] to be really thoughtful about where
+[08:19] we're using LMS and agents and only add
+[08:23] them in when they're really adding value
+[08:25] to our workflows and maybe opening up uh
+[08:28] workflows that we couldn't even do
+[08:30] before, right? Like some of these
+[08:31] workflows might be brand new ones that
+[08:33] are replacing flows that humans had to
+[08:36] do before and now those flows can be
+[08:39] largely automated. Right? On Thursday,
+[08:41] we're going to talk about bringing
+[08:41] humans into the loop because a lot of
+[08:43] times you can all you can automate like
+[08:45] 90% of a workflow, but you do want to,
+[08:47] you know, a human in at the at one point
+[08:50] just to, you know, give the thumbs up,
+[08:52] give a little editing, that sort of
+[08:53] thing, right? So, start thinking about
+[08:56] where you might, you know, start making
+[08:59] agentic workflows in your systems.
+[09:04] Now in Microsoft agent framework which
+[09:06] is the package we're using for this
+[09:08] series uh workflows have a you know
+[09:11] certain anatomy to them and certain
+[09:13] terminology. So we're going to learn
+[09:15] that uh terminology first. So workflow
+[09:18] is basically a graph right a graph has
+[09:20] nodes and edges between them. So in
+[09:24] agent framework each node is called an
+[09:26] exeutor right? So each of these are
+[09:28] executive nodes and then we have edges
+[09:32] between them and these are just called
+[09:34] edges right and a workflow takes input
+[09:36] and it produces outputs and the
+[09:39] executives can either produce outputs
+[09:42] and and or they can send messages to the
+[09:45] next executive. Uh so basically here you
+[09:48] can see um I have like a sample
+[09:51] executive and this first one here sends
+[09:54] a message where it receives some text
+[09:57] and then it uppercases that text and
+[09:59] sends it to the next executive. So
+[10:01] that's an example of message sending. So
+[10:03] a lot of times the ex the executives
+[10:05] that are like in the inside of the
+[10:07] workflow are going to be using message
+[10:09] sending. And then for the final
+[10:11] executive, that's the one that's using
+[10:13] yield output. And that's yielding output
+[10:16] that then uh can be accessed outside the
+[10:19] workflow. Uh now you can have a mix of
+[10:21] these and you can have ones that um both
+[10:23] send messages and yield outputs if you
+[10:25] want those outputs to be available after
+[10:27] the workflow ends. It's really with the
+[10:29] messages it's about what you want to
+[10:31] send between nodes in a workflow. And
+[10:33] with the output, it's like well what do
+[10:34] you want to be able to access once the
+[10:36] workflow is done, right? So you may have
+[10:39] some internal exe executives that both
+[10:41] send messages and yield outputs. Uh but
+[10:44] you definitely want to have one at the
+[10:46] end that that yields an output so you
+[10:47] have something useful that comes out of
+[10:49] your workflow.
+[10:52] So how do we build a workflow? So here's
+[10:54] the actual code, right? So from our
+[10:57] agent framework package, we import the
+[10:59] workflow builder. Then we set up uh ex
+[11:03] executive classes. So here what we've
+[11:05] done is made a subclass of exeutor. So
+[11:08] each of these is actually a subclass of
+[11:10] executive. So here's an executive
+[11:13] subclass, an executive subclass, an
+[11:15] executive subclass, and then we say,
+[11:17] okay, workflow builder, here's your
+[11:19] start exeutor. So you have to tell it
+[11:21] what node to start off on. And then and
+[11:24] then you add edges. So you say, okay,
+[11:26] from that start exeutor, you're going to
+[11:28] go from there to this one. And then
+[11:30] from, you know, from this one, you're
+[11:32] going to go to this one. Right? So we
+[11:33] add we say what the start is and then we
+[11:35] add edges from one to the next uh and
+[11:38] then we build the workflow and once once
+[11:42] we build that workflow then we can run
+[11:44] that workflow with different inputs and
+[11:48] then after we run it we can get the
+[11:50] outputs from it. So this is your you
+[11:52] know most basic workflow.
+[11:55] Uh so here I have it running. Um so it's
+[12:00] an examples a workflow rag ingest and
+[12:03] this workflow does not use any LLM at
+[12:06] all yet because I wanted to to show uh
+[12:09] the fact that you know we can build
+[12:10] workflows for anything. The workflows
+[12:13] don't have to use uh LLMs or agents. Uh
+[12:16] so this very first one actually does not
+[12:18] use any LLMs or agents. Uh so this is a
+[12:22] data ingestion workflow that takes a
+[12:24] document a PDF document and um extracts
+[12:29] the text from it then uh chunks it up
+[12:32] splits it up into pieces and then
+[12:34] generates embeddings for each of those
+[12:36] pieces. Uh so let me go ahead and run
+[12:38] this. I'll do uvun examples
+[12:42] workflow rag ingest py
+[12:47] and let me show these executives. Right.
+[12:49] So here you can see to make our
+[12:51] executives we just make a subclass of
+[12:54] exeutors. So this is how we make a
+[12:56] subclass in Python. We say here's our
+[12:57] new class. Here's the class name. We are
+[13:00] subclassing exeutor and then we add
+[13:03] methods in that subclass and we add the
+[13:06] handler decorator. So this is really
+[13:08] important. This shows agent framework
+[13:11] that this is a method that is going to
+[13:14] handle messages from other executives.
+[13:17] So the the key thing is you make a
+[13:19] subclass and then you add methods and
+[13:21] you put this handler decorator on the
+[13:23] methods to say hey this this executive
+[13:26] node receives messages right
+[13:30] uh so it receives a message and that
+[13:32] message has the path in it and in this
+[13:35] case it takes that path and it uses a
+[13:38] package called mark it down in order to
+[13:39] turn it into string. Uh and then the
+[13:42] crucial thing here is that it sends a
+[13:44] message to the next executive which says
+[13:46] okay here is what you need which is the
+[13:49] you know text version of this PDF. So
+[13:52] then the next executive receives that
+[13:54] that text that's actually marked down in
+[13:58] its handler method
+[14:00] and this one does some splitting into
+[14:02] paragraphs. Uh and then once it has
+[14:04] these chunks which is a list it sends a
+[14:07] message with those chunks. So you can
+[14:09] see how each of the executives can send
+[14:11] messages with different data types and
+[14:12] the next exeutor in the chain will
+[14:15] expect that it's going to receive a
+[14:18] message of that type. So you see here
+[14:20] this one expects to receive a list of
+[14:22] strings. So it's oh okay great you gave
+[14:24] me a list of strings and now this one
+[14:27] makes um vector embeddings of each of
+[14:29] the strings and outputs it.
+[14:32] So this is how you build a sequential
+[14:35] chain of executives. Each of the methods
+[14:38] accepts an input of the kind of message
+[14:40] they're getting sent. They send a
+[14:42] message out and the next executive
+[14:45] expects that kind of argument and then
+[14:48] sends the next message out.
+[14:52] And then we can see the result. So we
+[14:54] can see that we did the extraction, we
+[14:56] did the chunks and we got the
+[14:58] embeddings. So here this this workflow
+[15:02] worked. Um, so you can use this workflow
+[15:05] concept for all sorts of things. Now,
+[15:07] something that's really cool is that in
+[15:10] agent framework, there's this built-in
+[15:12] debi. And earlier in the series, we saw
+[15:14] how to use this with agents, but we can
+[15:17] also use it with workflows. And it has a
+[15:19] whole different visualization. So, in
+[15:21] order to use this deviation,
+[15:23] we import the UI and this is in a
+[15:26] separate package that we have in our
+[15:27] Python environment.
+[15:29] And we serve the workflow from WUI. So I
+[15:33] can go like this and say, "All right,
+[15:35] open this up in in Debi." And that's
+[15:38] going to serve it in the WUI
+[15:43] um interface instead of actually
+[15:45] directly running it, which is what I did
+[15:47] the first time. So almost all of the
+[15:50] examples for this series do have this
+[15:52] optional Deb UI support because it is
+[15:54] really it's really fun.
+[15:57] So here we go. We have it open in Debui
+[16:00] here. So this is what it looks like for
+[16:01] workflows. You'll see the executives,
+[16:03] you'll see their chain. Uh you can do
+[16:05] different things like you can change the
+[16:07] layout. Um I usually prefer horizontal
+[16:09] for myself. Um you know, you can you can
+[16:13] move stuff around if you want just to
+[16:15] help you visualize. Um we can let's just
+[16:18] autorange that. Okay. So now we can run
+[16:21] it. Um so we'll go ahead and give it the
+[16:26] input which is um example sample
+[16:29] document.pdf. Okay, so this is just
+[16:33] input to the workflow. So this is also
+[16:35] an easy way to try your workflow out
+[16:38] with different inputs, right? So instead
+[16:40] of having to write those inputs in your
+[16:42] code, you can start up your workflow and
+[16:44] just keep, you know, keep trying it out
+[16:46] with different inputs in this debui
+[16:49] instead.
+[16:51] Uh so here you can see the first two
+[16:53] nodes did go by really quickly. So we
+[16:56] can see the extraction node um and we
+[16:58] can see the text it extracted from the
+[17:00] document and then the chunk has a list
+[17:02] of chunks. So you can see that's that's
+[17:04] got a embedded list there. And then the
+[17:07] embed is still running because that
+[17:09] takes the most amount of time because
+[17:10] it's actually going out to um an
+[17:12] embedding model. Uh so we can see you
+[17:15] know as it's going through the execution
+[17:17] it's still running. Uh we can also see
+[17:19] events happening over here. These are
+[17:21] more granular events. Uh so uh as it's
+[17:25] going through the workflow, there's
+[17:26] quite a few events that that get called
+[17:29] and those will those will show up here.
+[17:32] And then if we did have open telemetry
+[17:33] enabled, which we talked about on
+[17:35] Friday, then you would also see open
+[17:36] telemetry spans. Uh I didn't actually
+[17:38] enable it for this one, so we don't see
+[17:40] them. Uh but it's super easy to enable
+[17:42] it like we talked about on Friday and
+[17:44] and then you could see it. All right,
+[17:47] the embedding call is being a little
+[17:48] slow.
+[17:51] So, it hasn't it hasn't shown up there.
+[17:53] And this is also a good way to see, you
+[17:54] know, what's what are we waiting on
+[17:56] here.
+[17:58] All right. And we're going to keep on
+[17:59] using it WI for um for other workflows.
+[18:02] So, we'll we'll keep seeing uh other
+[18:04] ways of uh yeah, the different ways that
+[18:07] workflows look in WI.
+[18:11] Okay. So now that we've seen a workflow
+[18:14] that you know wasn't using LLMs um but
+[18:18] here we're talking about aentic
+[18:19] workflows. So how do we bring agents
+[18:21] into our workflows? So agent framework
+[18:24] makes it very easy where if you want to
+[18:27] have agents in the workflows you can
+[18:29] just directly add the agent. So if you
+[18:31] have an agent right you declare it with
+[18:33] agent. You say okay have an agent. This
+[18:35] is an agent. It's got a name. It's got
+[18:36] instructions. Usually it's going to have
+[18:38] tools as well. And if you just have that
+[18:41] agent instance, you can directly pass
+[18:43] that in as nodes in your workflow and
+[18:47] then agent frame will basically wrap
+[18:49] them and turn them into executives. Uh
+[18:51] so they'll show up as agent executives
+[18:53] in your workflow. Uh but it takes care
+[18:55] of doing that for you. So as long as you
+[18:57] add the agent to your workflow, uh it'll
+[19:00] just make it into a workflow executive
+[19:02] for you. Right? So in this really simple
+[19:04] example, we have two agents. We set one
+[19:06] of them as the start executive and then
+[19:09] we add an edge from the writer um to the
+[19:12] reviewer. So from one agent to another
+[19:13] and that's it. That's our very simple
+[19:16] workflow. So going to Oh, it did
+[19:19] finally. There we go. It embedded. Good
+[19:22] job. And then we see all the results. So
+[19:24] some of your workflows might have slow
+[19:26] parts. Uh all right. So now let's go
+[19:28] ahead and try the um try out the agents
+[19:32] example. So, I'll go ahead and open
+[19:34] workflow agents.py.
+[19:38] And uh let's open that in Dev UI
+[19:44] as well.
+[19:47] And this is a writer reviewer
+[19:51] writing all of our social media posts.
+[19:55] I have to say they are pretty good at
+[19:56] writing LinkedIn posts.
+[19:59] All right, so we're opening we're
+[20:00] opening this up. So you can see it's
+[20:02] just two nodes and these agent classes
+[20:05] got turned into agent executive nodes.
+[20:07] And so now we can go and run this
+[20:10] workflow and we can give it an input and
+[20:12] we're going to say write a two sentence
+[20:14] LinkedIn posts. Why your AI pilot looks
+[20:16] good but fails in production. Okay, so
+[20:20] now it's going through them. Let's open
+[20:22] up our execution timeline here so we can
+[20:25] see it running
+[20:28] and we can see the writer um the writer
+[20:32] output. So the writer both has an output
+[20:34] and sends a message. Uh so here's you
+[20:37] know here's what it uh what it came up
+[20:40] with. And then here's the reviewer. It
+[20:42] says nice, it's on point. It's clear
+[20:44] structure. Uh it did give an optional
+[20:47] Titan rewrite. Here we go. So it did
+[20:49] come up with a rewrite here. Uh so here
+[20:52] you can see uh you know this is what
+[20:54] happens when we chain two agents
+[20:56] together and this is a very common
+[20:58] pattern is the writer reviewer pattern.
+[21:01] Um especially if you you know equipped
+[21:03] the use a different model for the writer
+[21:06] versus reviewer. In this case I'm using
+[21:07] the same model. Um but you might find
+[21:10] that you like really like some models
+[21:13] for writing but then really like other
+[21:15] models for reviewing. or you just might
+[21:17] give it a different system prompt that
+[21:18] makes the reviewer be like really
+[21:20] critical, right? Um but generally what
+[21:22] we find is that if you do add a review
+[21:24] phase or reflection phase, then um you
+[21:27] know it often can lead to better
+[21:30] results. So that's why you're going to
+[21:31] see this writer, reviewer, editor, that
+[21:33] sort of pattern come up quite a bit with
+[21:35] these workflows because it is such a
+[21:37] common way of working with LLMs.
+[21:41] All right, so there we go. We've got our
+[21:44] basic workflow. Um, and once again, we
+[21:47] all we had to do is define the agents.
+[21:52] Define the agents and make a workflow
+[21:55] with a start agent and an edge from the
+[21:58] agents to each other. So, that's all we
+[22:00] needed to do in this case. We didn't
+[22:02] have to do um custom executive classes
+[22:05] because the agent gets turned into an
+[22:08] executive automatically.
+[22:12] Okay. So in WI we also showed you know
+[22:16] there's all these events happening
+[22:18] right? Uh now when you are processing
+[22:22] these workflows you can also process
+[22:25] these events like you can process the
+[22:27] workflow one event at a time. You can
+[22:29] like you know handle events different
+[22:31] ways. Uh so we have this example here
+[22:34] workflow agent streaming which shows how
+[22:37] you can hook into these events. Uh so
+[22:40] you know this can be helpful when you
+[22:43] you know you want to have more granular
+[22:45] output like if you're building a front
+[22:47] end for a workflow a lot of times it's
+[22:51] it's going to be slow and so you want to
+[22:53] convey what's going on to you know to
+[22:57] the people using the workflows right
+[22:58] like DevUI is nice because it shows you
+[23:00] all the stuff but DevUI is for
+[23:02] development this is a tool for us to use
+[23:04] as developers if you are building a
+[23:07] userfacing application
+[23:09] you're going to build your own UI on top
+[23:12] of the workflows that shows like hey
+[23:14] this is what's happening right so
+[23:16] generally you're going to want to hook
+[23:17] into these events
+[23:20] and you're going to figure out which of
+[23:21] these events you actually want to hook
+[23:22] into but as a general practice when you
+[23:24] are building userf facing applications
+[23:27] uh especially ones that use LMS which
+[23:29] tend to you know be high latency to be
+[23:32] slow you want to convey the progress so
+[23:35] that the user understands you
+[23:38] what is going on? Is it is the workflow
+[23:40] progressing? Is it stuck somewhere? Um,
+[23:43] you know, all everything that's going
+[23:45] on, right? So, what you can do is when
+[23:48] you run the workflow here, we're saying
+[23:50] workflow.run. We give it our input and
+[23:53] then we say stream equals true. So, this
+[23:56] tells it it's going to stream the events
+[23:59] and the output as it happens. So uh you
+[24:02] can see for every time I get an event I
+[24:04] check to see what kind it is and you
+[24:06] know I show particular outputs for
+[24:08] different kinds of events and this is
+[24:10] also streaming the actual output from
+[24:12] the LLMs. So I have special treatment
+[24:15] for that so that when it prints it out
+[24:17] it doesn't it doesn't add a new line it
+[24:19] just prints it out uh one token at a
+[24:21] time. So this one here is printing one
+[24:24] token at a time and the other ones are
+[24:26] just you know straight single events
+[24:28] there. So let me go ahead and run that
+[24:31] so we can see uh what it looks like and
+[24:34] I'll run this in the console uh so that
+[24:37] we can actually see all these print
+[24:38] statements here. Okay, so we can see
+[24:42] event started that's the started event
+[24:46] and we can see what the name of the
+[24:48] workflow is. So we can output different
+[24:51] things as we're going on. Okay, then we
+[24:53] had a bunch of things happen. Executtor
+[24:55] invoked,
+[24:56] executive completed. And uh we saw the
+[25:00] output from that stream in. It was
+[25:01] really fast so it was hard to see. That
+[25:03] was really fast too. Um executive
+[25:06] completed, executive invoked. Uh this
+[25:09] this output streamed out as well. And
+[25:11] then executive completed. Right. And
+[25:14] this isn't even all the air all the
+[25:16] events. There's actually more events
+[25:17] than this. These are the ones that I
+[25:19] thought were the most interesting to
+[25:20] show. Um but you can hook into quite a
+[25:22] few events and decide how you are going
+[25:25] to use those events in your systems.
+[25:28] Right
+[25:35] now this is such a common um you know a
+[25:39] common thing to do is to chain just make
+[25:41] this linear workflow of um of agents. So
+[25:46] there is actually a builtin workflow
+[25:49] builder in uh in agent framework for
+[25:52] this. So it's called sequential builder
+[25:53] and you bring get it from the
+[25:55] orchestrations package and you just give
+[25:57] it a list of the participants. Right? So
+[25:59] this just makes it just a little bit
+[26:01] easier to do the thing we were already
+[26:03] doing. Uh so here that's in workflow
+[26:06] agent sequential
+[26:09] and um we can see here once again we
+[26:11] have the writer we have the reviewer and
+[26:14] it's just slightly less code right we
+[26:16] just say okay we're making a sequential
+[26:18] uh sequential pipeline here these are
+[26:20] the participants and done right uh so
+[26:24] let's go ahead and run run that one
+[26:32] and it's going to look pretty similar um
+[26:35] from the from the command line. Uh so
+[26:39] here it's once again writing a LinkedIn
+[26:42] post
+[26:45] and it's going to send it to the writer
+[26:47] first and then the reviewer. And I think
+[26:50] I saw a comment like oh why why do you
+[26:52] you know in this case why do you chain
+[26:54] an agent to a reviewer together? Why not
+[26:56] just, you know, maybe why not just have
+[26:57] the writer do its own reviewing because
+[26:59] you could actually equip the writer with
+[27:01] tools and that would be another
+[27:02] approach. And um and yeah, that could be
+[27:05] a totally valid approach. So there's
+[27:07] there's many ways you can work with
+[27:10] LLMs. I think I would say the advantage
+[27:13] of having them be two separate agents is
+[27:15] that you might um use a different model
+[27:19] entirely for the reviewer agent and that
+[27:22] you can really only do e you know when
+[27:24] you're when you have them as two
+[27:26] separate agents. So that to me is a big
+[27:27] advantage being able to have the two
+[27:29] separate models. And the other advantage
+[27:31] is different tools, right? So you might
+[27:33] give the reviewer access to tools that
+[27:35] the writer doesn't have. um that may not
+[27:39] be as common, but you know, generally
+[27:42] that's the reasons why you might
+[27:44] separate is different model, different
+[27:45] tools or if you had a vastly different
+[27:48] personality and you felt like you
+[27:50] wouldn't be able to direct, you know,
+[27:51] the writer to really review itself with
+[27:53] the same critical eye and then you could
+[27:56] have a really different personality in
+[27:58] the reviewer which isn't kind of
+[28:00] poisoned by the original prompt of the
+[28:02] writer. So there there's various reasons
+[28:05] why you can might want to separate out
+[28:07] your steps uh into different agents. So
+[28:10] here we can see we got the user, we got
+[28:12] the writer, the reviewer. Uh so that
+[28:15] worked and uh you know that that looks
+[28:18] really similar to what we did before.
+[28:20] What I do want to show you is what it
+[28:22] looks like in devi because what you'll
+[28:23] notice is that it has a slightly
+[28:26] different um set of nodes than the last
+[28:30] one.
+[28:32] So here when we use uh when we use
+[28:36] sequential builder what you see is that
+[28:39] there's two additional nodes. We see an
+[28:42] input node and an output node uh output
+[28:45] node. And the reason we have these two
+[28:47] additional nodes is because they are
+[28:50] making sure that everything all all of
+[28:54] the messages in this pipeline have to be
+[28:56] shaped like a conversation. Because
+[28:58] remember that first time we were talking
+[28:59] about how um the um let's see workflow
+[29:03] this one right when we were doing the
+[29:05] executives they all had different
+[29:07] arguments that they accepted right and
+[29:09] so they would only work with arguments
+[29:10] of a certain type in this sequential
+[29:13] pipeline
+[29:15] all of the messages have to be shaped
+[29:19] like a conversation they have to be a
+[29:20] list of messages and uh luckily with
+[29:24] agents agents always send messages as
+[29:26] list of convers as lists of messages.
+[29:28] That's just the way they always talk.
+[29:30] And so this first node here just turns
+[29:32] the input into a conversation shape, a
+[29:36] list of messages. So it just be a list
+[29:37] of a single message. And then this last
+[29:39] node here turns any output into um you
+[29:44] know into uh the expected output. Uh so
+[29:48] it's just a little bit of extra
+[29:50] executives on top just to make sure
+[29:52] everything is shaped like a
+[29:55] conversation. So you can only use
+[29:57] sequential builders with agents or with
+[30:01] custom executives that process
+[30:04] conversations. Uh so that means that
+[30:06] they're you know they're the input they
+[30:08] expect is a list of messages and that is
+[30:10] the message they send along as well. So
+[30:13] that is restricted but it's also this is
+[30:15] this is going to be a pretty common um
+[30:18] flow for people to do or at least to to
+[30:20] start off with. So they do make it easy
+[30:23] to do it in agent framework. Um so that
+[30:25] you can just you know run this one line
+[30:27] of code and boom you have a sequential
+[30:31] pipeline of agents.
+[30:36] All right. So now we've seen you know
+[30:39] these linear workflows, sequential
+[30:41] workflows. Now let's talk about
+[30:44] branching workflows. And that's where
+[30:46] things get more interesting because you
+[30:47] can decide to go one way or another way
+[30:50] based off the output of a particular
+[30:53] step.
+[30:56] So we're going to start with this basic
+[30:59] example of a workflow with a conditional
+[31:02] branch. And the way we do this is that
+[31:05] we can add edges with associated
+[31:08] conditions. And those conditions are
+[31:10] actually functions that return true or
+[31:13] false. Uh so let's take a look at this
+[31:18] uh conditional workflow here.
+[31:21] So this one we have a writer, a
+[31:26] reviewer, and an editor.
+[31:31] So our workflow starts off with the
+[31:34] writer. And then we have an edge from
+[31:37] the writer to reviewer.
+[31:40] So it's always going to get reviewed.
+[31:42] Now the reviewer can either go to the
+[31:44] publisher
+[31:47] if it uh if it's approved. So the
+[31:50] reviewer is going to output and say
+[31:52] approved or not and if it is approved
+[31:54] it'll go to the publisher. If it is not
+[31:56] approved it's go to the editor. So the
+[31:58] interesting thing is how do we decide
+[32:00] whether it's approved or needs revision.
+[32:02] So these are actually functions. So we
+[32:04] can go and look at these functions
+[32:07] and here they are up here. So is
+[32:09] approved takes a message. So it'll it
+[32:12] it'll these condition functions always
+[32:14] get sent a message and this looks at the
+[32:18] agent's response in the message and just
+[32:21] checks to see whether it starts with
+[32:23] approved.
+[32:24] Um so what if you look at the reviewer
+[32:27] you can see the reviewer it says
+[32:29] important your response must begin with
+[32:31] exactly one of these two tokens approved
+[32:34] or revision needed
+[32:37] and that's yeah I would say that's more
+[32:39] than one token but anyway it needs to
+[32:41] start with one of these two you know one
+[32:43] of these two phrases uh so the is
+[32:46] approved checks to see whether it starts
+[32:48] with approved and needs revision checks
+[32:50] to see if it starts with revision
+[32:52] needed.
+[32:54] So that's it. So based off that you know
+[32:56] these functions are going to return true
+[32:57] or false. So if you know if is approved
+[33:00] returns true it goes to publisher and if
+[33:03] needs revision returns true it goes to
+[33:05] editor.
+[33:07] So now let's go ahead and
+[33:10] try this out. We'll try it in the I'll
+[33:16] try it in debi first.
+[33:23] Okay, we're going to open up open up
+[33:26] this conditional workflow here.
+[33:31] All right, so we see the writer reviewer
+[33:34] and then we see the edges, right? The
+[33:35] reviewer is either going to go to the
+[33:37] editor or the publisher. So, let's go
+[33:41] ahead and give it some input here. All
+[33:44] right, write a LinkedIn post predicting
+[33:47] five jobs AI will replace. Okay, we're
+[33:51] generating rage bait here.
+[33:53] as we do. Uh so we can see that the uh
+[33:58] writer is working on it currently.
+[34:04] Okay. So the writer wrote its initial
+[34:06] LinkedIn post. Then we've got the
+[34:08] reviewer running
+[34:12] and let's see if the reviewer is going
+[34:13] to approve or say it needs revision. If
+[34:16] and this step really depends on your
+[34:18] model. Um, so the model I'm running
+[34:21] locally is GBD5 and it is a very
+[34:23] critical model. So it almost always say
+[34:25] says that a revision is needed. But if
+[34:27] you're running these in GitHub code
+[34:29] spaces, those are with GD41 mini and
+[34:31] it's not as critical. So it might just
+[34:33] go and approve it all. So which branch
+[34:35] it takes is so so dependent, right? It
+[34:38] depends. I mean it depends on the model,
+[34:39] depends on like what it, you know, the
+[34:41] randomness and what came up with that
+[34:43] time, right? There's so much
+[34:44] non-determinism here. Uh, in this case,
+[34:46] the reviewer did say revision needed. So
+[34:49] then it went to the editor and the
+[34:50] editor came up with its result here. Uh
+[34:54] and in this case this was the final
+[34:56] exeutor. We could you know we could have
+[34:58] made this uh graph this workflow a bit
+[35:00] fancier and had the editor uh go back to
+[35:02] the reviewer or the editor go to the
+[35:04] publish or anything like that. U but in
+[35:05] this case we end with the edited post
+[35:07] here and this is our new post.
+[35:13] Uh so so here we go. Um,
+[35:17] so you know in this case it went down
+[35:19] this edge here. So that worked. However,
+[35:23] there is something that uh I really
+[35:26] don't like about it and I don't know if
+[35:28] many of you uh you know notice that I do
+[35:30] see some comments, right? Oh, there's a
+[35:32] comment like is there a fallback if it
+[35:34] doesn't return approved or needs
+[35:35] revision, right? Um you know, so that
+[35:38] that sort of question is a great
+[35:40] question, right? Like this this here
+[35:42] feels
+[35:44] a little a little uh a little a little
+[35:48] funny, right? Like first of all, we're
+[35:50] just checking, you know, to to just just
+[35:52] string. We're just doing the string
+[35:54] check, right? So that's an issue is that
+[35:56] we're doing, you know, just a string
+[35:58] check. And the other issue is, yeah, is
+[35:59] that we don't have a fallback, right? So
+[36:01] these are all issues. So we're going to
+[36:02] see ways that we can improve our
+[36:05] conditional workflows to be more robust,
+[36:08] um, more reliable, have more kind of
+[36:11] fallback stuff. So we different
+[36:12] strategies that we're going to see here
+[36:14] to make more robust workflows.
+[36:20] So the first issue is that text output
+[36:22] is fragile, right? So I had the system
+[36:25] prompt that says, "Oh, your response has
+[36:26] to begin with approved or revision
+[36:28] needed, right?" And then you know these
+[36:30] condition functions that were based off
+[36:31] that. But so much can go wrong there,
+[36:33] right? Like first it might like decide
+[36:35] to stick like some other text in front
+[36:37] of it and then we won't match it. Uh it
+[36:39] might decide to return in Spanish like
+[36:41] if if the input was Spanish, you know,
+[36:43] sometimes it might decide to return its
+[36:46] output in Spanish too. I've definitely
+[36:47] had that happen with GitHub copilot. You
+[36:49] know, every so often it'll go into
+[36:50] Spanish or even Mandarin or something,
+[36:52] right? Um there could be it could start
+[36:55] off with approved but then have a butt
+[36:57] afterwards, right? Where it's like,
+[36:59] well, approved, but right. Uh and it
+[37:02] might even like end up saying both those
+[37:04] things, right? And we just don't even
+[37:05] know what it wants here. So, we want to
+[37:07] have a very clear signal that is always
+[37:10] the same and is always very obviously
+[37:12] approved or not.
+[37:15] So, what I recommend using is structured
+[37:18] outputs. Uh, we've talked about I think
+[37:21] we talked about structured outputs last
+[37:22] week. It's certainly something we talked
+[37:23] a lot about in our Python AI initial
+[37:26] series. Um, but basically when an LLM
+[37:28] supports structured outputs, you can
+[37:30] tell it what JSON schema it should
+[37:32] conform to and it will force the output
+[37:34] to conform to that schema. So this is a
+[37:37] very very useful tool um particularly in
+[37:40] workflows where along the way you want
+[37:43] to have these structured outputs from LM
+[37:46] so that you can really really make clear
+[37:48] decisions off the output. Uh I really
+[37:52] only want to have free text output like
+[37:54] you know in I don't often want free text
+[37:56] output. Maybe I want to add like the end
+[37:58] of my workflows. But that is the default
+[38:00] is to get this free text output. And
+[38:02] that's fine if what you're doing is like
+[38:03] answering a question, generating
+[38:05] content. But if you are doing decision
+[38:07] making, classification, extraction, any
+[38:10] of that, then you really want to be
+[38:11] using structured outputs instead.
+[38:16] So how can we do that? Um, so what we're
+[38:18] going to do is
+[38:20] uh with our agent, right? Because here
+[38:23] we were using an agent. with our agent.
+[38:25] We're going to say that it's going to
+[38:26] use response format and we're going to
+[38:28] set that equal to a pedantic base model.
+[38:30] So let me just open this up so we can
+[38:32] see the shoot full code. This is uh
+[38:35] workflow
+[38:36] conditional structured. Okay. So we
+[38:40] bring in base model from pantic. That's
+[38:43] a a way of um defining well-typed
+[38:47] objects in Python.
+[38:49] And we make this review decision and we
+[38:51] say okay this you know this review
+[38:54] decision class uh has a decision field
+[38:58] which is one of these literal strings
+[39:00] either approved or revision needed. It
+[39:02] has uh free text feedback which is a
+[39:04] string and it has the actual post text
+[39:08] um that it can pass along. Right? So
+[39:09] this is basically here just so it can
+[39:11] pass it along. um the LLM what it's
+[39:14] doing it's making a decision and it's
+[39:15] just and it's and if it's saying
+[39:18] revision needed it's going to give
+[39:19] feedback um and if it's approved it's
+[39:21] going to pass along that post text.
+[39:26] So so there we go. So we have that
+[39:27] review decision and then when we create
+[39:30] our agent we say hey agent you are going
+[39:33] to use this as your response format. So,
+[39:37] we pass it in as a uh default option to
+[39:41] the agent so that it knows that when it
+[39:43] makes its calls, it's going to tell the
+[39:45] LLM like, "Hey, you need to conform your
+[39:48] output to this model here."
+[39:53] And so then when we have the edges, so
+[39:56] now if we look at the edges, uh we can
+[39:59] see the edges first call this helper
+[40:01] function here that takes in the message
+[40:03] from the agent and it gets back the
+[40:06] value from the agent. So dot value when
+[40:08] you're using structured outputs dot
+[40:10] value will give you back the actual uh
+[40:14] parsed class, right? So this should
+[40:16] actually be a um review decision
+[40:20] instance, right? So when you're using
+[40:22] structured outputs, agent response value
+[40:25] should contain the structured output
+[40:28] object.
+[40:30] So then in our actual condition
+[40:32] functions, we parse out that structured
+[40:34] output and then we can actually be
+[40:37] really um specific and say
+[40:39] result.decision. So here we're actually
+[40:41] saying, hey, this result is a review
+[40:43] decision. I'm looking at the decision of
+[40:46] it and I'm checking to see if it is
+[40:48] equal to this exact string literal. So,
+[40:52] we're still doing string checkin, but
+[40:53] this is much more structured because
+[40:55] we're actually looking to see, oh,
+[40:56] there's this decision field inside the
+[40:59] output and that decision field is either
+[41:01] set to this exact string or this exact
+[41:04] string because by saying this literal
+[41:06] here, this is going to get sent to the
+[41:07] LM and saying, "Hey, LM, you have to do
+[41:10] it in one of these two uh with one of
+[41:12] these two literals." Now, your LLM has
+[41:14] to support structured outputs for this
+[41:16] to work. Uh, most of the modern LMS do
+[41:19] support structured outputs, but if
+[41:20] you're doing like local models or some
+[41:23] like alternative open source models or
+[41:25] something, they may not support
+[41:26] structured outputs or they just may not
+[41:28] have very good support for structured
+[41:29] outputs. So, it is really important that
+[41:31] if you are using structured outputs um
+[41:33] in your, you know, for your agents parts
+[41:35] of your workflow that you are actually
+[41:38] uh using a model that has very good
+[41:40] support for it.
+[41:43] And I and what does it mean for a model
+[41:45] sport structured outputs? So it is
+[41:47] actually uh for the modern LMS it is
+[41:50] part of their training process. So when
+[41:52] you know when models get trained they
+[41:53] first get trained on like the entirety
+[41:55] of the internet and then they get
+[41:56] trained um to be chat tuned so they can
+[41:58] respond to messages and then as a
+[42:01] additional phase they get trained to
+[42:03] know how to uh output structured
+[42:05] outputs. So that is how you get the best
+[42:08] support for structured outputs. Now it
+[42:09] is sometimes possible to use LMS for
+[42:13] structured outputs even without the
+[42:14] training. Um if the like if if there's a
+[42:17] layer on top that uh tries to force it.
+[42:19] So Olama if you are using Olama like for
+[42:21] local models it does actually have a way
+[42:23] of forcing all the models to to output
+[42:26] structured outputs but it's not going to
+[42:27] be as reliable. So the best support for
+[42:30] structured outputs is from LLM that had
+[42:32] it as part of their training process. Uh
+[42:35] so open you know first came out with it
+[42:37] um what a year two years ago two time
+[42:40] who knows uh but since then most LLMs
+[42:43] have added structured outputs to their
+[42:45] training process because it is just so
+[42:47] so so so helpful
+[42:50] and um you could still have some it is
+[42:54] still possible that the result may not
+[42:55] agree so you still may want to have a
+[42:57] fallback but I found that generally
+[42:59] they're they're quite good at complying.
+[43:02] All right. So, let's go ahead and try um
+[43:07] try this one out. I'm going to do this
+[43:10] um locally. So, the the workflow is the
+[43:13] same workflow we we've we've seen
+[43:15] before. Oh, I did add in another edge
+[43:17] here. So, writer, reviewer, reviewer to
+[43:20] publisher, reviewer to editor. Uh I
+[43:22] stuck in another ed edge here for fun.
+[43:24] Editor reviewer. I think I just did that
+[43:26] in my local copy just before just for
+[43:29] fun. Um, so here we're running the
+[43:31] workflow
+[43:33] and I'm just doing without stream. So
+[43:37] that means it does uh it is going to
+[43:39] take some time to to run here uh because
+[43:42] it's going to go through all of the uh
+[43:45] it's going to go through all of the
+[43:46] outputs before before it uh shows
+[43:49] everything.
+[43:51] Uh so this one, okay, we're doing the
+[43:53] LinkedIn post again
+[43:56] and and yeah, so that's running there.
+[43:59] Let me also
+[44:01] guess I'll also run it in
+[44:04] Debi at the same time just because it's
+[44:07] when you're not doing streaming it is a
+[44:09] little it can be a little uh slow to
+[44:12] wait for the full output right
+[44:15] conditional structured
+[44:18] pui okay
+[44:28] all All right. So now um so here you can
+[44:31] see um what the workflow looks like and
+[44:34] I'll just tell it write a two sentence
+[44:39] LinkedIn post about why AI is so hot
+[44:43] right now. Okay. All right. There we go.
+[44:46] So that's going to run there. And then
+[44:47] let's check on here. All right. So now
+[44:49] this one is done. Um so we can look and
+[44:52] see everything that came out of it. So
+[44:54] we had the prompt and then the first
+[44:57] output came from the writer. So this is
+[44:59] from the writer and then this is what I
+[45:01] want to show you is the next output came
+[45:03] from the reviewer and this time the
+[45:06] output is JSON right so we can see the
+[45:08] output says we've got an actual field
+[45:11] that says decision revision needed and
+[45:14] then we have the other fields like the
+[45:15] actual feedback here right so we can
+[45:18] distinguish between them and then we
+[45:19] have the actual post text but the really
+[45:21] key thing here is that that decision the
+[45:24] thing that we're using for the
+[45:26] conditional function is in its own field
+[45:29] and we can just pull out the decision
+[45:31] and know hey that's the decision and
+[45:33] that's it right uh so since this one was
+[45:36] revision needed then it went to the the
+[45:40] editor uh now it went back since I did
+[45:43] add that branch to go from editor to
+[45:45] reviewer this time the decision is
+[45:47] approved so we can see decision approved
+[45:50] and we can see back the you know it says
+[45:52] oh it's you know polished and published
+[45:53] ready no change needed and then there's
+[45:55] the post text and then finally um it it
+[45:58] goes from the reviewer to the publisher
+[46:00] and it is publishing it right
+[46:04] and we can see it's also doing this in
+[46:06] the dev UI decision approved and so this
+[46:09] one should end up going to the
+[46:10] publisher.
+[46:13] So so there we go. It's just it's much
+[46:16] better to use uh structured outputs for
+[46:20] decision-making notes. So that is what I
+[46:22] would highly recommend.
+[46:28] All right. Now, there was also a
+[46:30] question like, oh, what about fallbacks,
+[46:32] right? And also, you know, like what if
+[46:34] you just have like lots and lots of um,
+[46:37] you know, places you could go based off
+[46:39] the many different values of um, you
+[46:42] know, of a a particular, you know,
+[46:45] output from the the structured outputs,
+[46:47] right? So, now we're going to look at
+[46:50] doing category based routing with
+[46:52] structured outputs, right? So a very
+[46:54] common thing would be to use an agent to
+[46:57] do some classification and say all right
+[46:59] there's all these different buckets all
+[47:01] these different categories that um you
+[47:04] know we could potentially categorize
+[47:06] this input as let's categorize it and
+[47:09] then based off the categories we're
+[47:11] going to send the message to you know a
+[47:14] different handler right so this is you
+[47:17] know a really common pattern that you
+[47:18] can imagine so in this case this is for
+[47:20] like a customer support scenario the
+[47:22] customer says oh How do I reset my
+[47:24] password? That goes to the classifier
+[47:26] agent. The classifier agent uses
+[47:28] structured output to say, oh, this is a
+[47:30] question uh not a complaint or feedback.
+[47:33] Says this is a question. And so then we
+[47:36] have a a node that's specifically just
+[47:39] for figuring out the like extracting
+[47:41] that category from the structured output
+[47:44] and then that sends it to the right
+[47:46] executive um based off the category. So
+[47:49] this there's a special way of doing this
+[47:51] in agent framework. is called a
+[47:53] switchcase edge group. Uh so if you
+[47:56] remember switch statements uh we don't
+[47:58] actually have switch statements in
+[48:00] Python but there's many languages that
+[48:02] do have switch statements which is the
+[48:04] way of switching between many possible
+[48:06] values uh for a particular variable. So
+[48:09] you can switch between these values and
+[48:11] you can also have a a default um
+[48:13] fallback for for the uh switch case. So
+[48:16] we basically have switch statement but
+[48:19] for our workflow. So what we do is we
+[48:21] add a switchcase edge group and it has a
+[48:25] node that's in charge of just getting
+[48:28] out the results and then um you know
+[48:32] based off of that it's going to go to
+[48:34] different targets and then you can have
+[48:36] a default target here. So for some
+[48:38] reason none of those conditions were
+[48:40] true it's going to go to that default.
+[48:45] Uh, so that is in workflow_sw
+[48:48] switch case
+[48:52] and here we've got it. I'm going to I'm
+[48:55] going to start running it now just
+[48:58] so that we give it a little bit of time.
+[49:02] Switch case. Okay. So here the start
+[49:05] exeutor is the classifier. The
+[49:07] classifier goes to the category
+[49:08] extraction and then the switchcase edge
+[49:10] group goes from that to different
+[49:14] targets or the default target based off
+[49:16] of how things are categorized. Uh so if
+[49:20] we look at the extract category that uh
+[49:25] extracts out the result from the
+[49:29] structured outputs and then that gets
+[49:32] sent to is question and so that can just
+[49:36] directly
+[49:38] check message.category
+[49:41] and say okay message.categories
+[49:43] question. So this is just a like it's
+[49:46] really similar to what we did before. It
+[49:48] just makes it just even a bit easier to
+[49:51] to do, you know, routing to multiple
+[49:53] places and to handle this common
+[49:56] situation where, you know, you want to
+[49:58] do a maybe a little bit of massage
+[50:00] between the output and what your
+[50:03] condition functions are going to be
+[50:04] using.
+[50:06] All right, so we can see um that that
+[50:09] worked. So it says, how do I reset my
+[50:10] password? This is classified as a
+[50:12] question and then it routes it to the
+[50:15] correct QA team.
+[50:20] I see the question about whether switch
+[50:22] case is over overkill in this point.
+[50:24] Yeah, you may not need you may not need
+[50:27] switch case, right? Um but you might
+[50:29] find it makes your code cleaner. I in
+[50:31] this case like you just got you can you
+[50:32] know try different things. You can try
+[50:35] adding edges with conditions and if it
+[50:38] works great. Um you could also try uh
+[50:40] using the switch case instead and you
+[50:43] might decide you prefer that. You know,
+[50:45] it is nice that it has this default kind
+[50:46] of built in here and it just kind of
+[50:48] reads nicely where you can see what the
+[50:50] default is. So I think that could be an
+[50:51] advantage of using the switch case.
+[50:56] All right. Okay. We have 10 minutes
+[50:59] left. Uh so we are going to talk about
+[51:03] state management in your workflows.
+[51:07] So why do we even need workflow state?
+[51:11] So in like the examples I just showed
+[51:14] the writer reviewer publisher the go the
+[51:17] end goal was to publish that that text
+[51:20] right the the actual post text the
+[51:22] LinkedIn post text and so the writer
+[51:25] output that and then had to send it to
+[51:27] the reviewer who sent to the editor sent
+[51:29] to the publisher all of those nodes had
+[51:31] to carry along that post text just so it
+[51:34] could get to the final output right so
+[51:37] what we see is that we when we when we
+[51:40] don't have states Our executives might
+[51:43] be passing along information that they
+[51:47] themselves didn't produce, right?
+[51:49] They're just kind of passing it along
+[51:51] from a previous node and uh and that's
+[51:54] you know that's we don't want to you
+[51:56] know the ideally the executives are only
+[51:59] outputting you know what came from them.
+[52:01] So what we can do instead is that we can
+[52:03] add state to our workflow and say oh
+[52:07] okay the writer wrote the text we're
+[52:09] going to store that text in the state
+[52:11] we're only going to update it if it
+[52:13] needs updating right so the only person
+[52:15] who would be updating it would be like
+[52:16] when we add the editor inside this
+[52:18] workflow like so the editor could update
+[52:20] that post text but reviewer is should
+[52:23] only be reading it and publisher should
+[52:25] only be like you know reading and
+[52:27] outputting right so it makes a lot more
+[52:28] sense to actually store it explicitly as
+[52:31] state for this workflow.
+[52:34] Uh so how do we do that? Uh in our
+[52:37] executives we get this context and the
+[52:40] context has state. So what you're going
+[52:43] to do is use set state on that context
+[52:46] and get state on that context. Right? So
+[52:48] let me open open this up here. Workflow
+[52:51] conditional
+[52:53] state. Okay.
+[52:55] So here we've got various executives. Uh
+[53:04] And
+[53:07] so this one has actually the way I did
+[53:08] it this way is that I made a pass
+[53:11] through executive to store to store the
+[53:13] the post text, right? Um because since
+[53:16] I'm not using custom executives, I'm
+[53:18] using agents. So this way I I'm
+[53:20] basically directing all the agents that
+[53:22] need to store it, I just direct them to
+[53:24] this executive afterwards so that they
+[53:25] can store the the post text. So this is
+[53:28] a executive whose only job is to store
+[53:31] text
+[53:33] and then um when we need to access it we
+[53:36] can do get state from that context. So
+[53:39] executives always get passed a context.
+[53:41] So you always from an exeutor you should
+[53:43] always have the ability to retrieve
+[53:45] state or set state.
+[53:48] So let me go ahead and run this. This is
+[53:51] going to look like it's going to look
+[53:53] really similar to um ones we already
+[53:56] showed it. This is just an
+[53:58] implementation detail where we decide
+[54:01] like okay actually we're going to be you
+[54:04] know storing this um instead of uh just
+[54:08] having it be passed along. And let me
+[54:09] run it in WI as well so we can see what
+[54:12] it looks like in in WI. Okay. State py.
+[54:19] Okay,
+[54:24] so that's running.
+[54:28] Does the state management reduce token
+[54:30] usage? Yeah, state management could also
+[54:31] reduce token usage. That's a great
+[54:33] that's a great point. Yeah, because uh
+[54:36] the agents aren't having to carry along.
+[54:38] Uh so certainly state management it's
+[54:40] all it's kind of a mini version of
+[54:42] memory, right? So yes, state management
+[54:44] could reduce token usage. All right. So,
+[54:46] this is where you start to see like
+[54:47] workflows that are kind of crazy looking
+[54:49] because of the way
+[54:51] the way things are going. Um, because in
+[54:54] this case, uh, both the writer and the
+[54:56] editor
+[54:58] can store post store the post text.
+[55:02] This one's hard to look at. This is why
+[55:05] it's useful to be able to like drag
+[55:07] things around to see if you can come up
+[55:09] with a way of looking at it which makes
+[55:11] more sense. Um, and here and so there we
+[55:14] go. So it's done. Um
+[55:17] so the output looks the same. The
+[55:19] difference is you know that we're we're
+[55:23] storing that postex in the state and um
+[55:27] you know we're being really explicit
+[55:29] about accessing it and and yeah as
+[55:32] someone pointed out we are able to
+[55:34] reduce some token usage as well. Now
+[55:37] there is a danger to having state. So do
+[55:42] proceed wisely once you start storing
+[55:44] state. Um if you are reusing a workflow
+[55:48] across multiple runs right so you make a
+[55:51] workflow instance when you do workflow
+[55:53] builder.build that makes a single
+[55:55] workflow instance that workflow intense
+[55:58] has its its own state and it has just
+[56:01] one you know one state for that workflow
+[56:03] right so if you are doing workflow.run
+[56:06] run like in parallel with that same
+[56:08] workflow object you are in fact using
+[56:11] the same state. So if your key is just
+[56:14] something that's uh you know the same
+[56:16] across all those runs like post text and
+[56:18] you do multiple workflow runs in
+[56:20] parallel with the same instance then you
+[56:22] could have a race condition where you're
+[56:24] trying to access the same state. So the
+[56:26] what you should do instead is either you
+[56:28] create you know you run that build
+[56:30] multiple times so that each time you're
+[56:32] getting a fresh workflow instance or
+[56:35] when you're storing something in state
+[56:37] you got to use an ID an identifier to
+[56:39] say hey you know this is the identifier
+[56:41] for this run this is the identifier for
+[56:42] the other run right so either way like
+[56:44] either use a whole brand new workflow
+[56:46] instance or you're namespacing your keys
+[56:49] in the state so that they are not going
+[56:51] to overlap with each other so keep that
+[56:54] in Okay. The other issue is when your
+[56:57] workflow has agents. Agents have their
+[57:00] own kind of state which is their
+[57:02] conversation history. Right? We talked
+[57:04] about this last week where they have
+[57:05] their sessions which has history in it.
+[57:07] So if you are using uh a workflow um
+[57:11] with the same agents and you do multiple
+[57:14] runs of that workflow, then those agents
+[57:17] actually still have their old session
+[57:18] history. So they could get tainted by
+[57:21] their previous session history because
+[57:22] they remember what they did before. So
+[57:25] you want to be really careful uh about
+[57:28] agent instances and being you know
+[57:31] really um you know mindful of when
+[57:34] you're using the same agent instance.
+[57:37] So what we can do to isolate our state
+[57:41] is that we can just use a function that
+[57:43] creates everything. So this create
+[57:45] workflow function, it'll create agents
+[57:48] and it will build the workflow, right?
+[57:50] So every time we want, you know, a
+[57:52] workflow for a new prompt, we could call
+[57:54] that function and then we have a
+[57:57] workflow instance and we'll just call
+[57:59] run with that workflow once, right? And
+[58:02] so this way all of the state is isolated
+[58:04] um because we're every time we want a
+[58:06] new workflow, we're going to call that
+[58:07] function, get a new workflow, and run
+[58:09] it. So you can run that example if you
+[58:12] want. The output is the same. The
+[58:14] difference is that now we have better
+[58:15] state isolation.
+[58:17] Okay, we have two minutes left. Uh so I
+[58:22] wanted to show a brief example of you
+[58:24] know what might a userfacing UI look
+[58:27] like um for these agentic workflows.
+[58:30] Right. So I have it open here. I've got
+[58:32] it running locally. This is a pretend
+[58:34] shop. I'm logged in as the manager and
+[58:38] it says uh oh, I've got 12 products
+[58:40] running low on stock and it has this AI
+[58:43] agent to help me do stock. So, I'm going
+[58:46] to launch the analysis. And here we can
+[58:49] see in the front end it's telling me the
+[58:51] progress, right? It says, "Oh, okay. We
+[58:53] ran this agent, we ran this agent." And
+[58:55] that's what I was saying like when
+[58:56] you're building user interfaces for
+[58:59] these workflows, you probably do want to
+[59:02] indicate, you know, show the events that
+[59:04] are happening along the way so that
+[59:06] people get feedback about how things are
+[59:07] going. And then you have the output and
+[59:09] you're going to, you know, render that
+[59:11] as well. So this is just to give you an
+[59:13] idea for when you're building these into
+[59:14] your applications, what might the user
+[59:18] interface look like. Uh I have for the
+[59:21] you know next two sessions, I have two
+[59:23] other applications that I'll show you.
+[59:24] So we can also we're going to see
+[59:26] multiple examples of how you would
+[59:28] integrate uh workflows into user
+[59:31] interfaces
+[59:34] and that's the the code here is similar
+[59:36] to what we saw before right we've got
+[59:39] you know this is just a sock and then
+[59:41] we've got edges between you know between
+[59:44] these executives right so the code is
+[59:47] what we've been seeing it's just the
+[59:48] user interface is bit fancier there.
+[59:55] All right, that brings us to our final
+[59:58] minute. Now, I know there's lots of
+[01:00:01] questions we didn't answer, but the good
+[01:00:03] news is is that we have office hours
+[01:00:05] right after the session in Discord. So,
+[01:00:08] you can come on over to Discord with
+[01:00:10] your questions for those office hours.
+[01:00:12] Um, please do bring them. Uh, we've got
+[01:00:15] lots of time to talk. Uh we are going to
+[01:00:18] be on a different stage in the office
+[01:00:20] hours this time. So there's two there's
+[01:00:22] now two stages in the foundry discord.
+[01:00:25] So make sure you join the right stage.
+[01:00:26] Um just look for you know me and
+[01:00:29] everyone else talking about agents and
+[01:00:32] um and you can like look at the event
+[01:00:34] listing too. So just FYI we do have two
+[01:00:37] stages. Join the correct stage. Um and
+[01:00:39] if you're in the wrong stage just come
+[01:00:40] over to our stage. Uh, so come for
+[01:00:42] office hours and if you missed any of
+[01:00:44] the previous recordings, you can get it
+[01:00:46] from, you know, this link here. We've
+[01:00:48] got recordings, slides, annotated
+[01:00:51] writeups, um, office hour writeups, you
+[01:00:53] know, everything for you to learn from.
+[01:00:55] And we do have two more sessions left
+[01:00:58] this week where we're going to build
+[01:01:00] more advanced workflows. Uh, so tomorrow
+[01:01:02] we'll talk about like concurrency,
+[01:01:05] fan out, fan in, aggregation, like more
+[01:01:07] interesting patterns. And then on
+[01:01:09] Thursday, we'll talk about adding a
+[01:01:11] human in the loop to the workflows.
+[01:01:13] All right, everyone. So, that brings us
+[01:01:16] to the end of the YouTube stream, and I
+[01:01:19] hope to see a bunch of you in the
+[01:01:21] Discord. Thank you, everyone. Bye.
+[01:01:26] >> Thank you, Pamela. Thank you all for
+[01:01:28] joining
+[01:01:30] to keep your experience good. We always
+[01:01:33] look to improve it. So, please take a
+[01:01:36] moment to share your feedback in our
+[01:01:38] survey. You can find the link in the
+[01:01:40] chat or on the screen. And we'll see you
+[01:01:42] in the next one.

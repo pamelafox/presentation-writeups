@@ -1,0 +1,34 @@
+1. Series overview slide showing the six-session Python + Agents schedule with registration link.
+2. Title slide for Session 4: "Building your first AI-driven workflows" with speaker info and slides link.
+3. Agenda slide listing today's topics: workflows, sequential workflows, agent executors, DevUI, conditional edges, structured outputs, state management, and full-stack app demo.
+4. Instructions for following along using a GitHub Codespace with the demo repository.
+5. Recap slide defining an AI agent as an LLM that runs tools in a loop to achieve a goal.
+6. Section divider slide: "Workflows".
+7. Definition of an agentic workflow as a flow involving an agent for decision making or answer synthesis, with a warning that not all calls should be agentic.
+8. Anatomy of a workflow in agent-framework: a graph with Executor nodes and edges, showing handler methods that send messages or yield outputs.
+9. Building a workflow using WorkflowBuilder to connect Executor subclasses with add_edge, then running with workflow.run().
+10. DevUI visualization: installing agent-framework-devui and using serve() to visualize workflow progress through each node.
+11. Using Agent instances directly as Executor nodes in a workflow, with a writer-reviewer example.
+12. Streaming events from workflows using stream=True, handling event types like started, executor_invoked, output, executor_completed, and error.
+13. Built-in SequentialBuilder for linear conversation pipelines, which normalizes input/output to list[Message].
+14. Section divider slide: "Branching workflows".
+15. Conditional branching in workflows using edge conditions (functions returning True/False) for routing between reviewer, publisher, and editor.
+16. Problems with text-based output for workflow control: leading whitespace, localization, false positives, and mixed output.
+17. Comparison of unstructured text vs. structured output from an LLM, showing JSON with explicit decision fields.
+18. Using structured outputs (Pydantic BaseModel with Literal fields) as response_format for an Agent to make reliable workflow decisions.
+19. Category-based routing diagram: classifier agent categorizes input and routes to Question, Complaint, or Default handlers.
+20. Switch-case edge groups in workflows using add_switch_case_edge_group with Case conditions and a Default target.
+21. Section divider slide: "State management".
+22. Comparison of workflows without state (reviewer carries content it didn't produce) vs. with state (draft stored once and read by any step).
+23. Storing and accessing state using ctx.set_state() and ctx.get_state() in executor handlers, with a store_post_text pass-through executor.
+24. Warning about shared workflow state leaking between parallel runs due to race conditions on the same workflow instance.
+25. Warning about shared Agent instances accumulating conversation history across multiple workflow runs.
+26. State isolation via factory functions that create fresh Agent instances and build a new Workflow for each run.
+27. Section divider slide: "Using workflows in applications".
+28. Screenshot of a retail shop application with agentic workflows for inventory management.
+29. Diagram of a sequential workflow for restocking inventory: Inventory MCP, Prioritization, and Summarization steps.
+30. Next steps slide with links to registration, past recordings, and upcoming sessions on advanced workflows and human-in-the-loop.
+31. Appendix divider slide.
+32. Overview of built-in workflow builder subclasses: ConcurrentBuilder, SequentialBuilder, GroupChatBuilder, HandoffBuilder, MagenticBuilder, with link to workflow documentation.
+33. WorkflowViz for generating Mermaid diagrams and SVG exports of workflow graphs, with a Mermaid flowchart example and documentation link.
+34. Duplicate of the sequential workflow restocking inventory diagram (same as slide 29).

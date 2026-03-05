@@ -1,19 +1,16 @@
 """
 Agent Skills Write-up Generator
 
-Uses file-based Agent Skills with a FileAgentSkillsProvider to generate
-annotated blog-style write-ups from presentations. The agent loads the
-generate-writeup skill and orchestrates the pipeline using shell, file,
-and directory tools.
-
-Skills are discovered from .github/skills/ and follow progressive disclosure:
-1. Advertise — skill names/descriptions injected into system prompt
-2. Load — full instructions loaded on-demand via load_skill tool
-3. Read resources — supplementary files read via read_skill_resource tool
+Generates annotated blog-style write-ups from presentations by loading the
+generate-writeup prompt and the target presentation.md as agent instructions.
+The agent follows the pipeline step by step using shell, file, and directory
+tools, and has access to individual skills from .github/skills/ via a
+FileAgentSkillsProvider.
 """
 
 import asyncio
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Annotated
@@ -26,6 +23,15 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 SKILLS_DIR = Path(__file__).parent / ".github" / "skills"
+PROMPT_FILE = Path(__file__).parent / ".github" / "prompts" / "generate-writeup.prompt.md"
+
+
+def load_prompt() -> str:
+    """Load the generate-writeup prompt, stripping YAML frontmatter."""
+    text = PROMPT_FILE.read_text()
+    # Strip YAML frontmatter (--- ... ---)
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, count=1, flags=re.DOTALL)
+    return text.strip()
 
 
 # --- Tools for the agent ---
@@ -106,7 +112,14 @@ async def main() -> None:
 
     presentation_folder = sys.argv[1]
 
-    # --- 1. Create the chat client ---
+    # --- 1. Load prompt and presentation metadata ---
+    prompt_instructions = load_prompt()
+    presentation_md_path = Path(presentation_folder) / "presentation.md"
+    if not presentation_md_path.is_absolute():
+        presentation_md_path = Path(__file__).parent / presentation_md_path
+    presentation_md = presentation_md_path.read_text()
+
+    # --- 2. Create the chat client ---
     async_credential = DefaultAzureCredential()
     token_provider = get_bearer_token_provider(async_credential, "https://cognitiveservices.azure.com/.default")
     client = OpenAIChatClient(
@@ -115,17 +128,17 @@ async def main() -> None:
         model_id=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
     )
 
-    # --- 2. Create the skills provider ---
+    # --- 3. Create the skills provider ---
     skills_provider = FileAgentSkillsProvider(skill_paths=str(SKILLS_DIR))
 
-    # --- 3. Create the agent with skills and tools ---
+    # --- 4. Build agent instructions from prompt + presentation metadata ---
     instructions = (
-        "You are a presentation write-up generator. "
-        "You have access to agent skills that define how to generate write-ups from presentations. "
-        "You also have tools for running shell commands, reading/writing files, and listing directories. "
-        "When asked to generate a write-up, load the generate-writeup skill and follow its instructions step by step. "
+        f"{prompt_instructions}\n\n"
+        f"## Presentation folder\n\n`{presentation_folder}`\n\n"
+        f"## presentation.md contents\n\n{presentation_md}\n\n"
+        "The workspace root is the current directory. "
         "Use cached outputs when they exist to avoid re-generating them. "
-        "The workspace root is the current directory."
+        "Follow the pipeline steps in order."
     )
 
     async with Agent(
@@ -134,7 +147,7 @@ async def main() -> None:
         tools=[run_shell, read_file, write_file, list_directory, path_exists],
         context_providers=[skills_provider],
     ) as agent:
-        prompt = f"Generate a presentation write-up for {presentation_folder}"
+        prompt = f"Generate a presentation write-up for the folder: {presentation_folder}"
         print(f"Prompt: {prompt}\n")
         response = await agent.run(prompt)
         print(f"Agent: {response}\n")
