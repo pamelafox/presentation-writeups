@@ -1,0 +1,46 @@
+1. Title slide introducing "Building a RAG app to chat with your data" with a link to the slides.
+2. About the presenter Pamela Fox, a Python Cloud Advocate at Microsoft with experience at UC Berkeley, Khan Academy, Woebot, Coursera, and Google.
+3. Agenda overview covering LLMs, RAG, a deep dive into a RAG chat app solution, evaluating RAG apps, and observability.
+4. Section divider introducing the topic of Large Language Models (LLMs).
+5. Defines an LLM as a model large enough to achieve general-purpose language understanding and generation, illustrated with a sentiment analysis example.
+6. Lists popular LLMs in use today including GPT 3.5/4, PaLM, Gemini, Claude, LLaMA, and Mistral with their parameter counts and creators.
+7. Explains GPT as a Generative Pre-trained Transformer based on the Transformer architecture from the "Attention is all you need" paper.
+8. Demonstrates using OpenAI GPT models in Azure Studio by combining a system message and user question to get a chat completion response.
+9. Shows how to use OpenAI GPT models in Python with the openai library's chat.completions.create() method with streaming.
+10. Highlights the limitations of LLMs: outdated public knowledge and no access to internal knowledge.
+11. Presents three approaches to incorporate domain knowledge into LLMs: prompt engineering, fine-tuning, and Retrieval Augmented Generation.
+12. Section divider introducing Retrieval Augmented Generation (RAG).
+13. Illustrates the RAG flow where a user question is sent to search, relevant results are passed to the LLM, and the LLM generates a grounded answer.
+14. Describes the benefits of RAG: access to up-to-date public knowledge, internal/private knowledge, and brand-specific knowledge.
+15. Emphasizes the importance of the search step in RAG, noting that poor search results lead to poor answers and too many results degrade accuracy.
+16. Explains the optimal search strategy combining vector search, keyword search, hybrid fusion with Reciprocal-Rank-Fusion, and a reranking model.
+17. Shows the full RAG pipeline with hybrid search including the embedding model that vectorizes the user query before searching.
+18. Describes what RAG can search over: unstructured documents (PDFs, docx, etc.) and structured database rows, with Azure service options for each.
+19. Presents three ways to build a RAG chat app on Azure ranging from no-code (Copilot Studio) to low-code (Azure Studio) to high-code (open source demo).
+20. Shows Copilot Studio's "On Your Data" feature as a no-code option for building a RAG app with documents.
+21. Describes Azure Studio's "On Your Data" feature supporting multiple data types, search providers, and GPT models as a low-code option.
+22. Introduces the open source RAG chat app (azure-search-openai-demo) with Azure AI Search, multi-turn chats, user authentication, and image document support.
+23. Section divider introducing a deep dive into the RAG chat app solution.
+24. Lists prerequisites including an Azure account, Azure OpenAI access, and necessary permissions for role assignments and deployments.
+25. Presents three options for opening the project: GitHub Codespaces, VS Code with Dev Containers, or a local environment with Python, Node, and Azure Developer CLI.
+26. Walks through deploying with the Azure Developer CLI using azd auth login, azd env new, and azd up commands.
+27. Shows the application architecture on Azure with separate flows for the chat app (App Service) and data ingestion, connecting to Storage, OpenAI, and AI Search.
+28. Details the local data ingestion pipeline: uploading documents, extracting with Document Intelligence, splitting into chunks, vectorizing with OpenAI, and indexing in AI Search.
+29. Describes integrated vectorization as an end-to-end data processing pipeline built into Azure AI Search handling data access, cracking, chunking, vectorization, and indexing.
+30. Walks through the code structure showing the TypeScript/React frontend and Python/Quart backend with key functions for search, embedding, and chat completion.
+31. Lists RAG orchestration libraries including Langchain, Llamaindex, Semantic Kernel, and PromptFlow with their supported languages.
+32. Provides links to additional RAG chat app starter repositories in JavaScript, C#, Java, and .NET with various frontend frameworks.
+33. Section divider introducing the topic of evaluating RAG chat apps.
+34. Poses quality questions for RAG answers: are they correct relative to the knowledge base, clear, understandable, and properly formatted, with example responses.
+35. Outlines factors affecting answer quality from both the search side (engine, query, options, chunk size) and LLM side (prompt, model, temperature, tokens).
+36. Shows the Developer Settings UI for manually experimenting with different RAG app settings.
+37. Introduces automated evaluation tools (ai-rag-chat-evaluator) for generating ground truth data, evaluating with different parameters, and comparing metrics.
+38. Explains ground truth data generation by creating Q/A pairs from a search index using the azure-ai-generative SDK and Azure OpenAI.
+39. Describes improving ground truth data sets by adding a thumbs up/down feedback button to the live app and using feedback to debug and expand test data.
+40. Shows the evaluation process: computing GPT metrics (coherence, groundedness, relevance) and custom metrics for every question in the ground truth set.
+41. Demonstrates reviewing metrics across multiple evaluation runs using the review_tools summary command.
+42. Shows comparing answers across evaluation runs using the review_tools diff command.
+43. Section divider introducing observability for RAG chat apps.
+44. Demonstrates Azure Monitor integration by sending OpenAI traces to Application Insights using OpenTelemetry instrumentors for OpenAI, aiohttp, and httpx.
+45. Shows Langfuse as an alternative observability tool, using its OpenAI SDK wrapper and deployable to Azure Container Apps with PostgreSQL.
+46. Closing slide with next steps: create a RAG app, run evaluator tools, report issues, and share learnings.

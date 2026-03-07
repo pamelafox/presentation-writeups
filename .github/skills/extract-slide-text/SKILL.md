@@ -18,7 +18,7 @@ uv run .github/skills/extract-slide-text/extract_slide_text.py <pdf_path> <outpu
 ## Arguments
 
 - `pdf_path` (required): Path to the PDF file.
-- `output_path` (required): Path to write the output markdown file (e.g., `outputs/slide_ascii.md`).
+- `output_path` (required): Path to write the output markdown file
 - `images_dir` (optional): Path to the slide images directory. Used to generate correct relative image references. Defaults to `slide_images/`.
 
 ## Output format

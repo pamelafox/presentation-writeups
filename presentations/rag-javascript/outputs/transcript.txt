@@ -1,0 +1,1562 @@
+[00:11] Hey everyone, thank you for joining us
+[00:13] for the next session of our JavaScript
+[00:14] buildathon. My name is Anna. I'll be
+[00:17] your producer for this session. I'm an
+[00:19] event planner for Reactor joining you
+[00:21] from Redmond, Washington.
+[00:23] Before we start, I do have some quick
+[00:24] housekeeping. Please take a moment to
+[00:27] read our code of conduct.
+[00:29] We seek to provide a respectful
+[00:31] environment for both our audience and
+[00:32] presenters.
+[00:35] While we absolutely encourage engagement
+[00:37] in the chat, we ask that you please be
+[00:39] mindful of your commentary. Remain
+[00:41] professional and on topic.
+[00:44] Keep an eye on that chat. We'll be
+[00:46] dropping helpful links and checking for
+[00:48] questions for our moderators to answer.
+[00:52] Our session is being recorded. It will
+[00:54] be available to view on demand right
+[00:57] here on the Reactor channel.
+[01:00] With that, I'd love to turn it over to
+[01:01] our host for today, Chris. Thank you so
+[01:04] much for joining.
+[01:07] Hey, Anna. Thank you so much for that
+[01:08] intro. My name is Chris Noring, working
+[01:10] at Microsoft on a daily basis. I am
+[01:13] super stoked for all of you to be here
+[01:15] today with a fantastic colleague of mine
+[01:17] called Pamela. I'll intro her in just a
+[01:20] sec. But you might be wondering, why did
+[01:22] I tune in in the first place? Well, the
+[01:24] answer is what's known as the sorry the
+[01:27] JavaScript AI buildathon. What does that
+[01:30] mean? Well, you'll be skilled on a
+[01:32] number of sessions and then we're going
+[01:34] to have a hackathon at the mid of the
+[01:36] month. Because it's called JavaScript,
+[01:38] that means that anything JavaScript or
+[01:40] TypeScript is what we'd love to see and
+[01:43] hopefully that's what you all are using
+[01:44] as well.
+[01:46] So, here's our road map uh in this month
+[01:50] because we got running this for a month.
+[01:51] So we started at the beginning of this
+[01:53] week with three different quests. Local
+[01:56] AI on quest one. Quest two is end to end
+[01:59] model development on Foundry. And today
+[02:02] Pamela will intro us all to rag systems
+[02:05] and even advanced features in there. By
+[02:08] the start of next week, we'll introduce
+[02:10] quest four and five about AI agents and
+[02:13] how to design scalable multi- aent
+[02:16] systems. And of course uh the third week
+[02:19] after that that's when all the fun
+[02:21] begins for all of you because then you
+[02:23] get to build your own things. So then we
+[02:25] have the hack phase. We'll present more
+[02:27] details to all of you on the 13th of
+[02:30] March. So you will know exactly about
+[02:32] submission guidelines, judging
+[02:34] criterias, award categories, prices, and
+[02:37] much much more. Here's also a QR code if
+[02:39] you want to learn more about this road
+[02:41] map in general.
+[02:43] When once we're done today, once Pamela
+[02:45] has given her awesome session, we'll
+[02:47] head over to the Discord community.
+[02:49] Well, I'll be chatting with Pamela about
+[02:52] the questions that you post today. So,
+[02:54] make sure that you have some questions
+[02:56] for us, either questions you have right
+[02:58] now before the talk or things that you
+[03:00] think about as you hear from Pamela. We
+[03:03] have a channel just for this buildathon,
+[03:05] but there will also be a link that you
+[03:08] can join once in the discord. There's a
+[03:10] short link here. Have a look here.
+[03:12] akamsjsai
+[03:14] on discord to get to the channel
+[03:17] specifically for this buildathon if you
+[03:19] got any questions on the presentations
+[03:21] and on the upcoming hackathon.
+[03:24] So this is what you should have heard uh
+[03:26] in the beginning of this week if you
+[03:28] haven't that's a great session about
+[03:30] local AI development with foundry local
+[03:33] featuring my colleague and and panas
+[03:35] colleague Lee Sto and also Manab who is
+[03:38] an amazing product manager on Foundry
+[03:41] local. The second session that have
+[03:43] happened this week is with Nita another
+[03:45] amazing colleague where she talked about
+[03:47] development on Microsoft foundry and
+[03:51] today of course this is the big treat.
+[03:53] It is Friday and of course we need to
+[03:55] talk about more AI with uh advanced
+[03:58] retrieval augmented generation. So with
+[04:01] Pamela and I think we will hear
+[04:03] buzzwords like vector search embeddings
+[04:06] grounding and a lot of other things. I
+[04:09] for one am super excited and please post
+[04:12] in all of our different channels that we
+[04:14] have out there. We'd love to hear your
+[04:15] comments, your questions, where you're
+[04:17] from and much much more. So without
+[04:21] further ado, I'm going to intro over to
+[04:24] Pamela. Take it away.
+[04:28] All right. Thank you, Chris. Hello
+[04:30] everyone. Welcome to my session today.
+[04:34] We're going to be looking at rag and
+[04:38] going into many different aspects of rag
+[04:40] and also sprinkling in some JavaScript
+[04:43] at the end since this is part of the
+[04:45] JavaScript AI buildathon. Uh we are
+[04:48] going to try and cover a lot of rag
+[04:50] concepts today and see how much we can
+[04:53] squeeze in this hour. Uh so you you know
+[04:57] hopefully we'll have some questions as
+[04:59] you go along. You know post them in the
+[05:00] chat. We may not be able to address them
+[05:02] during the session, but we have office
+[05:03] hours right after uh so you can pop into
+[05:06] those office hours and that's where we
+[05:08] can address any questions that come up.
+[05:11] So I am Pamela Fox. I'm usually doing
+[05:14] Python uh Python sessions because I'm
+[05:16] actually in the Python apps team, but I
+[05:18] also do love JavaScript as well. So it's
+[05:21] fun to get to be in a JavaScript series.
+[05:25] Uh I do also spend most of my time on
+[05:27] Rag uh because it is one of the most uh
+[05:30] popular uses of LLMs and where we've
+[05:33] seen the most people using LLMs in
+[05:35] production. So I'm always excited to
+[05:36] talk about Rag with more developers.
+[05:40] So let's get into it. Uh so you know we
+[05:44] at this point we've probably all been
+[05:46] using LMS in some capacity and they are
+[05:49] incredibly good at some things right
+[05:51] like really really good for coding
+[05:53] agents like I'm using GitHub Copilot to
+[05:56] write almost all of my code now right
+[05:57] very very good at writing code uh but
+[06:00] they still have limitations right they
+[06:03] have a lot of limitations um so you know
+[06:05] one of those limitations is that they
+[06:07] were trained on data at a particular
+[06:09] point and they don't know anything past
+[06:11] that point. So people might try to ask
+[06:13] an LLM for you know information and then
+[06:17] get back old information and the LLM
+[06:19] doesn't even know that that is old
+[06:21] information right like if you ask it you
+[06:23] know how to write code using a
+[06:24] particular SDK and that SDK has changed
+[06:26] in the last six months you're going to
+[06:28] get wrong code right and then another
+[06:32] limitation is that they just have no
+[06:34] internal knowledge so if you want to use
+[06:35] an LLM to ask about something specific
+[06:38] to your company it's just not going to
+[06:40] know at all right it was never trained
+[06:41] on that. It just doesn't know. So, there
+[06:44] are some things that LLMs like know in
+[06:47] their weights because they got trained
+[06:49] on so much data that has it and shows it
+[06:51] over and over and over and over. Um, and
+[06:53] at this point, it's, you know, almost a
+[06:55] fact. Like nothing is truly a fact in
+[06:57] LM's weights, but almost something it,
+[06:59] you know, really really knows without
+[07:00] having to look up. Like, if I asked an
+[07:01] LM how to, uh, you know, bake chocolate
+[07:04] cookies, it knows how to bake chocolate
+[07:06] chip cookies, right? It's seen that a
+[07:08] billion times. um but there's many
+[07:10] things that it can't reliably give an
+[07:13] answer for and uh and that's what we
+[07:15] want to address.
+[07:17] So how do we integrate domain knowledge?
+[07:20] There's two primary ways of doing this.
+[07:22] Um, the first way is fine-tuning. And
+[07:24] that's that's how you can truly teach an
+[07:27] LLM. And that's where you take the LLM
+[07:30] and you take its weights and you give it
+[07:33] a bunch of new data and you retrain the
+[07:35] LLM, at least uh like certain layers of
+[07:38] its weights, usually like the outer
+[07:39] layers of its weights. You retrain the
+[07:41] LLM's weights on that information so
+[07:44] that it actually is truly learning that
+[07:47] information in the weights. So
+[07:49] fine-tuning is, you know, a way for an
+[07:51] LLM to learn things permanently and keep
+[07:55] them in their weights. And it can be
+[07:57] good for some really specific uh use
+[08:00] cases um where you know a general LLM is
+[08:04] not doing well. But the problem with
+[08:05] fine-tuning is that there's huge cost
+[08:07] and huge time involved, right? You have
+[08:10] to pay to fine-tune the model. Uh you
+[08:12] need to get thousands and thousands of
+[08:14] training data points. you need to spend
+[08:17] time fine-tuning the model and and hope
+[08:19] that you've done it well. And then once
+[08:21] you fine-tune the model, it is more
+[08:22] expensive to run a fine-tuned model than
+[08:25] you know one of the general models uh
+[08:27] because it's running just for you. So it
+[08:29] can't be optimized as much. So that's
+[08:31] why we don't see as many people doing
+[08:33] fine-tuning. Now fine-tuning could be
+[08:36] right for you especially if in your very
+[08:37] particular domain where um the LM is
+[08:40] really really struggling uh with your
+[08:42] your kind of knowledge and your kind of
+[08:43] syntax and questions and all that. Uh
+[08:46] but we generally uh you know we don't
+[08:48] reach for fine-tuning unless we truly
+[08:50] truly need it. Now what we're going to
+[08:53] be looking at today is retrieval
+[08:54] augmented generation which is a way for
+[08:56] an LLM to learn temporarily in the
+[08:59] moment so that it has enough information
+[09:01] to answer a question.
+[09:04] Now, you at this point have probably all
+[09:06] seen Rag in the wild, right? Um, if you
+[09:09] use GitHub Copilot and you ask it
+[09:11] questions, it answers based off of, you
+[09:14] know, what's in your codebase and it
+[09:15] just searches through it. Uh, if you
+[09:17] ever use Copilot inside Teams, it's
+[09:19] searching on your chats and answering
+[09:21] based off your chats. uh if you're using
+[09:24] co-pilot inside uh inside the browser
+[09:26] like inside edge uh it'll often do a
+[09:29] search on the web and then ground its
+[09:31] answer based off of the web results.
+[09:33] Right? So these are all chats that are
+[09:36] looking at uh knowledge and using that
+[09:40] knowledge to answer your questions.
+[09:44] So how does a rag
+[09:47] start with the very simplest rag flow
+[09:49] possible. So imagine we have a user and
+[09:52] the user is uh asking a question to a
+[09:56] car chat application. So the user says
+[09:59] how fast is the Prius 5.
+[10:03] So then we use that user question to
+[10:05] search a database of car information and
+[10:09] we get back information from this
+[10:11] database. And this information has you
+[10:14] know in this case it has a bunch of rows
+[10:15] and columns with like vehicle year MSRP
+[10:18] and acceleration. So then we send both
+[10:22] the user's question and all the matching
+[10:25] search results to the LLM and say, "Hey
+[10:27] LM, your job is to answer this question
+[10:31] based off of these search results and
+[10:33] your answer must be grounded in these
+[10:35] search results and you you must like
+[10:38] site your sources, right?" So you're
+[10:40] we're really trying to tell the LLM like
+[10:42] hey your job is to answer questions
+[10:44] based off these this information and not
+[10:47] based off what you know just what's in
+[10:48] your weights right so you can even say
+[10:50] like oh and if you know if if something
+[10:52] isn't in the information say you know
+[10:54] say you don't know right it's actually
+[10:55] hard to get an LM to admit that it
+[10:57] doesn't know I spent a lot of time
+[10:59] trying to get LMS to admit that you have
+[11:01] to like explicitly empower it right uh
+[11:04] sometimes you have to do that with your
+[11:04] colleagues too like and even myself like
+[11:07] you have to really say it's okay to say
+[11:09] you don't know. So that is our simplest
+[11:13] rag flow and even that on its own is
+[11:16] very powerful because we're basically uh
+[11:18] you know we're we're able to answer
+[11:20] questions that are grounded in our
+[11:23] particular context. So as long as we
+[11:25] have a way of searching for the user's
+[11:28] question and getting back results then
+[11:29] we can build a rag flow.
+[11:33] Now let's look at what rag flows uh tend
+[11:37] to look like in in production. So you
+[11:39] know in many of these chat applications
+[11:41] because at this point a lot of times we
+[11:42] interact via chat usually we're having
+[11:45] multi-turn conversations meaning that we
+[11:47] ask a question we get a response we ask
+[11:49] another question right we keep going
+[11:50] like sometimes I keep going for hours
+[11:52] with GitHub co-pilot so here the user
+[11:54] says oh how fast is it gets a response
+[11:57] and then they say okay well how fast is
+[11:58] insight you know a different car so then
+[12:02] uh you know we're we search a database
+[12:04] for the most recent question and get
+[12:07] back the results
+[12:08] and we send the whole conversation to
+[12:11] the LM so the LM can get the context of
+[12:14] you know of the whole conversation and
+[12:16] fill in any gaps based on that
+[12:18] conversation.
+[12:20] Now this works pretty well but we can
+[12:22] make this even better.
+[12:25] So let's look at this conversation here.
+[12:28] So the user asks how fast is the PS5? It
+[12:30] gets a response and then they say what
+[12:32] about the insight? Now if you look at
+[12:34] this question here there's a few things
+[12:35] to point out. One is that it has a
+[12:37] spelling error. Um, two is that it it on
+[12:41] its own it it's not a full question,
+[12:43] right? It is it is based off the fact
+[12:45] that you know first we were saying how
+[12:47] fast and now it's saying what about,
+[12:50] right? So it's not a full question. It's
+[12:53] missing context because the user is
+[12:55] assuming like oh okay well you know I'm
+[12:57] saying actually how fast is the Honda
+[12:59] insight? Right? That would be the full
+[13:00] question. So what we often want to do is
+[13:04] add in a query rewriting step. So what
+[13:07] we do is we take this conversation and
+[13:10] we send it to an LLM and say, "Hey LM,
+[13:13] here's a conversation. Here's the most
+[13:15] recent question. You are going to
+[13:17] rewrite this question into a good search
+[13:20] query based off the conversation." So
+[13:23] then the LM can take that and say, "Oh,
+[13:24] okay. They're looking for insight speed,
+[13:27] right?" So the LM both you know corrects
+[13:29] any sort of spelling errors because it's
+[13:31] better at spelling than we are and then
+[13:33] also fills in you know missing missing
+[13:36] nouns and removes fluff right like you
+[13:39] know we don't need words like what about
+[13:41] the right insight speed that is all all
+[13:44] we need to search for is insight speed
+[13:46] right so that LLM its only job is to
+[13:49] produce a nice optimized search query
+[13:52] that fills in the gaps
+[13:54] so then we take that optimized search
+[13:56] query and use it to search the database.
+[13:59] And now we're going to get a much better
+[14:00] result than if we'd done this original
+[14:02] query. You know what about the insect?
+[14:04] Now we're searching for insight speed
+[14:06] and getting better results. And then we
+[14:09] send the full conversation again with
+[14:11] those search results to the LLM. So this
+[14:14] is the flow that you want to aim for
+[14:17] when you are doing rag for multi-turn
+[14:19] conversations. And you just want to
+[14:21] generally think in you know in your
+[14:23] situation is this a situation where I
+[14:25] would benefit from a query writing step.
+[14:27] Now the drawback of adding query writing
+[14:29] is that it does add latency
+[14:32] uh because it is another LM call. What
+[14:35] you can do is you can use smaller LLMs
+[14:37] there. You could use like a mini model
+[14:38] there. Uh you could even use a nano but
+[14:40] I've some I've seen weird weird things
+[14:43] from nanos. I don't trust nanos. Uh but
+[14:46] in theory, yeah, you can use a smaller
+[14:48] model for that query rewriting step so
+[14:51] that you know you're getting it to be a
+[14:53] much faster call than your final call.
+[14:54] Your final call is going to be your slow
+[14:56] call. Um your query writing call is
+[14:58] generally going to be a lot faster. So
+[15:00] this is what you think want to think
+[15:02] about as a rag flow when you're
+[15:04] designing your systems.
+[15:08] The other thing you want to think about
+[15:09] with rag is what kind of data are you
+[15:12] searching? Are you searching structured
+[15:14] data or unstructured data? Right? So
+[15:16] structured data is database rows. You
+[15:18] might already have an existing database
+[15:21] uh that's got rows and columns and you
+[15:24] just want to have a good way of
+[15:26] searching that database. And a lot of
+[15:28] databases have built-in search
+[15:30] capabilities. Uh but these days a best
+[15:33] practice is to figure out what your
+[15:35] users are going to be searching for
+[15:37] because usually you'll have some
+[15:38] database columns that are like kind of
+[15:40] your free text columns that you know
+[15:42] have a lot of uh text in them and that's
+[15:44] what users are are going to be
+[15:46] searching. So in that case you generally
+[15:48] want to um be able to vectorize those
+[15:51] columns with an embedding model and then
+[15:53] be able to search you know the vectorzed
+[15:55] content of those rows. So often you're
+[15:57] going to take your database rows and add
+[15:59] in a vector column to those rows so that
+[16:01] you can do um a really good search um
+[16:04] for for finding semantically similar
+[16:06] stuff. Now with unstructured data like
+[16:10] you know PDFs, powerpoints, markdown,
+[16:13] HTML, images even there you need to have
+[16:16] a fancier process uh where you're
+[16:18] actually going to take that unstructured
+[16:20] data and uh extract the text uh and
+[16:23] maybe even the diagrams and images from
+[16:25] that data. extract that information,
+[16:27] split up that information into
+[16:29] manageable chunks, vectorize each of
+[16:31] those chunks and then store those in
+[16:33] some sort of database or search service
+[16:36] uh so that you can then search it. So
+[16:38] these are generally you know the two
+[16:41] kinds of data sources that you may be
+[16:42] doing rag on and we're going to explore
+[16:46] both of those today. Now you'll notice
+[16:48] something in common is that both of them
+[16:51] I'm recommending that you do some
+[16:54] vectorization. So let's talk about
+[16:57] vector embeddings.
+[16:59] A vector embedding is a it's basically
+[17:03] it's a list of floatingoint numbers and
+[17:05] it represents some sort of input
+[17:09] and it represents it basically as a
+[17:10] vector in a multi-dimensional space. So
+[17:12] you imagine that uh you know it this
+[17:15] vector embedding model we train the
+[17:16] vector embedding model u using the
+[17:18] similar architecture LMS but not exactly
+[17:19] the same but we train the vector
+[17:20] embedding model on lots of data and we
+[17:23] show the vector modeling models like the
+[17:25] similarity between that data and it
+[17:27] learns similarity relationships and then
+[17:29] it develops this multi-dimensional space
+[17:32] where every concept it maps to a vector
+[17:35] in that space. So you have like dog and
+[17:37] cat are actually very close to each
+[17:39] other, right? Um and uh you know tree
+[17:42] and uh wood would be very close to each
+[17:45] other and then some things are very part
+[17:47] far apart from each other. And in that
+[17:50] space you can represent single words but
+[17:51] also a lot of these models you can
+[17:53] represent more than single words. You
+[17:54] can represent entire sentences. You can
+[17:56] represent paragraphs. You can represent
+[17:58] more than paragraphs. You can even
+[18:00] represent images if it's a multimodal
+[18:02] embedding model. So it's this really
+[18:04] powerful thing where you can you know
+[18:06] take these concepts from the real world
+[18:10] and we can try to figure out like what
+[18:13] is you know what do these concepts look
+[18:15] like in a
+[18:18] mo a similarity space right so that we
+[18:21] can then measure similarity between
+[18:23] things and I think it is similar to
+[18:25] something like what we do in our head
+[18:26] because I know like uh like with my kids
+[18:29] I often call them by their same name
+[18:31] because like you know call them by each
+[18:33] other's name because in my head they're
+[18:35] like semantically very similar. They're
+[18:36] both my daughter. They like, you know,
+[18:39] they're both kid like they look they
+[18:40] seem similar. So like I just mix up the
+[18:42] vectors in my head. And my kids do the
+[18:44] same thing to me. They call me by, you
+[18:45] know, their nanny's name, right? And
+[18:47] it's like it's fine. It's just it's just
+[18:49] we're similar vectors. That's cool. We
+[18:51] just mix up our, you know, vectors
+[18:53] sometimes because they're too close in
+[18:54] our heads. So vector embeddings are very
+[18:57] exciting because they enable us to dis
+[18:59] figure out the similarity between things
+[19:01] and search for things that are similar.
+[19:04] Now there are many vector embedding
+[19:06] models and um you know and these models
+[19:09] differ in how large the input is and
+[19:12] what kind of input they'll take. Um you
+[19:14] know the goal of all of them is to try
+[19:16] and capture similarity and build a
+[19:17] similarity space. These models also
+[19:20] differ in how long their vectors are. So
+[19:22] we call that the dimension of the
+[19:23] vectors. So they've you know so some of
+[19:25] them have uh you know big dimensions
+[19:28] some of them have smaller right um today
+[19:31] we're mostly using the open AI models
+[19:33] text embedding three small and three
+[19:34] large and those accept up to 8,191
+[19:39] tokens and a token is the way that LLMs
+[19:42] and embedding models understand where
+[19:44] it's the way they break up text um and
+[19:46] uh you know it might be a syllable might
+[19:48] be a whole word it just depends on what
+[19:49] you're feeding in so they take a bunch
+[19:52] of to you know tokens and And then they
+[19:54] output vectors of varying length. Uh so
+[19:57] and you can actually um customize the
+[19:59] dimensions in some cases. Here we also
+[20:02] there's an open model nomic embed text
+[20:04] that uh I use locally a lot as well and
+[20:07] that has really similar performance to
+[20:08] the open AI models. And then there's
+[20:11] also for Azure AI we have this vision
+[20:13] model that can encode images and that
+[20:15] one's really fun. So whenever I want to
+[20:17] do stuff with image similarity I use
+[20:19] that AI vision model. So there's lots of
+[20:22] models. There's this leaderboard here
+[20:23] that you can check out to try and get
+[20:25] the perform see look at performance but
+[20:27] generally you want to figure out does
+[20:29] this model work for my domain like is it
+[20:32] is it representing these concepts uh you
+[20:35] know the way I expect right if I think
+[20:37] cat and dog should be similar is it
+[20:39] similar here so you want to check for
+[20:40] your domain for the language that you're
+[20:42] doing for the kind of input you're doing
+[20:44] image or text is it going to work for
+[20:46] you
+[20:48] then once you've decided on a model uh
+[20:51] then you want generate an embedding for
+[20:53] it. I usually use the OpenAI SDK. Uh so
+[20:56] this example code here is JavaScript
+[20:59] code that shows how to generate
+[21:00] embedding using OpenAI models hosted on
+[21:03] Microsoft Foundry. So here we set up our
+[21:05] OpenAI constructor. Uh you can pass in a
+[21:07] key or you can use key list uh pass in
+[21:10] uh your Azure OpenAI endpoint from
+[21:12] Foundry and then we generate an
+[21:14] embedding. So we say okay we want to
+[21:16] create an embedding using the text
+[21:18] embedding three small model with 1536
+[21:21] dimensions and here is what we are
+[21:24] actually encoding. So here I just put a
+[21:26] short phrase but we can put up to 8,191
+[21:31] tokens there. Now I keep saying tokens
+[21:34] we don't have time to talk about
+[21:36] tokenizer today but um what you can do
+[21:38] is search for openai tokenizer and it's
+[21:40] very fun. um you can play with it and
+[21:43] see you know uh how how these models
+[21:47] break up the words into tokens. So in
+[21:51] this case uh you know it it broke each
+[21:54] of these up into a single a token per
+[21:56] word but in other languages like Spanish
+[22:00] um it's you know it it actually breaks
+[22:02] it up into more tokens because it has
+[22:04] less training data for Spanish. Uh so
+[22:08] yeah so you can play around with that uh
+[22:09] if you want to understand get more of an
+[22:12] intuition for what tokens actually are.
+[22:18] Okay so we you know generate the
+[22:20] embedding. Now we want to be able to say
+[22:22] hey how similar are two inputs right and
+[22:26] to measure the similarity between
+[22:27] vectors there are multiple metrics you
+[22:29] can use the one I'm going to recommend
+[22:32] the most is cosine similarity. uh it
+[22:34] works the best for rag and it works the
+[22:37] best across models and uh basically it
+[22:40] is just computing the dotproduct of two
+[22:42] vectors and dividing by the magnitude.
+[22:44] So you can think of it as measuring the
+[22:46] angle uh between two vectors. So this
+[22:50] generally works quite well for um you
+[22:53] know for our rag use case and as kind of
+[22:57] the default metric that we'll use.
+[23:02] Then uh how do we do how do we actually
+[23:04] do vector search? So what we're going to
+[23:06] do is we get an input vector and we're
+[23:09] getting input like we have that input
+[23:11] query. We're going to turn that input
+[23:12] query into a vector and we need to use
+[23:15] exactly the same model that we used to
+[23:19] encode our existing vectors. So this is
+[23:21] really important and I do I get this
+[23:23] question a lot. So you have to keep
+[23:25] track of what embedding model did you
+[23:27] use to encode your existing data and how
+[23:30] many dimensions did you use when you
+[23:32] encoded it because you need to match
+[23:34] that exactly when you're then doing a
+[23:36] search, right? Because all of these
+[23:37] embedding models have different
+[23:39] similarity spaces and you just you can't
+[23:41] search a you can't search with different
+[23:44] across different models. So we turn that
+[23:46] into a query vector and then we search
+[23:48] and say okay you know which are the n
+[23:51] closest vectors to this input vector
+[23:53] right and you could do this with brute
+[23:56] force you could just compute the the
+[23:59] similarity the cosine similarity between
+[24:01] every single other vector in your
+[24:04] database however once your database gets
+[24:07] quite large then that's going to get
+[24:09] quite slow so you generally do not want
+[24:11] to be doing exhaustive search in
+[24:14] production you want to use some sort of
+[24:16] approximation algorithm. Uh so you want
+[24:19] to use an approximate nearest neighbor
+[24:20] search algorithm in order to be able to
+[24:23] search millions, billions of vectors and
+[24:26] be able to do it in a reasonable amount
+[24:28] of time. Uh so these are the most
+[24:31] popular algorithms that you are going to
+[24:33] hear about. Uh the most popular right
+[24:35] now is HNS HNSW
+[24:38] hierarchical navigable small worlds and
+[24:42] uh there are JS libraries for that one.
+[24:44] Uh but generally you're going to use it
+[24:46] as it's built into a database right so
+[24:48] often I use like Postgress with PG
+[24:50] vector extension um Azure AI search
+[24:52] chromob weave like pretty much all the
+[24:55] vector databases have support for HNSW
+[25:00] then there is diskn this is a algorithm
+[25:03] that came specifically out of Microsoft
+[25:05] research which is like really optimizing
+[25:09] um uh based off like hardware
+[25:11] improvements and that has support in a
+[25:15] lot of the Azure database offerings. So
+[25:17] you'll find it in Cosmos DB, Azure SQL
+[25:20] and Azure Postgress.
+[25:23] Uh then there's IBF flat and that one is
+[25:27] that one's a good algorithm if you're
+[25:29] only going to index your data once. it
+[25:32] doesn't work as well for repeated
+[25:34] updates and that's why people like HNSW
+[25:36] uh because HNSW is like pretty fast with
+[25:39] handling new inserts into into the into
+[25:43] the um database. IBF flat doesn't handle
+[25:45] new inserts as well. That's why it's not
+[25:47] as popular. Um but that is supported at
+[25:49] a lot of places as well like Postgress
+[25:50] PG vector that's where I've used it. And
+[25:52] then there's Feice and Feice is an
+[25:55] in-memory index only. So we do have
+[25:58] Feice you know we do use Feice sometimes
+[26:00] for um you know just prototypes and uh
+[26:03] demos but not in production.
+[26:09] Okay. So I just talked all about vector
+[26:11] search and now you know everybody gets
+[26:13] really excited about vector search and
+[26:14] they're like great I'm just gonna I'm
+[26:16] just going to use vector search and I'm
+[26:18] going to get great results and that's
+[26:20] all I need. But that is not the truth.
+[26:24] The truth is that vector search is not
+[26:28] enough. And I actually have I have a
+[26:30] whole blog post titled vector search is
+[26:31] not enough because because it just kept
+[26:33] coming up all the time. So yes, vector
+[26:35] search is amazing and will help you
+[26:38] answer queries that you could never
+[26:40] answer before. However, it is not
+[26:43] enough. You should be using more than
+[26:45] just vector search. Uh so here's some
+[26:48] you know research that uh that we did at
+[26:50] at Microsoft comparing different kinds
+[26:52] of u search strategies with different
+[26:54] kinds of queries and uh you know vector
+[26:56] search did pretty well with a lot of the
+[26:58] queries um but it absolutely failed at
+[27:01] some of them right so keyword queries if
+[27:02] you're searching for exact words if
+[27:04] you're searching for you know if I'm
+[27:06] searching for my name exactly my name
+[27:08] then I want to find my name I don't want
+[27:10] to find similar names I want to find my
+[27:11] name and only my name if I'm searching
+[27:13] for my email address or an exact product
+[27:15] number or even any sort of exact
+[27:17] numbers. If I'm searching for the number
+[27:18] like I want something that's 25 feet
+[27:20] long, I want exactly that. I don't want
+[27:23] it to be 75 or 100, right? So, vector
+[27:26] search really doesn't do well with exact
+[27:29] matches. And sometimes users do need
+[27:31] exact matches, right? So what we're
+[27:33] going to see is that the best search
+[27:36] strategy generally is to do a hybrid
+[27:39] search where we're going to use combine
+[27:42] multiple kinds of search together to get
+[27:45] to get you know all their their benefits
+[27:48] and merge them. So hybrid search
+[27:50] basically takes keyword search and
+[27:52] vector search merges it all together and
+[27:54] then ideally uses a ranking model in
+[27:56] order to get the best of the best. Now
+[27:58] we're going to break that down uh so
+[28:00] that we understand each step and and how
+[28:03] they produce the best results.
+[28:07] So the first one is keyword search.
+[28:10] Keyword search is what we used for you
+[28:12] know years and years um before vector
+[28:14] search came along where basically you
+[28:16] know we look at the we look at the words
+[28:18] in our in our um data and then we build
+[28:21] an inverted index based off the words in
+[28:23] there and we say hey this term shows up
+[28:25] in these documents. And then when we do
+[28:28] a search, we're basically saying, hey,
+[28:30] you know, find us the documents where
+[28:31] this term shows up the most, right? So
+[28:34] you're actually looking at the the
+[28:35] frequency and saying, oh, okay, based
+[28:37] off the document size, you know, this
+[28:40] term shows up proportionally way more
+[28:43] than in other documents. Uh, so that's
+[28:46] the general idea of a um, you know, a
+[28:49] full text search algorithm. The best uh,
+[28:52] full text search algorithm is called
+[28:53] BM25. So you always ideally want to be
+[28:57] using a BM25 full text search algorithm
+[29:00] when you're you know when you're uh
+[29:02] implementing this.
+[29:04] Then we have vector search. We already
+[29:06] talked about this one. So you know we're
+[29:09] we're doing our vector search and we're
+[29:11] using a um you know a approximation
+[29:14] algorithm in order to make it more
+[29:16] efficient. Um and you know I saw some
+[29:19] questions in chat like you know like can
+[29:21] you just match dimensions when you're
+[29:23] searching vectors? you have to use
+[29:24] exactly the same model that you encoded
+[29:29] your data with and the same dimensions.
+[29:32] Um, so it's it's really important. So I
+[29:34] even when I'm making my database
+[29:35] columns, I even name them after the
+[29:38] model and the dimensions so I remember
+[29:40] exactly um you know what how how those
+[29:43] uh vectors were made.
+[29:46] The next step once we've done keyword
+[29:48] search and vector search is that we're
+[29:50] going to merge those results using this
+[29:53] algorithm called reciprocal rank fusion.
+[29:56] And that sounds very fancy um but really
+[29:58] all it's doing is looking to see at the
+[30:00] rank of each of the the um results in
+[30:04] each of the sub queries and saying and
+[30:06] and just kind of moving things around
+[30:08] based off the relative rank. So it's
+[30:09] like okay if something was you know
+[30:11] super high in one and low in the other
+[30:13] then it's going to end up in the middle.
+[30:14] If it was high in both, it'll end up
+[30:15] high. If it was, you know, middle in
+[30:17] both, it'll end up middle. Right? So, it
+[30:19] ends up just accounting for the relative
+[30:22] ranks in those results. And then we get
+[30:24] those merge results. Uh so, you know,
+[30:26] it's it's not using any pseudo model.
+[30:28] It's just using math. You can implement
+[30:30] this entirely in just SQL uh math
+[30:33] functions. Uh so, it's just a bit of
+[30:35] math to to get these merge results based
+[30:38] off their relative rank.
+[30:42] The final step that I recommend is to
+[30:45] add on a reranking model. So a
+[30:47] re-ranking model is a special model that
+[30:50] is designed for reranking. Uh it is
+[30:52] actually not an LLM. It's generally a
+[30:54] cross- encoder model which has been
+[30:56] specifically trained to look at queries
+[30:58] and look at results and then assign a a
+[31:02] score to each result based off the
+[31:04] query. So to say, oh okay, uh you know,
+[31:06] I'll give this one a uh this score 0.9,
+[31:10] right? very you know a very good result
+[31:12] for the query and this other one 0.1
+[31:14] like bad result for the query right um
+[31:16] so uh so yeah so we can use this ranking
+[31:20] model and that way that will really look
+[31:23] at the results according to the query
+[31:25] and it often will you know find things
+[31:27] that we were missing move stuff around a
+[31:29] little bit and the nice thing here about
+[31:30] the reranker model is that because it
+[31:32] gives a score relative to the query we
+[31:34] can also set a threshold and say hey if
+[31:36] we get a reranker score that's below a
+[31:39] certain score we are just going to drop
+[31:41] it entirely. Right? So once you start to
+[31:43] look at your data, you can get a feel
+[31:45] for like, okay, this is the threshold at
+[31:47] which the results are just not good
+[31:49] enough. Um, and then you just drop it
+[31:51] because I I think that's really
+[31:52] important because both vector search and
+[31:54] keyword search can give noisy results.
+[31:58] Uh, because vector search like if you
+[32:00] have nothing similar, it'll still find
+[32:01] something similar because it's in a
+[32:03] vector space and there's always
+[32:04] something some vector that's closer, you
+[32:06] know, even if it's so far away. Uh, and
+[32:08] then keyword search can also find, you
+[32:10] know, noisy results because, you know,
+[32:12] sometimes something might match one of
+[32:13] the keywords but then be completely
+[32:15] unrelated, right? So, I like that ranker
+[32:17] step because it can uh compensate for
+[32:20] the fact that both vector search and
+[32:21] keyword search can yield noisy results.
+[32:26] So, this is what the complete hybrid
+[32:28] search looks like, right? We get the
+[32:29] query, we in parallel can do a keyword
+[32:32] search and a vector search. Then we fuse
+[32:34] them together using RF and then send
+[32:36] them to the reranking model which will
+[32:38] rearrange them and uh you know also
+[32:42] assign scores that we can use as a
+[32:44] threshold.
+[32:48] Now the good news is that hybrid search
+[32:50] is supported in many databases uh and
+[32:53] many databases on Azure if you're
+[32:55] developing your rag on Azure, right? So
+[32:58] in Postgress uh you can do vector search
+[33:00] using PG vector. You can do keyword
+[33:02] search using their built-in module. I
+[33:04] will say the the built-in module is not
+[33:06] BM25 which makes me sad. Um there's a
+[33:09] couple like community extensions that do
+[33:11] it. So you may want to bring those in.
+[33:13] Uh then you can do RF just in the SQL.
+[33:15] And then for reranker there's actually a
+[33:17] built-in function Azure AI.rank which
+[33:20] you can use a cross- encoder model with.
+[33:22] Right. So Azure AI search they have
+[33:25] incredible support for hybrid search.
+[33:26] they were kind of the first ones to
+[33:28] really come out with it. Um, so they're
+[33:29] using best-in-class everything. They've
+[33:31] got their own reranker model, um, that,
+[33:34] you know, is, you know, works really
+[33:36] well for it. So, um, it's, yeah, super
+[33:38] easy with that Azure AI search. Uh,
+[33:40] Cosmos DB, which we're using, um, for
+[33:43] today's JavaScript example, they do
+[33:45] support vector search. They do now have
+[33:47] BM25 and RF built in, and they have a
+[33:50] reranker in public preview, so you can
+[33:53] start checking out their reranker. uh
+[33:55] and Azure SQL is similar to Cosmoon DB
+[33:57] but doesn't have a reanchor yet. So just
+[33:59] when you are you know picking your
+[34:01] database and coming up with your search
+[34:03] stack you know do consider um you know
+[34:06] whether you can use the full hybrid
+[34:08] search stack uh because especially if
+[34:10] you're you know dealing with messy data
+[34:12] you really want to have the best search
+[34:14] possible.
+[34:18] Okay so now you know we're talking about
+[34:21] how to search that data. The other
+[34:23] aspect is how do we ingest that data?
+[34:25] How do we get our documents and our data
+[34:27] in a form that is going to be the most
+[34:32] searchable?
+[34:35] So if we are, you know, if we're doing a
+[34:37] database row, that's pretty easy. We're
+[34:38] just picking out the columns and
+[34:40] vectorizing them. But for documents, uh
+[34:42] things get a lot more interesting. Uh so
+[34:44] if we are dealing with documents, then
+[34:46] we need to set up an ingestion flow. Uh
+[34:49] so here's an example ingestion flow. uh
+[34:51] we can take the PDF, we could send that
+[34:53] to Azure document intelligence, which is
+[34:55] a service that uses OCR models, uh as
+[34:58] well as LLMs in order to be able to
+[35:00] extract um you know, information out.
+[35:03] Then we can send it, you know, use some
+[35:05] code in order to split the the extracted
+[35:08] text into chunks. Uh and we can split
+[35:11] that text uh based off of uh you know,
+[35:14] boundaries or headings. Like there's
+[35:16] many ways that you can split your data
+[35:17] up. um different kind of chunking
+[35:20] algorithms out there, but generally
+[35:21] you're going to use some sort of code,
+[35:22] some library in order to split the data
+[35:25] into chunks. Then you're going to take
+[35:27] each of those document chunks and then
+[35:29] generate embedding models and then
+[35:31] finally store the data and the original
+[35:34] document somehow in some database that
+[35:37] is searchable. So it's a general
+[35:40] ingestion flow here. Now I get the
+[35:43] question, why do we need to split
+[35:45] documents, right? Because people say,
+[35:46] "Hey, you know, Pamela, like LM have
+[35:48] these huge context windows now. Like I'm
+[35:50] using like a, you know, LM that has like
+[35:52] a million, you know, a context window of
+[35:55] a million tokens. Like, do I really need
+[35:57] to split the documents?" Right? So,
+[35:59] first of all, um, you know, when people
+[36:01] are developing rag applications for
+[36:03] their domain, they are often putting a
+[36:06] lot of documents in uh, you know, in
+[36:08] that database. So, those you know, the
+[36:10] total context of those documents is
+[36:12] generally more than a million. uh if you
+[36:15] truly are building rag for a small data
+[36:17] set then yeah maybe you actually don't
+[36:19] need search maybe you can just give the
+[36:22] entire document to LM right you you can
+[36:24] try that and see but most people are
+[36:26] dealing with you know uh databases that
+[36:28] have thousands hundreds of thousands of
+[36:30] documents and you know they they you
+[36:33] know need to be able to select across
+[36:36] them um but the the other thing is that
+[36:39] uh you know generally if we send too
+[36:42] much information to LM it gets
+[36:44] distracted. Uh it we there's been all
+[36:47] this research um that shows like okay
+[36:49] even if the LM technically can take in
+[36:52] all that context if you send it to
+[36:54] information it will get distracted by
+[36:57] it. Um this was the first paper about it
+[36:59] lost in the middle but since then
+[37:00] there's been more research and I even I
+[37:03] even saw a tweet this morning that I
+[37:05] bookmarked um where somebody looked at
+[37:07] context rot. Now we call it context rot
+[37:10] where as the context grows bigger the
+[37:11] quality goes down. So, somebody looked
+[37:13] at context rot for the new GBD 5.4 model
+[37:17] because that one technically has a 1
+[37:18] million context window, but they
+[37:20] basically saw is after 256K, the quality
+[37:23] just went way down, right? So, you you
+[37:25] know, you hear that these LM have big
+[37:27] context windows. Yes, they do, but
+[37:28] there's still the, you know, that the
+[37:31] quality goes down the more you send,
+[37:34] right? And also, you spend more money.
+[37:36] You like it's way more money the more
+[37:38] tokens you spend in LM and also more
+[37:40] latency. So if you can do a search that
+[37:43] will get you just what you need and send
+[37:45] just that to LM then that's going to be
+[37:47] uh you know better for your budget,
+[37:49] better for your user experience, right?
+[37:51] So that is why we're still splitting up
+[37:53] documents is because we want to be able
+[37:56] to send LM just what is necessary. Now
+[37:59] since the context windows are bigger, I
+[38:01] do think we can make bigger document
+[38:03] chunks than we did in the past. I think
+[38:04] we can uh you know you know store maybe
+[38:07] entire pages or something like that. Um,
+[38:10] but I would still split up documents.
+[38:14] Now, we all I always get asked like,
+[38:15] okay, all right, so I know I have to
+[38:16] chunk the documents, but how big those
+[38:18] chunks should be? Right now, this is
+[38:20] research that we did a few years ago,
+[38:21] and I think we should probably redo this
+[38:23] research now with the the newer LLMs
+[38:25] that have bigger context windows. But
+[38:26] when we did this research, um, they
+[38:29] checked to see like, okay, how big
+[38:30] should the chunks be? And in this
+[38:32] research, they found that the optimal
+[38:33] size was 512 tokens. So in English you
+[38:37] could think that might be 512 words but
+[38:39] in other languages that you know would
+[38:41] be different. Um and then they also
+[38:44] looked at where should you break the
+[38:46] chunks right? Where do you get the best
+[38:48] results? So they tried breaking just at
+[38:50] just the straightup token boundary and
+[38:52] that got the worst results. Uh they
+[38:54] tried preserving sentence boundaries and
+[38:56] that got better results. And then they
+[38:58] tried overlapping chunks so that there
+[39:00] would be you know some overlap between
+[39:02] chunks uh so that some of it wouldn't
+[39:04] appear just in one chunk. and that's how
+[39:06] they got the best results. So based off
+[39:08] this, this is now my chunking strategy
+[39:10] is that I usually aim for 500 tokens and
+[39:13] I aim for like a 25% overlap and I try
+[39:16] to preserve sentence boundaries within
+[39:17] that overlap. Now, it's like it's it's
+[39:20] kind of crazy code to write a splitter,
+[39:23] a chunker. So I don't recommend that you
+[39:26] write your own chunker. I think
+[39:27] generally you're going to have better
+[39:28] results using other people's splitter.
+[39:30] Um, and I say this just because I've try
+[39:32] I've written a splitter and it's very
+[39:35] it's it's there's a lot of edge cases to
+[39:38] think about when you're you know when
+[39:40] you're making a splitting algorithm. Um,
+[39:42] but you know if you want to build your
+[39:44] own splitter, but generally I would
+[39:45] recommend using uh, you know, using
+[39:48] someone else's splitter, you know,
+[39:49] that's been well tested, battle tested.
+[39:54] All right. Uh so we've talked about rag
+[39:57] flows and uh optimal search strategies
+[40:00] and data ingestion. Uh now there are
+[40:03] other rag approaches as well that people
+[40:05] often ask me about. Uh so I wanted to
+[40:08] talk briefly about some more um advanced
+[40:11] approaches that uh you may have heard
+[40:14] about. So the first one is graph rag.
+[40:18] This was a Microsoft research project uh
+[40:21] from a few years ago. And the idea of
+[40:24] graph rag is that you when you're
+[40:27] ingesting your data as you're ingesting
+[40:28] it, you analyze the data to extract out
+[40:32] the topics, the entities, the relations,
+[40:34] like all all how how you know try and
+[40:38] make you're trying to make an ontology
+[40:40] of the information that you're
+[40:42] ingesting. And then you use that to
+[40:44] build a hierarchical graph, a knowledge
+[40:47] graph that understands the entities and
+[40:51] relationships and topics that are
+[40:53] covered by that data. And so then you,
+[40:56] you know, you build that graph and every
+[40:58] time you ingest new data, you update
+[40:59] that graph, you know, with the
+[41:01] whatever's in the new data. And then
+[41:03] when you're doing the actual querying,
+[41:06] you're querying that um knowledge graph
+[41:08] and it's you know particularly you know
+[41:10] you might be quering at multiple levels
+[41:12] so that you're able to answer questions
+[41:16] uh you you you know you're able to
+[41:18] answer a wider range of questions
+[41:21] because you have access to this
+[41:23] knowledge graph, right? Um, so this
+[41:25] works like particularly well when you're
+[41:26] trying to ask questions that are more
+[41:29] high level um and that are like asking
+[41:32] to understand things at a high level um
+[41:34] versus like just picking out like you
+[41:36] know little bits uh details from the
+[41:38] documents. So this is really exciting um
+[41:41] and people are very excited by this
+[41:42] because of the ability to h handle a
+[41:45] wider range of questions like handle the
+[41:47] more zoomed out questions as I call
+[41:49] them. Uh however in in practical uh use
+[41:54] it's very hard to use graph rag in
+[41:57] production um because of how expensive
+[42:00] it is to build the graph right it takes
+[42:03] a lot of time to build that graph. Every
+[42:05] time you ingest new data you have to
+[42:07] update the graph. Uh so it's just
+[42:09] generally a slow and expensive process
+[42:13] to use that. And then when you're doing
+[42:15] the querying it is also a more expensive
+[42:17] query. So the truth is I actually do not
+[42:20] know anyone using graph rag in
+[42:22] production. Uh if anybody is in the
+[42:24] chat, please let us know. That'd be
+[42:25] really fascinating to find out. Um but
+[42:29] um uh I that's the thing. So we keep
+[42:31] looking into it and we're trying to
+[42:32] figure out how to make it reasonable to
+[42:35] be able to use this in production. Um
+[42:38] and you know there's been various
+[42:39] efforts. Hopefully we will have some you
+[42:42] know iterations on graph rag that are um
+[42:45] you know more uh practical for
+[42:48] production. Um but yeah right now that
+[42:50] is the you know kind of limitation of it
+[42:52] where it's just so much time and cost
+[42:55] that uh you know it's unclear whether
+[42:57] it's worth it.
+[43:01] Now there are some things kind of
+[43:03] similar along those lines that I do want
+[43:06] to mention that you can use in
+[43:07] production today. Um so one uh one thing
+[43:11] that you could use is you could use rag
+[43:13] with graph queries. Uh so here this is
+[43:16] an example there's a repo here that you
+[43:18] can look at which does this and it uses
+[43:20] as your postgress with the Apache graph
+[43:22] extension with cipher graph queries. So
+[43:26] it when it does um you know ingestion it
+[43:29] is building a graph of relationships
+[43:31] between things. So in this case it's
+[43:33] building a graph between products
+[43:35] product reviews product features and
+[43:38] it's um the edges it's labeling with the
+[43:41] sentiment. So it'll say like oh this
+[43:42] review has a positive sentiment of this
+[43:45] feature for this product. So it is
+[43:47] building this um you know you know this
+[43:50] graph of relations um between tables in
+[43:54] the database right and in theory you
+[43:57] could also do this with like a postgress
+[43:58] join but joins are very expensive right
+[44:00] if you use um the Apache graph extension
+[44:03] with cipher you can do these queries and
+[44:05] have them execute very very quickly uh
+[44:09] so yeah in this case we're doing a a rag
+[44:11] on a product like a product um store so
+[44:15] it says I want to buy a headphone phone
+[44:16] that has really good reviews on battery
+[44:18] life, right? So, it says, "Okay, you're
+[44:20] going to find the products with noise
+[44:22] cancellation features and the reviews
+[44:24] have a positive sentiment. That's the
+[44:26] edge about battery life, right?" And so,
+[44:29] then it can execute that graph query and
+[44:31] it can execute quite quickly and um get
+[44:34] back the responses. So, this is, you
+[44:36] know, almost kind of like a a graph rag
+[44:39] um but uh it's a it's a little bit
+[44:42] different as well. Um but you might be
+[44:45] able to kind of mix you know you know
+[44:46] use do use use it to do something
+[44:48] similar to um graph rag with building
+[44:51] the whole ontology. Uh so you can
+[44:54] consider that option you can check out
+[44:56] the the repo there to see how it's
+[44:58] actually implemented on in postgress.
+[45:01] And then another similar thing uh this
+[45:03] is a feature from Azure AI search. This
+[45:05] is their new knowledgebased feature
+[45:06] which does agentic rag. Um, and this is
+[45:10] really helpful if you're trying to
+[45:11] search across multiple sources. So,
+[45:14] basically what this does, it takes in
+[45:17] uh, you know, a conversation and it it
+[45:19] has that query planning step built in.
+[45:21] So, this is using an LLM to do query
+[45:23] planning and then um, comes up with
+[45:26] queries and also decides which of the
+[45:28] knowledge sources it's going to send
+[45:30] those queries to. So, it might say, oh,
+[45:32] I think for this query we need
+[45:33] Sharepoint and we need Bing, but we
+[45:35] don't need our, you know, one leg and
+[45:37] our search index, right? So you will
+[45:38] configure all these possible knowledge
+[45:39] sources and it's going to decide which
+[45:41] of those it's going to search and then
+[45:43] executes those searches in parallel on
+[45:46] those searches and then merges the
+[45:48] result using that whole hybrid search
+[45:50] semantic rank or all that stuff and then
+[45:53] even has an optional iterative retrieval
+[45:55] stage where it uses another model in
+[45:57] order to decide does it have enough
+[45:59] information because that's often an
+[46:00] issue with retrieval with complex
+[46:02] documents is just not getting enough
+[46:04] information. So it reflects on those and
+[46:06] uses another model to say okay you know
+[46:10] do do these results full help us fully
+[46:12] answer the question or do we do need to
+[46:14] do one more search right uh and that
+[46:17] particularly helps with like questions
+[46:18] that kind of have dependencies in them
+[46:20] like these more complex questions and so
+[46:22] then it can do that that loop again. Uh
+[46:26] so that's exciting if um if you're
+[46:27] dealing with searching across lots of
+[46:29] different data sources that unstructured
+[46:31] documents uh where you you know it just
+[46:34] makes it easier to be able to fan across
+[46:36] all of them.
+[46:39] Okay. So how do you know I showed all
+[46:41] these different uh search techniques um
+[46:44] these you know more advanced techniques.
+[46:46] The question is you know how do you know
+[46:48] if you are getting good results? How do
+[46:50] you know if it's worth it to do graph
+[46:52] rag? it's worth it to do hybrid search,
+[46:54] right? You need evaluation
+[46:57] and you need this because there's so
+[47:00] many things that affect the quality of a
+[47:01] rag flow, right? Like I showed all these
+[47:03] different search options, data ingestion
+[47:05] options,
+[47:07] uh you know, big decisions there, small
+[47:10] decisions there, every single thing
+[47:11] affects the quality of those search
+[47:14] results. And then there's the LLM
+[47:15] itself, right? What system prompt are
+[47:17] you using? Which model are you using?
+[47:19] The model has such a big effect, right?
+[47:21] uh the temperature like so many
+[47:23] different parameters. So there's so many
+[47:25] things that affects your answer quality
+[47:28] and if you just change one of these then
+[47:30] your answer quality could go up but it
+[47:32] could also go down right and the other
+[47:34] thing that can go up and down is your
+[47:36] cost and your latency right like all a
+[47:38] lot of this is about latency and cost
+[47:41] right if we had infinite time we could
+[47:43] have perfect rag I would say maybe but
+[47:46] we don't have infinite time usually
+[47:48] we're trying to get an answer to
+[47:50] somebody who wants it and so we always
+[47:52] have to think about um the trade-off
+[47:54] offs of cost and latency and whether
+[47:56] we're getting good enough quality.
+[47:59] So what does it even mean for rag
+[48:01] answers to be qu high quality? Right? So
+[48:04] um are they correct? Are they
+[48:05] understandable? And are they formatted
+[48:07] correctly? Right? Um so there I've got
+[48:10] like three different answers here, but
+[48:11] there's only one of these I like because
+[48:13] only one of these answers has the
+[48:14] citation in the correct format that I
+[48:17] can then render the citation to the
+[48:19] user, right? Um, so you know, we're
+[48:21] looking at all these aspects when we're
+[48:23] thinking about quality for rag answers.
+[48:25] Now, you can do different kinds of
+[48:27] evaluation. You can do manual evaluation
+[48:29] with humans and you can set it up so
+[48:31] that humans can look through a bunch of
+[48:32] answers and they can say, "Oh, this
+[48:33] one's good. This one's bad." And ideally
+[48:35] annotate why it's why it's bad. So then
+[48:37] they can improve. And so this is really
+[48:39] helpful to do if you have humans who
+[48:40] have domain expertise.
+[48:43] But there's a limitation to how much
+[48:44] data humans can process. So what you
+[48:46] really want is to also set up automated
+[48:49] evaluation you know based off what the
+[48:51] humans discover and annotate to say okay
+[48:52] we're going to measure performance and
+[48:54] measure these metrics across huge data
+[48:56] sets for multiple metrics
+[48:59] there are various in automated
+[49:00] evaluation frameworks typically I'm
+[49:02] working in Python so I use Azure AI
+[49:04] evaluation there's a lot of Python
+[49:06] frameworks for JavaScript there's prompt
+[49:08] fu I think that's the most popular one
+[49:10] for JavaScript um but these all these
+[49:12] frameworks do pretty much the same thing
+[49:15] they do very similar things. Um they
+[49:17] basically a lot of them just make it
+[49:18] easy to run uh evaluations across bulk
+[49:22] data sets, right? And a lot of these
+[49:24] evaluations use an LLM as a judge to
+[49:26] score the output. So we're actually
+[49:28] using LM to score the result from
+[49:31] another LM, which is funny, but it
+[49:33] works. So hey, um so for example, when
+[49:36] we're looking at rag, we often look at
+[49:39] okay, you know, how grounded is the
+[49:41] response? Was the response actually
+[49:43] grounded in the data? How relevant is
+[49:45] the response to the query? Like did it
+[49:46] you know did it answer everything in the
+[49:48] query or did it leave something out and
+[49:50] then we also look at how similar is the
+[49:52] response to the ground truth. So if we
+[49:53] have the ground truth for an answer then
+[49:55] that then you can run the best
+[49:56] evaluations because you can say hey this
+[49:58] is what I wanted this is what I got how
+[50:01] you know did you know did I get what I
+[50:03] wanted right um and I often look
+[50:05] specifically at whether the citations
+[50:07] match and that I even just use a reax
+[50:09] for. So you don't have to use an LM as a
+[50:10] judge for everything. Sometimes, you
+[50:12] know, you can use reax like when it
+[50:14] comes to citation checking, but this is
+[50:16] generally the kind of metrics you're
+[50:17] looking at and um you can use an LLM to
+[50:20] judge metrics uh if if that's helpful.
+[50:24] So then you're going to run evaluation
+[50:26] across these large data sets and keep
+[50:28] track of your metrics, right? So you
+[50:30] know your LLM metrics like groundedness,
+[50:32] relevance, um here I have my citation
+[50:35] metric, whether citations match. That's
+[50:37] my reax. I look at answer length because
+[50:39] that varies so much across models. Um,
+[50:42] and I usually also look at latency. So,
+[50:43] it's cut off here, but uh I always look
+[50:45] at latency as well because you might
+[50:47] have better quality, but your latency
+[50:48] might go way down, right? So, you you
+[50:51] want to look at all these metrics and
+[50:53] also look at length, cost, latency so
+[50:55] that you can really evaluate
+[50:57] holistically.
+[50:59] And then when you see that scores have
+[51:01] changed, I do recommend looking at the
+[51:02] specific answers to understand why they
+[51:04] changed, how they changed, and whether
+[51:07] you need to improve your prompt or maybe
+[51:08] even change your judges, right?
+[51:11] So, I've run lots of evaluations and I
+[51:14] always learn when I run evaluations, um,
+[51:18] you know, and and I just think it's so
+[51:20] helpful. So, you really got to set up
+[51:21] evaluation for any of your apps that are
+[51:23] based off LLMs and, um, and I think
+[51:26] you'll learn so much from it. Um, Hamal
+[51:28] Hussein is my favorite person in the
+[51:30] evaluation space. Do subscribe to his
+[51:32] blog. You'll learn so much about
+[51:33] evaluation from him. Okay, we have seven
+[51:37] minutes left. We are going to do a code
+[51:39] uh look at the actual code that you can
+[51:41] deploy that will make a rag app with
+[51:43] JavaScript. So, this is a open source
+[51:46] rag solution. Um, and let me go ahead
+[51:49] and put this link in the chat so that
+[51:52] everybody has it here. Here we go.
+[51:56] So this is a yeah open source rag
+[51:59] solution that you can deploy to Azure
+[52:01] and that you can also run locally. So
+[52:03] you can run locally using a lama and
+[52:06] vice or you can deployed it to Azure
+[52:08] where it'll use Azure OpenAI Cosmos DB
+[52:12] um and Azure functions.
+[52:15] Uh so here I have it running. Uh so I've
+[52:18] already asked a question early today
+[52:19] like okay what is the refund policy? Uh
+[52:22] let me just reload it. Okay, what is the
+[52:23] refund policy? And uh you can see that
+[52:26] the answer will come streaming in. It's
+[52:29] also loading my chat history. So it does
+[52:31] have chat history. Uh the answer streams
+[52:33] in. We get a citation. That's really
+[52:35] important. I click on the citation and
+[52:37] we can see the actual document that
+[52:39] answers the question. Right. So this is
+[52:42] uh you know what what we're building
+[52:43] here. Um which is what you expect out of
+[52:47] rag application is the ability to have
+[52:48] multi-turn conversations that stream in
+[52:50] the results and give you citations and a
+[52:52] history of your chats.
+[52:55] Uh now to get started with the project
+[52:57] you can open it in GitHub code spaces
+[52:59] which will have everything set up or VS
+[53:01] code with the dev container extension or
+[53:03] just your local environment where you
+[53:04] need to have node the ACD CLI Azure
+[53:08] functions and git. So this information
+[53:11] is all in the repo. Then you can deploy
+[53:13] it to Azure using the Azure developer
+[53:15] CLI. Um you'll need an Azure account for
+[53:18] that and some permissions. You log into
+[53:20] your account and you run as up and
+[53:22] that'll get everything up on Azure.
+[53:26] Now let's look at how this code actually
+[53:29] works. Uh so there is a data ingestion
+[53:32] process that's in documents post.ts
+[53:35] and it is an Azure function. So
+[53:37] everything here is deployed to Azure
+[53:39] functions. So this is running on Azure
+[53:42] function. So we send a PDF to the Azure
+[53:45] function. Uh we post it to the Azure
+[53:47] function. It uses langchain.js to both
+[53:50] do the extraction. So it's actually
+[53:52] doing extraction just fully in
+[53:53] JavaScript and also using langchain to
+[53:56] split the data into chunks. Uh langchain
+[53:58] has a nice um character splitter. So I
+[54:01] actually let's see I have that open
+[54:03] here. Right. So first we use the PDF
+[54:06] loader
+[54:07] and then we use the recursive character
+[54:10] text splitter. Uh this takes lots of
+[54:12] options here. This code is actually
+[54:14] splitting based off character count but
+[54:16] you can there is an option to to split
+[54:18] based off tokens and that's what I um
+[54:20] you know usually recommend. So then we
+[54:22] split into chunks. Uh then we generate
+[54:25] embeddings using either Azure OpenAI
+[54:27] with Cosmos DB or using Olama with Feice
+[54:33] and then we upload the original file to
+[54:35] blob storage and that way we can have
+[54:37] these citations.
+[54:40] So that's the full ingestion flow. Here
+[54:42] you can see that it takes advantage of
+[54:45] you know built-in functionality from
+[54:46] langchain so that the actual ingestion
+[54:48] code is quite short.
+[54:52] Now how does the app work itself? You
+[54:54] know this is what it looks like. Uh the
+[54:56] front end is Typescript and it's built
+[54:59] using lit components and bite and the
+[55:03] front end sends post requests to the
+[55:06] back end which is on Azure functions. So
+[55:08] the front end is hosted on Azure static
+[55:10] web apps. So it's you know fully static
+[55:12] and it sends all its API requests to
+[55:14] Azure functions. Uh so the main file is
+[55:18] chats post.ts which handles the you know
+[55:21] the full rag flow. So let's check that
+[55:25] out here. chats post.ts. Okay. So this
+[55:29] has you know actual function. We've got
+[55:31] the system prompt here. And notice the
+[55:33] system prompt you know says you have to
+[55:35] answer only with the information from
+[55:36] the sources below. Uh it says how it's
+[55:38] going to site the sources. So we can
+[55:40] pull it out later. Says how to do
+[55:43] follow-up questions. Right? So here's
+[55:45] our actual function. Um so you know we
+[55:48] set up our connection to Azure OpenI and
+[55:50] Cosmos DB and Cosmos DB is being used
+[55:52] here both as the vector store and for
+[55:56] the message history.
+[55:59] Um so we're you know we're using Cosmos
+[56:02] for multiple multiple uses here. uh
+[56:05] locally we can use a llama and fice in
+[56:07] memory and a file system message
+[56:08] history.
+[56:10] Then we use lingch chain to um to chain
+[56:14] our um documents with our system prompt
+[56:18] and our recent human message
+[56:20] and uh and and we use this runnable with
+[56:23] message history in order to add in the
+[56:25] chat history from this current thread.
+[56:27] Uh then with the retriever we say we're
+[56:29] going to retrieve three documents from
+[56:32] from there and then we run that rag
+[56:35] chain as a streaming function so that we
+[56:38] stream back the results and stream it
+[56:41] back to the front end. Um we also make a
+[56:45] title for the chat session that's just
+[56:46] for chat history. Uh and then there we
+[56:49] go. We return back the stream.
+[56:52] So that is the rag flow. Um, a few
+[56:55] notable things here is that it's using
+[56:57] Cosmos DB only with vector search. It's
+[56:59] not using hybrid search. There is
+[57:01] support now for hybrid search and Cosmos
+[57:03] DB as I mentioned, but I don't think
+[57:04] it's merged yet into lang chainjs. And
+[57:07] this code here um brings in everything
+[57:09] from lane chain. Uh, so hopefully in the
+[57:11] future you could port this to uh or we
+[57:14] port this to hybrid. Um, and yeah, but
+[57:17] then we you know, we get back some good
+[57:19] results there. So that is that's the
+[57:22] code. Uh so you we encourage you to try
+[57:26] out this app. You can try it locally.
+[57:28] You can try deploying it and then what's
+[57:30] really fun is to try and customize it
+[57:31] for your own data, right? So you know
+[57:33] put your own documents in the repo and
+[57:36] and ingest those documents and you know
+[57:39] see what happens, right? You really
+[57:41] only, you know, in my experience, you
+[57:43] really learn the most about how rag
+[57:45] works when you do it on data that you
+[57:48] know, right? Because the issue is if you
+[57:49] do it with our sample data, you there
+[57:52] might be hallucinations and you wouldn't
+[57:53] even know. But if you do it on data, you
+[57:55] know, so I actually um I have a rag
+[57:58] that's just on my blog, right? So I took
+[58:00] all my blog posts, I you know um
+[58:02] ingested those and then I can ask
+[58:05] questions on my blog and like I know
+[58:07] what I've written on my blog. I know if
+[58:09] it's hallucinating something, if it's
+[58:10] not for my blog. And so that has been
+[58:12] really helpful for me uh to be able to
+[58:15] reason about how to um improve rag
+[58:17] quality, right? So I do recommend
+[58:20] deploying rag for your own domain data
+[58:22] so that you really get a good
+[58:23] understanding of it. Now I do we call
+[58:26] this a deep dive, but it's really hard
+[58:27] to do a true rag deep dive in an hour. I
+[58:30] I tried to cover a lot of aspects of it,
+[58:32] but honestly like there's so many
+[58:34] aspects of rag and I couldn't fit it all
+[58:36] in an hour. did what I could. Um, but I
+[58:39] have a uh let's see an 11p part series
+[58:42] that I did last year. Um, and this is
+[58:44] with our Python solution, but a lot of
+[58:46] the concepts are are similar, right?
+[58:49] Like talking about um, you know,
+[58:51] multimedia, user login, data, access
+[58:53] control, chat history, speech, input,
+[58:54] output, private deployment, evaluation,
+[58:56] monitoring, and extending with function
+[58:59] calling. Uh, I would love to do an
+[59:01] update of this series sometimes because
+[59:03] now, you know, it was a year ago and
+[59:04] that was ages ago. But, uh, there's more
+[59:06] things there you could check out. And
+[59:08] then, yeah, hope you join us in the
+[59:09] Discord afterwards for office hours, uh,
+[59:12] so that we can answer your questions.
+[59:13] And now we're back with Chris to close
+[59:15] us up.
+[59:17] >> Right Pamela, thank you so much. That
+[59:20] was an amazing talk. I think I learned
+[59:21] quite a bunch and great to see that you
+[59:23] also have that rag series. I don't want
+[59:24] to don't know if we can post that in the
+[59:26] comments, but I'm sure our audience be
+[59:28] very interested to learn about that. Uh,
+[59:31] right, we have one more slide to talk
+[59:33] through today.
+[59:35] uh before we venture off into Discord.
+[59:38] And uh yeah, I've been trying my best,
+[59:40] me and my colleagues, to answer all of
+[59:42] your questions. Fantastic questions,
+[59:43] many of them. Uh this is where we go
+[59:46] next, right? So scan the QR codes, you
+[59:48] end up in our discord. There are I think
+[59:51] 27,000 members in that discord. So you
+[59:54] would be joining a lot of other people
+[59:56] in there, but it would be me, it would
+[59:59] be Pamela, your questions from the
+[01:00:01] session, but also new questions that you
+[01:00:04] think of. So yes, join us there in just
+[01:00:07] a few minutes.
+[01:00:10] >> All right,
+[01:00:11] >> back to our control room or perhaps.
+[01:00:21] Thank you all for joining and thanks
+[01:00:23] again to our speakers.
+[01:00:25] This session is part of a series. To
+[01:00:28] register for future shows and watch past
+[01:00:30] episodes on demand, you can follow the
+[01:00:32] link on the screen or in the chat.
+[01:00:36] We're always looking to improve our
+[01:00:38] sessions and your experience. If you
+[01:00:40] have any feedback for us, we would love
+[01:00:42] to hear what you have to say. You can
+[01:00:44] find that link on the screen or in the
+[01:00:46] chat and we'll see you at the next one.

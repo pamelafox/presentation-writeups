@@ -1,0 +1,37 @@
+1. Title slide: "Building RAG with PostgreSQL" by Pamela Fox and Joshua Johnson.
+2. Agenda slide listing three sections: Simple RAG with PostgreSQL, RAG with Azure PostgreSQL solution, and AI extensions for Azure PostgreSQL.
+3. Section header: "RAG with PostgreSQL: Getting started."
+4. Diagram showing simple RAG steps: user question goes to search, results go to LLM, answer with citations comes back.
+5. Explains hybrid search combining vector search (pgvector) and keyword search (tsquery), merged with Reciprocal Rank Fusion (RRF).
+6. Diagram showing simple RAG with hybrid search: user question goes to embedding model, then hybrid search on database, results sent to LLM.
+7. Instructions for setting up pgvector extension with CREATE EXTENSION and a link to the pgvector-playground dev container.
+8. Shows how to add a vector embedding column and an HNSW index to a table.
+9. Explains index creation options: HNSW vs IVFflat, inner product vs cosine distance operators.
+10. Python code for computing vector embeddings using the OpenAI text-embedding-3-small model and storing them in the database.
+11. SQL query for vector search using the cosine distance operator (<=>), with a note to match the operator to the index.
+12. SQL query for full-text search using plainto_tsquery and ts_rank_cd on the description column.
+13. Full hybrid search SQL query combining semantic search and keyword search CTEs with Reciprocal Rank Fusion scoring.
+14. Python code for orchestrating a RAG flow: execute search, format results, send to LLM with system message and user question.
+15. Section header: "Full RAG with PostgreSQL solution."
+16. Introduces the Simple RAG on PostgreSQL template using Azure OpenAI, Azure PostgreSQL Flexible Server, and Azure Container Apps, with links to code and demo.
+17. Code walkthrough diagram showing TypeScript frontend (React, FluentUI) and Python backend (FastAPI) with simple_rag.py.
+18. Diagram of advanced RAG with query rewriting: LLM rewrites user question before searching the database.
+19. Section header: "Advanced RAG (on PostgreSQL)."
+20. Diagram of query rewriting with function calling: LLM extracts structured search parameters including SQL filters.
+21. Full advanced RAG flow diagram showing function calling to extract query and price filter, then search, then LLM response.
+22. Code walkthrough diagram for advanced RAG showing advanced_rag.py replacing simple_rag.py in the backend.
+23. Deployment instructions using Azure Developer CLI: azd auth login, azd env new, azd up.
+24. Application architecture diagram on Azure: Azure Container Apps, Azure Database for PostgreSQL, and Azure OpenAI.
+25. Section header: "AI extensions for Azure Database for PostgreSQL."
+26. Overview of Azure PostgreSQL AI features: pgvector for vectors, azure_ai extension for Azure OpenAI/ML, and integrations with LangChain, Semantic Kernel, LlamaIndex.
+27. Diagram of AI services integrated into Azure PostgreSQL via the azure_ai extension: Azure OpenAI, Language Services, Translator, and Machine Learning.
+28. Comparison of remote vs in-database embedding models: remote calls Azure OpenAI, in-database uses azure_local_ai with multilingual-e5-small running locally.
+29. Performance comparison: remote embeddings average 77ms, in-database embeddings average 7ms, with benefits for data privacy and cost predictability.
+30. Full RAG pattern diagram with Azure Database for PostgreSQL: unstructured data → embedding model → vector database → LLM, with example comparing RAG vs no-RAG answers.
+31. Introduction to eShop demo powered by Azure DB for PostgreSQL, using .NET Aspire, Entity Framework Core, Semantic Kernel, and pgvector/azure_ai extensions.
+32. Screenshot of the eShop on Azure sample repository (Azure-Samples/eShopOnAzure).
+33. Screenshot of the eShop application running with a chat assistant interface.
+34. Screenshot of the eShop chatbot conversation demonstrating product recommendations and cart functionality.
+35. Demo of hybrid search with real-time translation combining vector search, geospatial data, and Azure AI Services on an Airbnb dataset.
+36. Screenshot showing query results with translated listing summaries and map visualization of geospatial results near the Space Needle.
+37. Closing slide with resources and links.

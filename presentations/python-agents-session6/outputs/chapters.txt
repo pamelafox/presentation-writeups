@@ -1,0 +1,35 @@
+In the final session of the Python + Agents series, Pamela Fox explores how to incorporate human-in-the-loop (HITL) interactions into agentic workflows using the Microsoft Agent Framework. The session covers tool approval for gating sensitive operations, structured requests and responses for collecting human input, checkpoint storage for durable long-running workflows, and handoff orchestration with interactive user input. The session concludes with a full-stack banking assistant demo that combines all these patterns.
+
+00:00 - Introduction and series overview
+01:26 - Session overview: adding a human in the loop
+03:17 - Recap: what is an agentic workflow
+04:05 - Why add a human in the loop
+06:29 - Reasons for HITL: accuracy, safety, trust, compliance, control
+07:43 - HITL patterns in agent-framework
+08:08 - Tool approval for agents
+09:32 - Defining tools that require approval
+10:51 - Handling tool approval in the event loop
+12:35 - Demo: tool approval with approve and reject
+15:32 - Requests and responses in workflows
+17:44 - Simple chat with HITL workflow
+20:22 - Executor code for handling requests and responses
+21:34 - Demo: simple chat with HITL
+25:12 - HITL with structured outputs
+26:54 - Agent definition with structured outputs
+28:03 - Executor code for structured response handling
+29:09 - Demo: trip planner with structured HITL
+32:27 - Checkpoints and resuming
+33:48 - Workflow lifecycle with checkpoints
+35:01 - Configuring checkpoint storage
+36:34 - Demo: file checkpoint storage
+40:32 - Resuming from checkpoint
+41:06 - Custom checkpoint storage design
+42:02 - Custom checkpoint storage with PostgreSQL
+46:02 - Demo: PostgreSQL checkpoint storage
+47:42 - Handoff orchestration with HITL
+49:00 - Configuring HandoffBuilder for interactivity
+49:22 - Handling HITL requests in HandoffBuilder
+50:11 - Demo: customer support handoff with HITL
+53:56 - End-to-end banking assistant application
+56:06 - Demo: agentic banking assistant
+1:00:51 - Series wrap-up and next steps

@@ -1,0 +1,1497 @@
+[00:04] Hello everyone and thank you for joining
+[00:06] our live session today. My name is
+[00:08] Larissa. I'm an event planner at Reactor
+[00:10] joining you from Brazil. Before we
+[00:13] start, I have some quick housekeeping.
+[00:15] Please take a moment to read our code of
+[00:17] conduct. We seek to provide a respectful
+[00:20] environment for both our audience and
+[00:22] presenters. While we absolutely
+[00:24] encourage engagement in the chat, we ask
+[00:26] that you please be mindful of your
+[00:27] commentary. remain professional and on
+[00:30] topic.
+[00:32] This session is being recorded and will
+[00:34] be available to view on demand here on
+[00:36] the Reactor YouTube channel within 48
+[00:38] hours. Keep an eye on the chat. We'll be
+[00:41] dropping helpful links and checking for
+[00:44] questions.
+[00:45] I'll now turn it over to our speaker for
+[00:47] today. Thank you all and hello, welcome
+[00:50] Tamila.
+[00:51] >> Hello. Hello everyone. Welcome to the
+[00:54] final session in our Python plus agents
+[00:58] series. Thank you everyone for joining
+[01:00] us along the way and for joining this
+[01:02] final session. If you missed any of the
+[01:05] earlier sessions, you can watch the
+[01:07] videos, grab the slides, go through the
+[01:08] writeups. All those resources are
+[01:11] available for you to keep learning. And
+[01:14] uh and yeah and you can also if you're
+[01:16] inspired you can give this course
+[01:19] yourself to your you know friends,
+[01:21] family, loved ones, whoever you uh talk
+[01:23] to.
+[01:26] So for our final session, we are going
+[01:28] to be talking about adding a human in
+[01:30] the loop uh both to agents and to
+[01:33] workflows. And this is really really
+[01:35] important as we'll see um because we're
+[01:38] working with LLMs and LMS are nowhere
+[01:41] near perfect. Uh so I'm very happy that
+[01:45] we get to talk about this today. So
+[01:49] we're going to talk about you know why
+[01:50] it's so important and show different
+[01:53] ways of bringing human into the loop
+[01:55] into agents and then into workflows. uh
+[01:58] discuss how to do checkpointing which uh
+[02:02] is is something helpful for uh for human
+[02:05] and loop workflows especially ones that
+[02:07] happen over time and then end with
+[02:09] another cool end toend application.
+[02:13] So if you do want to follow along we
+[02:15] have this repo that we've been using
+[02:17] throughout the series. So you can go to
+[02:19] the repo and you can click the code
+[02:22] button and then you will see a big
+[02:25] button create codeace on main and that
+[02:29] will open a VS code in the browser
+[02:32] that has everything set up. And when
+[02:36] this opens in code spaces it will use
+[02:38] GitHub models by default which are free
+[02:41] models that you can use with your GitHub
+[02:42] account up to a certain rate limit. And
+[02:46] uh I think for these examples today we
+[02:49] can use I think that they all fit within
+[02:51] the rate limit. So hopefully you are
+[02:53] able to run all the examples today for
+[02:55] free with GitHub models. Just let us
+[02:57] know in the chat if you have any issues
+[02:59] with following along with the code. If
+[03:02] you do already have the code checked
+[03:05] out, do run gitpull this morning,
+[03:08] afternoon, whatever to make sure you
+[03:10] have the latest changes. Uh because you
+[03:12] know sometimes I make little tweaks to
+[03:14] the code between our sessions.
+[03:17] So let's recap what we've been talking
+[03:20] about this week is agentic workflows. An
+[03:22] agentic workflow is a flow that involves
+[03:26] an agent at some point. It's usually to
+[03:28] handle decision- making to decide, you
+[03:30] know, where to go next in the flow or
+[03:32] it's to synthesize some information or
+[03:35] structured output. Now, we are
+[03:38] specifically using Microsoft agent
+[03:40] framework in this series. And an agent
+[03:42] framework, a workflow is a graph that
+[03:45] has executive nodes and edges in
+[03:47] between. And many of those executive
+[03:49] nodes could be agents, but they could
+[03:51] also be custom nodes that do any sort of
+[03:53] processing or data look at lookup. So we
+[03:57] are going to be building on top of
+[03:58] agents and workflows in today's session.
+[04:05] Now we want to bring humans into the
+[04:09] loop in these workflows with these
+[04:11] agents.
+[04:13] And we want to bring humans in the loop
+[04:15] because oftentimes an agent wants to
+[04:17] take an action, right? We're giving
+[04:19] agents tools and some of those tools are
+[04:23] actions that actually affect the world,
+[04:25] right? affect something about the
+[04:27] environment. They are actions that are
+[04:29] write operations, right? The agent can
+[04:32] uh send an email, can post a comment,
+[04:35] you know, uh make a report, like all
+[04:37] sorts of right operations that actually
+[04:40] have a real consequence. And many times
+[04:43] in that case, we want to make sure that
+[04:46] that action really should be taken. And
+[04:49] if if we don't have 100% confidence in
+[04:52] the agent, then we want to send that to
+[04:54] a human to review first. And this is
+[04:56] generally a good practice right now when
+[04:59] we're building things on top of LLMs
+[05:01] because LLMs
+[05:04] have a tendency to uh make stuff up.
+[05:07] That's actually kind of that's like a
+[05:08] feature as well as a bug. Just you know
+[05:11] they are generative LLMs are generative
+[05:14] AI. they are generating responses a and
+[05:17] sometimes those responses are not
+[05:19] exactly the response that we want it to
+[05:21] be right and if we are giving the LM
+[05:24] access to tools it might uh say like oh
+[05:27] I want to use this tool to do this thing
+[05:29] and that tool could be an actual write
+[05:31] operation and actually we don't want
+[05:33] that to happen right so a lot of times
+[05:36] when we're giving agents the ability to
+[05:39] take a right action we do want a human
+[05:42] to review it first Um, I think we've all
+[05:45] seen this in the past few weeks with
+[05:46] OpenClaw, which is like an agent that
+[05:49] gets full access to like email and your
+[05:52] operating system and all that stuff. And
+[05:54] even a safety researcher from OpenAI
+[05:56] like they were using OpenClaw and they
+[06:00] uh realized that openclaw basically
+[06:02] deleted like half their emails in their
+[06:04] inbox because it decided to start
+[06:07] deleting emails even though that's not
+[06:09] what the you know the person asked them
+[06:11] to do, right?
+[06:13] So they had to scramble to like shut off
+[06:14] their open claw, right? So if you're
+[06:16] giving an agent the ability to do
+[06:19] something like, you know, like delete
+[06:21] email, send email, etc. You really want
+[06:23] to be in the loop and reviewing all
+[06:26] those actions first.
+[06:29] So just to reiterate, why are the
+[06:32] reasons we're adding a human in the
+[06:33] loop? Um as we said like you know LLMs
+[06:37] are generative and they're producing all
+[06:39] kinds of outputs and you know those
+[06:41] outputs are not always correct. So when
+[06:43] we add a human in the loop it gives us
+[06:45] it can give us accuracy in terms of
+[06:47] verifying facts are correct. Um safety
+[06:50] for sensitive operations
+[06:53] u trust so that users will just have
+[06:55] more trust when they see that they're
+[06:57] the ones explicitly giving the agent the
+[07:00] ability to take that operation. uh you
+[07:02] know right now users rightfully may not
+[07:04] have trust in an application that's
+[07:06] entirely driven by an LLM and if you
+[07:09] tell them okay well don't worry we're
+[07:11] always going to ask for your approval
+[07:13] before we do this thing well then the
+[07:14] user can have a higher level of trust
+[07:16] right uh compliance you may need
+[07:19] compliance you may need an audit trail
+[07:21] of human approvals for uh workflows in
+[07:24] particular domains and just general
+[07:26] control right it like you can have your
+[07:29] workflow just might work better when you
+[07:31] bring a human in at particular points
+[07:32] because the you know human just has more
+[07:35] expertise in deciding uh what should
+[07:38] happen next in the workflow.
+[07:43] We have various ways of bringing human
+[07:45] in loop and agent framework. These are
+[07:47] the ones we're going to talk about
+[07:48] today. Um tool approval for agents,
+[07:52] uh workflows, request and responses,
+[07:56] checkpoints and resuming particularly
+[07:57] helpful for longunning tasks where
+[07:59] humans are involved. And then we're
+[08:00] going to look at that handoff
+[08:02] architecture in particular and see how
+[08:04] to bring human to loop there.
+[08:08] So first let's talk about tool approval
+[08:10] for agents.
+[08:13] So if we don't have tool approval what
+[08:15] happens uh agent can decide to send an
+[08:18] email or delete all the emails in the
+[08:20] inbox. that tool executes automatically
+[08:23] and then you know that that email got
+[08:25] sent and you know maybe that email was
+[08:28] wrong and for something as as important
+[08:31] as email you may not want that to happen
+[08:34] right so if we add in that approval step
+[08:37] then what's going to the flow is going
+[08:38] to be that the agent decides it wants to
+[08:40] send an email and the agent pauses and
+[08:43] the human gets this you know this this
+[08:46] prompt that says hey are you sure you
+[08:47] want to send this email and the human
+[08:49] says yes or Oh, and only then does the
+[08:52] tool execute. Right? So, we basically
+[08:54] want to pause at the point that an agent
+[08:56] decides which action it wants to take if
+[08:59] it is a sensitive action, a sensitive
+[09:01] tool. Uh so, you should consider having
+[09:04] tool approval for any sort of financial
+[09:07] operations, right? Anything with a a
+[09:09] bank. We'll see a banking uh example
+[09:11] later today. Uh any communications,
+[09:14] uh any destructive operations,
+[09:16] deletions.
+[09:17] I had co-pilot delete a resource group
+[09:20] the other day without asking me and I
+[09:21] was very offended right like you should
+[09:25] ask me before something like that
+[09:26] generally any irreversible action right
+[09:32] so how do we do this in agent framework
+[09:34] so earlier we saw how to define tools
+[09:37] using that tool decorator now what we're
+[09:40] going to do is specify the approval mode
+[09:42] for each of our tools so the um the
+[09:45] default is never require
+[09:47] But we can change that approval mode
+[09:49] mode to always require. So let's
+[09:52] actually check this out in the code.
+[09:55] This is agent tool approval.
+[10:00] Uh so up here we've got a few different
+[10:03] tools. So lookup receipt. This is just a
+[10:06] read operation. This is not a big deal.
+[10:09] So we are just saying that we're never
+[10:10] going to require which is the same thing
+[10:12] as just leaving it off. But here we're
+[10:15] being really explicit and saying okay
+[10:17] this is a tool and it never requires
+[10:19] approval.
+[10:21] And then here we have a tool where it
+[10:22] always requires approval and this is for
+[10:24] submitting an expense report because
+[10:26] this is a you know an actual write
+[10:28] operation that's going to uh you know
+[10:30] add something to the database. Right? So
+[10:32] if you think in terms of database
+[10:33] operations you know a select is not a
+[10:36] big deal as long as you have um
+[10:38] authorized access to that information.
+[10:40] But any sort of update, insert, delete,
+[10:43] those are generally big deals. Right? Uh
+[10:46] so in this case we are saying that we
+[10:49] need to always require
+[10:51] uh for for this tool now when we build
+[10:54] the application around this agent we
+[10:56] need to uh intercept these tool approval
+[11:01] requests. Right? So what we do is that
+[11:03] we run our query. So here's a simulated
+[11:05] user query and we tell the agent to run
+[11:08] on the query
+[11:10] and then um what we do is we loop
+[11:12] through and see if there's any user
+[11:15] input requests. So if there are any user
+[11:18] input requests because there could
+[11:19] actually be multiple because you could
+[11:20] actually have multiple tools and it
+[11:22] could decide to call multiple tools at
+[11:23] the same time with parallel tool
+[11:25] calling. So there could in theory
+[11:26] actually be multiple. So we loop through
+[11:28] and see okay for all of the user input
+[11:30] requests we're going to look through
+[11:32] them. We're going to look at each
+[11:34] request and we're going to look at the
+[11:35] function call for that request and look
+[11:38] at the name and the arguments and we're
+[11:39] going to tell the user like hey your
+[11:42] approvals requested for this tool with
+[11:44] these arguments
+[11:47] and then we're going to um we're going
+[11:51] to
+[11:53] uh you know add the fact that we
+[11:54] requested that to the conversation and
+[11:56] then we're going to ask the user's input
+[11:58] do you approve this tool right so here's
+[12:00] we're just doing the command line
+[12:01] approve approve yes or no and then um
+[12:05] and then once we get that response there
+[12:08] is a special function you can use to uh
+[12:11] indicate that the function got approved.
+[12:13] So you just say request to approval
+[12:16] response and that uh that indicates
+[12:20] whether it was approved or not and then
+[12:22] the agent then we run the agent with the
+[12:25] new messages in there. So the agencies
+[12:27] okay we wanted to make the tool call and
+[12:30] the user said either yes or no and now
+[12:33] it can decide what to do next. So let's
+[12:35] actually
+[12:37] uh take a look at this. So UV run
+[12:39] examples agent tool
+[12:43] approval
+[12:45] py.
+[12:51] So let's see.
+[12:54] So here and our uh agent here is just an
+[12:57] expense agent and just has access to
+[12:59] those tool two tools. So remember this
+[13:01] one it doesn't need approval and this
+[13:03] one it does.
+[13:07] All right. So the user asked it to look
+[13:08] up the receipts and then submit an
+[13:10] expense report for both of them.
+[13:13] And we got approver requested submit
+[13:15] expense report. Here's the description.
+[13:17] So these are all the arguments that are
+[13:19] getting sent to the function.
+[13:22] And we can say yes.
+[13:25] And now we see that I approved it.
+[13:30] And now the agent's going to process the
+[13:32] fact that it was approved.
+[13:35] And it says, "Okay, uh, done. I
+[13:38] submitted a report for both of them." U,
+[13:40] it also looked up the receipts. We
+[13:42] didn't get an approval for that because
+[13:43] it didn't need one. It just did it
+[13:44] behind the scenes. Now, we could also
+[13:47] try seeing what happens if we do not
+[13:50] approve it, right? What will the agent
+[13:52] decide to do in that case? I actually
+[13:55] don't know. I've never tested that. I
+[13:58] mean, I think the agent will be like,
+[13:59] "Oh, okay. Sorry, we can't we can't do
+[14:01] that." Right? Rejected.
+[14:05] So, now the agent has to decide what to
+[14:07] do um when its tool gets rejected. Okay.
+[14:10] And in this case, it's just this is kind
+[14:13] of interesting. This is something you
+[14:14] need to think about uh in terms of when
+[14:16] you're developing your agents like if
+[14:18] the if the user rejects it should the a
+[14:22] you know should the agent keep asking
+[14:23] which is what it's doing in this case or
+[14:26] you know maybe you put in the system
+[14:27] prompt like okay if the user rejects it
+[14:29] then you say sorry I can't help you
+[14:30] today right uh because this experience
+[14:33] probably isn't as good so that is
+[14:34] something definitely to think about once
+[14:36] you're you know you're having this human
+[14:38] loop is what should be the um experience
+[14:42] uh and how should the agent handle if
+[14:45] the user rejects that? Right? Uh with
+[14:48] GitHub copilot, I do often actually
+[14:49] reject things it does and then the
+[14:51] co-pilot will be like, "Oh, okay. Well,
+[14:52] we're not allowed to do that. I'll come
+[14:54] up with a different way." Right? In this
+[14:55] case, this agent has so few tools. It
+[14:58] doesn't have any alternative way to
+[15:00] submit the expense report. So, it's just
+[15:02] kind of struggling and it just keeps
+[15:04] asking if it can do it. uh which is you
+[15:06] know good on it for being persistent but
+[15:07] probably we should put in the system
+[15:09] prompt uh you know that if the if they
+[15:12] reject you just you just um say okay
+[15:15] sorry I can't help you today. Uh you
+[15:17] could also add some sort of middleware
+[15:18] to detect how many times a particular
+[15:20] tool call has been attempted and
+[15:22] rejected. All right so there we go that
+[15:25] is our um tool call approval for agents.
+[15:32] So this is just on the agent level
+[15:35] itself.
+[15:39] Now we're going to look at workflows.
+[15:41] Workflows are you know what we build
+[15:43] around agents and other uh executives.
+[15:46] And workflows have their own way of
+[15:49] doing human in the loop.
+[15:52] So uh let's look at this diagram here to
+[15:55] see how it works. We've got application
+[15:58] code which is like our actual you know
+[16:00] um outer Python code that's that's
+[16:03] setting up the workflow. Then we have
+[16:05] the actual workflow exeutor code like
+[16:07] the code that's inside that executive
+[16:09] class. And then we have the human. So we
+[16:12] start off with running our workflow and
+[16:15] sending a message to it. And then the
+[16:18] executive looks at that message and it
+[16:20] may decide that it needs information
+[16:21] from a human in order to proceed. So it
+[16:23] set it tells the context. So every
+[16:25] executive receives a workflow context.
+[16:28] It tells the context, hey, I need to
+[16:29] request information and says which
+[16:32] information it needs. So our application
+[16:35] code is uh handling events for the
+[16:38] workflow and sees that there's been
+[16:40] event of this type. Uh so we need to
+[16:43] actually have explicit code that is
+[16:45] looking for this request info event type
+[16:48] so that then we can handle it. Uh so in
+[16:51] that case you know we get that event the
+[16:53] workflow is now effectively paused and
+[16:56] we then prompt the user in some way
+[16:58] right so we say hey user we need some
+[17:01] information that goes to the human human
+[17:03] gives input goes back to our application
+[17:05] code and then we add that information to
+[17:09] the responses to our list of messages
+[17:12] and send that back to the workflow and
+[17:14] say okay workflow you can resume now
+[17:16] here is the information that you wanted.
+[17:19] So then the workflow response handler
+[17:23] receives those new responses and the
+[17:26] workflow can resume. So that is the
+[17:28] general general flow. Uh so the changes
+[17:32] it requires is that our workflow
+[17:34] executive needs to request info at some
+[17:36] point and our application code needs to
+[17:39] be looking for that request info event.
+[17:44] So, we're going to look at a simple chat
+[17:47] with human in the loop workflow. Um, and
+[17:51] in this workflow, we're going to have a
+[17:52] chat coordinator executive and we're
+[17:54] going to have a chat agent which has an
+[17:55] LLM.
+[17:57] And, uh, the chat coordinator is going
+[18:00] to decide when it needs to request
+[18:03] information from the human. Basically,
+[18:04] it's going to keep requesting
+[18:05] information from the human until the
+[18:07] human says done. If the human says done,
+[18:10] then you know, then it'll conclude the
+[18:12] workflow. But if the human says anything
+[18:14] else, then it's going to um keep going.
+[18:18] So let's actually look at the code
+[18:19] because I think that'll be clear. Uh so
+[18:21] this is
+[18:24] workflow
+[18:26] requests. py.
+[18:29] All right. So let's
+[18:31] look at how we set this up. So, we've
+[18:34] got a, you know, this agent here that is
+[18:39] just a really generic um, you know, LLM
+[18:42] assistant agent. Then we have this
+[18:44] coordinator
+[18:46] and the coordinator knows about the
+[18:49] agent and then we set up a workflow that
+[18:52] has that starts on the coordinator and
+[18:54] the coordinator goes to the agent and
+[18:55] the agent can come back to the
+[18:57] coordinator
+[18:58] and the user can just ask a generic
+[19:00] question like what are fun things to do
+[19:02] in Seattle?
+[19:05] So then we send that message to the
+[19:07] workflow
+[19:09] and then we have this loop here that is
+[19:11] processing all the events that come back
+[19:14] in the stream. So we're streaming back
+[19:16] the events so that we can process those
+[19:18] events so that if we see a request info
+[19:21] event then we say oh there's this you
+[19:23] know there's this pending request here
+[19:25] and then we go through all the pending
+[19:27] requests and say hey the agent you know
+[19:28] the agent has a question for you and we
+[19:31] get back in from the user. So the user
+[19:34] can type anything there or type done.
+[19:37] And then we run the workflow with these
+[19:41] responses here.
+[19:44] And basically this response these
+[19:46] responses is a dictionary that maps
+[19:51] request ids to replies. All right. So
+[19:54] you imagine the workflow has a bunch of
+[19:57] pending, you know, it has potentially
+[19:58] multiple pending requests and on the
+[20:01] event, you know, there's this request ID
+[20:03] here
+[20:05] and we add our reply to that uh to for
+[20:10] that request ID. So the workflow can
+[20:11] see, oh, okay, I had that request and
+[20:14] that request got a reply, right? We need
+[20:17] it needs to see that it had that request
+[20:19] and that it got a reply. So now let's
+[20:22] look at the actual uh workflow code here
+[20:25] right so uh you know in the chat
+[20:28] coordinator um when it first gets just a
+[20:31] standard u message from the user it
+[20:35] tells you know it just sends out to the
+[20:37] chat agent and says hey respond
+[20:40] uh and then when it gets a response from
+[20:42] the chat agent
+[20:44] then it actually um requests information
+[20:48] right it says oh okay uh let's ask the
+[20:51] user for its response. So it's just
+[20:53] coordinating this back and forth between
+[20:55] the LM and the user.
+[20:58] And then when we get a human reply, so
+[21:01] this is taking a different type here. So
+[21:03] this is a reply coming from the human,
+[21:06] we check to see, hey, are they just
+[21:08] saying done? In which case, we're going
+[21:10] to finish this workflow. Otherwise,
+[21:13] we're going to send uh you know, send on
+[21:16] the user's message to the chat agent.
+[21:23] So, even I said it was a simple chat
+[21:25] workflow, but even that is, you know,
+[21:27] there's a fair amount of complexity in
+[21:29] there and seeing how we uh set up the
+[21:32] coordination.
+[21:34] All right, so let's just run this so we
+[21:35] can see.
+[21:40] And one thing I should note is that this
+[21:42] there are two different decor uh two
+[21:44] different decorations here. So we have
+[21:46] the handler one and the handler
+[21:48] decoration is um what we uh decorator
+[21:53] sorry the handler decorator is the one
+[21:55] we add just for generically receiving um
+[21:59] receiving messages from other
+[22:01] executives. So you know there's two uh
+[22:04] these two executives in this workflow
+[22:06] and uh whenever and you know this
+[22:10] executive receives something it's going
+[22:12] to check to see which of the handlers
+[22:15] should receive it. Right? So this
+[22:17] handler can process uh any any message
+[22:20] that's just a string whereas this
+[22:22] handler processes uh messages that
+[22:26] actually come from from the chat agent.
+[22:30] Uh so you can see like basically it's
+[22:31] gonna like the input is going to prompt
+[22:33] that first handler and then the return
+[22:36] from the agent is going to prompt that
+[22:38] second handler. And now this one is
+[22:40] using the response handler decorator. So
+[22:42] that one is specifically for handling
+[22:45] responses from humans. So we're only
+[22:48] adding this one because we are doing
+[22:50] human in the loop.
+[22:53] All right. So here we say okay we start
+[22:55] the chat. What are fun things to do in
+[22:56] Seattle? The agent says to visit some
+[22:58] places. is I say I want to dance.
+[23:02] Okay. And so then that um you know so in
+[23:06] this case it's going through this code
+[23:08] here where it gets um it's getting a
+[23:11] response from the user and says oh okay
+[23:13] the user did not say done. So I'm going
+[23:16] to send a send this messenger send a
+[23:19] message with the user's response to the
+[23:21] chat agent. The agent says heck yes go
+[23:23] dancing. Okay great. If I want to dance
+[23:27] right now.
+[23:29] Okay, right now I'm gonna turn the place
+[23:30] into a mini club. Let's go. Uh, okay.
+[23:34] Not right now. That'd be awkward.
+[23:38] Uh, so every time it's going to every
+[23:41] time I send a a response here, right?
+[23:44] So, you know, I'm every time I respond
+[23:47] here, it's adding my response to this
+[23:50] dictionary of responses to request IDs
+[23:53] and sending those back to the workflow.
+[23:56] And then the executive, this executive
+[23:59] is receiving it here and deciding uh
+[24:02] what it's going to do.
+[24:05] All right. And now I'm just going to say
+[24:06] done. So done then goes and triggers
+[24:09] this which says okay yielding output and
+[24:13] uh not sending any messages and that
+[24:15] means the workflow is just done right um
+[24:18] if we yield output and don't send a
+[24:19] message then there's nothing more to be
+[24:21] done in this workflow and there
+[24:23] conversation ended
+[24:27] okay so so there we go that is adding a
+[24:30] human work to a workflow so the key
+[24:33] things here once again is that we need
+[24:35] to intercept that request info event.
+[24:38] And when we intercept that, we need to
+[24:40] build a dictionary of request IDs to
+[24:43] responses that we can then uh that we
+[24:47] can then send back to the workflow. And
+[24:51] then in our workflow exeutor itself, we
+[24:53] need to have a you know something that
+[24:56] will request information when we want
+[24:58] information only when we want it. In
+[25:00] this case, we wanted it a lot. Um, and
+[25:03] then something that will be a response
+[25:05] handler that processes the replies from
+[25:08] the humans.
+[25:12] Okay,
+[25:14] so that worked. Now, of course, the
+[25:17] thing I didn't like about that is that
+[25:20] we were relying on just uh this free
+[25:23] text uh just the string done to decide,
+[25:26] you know, the flow of the conversation.
+[25:29] And if you've been watching um you know
+[25:32] this this series, you know that I love
+[25:35] structured outputs. So let's look at how
+[25:39] we could add structured outputs into a
+[25:42] workflow so that we can be a little more
+[25:45] structured about when we decide we need
+[25:48] more information from the user. Uh so as
+[25:52] a reminder, structured outputs is
+[25:53] basically a way of getting the LM to
+[25:55] produce JSON that conforms to a
+[25:57] particular schema. And it's really
+[25:59] helpful for workflows whenever there's a
+[26:01] decision point because then you can be
+[26:03] much more confident uh that the you're
+[26:06] making the right decision uh based off
+[26:08] the LLM's analysis. So for this workflow
+[26:12] uh we're doing this trip planning agent
+[26:15] and it's similar in that we do have the
+[26:17] trip coordinator that is coordinating
+[26:19] with this agent that has an LLM and this
+[26:22] LLM is using structured outputs. So when
+[26:25] this LM responds, it is always going to
+[26:28] respond with a structured output and in
+[26:32] that structured output, it's going to
+[26:34] say whether it needs more information
+[26:36] from the human or whether it's got a
+[26:40] complete trip plan. Right? So if it has
+[26:41] a complete trip plan, we can just output
+[26:43] it and say here's your trip plan. Uh but
+[26:45] if it needs more information from the
+[26:46] human before it can develop that plan,
+[26:49] then that's when we're going to request
+[26:51] information from the human.
+[26:54] So let's go ahead and look at this code.
+[26:58] This is workflow
+[27:00] hitl request structure py. All right. So
+[27:07] uh what we can see here is that we've
+[27:08] got an agent which is the trip planner
+[27:10] agent and this one has uses this planner
+[27:13] output in order to whenever it's you
+[27:17] know whenever it's responding it's going
+[27:19] to use planner output. Uh so let's look
+[27:21] at planner output that will give a
+[27:23] status of need info or complete. Uh and
+[27:27] so this is how we're going to know
+[27:28] whether we need more information from
+[27:29] the human. And then it has optional
+[27:32] question or itinerary. So basically if
+[27:34] it needs more info it's going to ask a
+[27:36] question and stuff it in here. And if
+[27:38] it's complete it's not going to have a
+[27:40] question and it's going to stuff the
+[27:41] itinerary in this itinerary field.
+[27:46] So that's our trip planner agent. Then
+[27:49] we have our coordinator and that's the
+[27:51] one that's has all the the code for
+[27:53] managing um the information requesting
+[27:56] and then we set up the same uh workflow
+[28:00] uh topology as before.
+[28:03] So now let's look at that coordinator
+[28:05] code.
+[28:07] So the coordinator code similarly you
+[28:09] know we've got the start handler and
+[28:11] that takes in the string and when you
+[28:13] know at the start it's just going to
+[28:15] directly send that to the trip planner.
+[28:16] It's like, okay, this is what the user
+[28:18] wants. Start figuring this out. Right?
+[28:20] Then whenever it gets a response from
+[28:22] the trip planner, it's going to turn
+[28:25] that response into uh, you know, this
+[28:27] Python object and it's going to check to
+[28:30] see, okay, is the status need info
+[28:33] uh, and it has a question. In that case,
+[28:35] it's going to request information.
+[28:38] If not, that means the trip is complete
+[28:40] and it can just yield that output.
+[28:45] And then we have this handler here that
+[28:47] handles human answer. So this is that at
+[28:49] response handler.
+[28:52] And whenever it gets a response from the
+[28:54] human, it just forwards it to the trip
+[28:56] planner agent.
+[28:59] And then the while loop down here is
+[29:01] very very similar.
+[29:05] It's basically just only the emojis are
+[29:07] different really. All right. So let's
+[29:09] try this out. workflow
+[29:11] uh hit requests structured.
+[29:18] All right,
+[29:21] let's see.
+[29:23] So, we started it with I want to go
+[29:24] somewhere warm next month.
+[29:28] So, that gets sent to that agent and the
+[29:31] agent asked me a question, right? So
+[29:33] that mean since it asked a question that
+[29:35] means that the agent came back with a
+[29:37] status of need info and this question
+[29:40] right. So that's why I'm seeing this
+[29:43] this question here. So be like uh so I
+[29:46] just say Costa Rica
+[29:49] always always Costa Rica. Uh all right.
+[29:52] It says what are my exact travel dates?
+[29:54] Okay. Uh March 20th to 26.
+[29:58] Uh and well there we go. That should be
+[30:02] enough information about the travel
+[30:04] dates.
+[30:05] And what's my budget? The other day I
+[30:08] did three million. Okay, we'll do three
+[30:10] million again just because it's fun. Um,
+[30:13] you should always mess with LMS when
+[30:14] you're working with them because then
+[30:15] you'll get to like really see how they
+[30:17] respond. Uh, what do I mean? Uh, CRC
+[30:23] just for me, baby. All right.
+[30:30] And I think it's going to have one more
+[30:32] request because basically uh you know we
+[30:34] told it what information it needs. It
+[30:37] needs all this information. And so it's
+[30:38] going through and asking all this. So
+[30:40] find what activities volcanoes
+[30:45] they they have this nice volcano that's
+[30:46] erupting all the time in Costa Rica
+[30:48] constantly. Okay. So uh so it you know
+[30:52] as you can see it was continuously
+[30:53] coming back with need info because in
+[30:55] the system prompt I told it like listen
+[30:57] you need to find out their destination
+[30:58] their dates their activities and their
+[31:01] budget. I told it that it needs to find
+[31:03] out those four things. So it's it's
+[31:04] really helpful in the system prompt to
+[31:06] be very clear uh to the agent like this
+[31:09] is the information you need to find out
+[31:11] before you can proceed, right? Because
+[31:13] if you don't it'll either ask for too
+[31:15] much or too little. So you want to be
+[31:17] really really clear.
+[31:20] All right. So then finally it came back
+[31:22] which means that it uh and we see the
+[31:24] itinerary. So that means that finally it
+[31:27] said output status is complete and it
+[31:30] made an itinerary and that is what we
+[31:33] outputed here.
+[31:37] Yeah. And great going to AR now. All
+[31:40] right.
+[31:42] Leaves plenty of headroom within my
+[31:44] budget for upgrades.
+[31:48] Yeah. 3 million's a lot, I guess. Okay.
+[31:51] All right. So, so there we go. So, I
+[31:53] think that's I think that's a nice uh
+[31:56] approach to to being able to decide when
+[32:00] it is that you, you know, when it is
+[32:02] that you're going to ask the human for
+[32:04] more information is to, you know, use
+[32:07] those structured outputs.
+[32:10] Now, it does mean you need to use an LM
+[32:12] that supports structured outputs. Um,
+[32:14] but as you know, we've talked about,
+[32:16] most of the Frontier LLMs do have uh
+[32:19] built-in support for structured outputs
+[32:21] as part of their training process.
+[32:27] Okay, so there we go. So, we've seen how
+[32:30] to bring humans in the loop for agent
+[32:32] tool approval. We've seen how to bring
+[32:35] humans in the loop for workflows. Now,
+[32:38] we're going to look at how we can do
+[32:41] checkpoints and resuming. And this is
+[32:43] particularly helpful when humans are
+[32:45] involved because humans are not always
+[32:47] available. So we may need to pause a
+[32:49] workflow and wait for the human to be
+[32:51] available. And we need some way of
+[32:53] resuming these paused workflows.
+[32:58] So yeah, why do we need checkpoints?
+[33:01] Right? If we don't have a checkpoint,
+[33:03] the workflow is going to pause and ask
+[33:05] for human input. The human may not be
+[33:07] there. They might be gone. They might be
+[33:08] in Costa Rica. Who knows?
+[33:10] uh and then you know what is the process
+[33:12] going to do? It's probably going to just
+[33:15] uh crash at some point or quit and that
+[33:17] means all the progress is lost. So once
+[33:21] we add checkpoints the workflow can
+[33:23] pause for human input if the human you
+[33:25] know the human may be offline can save
+[33:27] the checkpoint to disk or database
+[33:29] wherever uh the process can safely exit
+[33:32] because all the information has been
+[33:33] saved and then hours later when they're
+[33:36] back from their volcano trip they can
+[33:38] restart the process load the checkpoint
+[33:42] uh let the human provide input and then
+[33:44] the workflow can resume.
+[33:48] So this is what a workflow life cycle
+[33:50] looks like once we have checkpoints,
+[33:52] right? So we've got our original
+[33:54] process, we run the workflow, the
+[33:56] workflow requests information and the
+[33:58] human's not there. We save that
+[34:00] checkpoint and the process can safely
+[34:02] exploit uh exit and that checkpoint gets
+[34:05] saved somewhere uh you know in a often
+[34:08] in a database and that checkpoint
+[34:11] includes everything that's needed to
+[34:14] resume that workflow. So basically
+[34:16] everything about that workflow. So we've
+[34:17] got the states of the executives, we've
+[34:19] got the shared state of the workflow
+[34:20] itself, we have any pending requests and
+[34:23] we have the full messages in the
+[34:25] workflow, right? So then we can tell the
+[34:27] workflow to rerun from that checkpoint
+[34:30] uh using its particular checkpoint
+[34:32] storage and it'll find that checkpoint
+[34:34] ID and restore the checkpoint and if
+[34:38] there are any pending requests, it will
+[34:40] remit that request. And so that's really
+[34:42] important because remember we always
+[34:43] have that event loop that's checking for
+[34:46] request info events. So when it restores
+[34:49] that checkpoints if it sees any of those
+[34:51] pending events it will remit them. So
+[34:54] that way we can catch them and say oh
+[34:56] human we need you right now.
+[35:01] So how do we set up checkpoint storage?
+[35:03] Uh the agent framework does provide two
+[35:06] built-in storage mechanisms. uh one of
+[35:08] them is just an in-memory checkpoint
+[35:10] storage and uh the other one is a file
+[35:13] checkpoint storage.
+[35:15] Uh we will see how to you know actually
+[35:17] use the database as well. Uh since these
+[35:20] ones are don't feel very production
+[35:23] ready.
+[35:24] Depends on your use case though. Uh so
+[35:26] in our example we're going to try out
+[35:28] the file checkpoint storage. So we just
+[35:30] give it a path to a directory and then
+[35:32] when we set up the workflow we specify
+[35:35] that this is the checkpoint storage
+[35:37] we're using. So we associate our
+[35:40] workflow with a particular checkpoint
+[35:42] storage.
+[35:45] Uh and then when we're actually running
+[35:48] the workflow before we run it we check
+[35:50] to see if there's any uh checkpoint ID
+[35:52] associated uh that we should be using.
+[35:55] So if we find that there's a checkpoint
+[35:56] ID, then we're going to rerun from that
+[35:59] checkpoint ID. Now, normally you'd be
+[36:01] like associating this with a user,
+[36:02] right? Like the user's logged in, you
+[36:04] check to see like, oh, is there any like
+[36:06] checkpoint ID for that user? In this
+[36:08] case, we don't have users, so we're just
+[36:09] going to, you know, kind of check
+[36:10] globally if there's a checkpoint ID. But
+[36:13] in, you know, in production, you would
+[36:14] probably be associating this with a
+[36:16] user, a session, you know, some sort of
+[36:18] um way of figuring out that there's uh
+[36:21] the the current person uh has a
+[36:24] checkpoint
+[36:26] uh and then uh you know, and then we
+[36:28] have our normal event processing uh that
+[36:30] can process the workflow.
+[36:34] Okay, so let's go ahead and check this
+[36:36] out. It workflow hitl checkpoint. py.
+[36:41] I'm also going to make sure my
+[36:42] checkpoint directory is deleted. It is.
+[36:46] Okay, great. Okay. All right. So,
+[36:51] uh, let's see. So, we we're setting up
+[36:54] this file checkpoint storage just with a
+[36:56] local directory.
+[36:58] And we set our checkpoint storage here.
+[37:03] And here's the code where we check to
+[37:05] see. Um, so here I'm just looking at all
+[37:07] of the checkpoints in this in this one.
+[37:09] So, I just looked at all the checkpoints
+[37:11] and I just grabbed the latest one,
+[37:13] right? So, I was saying like in
+[37:15] production, you'd probably be
+[37:16] associating checkpoints with a user. Um,
+[37:19] but in this case, uh, you know, I'm just
+[37:21] kind of doing it globally and just
+[37:23] saying, all right, just if there's a
+[37:24] latest checkpoint, we're going to resume
+[37:26] from that. And if not, then we just run
+[37:29] from the beginning.
+[37:32] Okay. So, let's actually
+[37:34] try this out.
+[37:41] So uv run examples workflow
+[37:45] hitl checkpoint py.
+[37:52] So right now it is listing checkpoints.
+[37:54] It did not find any at all. So, it
+[37:57] started the workflow here from scratch
+[38:00] and says, "Okay, we're starting it with
+[38:02] this brief
+[38:04] and here is a draft. Uh, please approve
+[38:09] it." Now, at this point, I'm going to
+[38:11] exit the process. So, I'm just going to
+[38:13] control C to simulate exiting the
+[38:16] process. Uh, and then I'm going to show
+[38:18] you my directory.
+[38:22] You can see there is now a checkpoints
+[38:24] directory. And you can see there's
+[38:25] actually three checkpoints. So the
+[38:27] checkpointing happens at multiple steps
+[38:29] in the workflow. So in this case there
+[38:31] are actually three checkpoints. Uh and
+[38:33] you can even see what's in the
+[38:34] checkpoints. This is all in this case
+[38:36] it's just stored as uh in the file. So
+[38:38] you can see it. Uh there's some pickling
+[38:40] here as well for the Python objects. Uh
+[38:43] but you can see you know you can look at
+[38:45] these and see also um you know this this
+[38:48] was the zero iteration. Uh this was two.
+[38:52] So this one looks like it's the most
+[38:53] recent one. And you can also check
+[38:55] timestamps here. So you can see its
+[38:57] checkpoint ID, its previous checkpoint
+[38:59] ID. Uh you can see if there's any state
+[39:02] uh executive state, the full
+[39:03] conversation, the pickled message
+[39:05] objects. Those are Python objects that
+[39:08] have been pickled, which is a way of
+[39:10] turning Python object into strings.
+[39:13] And all of this will get restored when
+[39:16] we resume the checkpoint.
+[39:20] And then important thing here is that
+[39:22] you can see pending request info events
+[39:25] right so here you can see aha there is
+[39:27] an event that when this workflow is
+[39:30] resumed this event should be emitted
+[39:33] right uh so that's a really crucial part
+[39:35] of the checkpoint
+[39:38] okay so now now when we rerun it what it
+[39:43] should do is list those checkpoints
+[39:47] find the one that has most recent time
+[39:49] stamp based off that time stamp field we
+[39:51] just looked at
+[39:53] and then restart the checkpoint from
+[39:57] that workflow. So here you can see found
+[40:00] three checkpoints resuming from latest
+[40:02] and we don't see you know that initial
+[40:04] prompt anymore. We just see this event
+[40:06] human approval needed review the draft.
+[40:10] Uh and now I can say approve and now it
+[40:13] says workflow completed. And so if I run
+[40:15] it one more time, it's going to see even
+[40:18] more checkpoints, right? Uh so let's
+[40:21] see. Found six point check six
+[40:23] checkpoints. Resuming from latest and
+[40:25] then there's nothing to do because this
+[40:26] workflow is complete. So resumeuming
+[40:28] just means boom, the workflow is done.
+[40:32] So So there we go. So that's the idea of
+[40:35] of checkpoint storage. The workflow is
+[40:37] going to store multiple checkpoints
+[40:39] along the way. Uh not not just when you
+[40:41] request information. It's just uh
+[40:43] basically after each step in the
+[40:45] workflow, it's going to store a
+[40:46] checkpoint and then you need to decide
+[40:48] how you're going to find which
+[40:50] checkpoint ID you want to start off
+[40:53] from. Um but as long as you you know
+[40:55] associate that checkpoint storage and
+[40:57] have a way of deciding on the checkpoint
+[40:59] ID, then you can resume from that
+[41:01] checkpoint.
+[41:06] Now you probably if you're you know
+[41:09] designing workflows that are going to be
+[41:10] running on servers um especially for
+[41:12] like userf facing applications you may
+[41:15] want to implement your own checkpoint
+[41:17] storage that stores in a database.
+[41:21] Uh so how do we do that? We can
+[41:23] implement a storage class that
+[41:25] implements the checkpoint storage
+[41:27] protocol. So this class has to define
+[41:29] how to save a checkpoint, how to load a
+[41:31] checkpoint, how to delete a checkpoint,
+[41:33] list checkpoints, and get the latest
+[41:35] checkpoint.
+[41:37] Oh, I should probably have just that
+[41:38] would have been easier to use. Okay,
+[41:41] probably I could replace my code with
+[41:42] get latest. I forgot that that was an
+[41:45] option.
+[41:47] Uh now there is the built-in back end
+[41:48] you know the built-in stoages for file
+[41:51] and in memory but basically you can
+[41:53] write checkpoint stoages on your
+[41:55] favorite database of choice.
+[41:59] So for this for today I'm going to show
+[42:02] how to make one for u for postgress. So
+[42:05] we're going to make a table where we
+[42:07] store the checkpoint ids uh the workflow
+[42:10] name the timestamp and then the actual
+[42:13] checkpoint data
+[42:15] and uh you know when when coming up with
+[42:17] this checkpoint storage we do have to
+[42:19] make some decisions right how are we
+[42:21] going to scope that checkpoints is it
+[42:23] you know is it a global workflow that's
+[42:26] you know just um you know running the
+[42:28] same for everyone or are these workflows
+[42:30] that should be scoped to a particular
+[42:32] user or session uh how long do you want
+[42:34] to keep the checkpoints around like do
+[42:35] you want to keep them around forever? Do
+[42:37] you want to prune at some point? How
+[42:39] large are the checkpoints? Are they
+[42:40] going to fit in your database storage
+[42:43] like what kind of type should you use
+[42:44] for them? Right? Um yeah like even with
+[42:47] Postgress I was deciding between the
+[42:49] binary type and the JSON JSON type. So
+[42:52] you have to decide you know how how you
+[42:54] can properly store them and then who can
+[42:57] access checkpoints right like if they're
+[42:59] user scoped how are you going to make
+[43:01] sure that nobody is able to resume from
+[43:03] somebody else's checkpoint. So those are
+[43:04] all things to think about when you're
+[43:06] doing these checkpoints in production.
+[43:09] So in order to do checkpoint storage
+[43:12] with Postgress, um we do need to set up
+[43:15] a table and then when we save a
+[43:17] checkpoint, we're going to save that
+[43:19] checkpoint into the table with its ID,
+[43:22] its workflow name, its time stamp and
+[43:24] the data. And then when we load it,
+[43:25] we're going to do a select to pull it
+[43:27] back out. So let's go and actually check
+[43:30] out the Postgress code.
+[43:34] So workflow uh hitl checkpoint pg
+[43:39] and let's go and look here at our
+[43:42] postgress code. Um so when we construct
+[43:46] it we make sure that we have a table
+[43:48] that has these columns. Uh so you know
+[43:52] this is this is everything we need in
+[43:54] order to implement all the required
+[43:55] functions
+[43:57] and we also create an index on there so
+[44:00] that we can get by get by time stamp so
+[44:02] we can get latest. Then when we save we
+[44:06] are pickling. Now you do have to be
+[44:08] careful about pickling in general
+[44:09] because pickling has some security
+[44:10] issues but in this case we're pickling
+[44:12] data that um is under our control so
+[44:15] that should be okay.
+[44:18] Wonder what is this? No QA. Okay.
+[44:22] Um, but you do, yeah, generally you do
+[44:23] want to be careful about pickling. Um,
+[44:25] but in this case, pickling is fine to
+[44:28] do. Then we connect to the database and
+[44:31] insert the checkpoint into the database
+[44:34] and we return the ID of the inserted
+[44:36] checkpoint. Then when we load, we're
+[44:39] going to get that checkpoint from the
+[44:41] database and we are going to unpickle
+[44:44] it.
+[44:46] Then we can list checkpoints for a
+[44:48] particular workflow. We can delete a
+[44:50] checkpoint and we can get the latest by
+[44:53] um ordering by time stamp.
+[44:57] So that's basically our checkpoint
+[44:59] storage. And then uh you know the rest
+[45:01] of the code is similar. Um we do have to
+[45:05] have this code here. I didn't show this
+[45:06] before but whenever you're doing
+[45:07] checkpointing you need to make sure that
+[45:10] you are saving the executive state. to
+[45:13] actually implement this onch checkpoint
+[45:14] state on checkpoint restore method that
+[45:18] says how this executive state should get
+[45:21] serialized and how it should get uh you
+[45:24] know restored.
+[45:27] Okay. Uh then we create our checkpoint
+[45:29] storage. We pass that in to our workflow
+[45:32] builder
+[45:34] and uh then I really should use the get.
+[45:39] So I did list, you know, list
+[45:41] checkpoints here. But in fact, we could
+[45:43] just do await storage.get
+[45:46] latest.
+[45:50] Let's try that. Uh if
+[45:54] that should return back a single Okay.
+[45:56] All right. There we go. That looks
+[45:58] nicer. Let's try this out.
+[46:02] So we're going to run this example here.
+[46:08] Okay.
+[46:11] So if it has a checkpoint, it's going to
+[46:13] resume it. If not, it's going to start
+[46:15] the workflow with the brief. So here we
+[46:18] can see it has started from scratch
+[46:23] and it's going to ask us for some for
+[46:26] some input.
+[46:29] And once again, I'm going to control C
+[46:30] out of here. And then I'm gonna open up
+[46:33] my Postgress database and show you that
+[46:35] I now have a table called workflow
+[46:39] checkpoints. Uh here I'm using the VS
+[46:42] code Postgress extension which is really
+[46:43] really nice. Highly recommend it. Uh so
+[46:46] now I can inspect this table and um see
+[46:50] what's in it. And you can see there are
+[46:51] three checkpoints and the data is
+[46:54] entirely pickled. So it just looks like
+[46:56] a binary blob. Uh but this is similar to
+[46:59] what we saw before stole locally but now
+[47:01] it is in our database right so there's
+[47:03] three checkpoints so now I'm going to
+[47:05] rerun this workflow again
+[47:11] and it says okay found a checkpoint in
+[47:14] Postgress resuming from latest human
+[47:16] approval needed let's approve it great
+[47:19] workflow completed if I rerun and look
+[47:22] at the checkpoints we can now see six
+[47:24] checkpoints so it's really the same
+[47:26] thing except Now we are storing our
+[47:28] checkpoints in Postgress instead of
+[47:32] storing them in a local file system.
+[47:35] Uh so hopefully you can get an idea for
+[47:36] how you could make your own checkpoint
+[47:38] storage with your favorite database.
+[47:42] Okay. So now we're going to look at how
+[47:47] to use the built-in handoff workflows
+[47:51] with human in the loop. So we talked
+[47:53] about handoff yesterday and we didn't
+[47:56] have humans in loop then and we actually
+[47:58] saw that handoff was a bit funky without
+[48:00] humans. Uh so handoff is really designed
+[48:03] to work well with human in the loop. So
+[48:05] that's what we're going to see now. Um
+[48:07] so as a recap of what we talked about
+[48:09] yesterday, handoff is a built-in
+[48:11] workflow where any agent can hand off to
+[48:14] any other agent. Uh none of the edges
+[48:17] are defined up front u by default. you
+[48:19] know, the routing is just determined
+[48:21] based off of the current conversation
+[48:23] state.
+[48:25] Now, handoff works the best when you
+[48:28] have a a user there because an agent can
+[48:31] decide to request user input if it's not
+[48:34] sure what to do next or if it doesn't
+[48:36] have enough information. Uh so when an
+[48:38] agent doesn't hand off, it might instead
+[48:40] request user input. the workflow will
+[48:43] emit a special event, the handoff user
+[48:46] request event, and the application can
+[48:48] handle that event and present it to the
+[48:51] user so that it can then pass back the
+[48:53] information for the workflow to resume.
+[48:57] So in order to set up handoff builder
+[49:00] for interactivity, you actually just set
+[49:02] it up the normal way and you just make
+[49:05] sure you do not set with autonomous
+[49:07] mode. So yesterday we set this with
+[49:09] automous mode because we didn't have
+[49:12] humans in the loop. Um but today we're
+[49:13] just going to set it up and by default
+[49:16] it will be able to request input from
+[49:19] the user.
+[49:22] And so the important thing is that when
+[49:24] we are looking at events we need to
+[49:26] check we need to check and see hey is
+[49:28] this an event? Is this a user request
+[49:30] event? If so, let's get information from
+[49:33] the user and then um you know send it
+[49:36] back to the workflow uh in the
+[49:39] responses. So this is similar to how we
+[49:42] were handling uh human in the loop for
+[49:44] just generic workflows here. It's just a
+[49:47] slightly different because handoff is
+[49:50] has its own special uh event class that
+[49:52] it's emitting and um and it's even got a
+[49:56] special built-in method for creating a
+[49:58] response in the format that it likes. Um
+[50:00] but generally it's the same idea is that
+[50:02] we're going to build up a dictionary
+[50:03] that maps request IDs to responses and
+[50:07] then rerun the workflow with those
+[50:09] responses.
+[50:11] All right, so let's just actually try it
+[50:13] out here.
+[50:18] Okay, workflow
+[50:20] handoff.
+[50:25] So here we are we have this customer
+[50:28] support handoff. It has a triage agent,
+[50:30] order agent, return agent. Um it does
+[50:32] start with a triage agent but once it
+[50:34] starts off all the agents can hand off
+[50:37] to each other. And then in our event
+[50:40] processing, this is what's changed is
+[50:41] now we're looking for um we're looking
+[50:44] for particular kinds of events. Uh so
+[50:48] we're looking for
+[50:50] um uh this one request info
+[50:56] and that will add that event and then we
+[50:58] can look through that and and get the
+[51:00] actual user request and then send that
+[51:04] to the user.
+[51:07] So, let's go ahead and run this and see
+[51:10] what happens.
+[51:18] All right. So, we started it off with
+[51:20] the request. This is from me. Hi, I need
+[51:22] help with an order. So, it's going to
+[51:25] get passed to the triage agent first and
+[51:27] then the triage agent is going to decide
+[51:29] what to do. All right. So, can you tell
+[51:31] me your three-digit order number? Order
+[51:32] one, two, three. My order was damaged.
+[51:37] I want a refund. Okay.
+[51:42] So, now it has to decide where it's
+[51:44] going to hand off next.
+[51:49] And it's it's handed off to the return
+[51:52] agent. That sounds good. All right. It
+[51:55] says, "Okay, you'd like a refund.
+[51:57] Confirm by replying yes." Right. So
+[51:59] every time that I'm responding here,
+[52:01] it's it's this here where I'm, you know,
+[52:03] I'm giving my user input and uh here if
+[52:08] I decide to exit or quit, it will
+[52:09] actually terminate and and tell the
+[52:11] whole workflow to terminate. So you have
+[52:13] a way of getting out of the workflow if
+[52:16] you need that. Um but otherwise, if I
+[52:18] don't say exit or quit, then it's going
+[52:20] to say, okay, this is the reply. This is
+[52:24] the, you know, the response to this
+[52:26] request event, right? And then it reruns
+[52:29] the workflow with that dictionary
+[52:32] mapping request ids to responses.
+[52:35] All right. So I confirm by saying yes.
+[52:41] All right. And as you can see um it
+[52:44] decided to call a tool. Uh I didn't put
+[52:46] tool approval in here. That'd be fun to
+[52:48] add tool approval as well. But it, you
+[52:50] know, it asked for my approval, too. Now
+[52:52] return decided to send hand off back to
+[52:54] triage. Triage decided to hand back to
+[52:57] return. Return says, "Okay, it's done.
+[53:00] I'll hand you back to the team." Let's
+[53:02] see if it'll actually hand me back.
+[53:06] Um, return is going back to triage.
+[53:09] Okay.
+[53:11] It's really fun to see when they like go
+[53:12] back and forth because they can't
+[53:13] decide. All right. And hi, you're
+[53:15] welcome. Is there anything else I No, I
+[53:17] am good.
+[53:20] And let's see if it it'll terminate. Now
+[53:23] the workflow as a whole has a
+[53:25] termination condition as well where when
+[53:27] the you know anyone says goodbye it just
+[53:30] terminates. Uh so triage agent said
+[53:32] goodbye and the conversation is ended.
+[53:37] Uh so there you go. So you know handoff
+[53:40] works uh particularly well when users
+[53:43] are involved because oftentimes the
+[53:46] agents do need some additional
+[53:48] information or guidance to figure out
+[53:50] what to do next.
+[53:56] Now let's look at a endto-end
+[53:59] application that uses that handoff
+[54:01] workflow that I just showed and involves
+[54:04] a human in the loop. So this is a very
+[54:07] cool application from my colleague
+[54:10] Zavine who's in the chat or at least was
+[54:12] earlier and um you can you can actually
+[54:16] check out the code yourself and deploy
+[54:18] it deploy it yourself on on Azure if you
+[54:22] want. um it uses uh agent framework,
+[54:25] fast MCP and then on the Azure side it
+[54:27] uses open AI, document intelligence,
+[54:29] container apps and it's a it's a very
+[54:32] nicely done demonstration.
+[54:35] So in this application, this is a
+[54:39] banking assistant application. So I have
+[54:41] it open open here and it's like a like a
+[54:44] personal home baking assistant, right?
+[54:48] And it has various MCP servers and
+[54:51] agents, right? Uh so on the MCP server
+[54:54] side, those are built with fast MCP and
+[54:57] it has an account service that can get
+[54:59] accounts by username and get credit
+[55:01] cards. We've got a payment service to
+[55:02] submit bills. We've got a reporting
+[55:04] service, you know, to get transaction
+[55:06] information.
+[55:08] Then on the agent side, these are all
+[55:10] using agent framework. Uh we've got a
+[55:12] supervisor agent, account agent,
+[55:14] transaction agent, and payment agent.
+[55:15] And each of these have access to
+[55:17] different MCP servers, right? So account
+[55:19] agent only accesses uh the account
+[55:21] service. Transaction accesses accounts
+[55:25] and reporting and payment accesses all
+[55:28] of them plus an additional tool that
+[55:30] uses document intelligence to scan
+[55:32] invoices.
+[55:34] And then we have a a supervisor agent
+[55:36] which is basically the triage agent. In
+[55:37] this case, it's called supervisor, but
+[55:39] it is since we're doing handoff, this is
+[55:41] basically the same as the triage agent
+[55:43] that we were just showing. So it's going
+[55:44] to decide uh you know where to send
+[55:46] people to. So the code is similar to
+[55:49] what we've seen is that we have that you
+[55:50] know that triage agent and then it
+[55:52] passes off uh it it it's it's involved
+[55:55] in the same um you know it's it's got
+[55:57] these other participants the account
+[55:59] agent, transaction agent and payment
+[56:00] agent and it does also have checkpoint
+[56:02] storage too. So you can see how they've
+[56:04] implemented checkpoint storage. So let's
+[56:06] actually try this out. So on the website
+[56:09] I can pull up this chat. Uh, and this
+[56:12] chat is built also using OpenAI chat
+[56:15] kit, which is a cool way of easily
+[56:17] getting interactive chat UIs for your
+[56:19] applications. And agent framework has an
+[56:21] adapter that will um uh turn the uh
+[56:24] agent framework output into something
+[56:25] that works with chatkit.
+[56:28] All right. So, get my last 10
+[56:31] transactions.
+[56:34] Okay. So, here you can see it's
+[56:35] connected to the transaction agent. It
+[56:38] retrieves my account. So, these are
+[56:39] tools that it's calling, right? like uh
+[56:41] get last transactions. Here's my last 10
+[56:43] transactions. Okay, great. Um now, uh
+[56:49] the next thing I want to do is um you
+[56:53] know list my u payment methods. All
+[56:56] right. So that is retrieving my
+[57:00] accounts. Okay. All right.
+[57:04] And now let's try paying
+[57:06] uh let's see pay a bill. Let's try
+[57:10] uploading a bill that I have. It's a
+[57:12] fake bill. Uh so pay pay my bill. Okay.
+[57:18] So here
+[57:21] um
+[57:23] okay evite
+[57:28] retrieve my accounts. Let's see if it's
+[57:30] gonna p uh hand it off to
+[57:38] uh to the to the account thing. All
+[57:40] right, I'm going to re reload it. Okay,
+[57:44] whoop.
+[57:46] Let me make this bigger again
+[57:50] and then try pay my bill.
+[57:57] All right, here we are connected to the
+[57:59] payment agent. So the triage agent
+[58:01] passed off to the payment agent. Uh it's
+[58:03] using document intelligence to extract
+[58:05] the data from the uploaded image
+[58:08] and it extracted these details from it.
+[58:11] Uh please confirm that these are
+[58:12] correct. Okay, I'll say looks good.
+[58:17] And now it's looking at my possible
+[58:19] accounts. It's fetching my account deal.
+[58:21] So it says here's my available payment
+[58:23] method. So I'll say platinum Visa
+[58:27] it's processing fetching my credit card
+[58:30] details. Okay, it has sufficient funds.
+[58:32] Confirm.
+[58:36] And now what we see is there is a tool
+[58:38] approval required. So here you can see
+[58:40] we're using the handoff architecture but
+[58:43] one of the agents the payment agent has
+[58:45] approval required. So you can combine
+[58:49] basically this combines everything we
+[58:50] looked at today right we're using
+[58:51] handoff we're using human in the loop
+[58:54] we're using checkpointing and we're
+[58:56] using tool approval. So this is how it's
+[58:59] uh it's you know rendering this tool
+[59:01] approval action. So it's okay requires
+[59:03] your approval and here's the
+[59:05] information. We're going to say approve.
+[59:13] And now that is going through. Now that
+[59:16] we approved it, hopefully it will pay
+[59:20] our bill. While it's doing that, here's
+[59:23] the actual code. So you can check out,
+[59:25] you can look and see all uh you know,
+[59:28] all the code that um is involved here.
+[59:33] You can see we are we do have special um
+[59:36] you know we have a special check for
+[59:38] this function approval request since we
+[59:40] are doing tool approval here as well.
+[59:46] And I think it's still going through
+[59:47] there. So, so there you go. So, you can
+[59:50] get an idea for how you might build
+[59:53] userfacing applications
+[59:55] uh that involve a lot of the components
+[59:58] that we saw here uh with the you know
+[01:00:01] with having multiple agents with human
+[01:00:03] and loop with tool approval with
+[01:00:05] checkpointing uh so many interesting
+[01:00:07] ways that you can combine these things
+[01:00:09] in order to uh create these workflows.
+[01:00:13] And I do think it's really important to
+[01:00:15] think about how you want to bring human
+[01:00:17] in the loop into these applications. Uh
+[01:00:20] because to reiterate, LLMs are
+[01:00:22] generative and sometimes what they
+[01:00:24] generate is not what you want them to
+[01:00:26] generate. And so you really want to
+[01:00:28] bring humans in at those crucial points
+[01:00:30] so that you know you get the advantage
+[01:00:32] of LMS. They are very powerful. There's
+[01:00:34] a lot they can do. um but also still
+[01:00:36] have checks in the process so that you
+[01:00:38] know before anything uh really mission
+[01:00:41] critical happens and you know something
+[01:00:43] gets uh you know submitted uh into a
+[01:00:46] database that you have a human that's in
+[01:00:48] that loop there.
+[01:00:51] So this was our final session for the
+[01:00:55] series. I hope you enjoyed it. Uh I
+[01:00:57] certainly learned a lot uh developing
+[01:01:00] the curriculum for this series and and
+[01:01:02] it was really fun to use agent framework
+[01:01:04] and I have more ideas myself about how
+[01:01:06] I'll actually use it for my everyday
+[01:01:08] life now. Um I hope you all start using
+[01:01:10] agent framework and do share you know
+[01:01:12] what you make uh you know in our in our
+[01:01:15] community channels like on discord or on
+[01:01:17] LinkedIn uh because it's great to hear
+[01:01:19] how people are putting agents and
+[01:01:20] workflows to use in their you know in
+[01:01:23] their actual lives
+[01:01:25] uh work and personal uh so we do have
+[01:01:29] our final office hours after this
+[01:01:31] session in founder discord so uh once I
+[01:01:35] close this stream I'll go and open up
+[01:01:37] discord so if If you do have any
+[01:01:39] questions still pending that we didn't
+[01:01:42] answer in the live chat, then come on
+[01:01:44] over to the Discord and we've got uh
+[01:01:46] plenty of time there to talk through it.
+[01:01:48] If you missed any of the earlier
+[01:01:50] sessions, all of the resources are
+[01:01:52] available on this resources page. Uh
+[01:01:54] we've got just just so many so many
+[01:01:57] resources here, right? We've got the
+[01:01:59] videos, the slides, the writeups, the
+[01:02:01] code, the office hour recordings, the
+[01:02:04] office hour questions, um you know, some
+[01:02:06] other helpful resources. So, lots there
+[01:02:09] for you to recap if you missed anything.
+[01:02:14] And do also let us know if you have
+[01:02:16] ideas for what future uh topics you want
+[01:02:19] to see in series. Uh Gwen and I love
+[01:02:22] doing these English Spanish live stream
+[01:02:24] series. So, so far we've done Python
+[01:02:25] plus AI, we've done MCP, and now we've
+[01:02:28] done agent framework. If you have ideas
+[01:02:30] for uh what topics you want to see in
+[01:02:33] the future, do let us know uh because it
+[01:02:36] I think it's a lot of fun. So, we just
+[01:02:39] yeah, we just need to figure out what
+[01:02:40] our next series is going to be.
+[01:02:43] All right,
+[01:02:45] thank you everyone. I hope to see you in
+[01:02:48] the Discord. Bye.
+[01:02:52] >> Thank you, Pamel Pamela. Thank you all
+[01:02:53] for joining and thank you all to you all
+[01:02:57] who are watching our recording and and
+[01:03:01] uh we are always looking to improve your
+[01:03:03] experience. So if you have any feedback
+[01:03:04] for us, we would love to hear what what
+[01:03:06] you have to say. You can find the link
+[01:03:08] to the survey on the screen or in the
+[01:03:10] chat and we'll see you in the next one.

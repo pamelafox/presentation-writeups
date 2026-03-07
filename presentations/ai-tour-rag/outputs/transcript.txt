@@ -1,0 +1,920 @@
+[00:00] Welcome to this presentation about
+[00:03] advanced retrieval for your AI apps and
+[00:05] agents on Azure. I'm Pamela Fox from the
+[00:08] Python Cloud AWS team and I came up with
+[00:11] this presentation for the Microsoft AI
+[00:14] tour which may be coming soon to a city
+[00:17] near you. I encourage you to go to AI
+[00:20] tour and see this presentation in
+[00:22] person. But if you can't make it to AI
+[00:24] tour, then this recording is for you.
+[00:31] Let's talk about agents. There are many
+[00:33] potential agents that you may be
+[00:35] building for applications, and most of
+[00:36] these agents need the ability to find
+[00:38] information to complete their task. For
+[00:40] example, consider the agents used by
+[00:42] Zava, a fictional home improvement
+[00:44] store. Customers talk with the Zava
+[00:46] shopper agent when they want to buy
+[00:48] something, and that agent needs to find
+[00:50] products, probably from a relational
+[00:53] database. Customers work with the Zava
+[00:55] interior design agent when redesigning
+[00:58] their home. And that agent needs to
+[01:00] search through design images, not just
+[01:02] text.
+[01:04] Internally, Zava employees can ask a
+[01:06] Zava HR agent for help understanding
+[01:08] company benefits, and that agent needs
+[01:10] to search through thousands of
+[01:11] documents. Agents need ways to search
+[01:14] many types of data, relational,
+[01:16] unstructured, and images. And that's
+[01:19] what we're talking about today.
+[01:22] How do agents actually use this
+[01:24] information? Many agents use it for the
+[01:27] technique called rag, retrieval
+[01:29] augmented generation. In this technique,
+[01:32] the agent sends an information to an LLM
+[01:34] to answer a question. Rag was one of the
+[01:36] first practical uses for LLMs and is
+[01:38] just as relevant today in the era of
+[01:41] agents. So, in this example, Ragflow,
+[01:44] the user asks about the best paint for
+[01:46] bathroom walls.
+[01:49] The search results include multiple
+[01:51] paint options and those results are sent
+[01:53] to an LLM along with the original user
+[01:56] question. The LM answers the question
+[01:59] citing the relevant results. When you
+[02:02] see citations, that means that the agent
+[02:05] used rag because they're able to
+[02:07] actually see real information to
+[02:10] contribute to the answer, not just base
+[02:12] the answer on what's in its weights.
+[02:18] Now when users are communicating with
+[02:20] agents, there's a huge diversity in
+[02:22] their requests. Some queries are short,
+[02:24] some are long, some are general, some
+[02:26] are specific. Some are in the language
+[02:28] of the data, some are in a different
+[02:30] language like the native language of the
+[02:31] speaker. For example, these are four
+[02:34] requests that users could make to a Zava
+[02:36] shopper agent when shopping for hoses.
+[02:38] The first user just asks for general
+[02:41] garden watering supplies. The second
+[02:43] user gets more specific that they want a
+[02:45] garden hose. The third user wants it to
+[02:47] be 25 ft long and a drip style. And the
+[02:50] final user asks for a similar hose but
+[02:53] in Spanish.
+[02:55] Ideally, the agent should find great
+[02:57] results for all of those queries.
+[03:02] So, here's our agenda for today. talking
+[03:04] about aful search strategies that should
+[03:06] work across many Azure databases and
+[03:09] then we're going to talk about some
+[03:10] advanced strategies specific to Azure
+[03:13] database for PostgreSQL and Azure AI
+[03:16] search.
+[03:20] Let's begin with the optimal search
+[03:21] strategies that can be used across Azure
+[03:23] offerings.
+[03:26] There are two main search strategies
+[03:28] that you've probably heard of. keyword
+[03:29] search which has existed for a while now
+[03:31] and vector search which got really big
+[03:34] the last few years thanks to better
+[03:36] embedding models. Some of the queries by
+[03:38] users can be handled better by keyword
+[03:40] search while many will be handled better
+[03:43] by vector search. So which strategy do
+[03:45] we use?
+[03:49] We should use both strategies. The
+[03:51] optimal search strategy is a full hybrid
+[03:54] search stack where refers to par
+[03:56] parallel vector and keyword searches.
+[03:58] Then merge the results together and
+[04:00] finally apply a ranking step to ensure
+[04:03] that the best results are at the top.
+[04:05] Let's look at each of these steps in the
+[04:07] stack to understand fully how it works
+[04:09] and why it's an important part of an
+[04:11] optimal search strategy.
+[04:15] Let's start with keyword search. Classic
+[04:18] keyword search. The idea here is that we
+[04:20] search for the terms in the query and
+[04:22] find the results which have those terms
+[04:24] in the highest frequency. The best
+[04:26] algorithm is BM25,
+[04:29] a probabilistic ranking algorithm that
+[04:31] takes into account the relative
+[04:33] frequency of a term proportional to the
+[04:35] length of a document. If the user
+[04:38] searches for hose and a document says
+[04:40] hose hose hose all over the place and
+[04:42] the other documents don't, then that
+[04:45] document is probably the best result. So
+[04:48] let's try keyword search on an actual
+[04:50] database.
+[04:53] Our Zava product data is stored in Azure
+[04:56] database for Postgress. Postgress is one
+[04:59] of the most popular databases in the
+[05:00] world. So some of you may already be
+[05:02] using it. Fortunately, we have great
+[05:04] support for Postgress at Azure. We also
+[05:06] have a new VS code extension for
+[05:08] Postgress which I'm using now to explore
+[05:11] the database schema. Our database has
+[05:14] tables for products, orders, customers,
+[05:19] inventory, everything you'd expect for a
+[05:21] store. And the product table also has
+[05:24] related tables storing types and
+[05:26] embeddings, which we'll use later.
+[05:30] So, let's just query this products table
+[05:33] just to see what the data looks like.
+[05:36] So, I'll just look at the top 10,00.
+[05:40] And as you can see, we've got product
+[05:42] IDs, product names, various costs, and a
+[05:46] product description.
+[05:49] So, we can use all this information when
+[05:50] we're doing searches.
+[05:54] Now, let's open a Python script that
+[05:56] connects to that Python database and
+[05:59] that Postgress database and searches it.
+[06:02] So, here we have keyword search.py py
+[06:07] and you can see here that uh you know it
+[06:10] connects to the Postgress database and
+[06:13] it's got a query here for 25 ft drip
+[06:17] hose
+[06:19] and the SQL uses Postgress built-in full
+[06:23] text search in order to search for the
+[06:26] words in that query and back get back
+[06:28] the top five results.
+[06:31] So let's try running uh running this
+[06:34] query here. So I'll say Python
+[06:38] keyword search py
+[06:41] and check out the results.
+[06:46] So it's going off connecting to that
+[06:48] Postgress database and uh finding out
+[06:52] what the best results are. So here we
+[06:54] can see the top result is in fact a 25
+[06:57] ft soaker hose which is basically
+[07:00] exactly what the user was looking for at
+[07:03] least for this top result. Now if we
+[07:05] look at the other results we do see more
+[07:06] hoses and then the number five result is
+[07:09] a 25 ft drain snake. Now that's a pretty
+[07:13] irrelevant results since someone looking
+[07:15] for a hose definitely is not looking for
+[07:17] a snake but keyword search isn't clever
+[07:21] enough to discard this result.
+[07:24] So now let's try a more general query.
+[07:27] Garden watering supplies.
+[07:31] Let's see how it does for this.
+[07:37] So this one shows a hose as a top
+[07:39] result. So that's good. But then the
+[07:41] number two result is a copper pipe which
+[07:44] is entirely irrelevant. Keyword search
+[07:48] is hit and miss when it comes to broad
+[07:50] ambiguous queries like this one.
+[07:54] Finally, let's see how we handle a
+[07:56] Spanish query. Manga de vent.
+[08:01] Let's rerun it with that Spanish query.
+[08:05] And let's see, we get a drain snake, a
+[08:09] hexet, drywall, there is one hose in
+[08:12] there, and then a tape measure. So
+[08:14] almost entirely irrelevant results,
+[08:17] right? And you notice that most of these
+[08:18] contain or they all contain 25. That's
+[08:20] basically the only thing it matched was
+[08:22] 25. It didn't match any of the other
+[08:25] words there because all the data is
+[08:27] stored in English. So if it is important
+[08:29] that our agents can handle queries in
+[08:32] multiple languages, then we definitely
+[08:33] need to consider that when deciding on a
+[08:35] search strategy.
+[08:40] So that's why developers were so excited
+[08:42] when vector search came out since it can
+[08:44] handle many of the queries that keyword
+[08:46] search struggles with. We first use an
+[08:50] embedding model like the Azure OpenAI
+[08:53] text embedding 3 models to make
+[08:54] embeddings for our content. Then when a
+[08:57] user query comes in, we embed that using
+[09:00] the same embedding model and use a
+[09:02] vector similarity metric to find the
+[09:05] vectors closest to that query vector.
+[09:08] Now to make that query efficient across
+[09:10] millions of vectors we use an
+[09:11] approximation al algorithm like uh hnssw
+[09:15] or diskn.
+[09:17] So let's try a vector search with the
+[09:19] zava postgress database.
+[09:25] Here we have vector search.py.
+[09:30] So first I set up a diskn index uh so
+[09:34] that we can have efficient search here.
+[09:36] And now I've got that query for 25 foot
+[09:39] garden hose. First I create a embedding
+[09:44] vector based off that query and I use
+[09:46] this built-in function to Azure
+[09:47] Postgress called Azure OpenAI.create
+[09:50] embeddings and that uses an embedding
+[09:52] model that's been deployed in Foundry.
+[09:54] So it gets back that query and then it
+[09:56] passes it into a SQL query which uses
+[09:59] the uh PG vector extension in order to
+[10:03] query the cosine distance to find the
+[10:06] closest vectors and we're going to get
+[10:08] the five closest vectors. So let's try
+[10:12] out this vector search and see what the
+[10:15] results are like.
+[10:20] So this time for 25T garden hose, we see
+[10:23] that the top result is actually a 50ft
+[10:25] garden hose and then we've got a 75 ft
+[10:29] and then we've got that 25 ft hose. And
+[10:32] so these are pretty good results, but
+[10:34] it's interesting that the 25 ft hose is
+[10:37] number three. And this happens because
+[10:39] vector search and vector embeddings,
+[10:42] they don't really distinguish that much
+[10:43] between numbers. 25, 50, 75, they're all
+[10:47] pretty similar. What matters more in the
+[10:49] semantic space is, you know, finding a
+[10:51] garden hose. And that's what it really
+[10:53] prioritized here was finding that garden
+[10:54] hose and not caring as much about this
+[10:57] exact number here.
+[11:00] So, pretty good results, but you know,
+[11:02] maybe some issues there. Now, let's try
+[11:05] the more general query for garden
+[11:07] watering supplies.
+[11:10] Okay, so let's go pass that in.
+[11:16] So this is the kind of query where
+[11:18] vector search shines because vectors can
+[11:20] encode the concept of guardian watering
+[11:22] supply even if none of the words match.
+[11:25] So we can see all of these results are
+[11:27] actually great results for the query,
+[11:29] right? We got a sprinkler kit, a hose, a
+[11:30] hose, a selfwatering planter, and
+[11:32] another hose. Great results for that
+[11:35] query.
+[11:36] Now what about that Spanish query? So,
+[11:39] manga
+[11:44] and let's try it out.
+[11:48] So, here we get a bunch of hoses and we
+[11:52] still actually do get one drain snake
+[11:54] here, but generally the results are much
+[11:57] better than uh than what we saw when
+[12:00] using keyword search. And that's because
+[12:02] we are using the OpenAI text embedding
+[12:04] models that were trained across multiple
+[12:06] languages. They do have a bias towards
+[12:08] English and they perform the best for
+[12:10] English queries. But they have seen a
+[12:12] lot of Spanish and other languages in
+[12:13] their training data. So this
+[12:15] multilingual support is fantastic since
+[12:17] many buildings, many developers are
+[12:19] building for users that speak multiple
+[12:21] languages. So can we use vector search
+[12:25] for everything?
+[12:27] No. No, we can't. It's pretty great, but
+[12:30] it's still not perfect. So let's try
+[12:33] searching for a 100 foot hose that won't
+[12:37] break. Okay.
+[12:41] So what are we going to get back for
+[12:43] this query? So the top result is a 75 ho
+[12:47] foot hose, then a 50ft hose, and finally
+[12:49] number three is a 100 foot hose.
+[12:54] As a user, that feels a bit odd.
+[12:56] Shouldn't the 100 foot hose be the top
+[12:58] result? But once again, vector
+[13:00] embeddings do not distinguish well
+[13:01] between specific numbers, specific brand
+[13:03] names, ids, etc., which is the kind of
+[13:06] thing that vector search does do really
+[13:08] well at. So we can see generally vector
+[13:11] search is a better option if we're going
+[13:13] to pick between the two, but it's not
+[13:15] perfect.
+[13:21] That's why we should always use both
+[13:22] vector search and keyword search and
+[13:24] then find meaningful ways to merge
+[13:26] results. The most popular result, the
+[13:29] most popular algorithm for result
+[13:31] merging is called reciprocal rank fusion
+[13:33] or RRF. It sounds fancy, but it's really
+[13:37] just a formula that calculates the score
+[13:39] for each result based off its relative
+[13:41] rank in each result set. So, if a result
+[13:44] shows up highly in both results, it'll
+[13:46] be ranked highly in the final merged
+[13:48] results. If a result is high in one but
+[13:51] low in the other, then it'll end up more
+[13:53] in the middle.
+[13:55] So let's do a search of the Postgress
+[13:57] database using RRF.
+[14:03] So here is our RF code. Basically we're
+[14:06] taking the vector search, we're taking
+[14:08] the keyword search and then we are
+[14:11] implementing RF inside SQL just using
+[14:14] SQL query language here. Uh, so I say
+[14:18] it's basically it's a formula that looks
+[14:19] at the rank in the sub results and then
+[14:22] comes up with the RF score based off
+[14:24] that relative rank. So let's go ahead
+[14:27] and run this
+[14:31] query here. Let's see what we're
+[14:32] searching for. Garden watering supplies.
+[14:36] Okay, so in the results you can see that
+[14:38] we're displaying both the RRF score and
+[14:41] we're also displaying the relative
+[14:43] rankings. And so now we can see that you
+[14:45] know some things move up some things
+[14:48] move down and it really just depends on
+[14:51] the relative ranks uh across these
+[14:53] right. So this one drinking water safe
+[14:55] hose was number one for keyword and
+[14:58] number five for vector and it ended up
+[15:00] being number one here whereas the number
+[15:02] one search for vector results was number
+[15:05] 10 for keyword. So it ended up being
+[15:07] number four here. So it's really
+[15:09] interesting to see how uh you know how
+[15:11] these relative ranks contribute to the
+[15:13] final ordering for RRF.
+[15:17] RRF is not the perfect solution.
+[15:20] However, both vector search and keyword
+[15:22] search can yield noisy results. Results
+[15:25] that don't really belong there at all.
+[15:26] Like if you remember for that keyword
+[15:28] search example, the user asked for a 25
+[15:30] ft hose and saw a 25 ft drain snake in
+[15:33] the results. And that result really just
+[15:36] shouldn't be there at all. Right now,
+[15:38] vector search 2 can be noisy since it
+[15:40] will always find the closest vectors
+[15:42] even if the vectors are quite far away.
+[15:44] So, the top result may be a great fit
+[15:46] for the query, but the rest could be
+[15:48] absolutely unrelated. So, we need a
+[15:51] smarter algorithm that actually
+[15:53] understands when a result is irrelevant.
+[16:00] That brings us to the final step,
+[16:02] reranking. We take the merge results and
+[16:05] send them through a reranking model
+[16:07] whose job it is to look at each result,
+[16:09] look at the user query and give a score
+[16:11] indicating how well a result matches the
+[16:13] query. We typically use a special kind
+[16:16] of model for this called a cross-
+[16:17] encoder model, but LLMs can also be used
+[16:21] with the right system prompt. A cross-
+[16:23] encoder model is the best option since
+[16:25] it's actually been trained for this
+[16:27] specific task based off human scoring
+[16:29] search results and saying, "Oh yeah,
+[16:31] this search result is great for the
+[16:32] query. Oh, and this search result is not
+[16:35] so great." So let's try this out in the
+[16:37] Zava database for Postgress.
+[16:44] So in this script here, we first do that
+[16:47] RF that we did previously and then with
+[16:51] those results, we take each of those
+[16:53] results. We take the original query and
+[16:56] we send them through the Azure AI.rank
+[16:59] function. This is a built-in function to
+[17:02] Azure for Postgress and it uses the
+[17:06] cohhere ranking model in order to look
+[17:08] at the query, look at the document
+[17:10] results and do the reranking and come up
+[17:14] with a ranker score for them. So let's
+[17:17] try running with this reranker step.
+[17:22] It's really nice that it's built into
+[17:24] Azure Postgress so we can do it all
+[17:26] inside the query.
+[17:30] So here for garden watering supplies.
+[17:33] Now we can see that our top result is a
+[17:36] soaker hose and it moved all the way
+[17:40] from actually number seven in RF to
+[17:42] number one with the reanker. Right? So
+[17:45] this is really interesting to see how
+[17:47] something might end up somewhat low in
+[17:49] those merge results, but once we send it
+[17:51] to the ranker, the ranker might say,
+[17:52] "Hey, we think this is the absolute best
+[17:56] result for this query." Right? And uh
+[17:59] you know we see also that the drinking
+[18:00] water safe hose actually moved down due
+[18:02] to the reanker right so it's just going
+[18:05] to decide based off its training and
+[18:07] based off what it's seeing of the query
+[18:09] and the document information how it's
+[18:11] going to reorder those those results.
+[18:15] Now since we're getting back this
+[18:17] reanker scores we can also decide that
+[18:19] we might want to cut off at a particular
+[18:21] ranker threshold it and say like oh
+[18:24] below a certain score it's just
+[18:25] completely irrelevant. And we can do
+[18:27] that because the reranker scores
+[18:29] actually do have uh do have some meaning
+[18:32] because of you know the way these models
+[18:33] were trained.
+[18:39] So now we've broken down each step. So
+[18:42] let's revisit the full hybrid search
+[18:44] flow in this diagram. So we take the
+[18:46] user's query and we use it to perform a
+[18:49] keyword search and a vector search in
+[18:51] parallel. Then we merge those results
+[18:54] together using reciprocal rank fusion.
+[18:56] Finally, we send the merge results to a
+[18:58] re-ranking model to get the best
+[19:00] ordering and possibly discard irrelevant
+[19:03] results, you know, based off a reranker
+[19:04] threshold.
+[19:09] So, that is the best uh approach to
+[19:13] merging the benefits of both vector
+[19:15] search and keyword search. Now, what's
+[19:17] really exciting is that we can do hybrid
+[19:19] search across so many Azure database
+[19:21] offerings. So if you want to get the
+[19:23] best retrieval, you can hopefully get it
+[19:26] in your favorite Azure database. So
+[19:28] let's just talk about each of these
+[19:30] databases briefly. Now I demonstrated
+[19:33] using Azure database for Postgress and
+[19:35] as you saw we can do the vector search
+[19:37] using the PG vector extension and then
+[19:39] using either HSW, IBF or diskn for the
+[19:42] efficient indexing. For keyword search
+[19:45] we can use the built-in FTS uh
+[19:48] functionality of Postgress. We can do
+[19:50] the RF step actually using SQL just
+[19:53] using standard SQL and then for the
+[19:56] reranker we can use Azure AI rank with
+[19:58] the coher model deployed in foundry.
+[20:01] For Azure AI search we can do vector
+[20:04] search with HNSW keyword search using
+[20:07] the BM25 algorithm. Then search service
+[20:11] will do the RF for us and even do the
+[20:13] reranker for us just by toggling a
+[20:16] boolean to true. And this reranking step
+[20:19] uses the same reranking model as being
+[20:23] search. So it's very powerful
+[20:26] for Azure SQL. We can do vector search
+[20:28] using a built-in function that uh uses
+[20:31] diskn behind the scenes. We can do
+[20:34] keyword search with BM25 and we can
+[20:36] merge results using SQL similar to how
+[20:39] we did for Postgress. Finally, for Azure
+[20:41] Cosmos DB, they also have a built-in
+[20:44] function for vector search now and BM25
+[20:46] support and a new built-in function for
+[20:49] RF. And they are working on built-in
+[20:52] support for the reranker. If you are
+[20:55] interested in that, please fill out this
+[20:56] form for the private preview.
+[21:03] The reason that we support hybrid search
+[21:05] across so many Azure offerings is that
+[21:07] it really improves the relevance of
+[21:09] results. This table is from research
+[21:11] done by the Azure AI search team
+[21:12] comparing search strategy for different
+[21:14] kinds of queries. You can see that
+[21:16] keyword search and vector search differ
+[21:18] in the kinds of queries they handle
+[21:19] well. But as long as we use a full
+[21:21] hybrid flow with a ranking step, then we
+[21:24] see great results across all kinds of
+[21:26] queries.
+[21:30] So you should be using hybrid search for
+[21:33] your agents
+[21:35] and that's going to really help a lot.
+[21:38] But users ask all sorts of things and
+[21:42] even with that amazing hybrid search
+[21:44] flow, there are still some questions
+[21:45] that are hard to answer. For example,
+[21:49] users can have queries that require
+[21:50] external knowledge, right? Like saying,
+[21:52] "Hey, do you carry any of the pesticides
+[21:54] approved for use in my town?" Right?
+[21:56] Well, first it's going to have to do
+[21:57] that search to figure out what those
+[21:59] pesticides are before it can search its
+[22:00] own inventory.
+[22:03] They might also ask queries that rely on
+[22:05] relations between different parts of the
+[22:07] database, right? like I want a hose
+[22:08] that's reviewed as as highly as the
+[22:10] expensive hoses. Well, then you got to
+[22:12] look at reviews, right? That's bringing
+[22:13] in multiple tables in your database.
+[22:17] They could also be asking just really
+[22:19] complex questions that are truly
+[22:20] multiple questions in one query and they
+[22:22] want to get all those answers in the
+[22:25] same result. So, we're going to explore
+[22:27] a few ways we can tackle these harder
+[22:29] questions using specific features from
+[22:32] Azure offerings.
+[22:35] Let's start with the graph features
+[22:37] available in Azure database for
+[22:38] Postgress and see what questions they
+[22:40] can help tackle.
+[22:43] This feature is going to help
+[22:45] particularly with those questions that
+[22:46] bring in multiple kinds of related data
+[22:48] and the relationships between data. In
+[22:51] these example questions, users are
+[22:53] asking both about products but also
+[22:55] product categories, product reviews, and
+[22:57] the sentiment of reviews.
+[23:00] So here, this user wants a cheap garden
+[23:02] hose that's reviewed as highly as
+[23:04] expensive hoses. That's what we saw
+[23:05] before. This one wants a headphone with
+[23:07] good reviews on battery life. Uh which
+[23:09] this one wants to know which hedge
+[23:10] troomers are reviewed the most. Right?
+[23:12] They all want to bring together
+[23:14] information from the products and the
+[23:16] reviews in order to answer their
+[23:18] question.
+[23:21] Now in standard SQL, we would have to
+[23:23] use complex joins to answer these
+[23:25] questions, but those can get quite
+[23:27] expensive and slow. So instead, what we
+[23:30] consider doing is a graph query on the
+[23:33] related data to get an efficient
+[23:35] response that still answers the
+[23:37] question. So you know that example of
+[23:39] buying a headphone with noise
+[23:41] cancellation and good reviews on battery
+[23:43] life that requires looking at the
+[23:45] product, the product features and the
+[23:48] reviews and their sentiment. And that
+[23:51] sounds like kind of a complex query, but
+[23:53] it can actually be done in a single
+[23:55] graph query.
+[23:57] So we can use an LM to come up with a
+[23:59] graph query based off the user's input,
+[24:02] send that through our database and then
+[24:04] get back the results to send the LM to
+[24:07] answer that question.
+[24:10] Now we can use graph queries on Azure
+[24:13] database for Postgress thanks to Apache
+[24:15] A, a graph database extension for
+[24:18] Postgress which you can use on Azure as
+[24:20] a native plug-in. What makes this
+[24:23] powerful is that you get both SQL and
+[24:25] cipher in the same engine. That means we
+[24:29] can combine relational data with graph
+[24:31] traversal and then layer analytics or
+[24:34] visualization on top. In our case, we're
+[24:36] going to use AG to connect product data,
+[24:39] customer reviews, and AI extracted
+[24:41] insights.
+[24:45] So, here's how we build the graph. We
+[24:47] start with the known products and their
+[24:50] features plus the raw customer reviews.
+[24:53] Then we call Azure AI.extract to do two
+[24:56] things. First, we extract which product
+[24:59] features are mentioned in each review.
+[25:02] And second, we classify the sentiment,
+[25:05] positive, negative, or neutral.
+[25:08] From there, we create graph nodes for
+[25:12] the products, the features, and the
+[25:14] reviews. And we use edges to connect
+[25:17] them. Products have features. Products
+[25:20] have reviews. And reviews point back to
+[25:22] features with an edge indicating the
+[25:24] sentiment of positive, negative, or
+[25:27] neutral. So this turns the unstructured
+[25:30] review text into structured graph
+[25:32] relationships.
+[25:38] Now that the graph is built, querying it
+[25:40] is straightforward. The cipher query
+[25:42] finds all the products reviews that
+[25:44] mention noise cancellation positively.
+[25:48] Instead of chaining multiple joins, this
+[25:50] query simply traverses from a product to
+[25:52] its reviews, then to the features and
+[25:54] filters for positive sentiment. The
+[25:57] result is a ranked list of products and
+[26:00] the number of positive mentions for that
+[26:02] feature. This is the kind of question
+[26:04] that is messy in SQL but natural in a
+[26:08] graph with AG. So thanks to AG and
+[26:11] Postgress, we can bridge structured
+[26:13] data, unstructured reviews and AI
+[26:15] insights insights into a single graph
+[26:17] and then ask questions that map directly
+[26:19] to how users think about their products.
+[26:24] We have a full end solution that
+[26:27] demonstrates an agentic shopping
+[26:28] experience using graph queries. It is
+[26:30] open source so you can check it out,
+[26:32] deploy it yourself and customize for
+[26:34] your need. So I have it running here.
+[26:40] All right. So, I have it running here
+[26:42] and you can see it's displaying a bunch
+[26:43] of products on the main page. So, let's
+[26:46] try the search for headphone headphones
+[26:48] that have, you know, great noise
+[26:50] cancellation.
+[26:52] Uh, so the results look good so far.
+[26:54] Lots of headphones with big earpieces.
+[26:57] And I can look at the agentic flow for
+[26:59] this search and see that the agent
+[27:02] decided to call its query reviews with
+[27:06] sentiments tool
+[27:08] and it filled in the arguments based off
+[27:11] the search query. So it's looking for
+[27:12] headphones. It's looking for the noise
+[27:14] cancellation feature and it's looking
+[27:16] for sentiment positive.
+[27:19] So now let's look at the top result and
+[27:22] check out its reviews. search for noise.
+[27:25] And we can see uh that the noise
+[27:29] cancelling technology is stellar.
+[27:32] Uh the noise cancellation feature offers
+[27:35] the perfect way to zone out during work,
+[27:38] which maybe is what people want.
+[27:40] [gasps and laughter] Uh maybe that's a
+[27:41] good thing. And the noise cancellation
+[27:44] works perfectly, blocking out annoying
+[27:46] sounds while I work from home. So, this
+[27:49] definitely looks to be a headphone where
+[27:51] the reviews have a positive sentiment
+[27:53] about the noise cancellation feature.
+[27:57] All right, so let's go back to those
+[28:00] search results and at that agentic flow.
+[28:06] So, this agentic flow shows us that the
+[28:10] agent could have decided between
+[28:12] different tools, right? It could have
+[28:13] also done a simple search or a query
+[28:16] about a specific product. So this kind
+[28:19] of command routing agent here is a nice
+[28:22] middle ground between a simple search on
+[28:24] a single table and a full NLP to SQL
+[28:27] approach which can be quite risky. So
+[28:29] what you can do is you can identify
+[28:31] common types of queries, create tools
+[28:33] for them and use a routing agent to
+[28:35] select the most appropriate tool to
+[28:38] execute an efficient graph query.
+[28:44] Now remember, you can check out all this
+[28:45] code for yourself, deploy it, and even
+[28:47] base your own solutions off this
+[28:49] solution.
+[28:52] If you're interested in learning more
+[28:53] about the Azure database for Postgress,
+[28:55] check out the resources on this slide.
+[28:58] The team published a blog post
+[28:59] explaining the agentic approach using
+[29:01] the solution with much more detail than
+[29:03] we had time for here. There's a learning
+[29:05] path on Microsoft learn entirely about
+[29:08] using Postgress with II like the many
+[29:10] built-in functions both the ones we use
+[29:12] today and others like translate.
+[29:14] Finally, you can subscribe to the team's
+[29:16] blog to find out about the new features
+[29:18] that they're adding all the time.
+[29:24] Now let's look at Azure AI search and
+[29:26] another feature that can help with
+[29:28] different kinds of complex queries.
+[29:30] Their new agentric retrieval with AI
+[29:33] knowledge bases.
+[29:37] This feature helps particularly with
+[29:39] tricky questions about unstructured
+[29:41] data. These example queries all require
+[29:44] multiple searches to answer fully. This
+[29:47] first question here is really multiple
+[29:49] queries bundled together in one
+[29:51] question.
+[29:52] The second question requires a chain of
+[29:55] queries where the results from the first
+[29:57] query inform the results of the second
+[30:00] query.
+[30:01] And the final example requires results
+[30:04] from the web in order to answer fully.
+[30:09] Fortunately, we can handle these complex
+[30:11] queries using an Azure AI search
+[30:13] knowledge base. Each knowledge base has
+[30:16] an agentic retrieval engine which
+[30:18] handles query planning, knowledge
+[30:20] sources, and merged outputs. The agentic
+[30:23] retrieval engine uses multiple types of
+[30:25] generative AI and machine learning
+[30:27] models for each step along the way. So,
+[30:29] first we have the query planning step.
+[30:31] This uses an LLM to break down a
+[30:34] conversation into multiple queries based
+[30:36] off of the information need. This query
+[30:38] planning process can also decide which
+[30:40] of the knowledge sources are necessary
+[30:43] to answer the queries. Knowledge sources
+[30:46] contain the data that your agent needs
+[30:48] to answer questions and perform tasks.
+[30:50] They can include search indexes, one
+[30:52] lake, shareepoint or Bing covering both
+[30:55] internal and external data. Each query
+[30:58] is sent to every selected knowledge
+[31:00] source to gather the relevant documents.
+[31:03] Then the results from the queries are
+[31:05] merged together and can be used to
+[31:06] produce a single synthesized answer with
+[31:09] citations.
+[31:10] Finally, if the agentic retrieval engine
+[31:12] determines that the results are not
+[31:14] sufficient to answer the question, it
+[31:17] will repeat that query planning phase
+[31:19] taking into account the results it's
+[31:21] already seen.
+[31:26] Knowledge bases offer a control for the
+[31:29] amount of effort to put into the agentic
+[31:32] retrieval. And this is important so that
+[31:34] you can control your cost and latency.
+[31:37] This is called the retrieval reasoning
+[31:39] effort. It can either be minimal, low or
+[31:42] medium. Minimal is the cheapest, medium
+[31:45] is the most expensive, but can get the
+[31:48] best results. Now, you'll notice there's
+[31:49] no high yet, and that's because the team
+[31:51] is still deciding what really the high
+[31:53] level would entail and what would be
+[31:56] worth it to put that amount of effort
+[31:58] in. So, we're going to look at each of
+[32:00] these effort levels.
+[32:03] The minimal effort offers a option for
+[32:07] dentic retrieval that doesn't use any
+[32:09] LLMs. So, this sacrifices a lot of
+[32:12] advanced features, but does get you much
+[32:14] lower latency and um will still be able
+[32:17] to perform searches across multiple
+[32:20] knowledge sources. And this can
+[32:22] sometimes be the best uh option for
+[32:25] switching over an existing agent before
+[32:27] you're ready to take advantage of the
+[32:29] advanced levels.
+[32:31] So, let me just search look at an
+[32:33] example here, right? Uh so, we have this
+[32:36] question. What is the best zaba paint
+[32:38] for bathroom walls? So with middleful
+[32:41] effort, the knowledge base skips the
+[32:43] query planning step and sends that
+[32:45] question directly to all the configured
+[32:48] knowledge sources. In this case, that
+[32:50] includes both a search index and an
+[32:52] internal SharePoint. Then it gets back
+[32:55] the results from all those sources and
+[32:57] merges them based off that reranking
+[32:59] model and returns those merge results
+[33:02] back to the agent. So as you can see,
+[33:04] minimal is very minimal. It really all
+[33:07] it does is give you the ability to
+[33:08] search across multiple sources, but
+[33:10] that's still going to give you better
+[33:12] results for the situations where there
+[33:14] are multiple sources to consult.
+[33:20] Now, let's look at a knowledge base with
+[33:21] low effort. This includes query planning
+[33:25] and source selection
+[33:27] and also even answer synthesis. So this
+[33:30] really brings in a lot of those agentic
+[33:32] features that we saw in the original
+[33:35] diagram.
+[33:38] So let's look at a specific example. Uh
+[33:40] so in this question the user asks what
+[33:42] is the best job of paint for bathroom
+[33:43] walls and how does it compare to other
+[33:45] brand paints. The knowledge base first
+[33:48] performs query planning to break this
+[33:50] down into two search queries. So we get
+[33:52] paint for bathroom and cost of bathroom
+[33:54] paint. It sends each of those queries to
+[33:58] its con its knowledge sources. So in
+[34:00] this case, it's a search index and it's
+[34:02] the Bing web public search results. It
+[34:06] gets back those results and merges them
+[34:08] into, you know, a single merge results
+[34:12] output and then generates the answer
+[34:14] with citations based off those merge
+[34:16] results and the original user query. So
+[34:20] this is quite powerful because we get
+[34:22] the query planning, we get the parallel,
+[34:26] you know, search searching across all
+[34:28] the selected sources, the merge results
+[34:30] and the answer synthesis.
+[34:35] Finally, we have the medium effort,
+[34:38] which currently is the most agentic
+[34:40] option. And this one is everything we
+[34:42] just saw plus this optional iterative
+[34:45] retrieval. Basically, once it does this
+[34:48] first pass, it looks at the results,
+[34:50] decides if they're good enough to answer
+[34:52] the query, and if not, it may decide to
+[34:55] do a second pass on query planning and
+[34:58] search. And this can really improve the
+[35:01] comprehensiveness of answers to complex
+[35:04] questions.
+[35:06] So, for this example, the user asks,
+[35:08] "How can I explain how can I paint my
+[35:10] house most efficiently? Also, I want a
+[35:13] list of the Zava products and prices for
+[35:15] each of them that can help with this.
+[35:17] So, first the knowledge base turns that
+[35:21] user question into multiple queries. So,
+[35:24] we get a query for efficient house
+[35:26] painting and a query for Zava paint
+[35:29] supplies prices. It sends them both to
+[35:32] the search index and to Bing web. And
+[35:35] then it looks at the results and says,
+[35:37] uhoh, we don't have enough information.
+[35:39] I need more information. And so in this
+[35:42] case, it decided to search for paint,
+[35:43] brushes, rollers, and trays because it
+[35:46] realized that that's part of more
+[35:48] efficient house painting. So it sends
+[35:50] those to the same sources, get back
+[35:52] results, merges all those together, and
+[35:55] generates an answer with citations. And
+[35:58] this answer is much more complete
+[36:00] because it did that second iteration.
+[36:05] Now once again we have a endtoend
+[36:08] solution that's open source that
+[36:10] includes this agentic retrieval feature
+[36:13] and really showcases how you can use it
+[36:15] for userfacing rag applications. Uh so
+[36:18] let me show you that same question in
+[36:21] the application right so explain how to
+[36:24] paint my house most efficiently and give
+[36:26] me a list of Zava products and you can
+[36:28] see we get a very long answer here and
+[36:31] it includes all the Zava products. We
+[36:33] have a bunch of citations. They go off
+[36:35] to the web. They also go off to internal
+[36:38] sources, these markdown files from our
+[36:40] inventory.
+[36:42] And we can look at the thought process
+[36:44] for this and see that we did our initial
+[36:47] pass with query planning and got back
+[36:49] results from both our search index and
+[36:52] the web. And then in our uh you know in
+[36:55] our second pass, it can do additional
+[36:58] queries.
+[37:00] So if you are looking to build a
+[37:02] conversational rag application that can
+[37:04] take advantage of a deck retrieval,
+[37:06] definitely give that repo a spin.
+[37:11] We have lots of ways you can learn more
+[37:13] about using Azure AI search to power
+[37:15] your retrieval. Uh you can read more in
+[37:17] the announcement blog post about the new
+[37:20] agent retrieval feature. You can also
+[37:23] check out the quick start Python
+[37:24] notebook that shows you how to get it
+[37:26] started. And if you want to learn about
+[37:28] everything Azure AI search is working
+[37:30] on, they are adding new features all the
+[37:32] time to improve retrieval. So you can
+[37:34] check out their change log here.
+[37:39] Now I have shared a lot with you today,
+[37:41] but I still want to leave you with one
+[37:43] more tip.
+[37:47] When you are developing agentic flows or
+[37:49] rag systems, you need to design them
+[37:51] carefully and pay attention to each step
+[37:53] of the process. You must evaluate the
+[37:55] system based both off its final output
+[37:58] but also on how it got to that final
+[38:00] output. Oftentimes retrieval is the
+[38:02] biggest factor affecting output quality.
+[38:04] And the best way to improve a system is
+[38:06] to improve its retrieval. That might
+[38:08] mean changing search strategies, adding
+[38:10] more complex search strategies, changing
+[38:13] the data preparation process, or all of
+[38:15] the above. The only way to know for sure
+[38:18] if your system is improving is to add
+[38:20] automated evaluation. You can use the
+[38:23] Azure AI evaluation SDK to set up an
+[38:26] eval system which will let you see
+[38:28] whether your system has truly improved
+[38:30] when you improve the steps that happen
+[38:32] along the way. We want all of your
+[38:35] agents to have the best retrieval
+[38:36] possible and we hope you're excited to
+[38:38] try out all these new search strategies.
+[38:43] Thank you so much for watching and uh
+[38:46] you can download the code and the slides
+[38:48] from this URL and do let us know if you
+[38:51] have any questions.
+[38:52] Bye everyone.

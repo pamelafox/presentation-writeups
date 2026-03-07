@@ -1,0 +1,39 @@
+1. Series overview slide listing all six sessions in the Python + Agents series with registration link.
+2. Title slide for Session 6: "Adding a human-in-the-loop to workflows" with speaker info and slides link.
+3. Agenda slide listing topics: why HITL matters, tool approval, requests and responses, checkpoints and resuming, handoff with HITL, and E2E application.
+4. Instructions for following along using the GitHub repository and Codespaces.
+5. Recap of agentic workflows: a flow involving an agent, with executor nodes and edges in agent-framework.
+6. Diagram showing human-in-the-loop concept: a human reviews an agent's proposed action before it executes or gets discarded.
+7. Section divider slide: "Why add a human in the loop?"
+8. Reasons for adding HITL: accuracy, safety, trust, compliance, and control, with explanations for each.
+9. Overview of four HITL patterns in agent-framework: tool approval, requests and responses, checkpoints and resuming, and handoff with HITL.
+10. Section divider slide: "Tool approval" with documentation link.
+11. Comparison of workflows without and with tool approval, plus list of operations that should require approval.
+12. Code showing how to define tools with approval_mode set to "always_require" or "never_require" using the @tool decorator.
+13. Code showing the event loop for handling tool approval requests, checking user_input_requests and prompting for approval.
+14. Section divider slide: "Requests and responses" with documentation link.
+15. Sequence diagram showing the request_info and response_handler flow between application code, workflow executor, and human.
+16. Topology diagram for a simple chat with HITL workflow using a coordinator and agent executor with request_info loop.
+17. Executor code for the ChatCoordinator class showing @handler for agent responses and @response_handler for human replies.
+18. Application code showing the event loop that checks for "request_info" events and collects user input to send as responses.
+19. Topology diagram for HITL with structured outputs, where the coordinator branches on the agent's PlannerOutput status field.
+20. Agent definition with PlannerOutput structured output model containing status, question, and itinerary fields.
+21. Executor code for TripCoordinator showing how it checks structured output status to decide whether to request info or yield output.
+22. Section divider slide: "Checkpoints and resuming" with documentation link.
+23. Comparison of workflows without and with checkpoints: without, progress is lost on crash; with, checkpoint saves state for later resumption.
+24. Lifecycle diagram showing checkpoint save in Process A and checkpoint restore in Process B, with checkpoint contents listed.
+25. Code showing how to configure FileCheckpointStorage and pass it to WorkflowBuilder via checkpoint_storage parameter.
+26. Code showing how to resume a workflow from a checkpoint by passing checkpoint_id to workflow.run().
+27. Code showing on_checkpoint_save and on_checkpoint_restore methods on an Executor for serializing instance state.
+28. Table of CheckpointStorage protocol methods (save, load, delete, list_checkpoints, list_checkpoint_ids, get_latest) with built-in and custom backends.
+29. Database table schema for custom checkpoint storage showing id, workflow_name, timestamp, and data columns, plus design considerations.
+30. Code for PostgresCheckpointStorage implementing save and load methods with SQL insert/select and checkpoint encoding.
+31. Section divider slide: "Handoff orchestration with HITL" with documentation link.
+32. Review of HandoffBuilder: agents hand off dynamically, no predefined edges, inherently interactive with HandoffAgentUserRequest events.
+33. Code for configuring HandoffBuilder with participants, termination condition, and start agent (no autonomous mode).
+34. Code for handling HandoffAgentUserRequest events: displaying agent response and collecting user input with terminate option.
+35. Section divider slide: "End-to-end application."
+36. Overview of the agentic banking assistant sample app with Python frameworks (Agent Framework, FastMCP) and Azure services.
+37. Architecture diagram showing supervisor agent, account/transaction/payment agents, MCP services, and Azure backend services.
+38. Code showing HandoffBuilder with checkpointing for the banking assistant, using with_checkpointing method.
+39. Next steps slide with links to past recordings and Discord office hours.

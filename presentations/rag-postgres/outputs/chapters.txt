@@ -1,0 +1,30 @@
+This video covers how to build Retrieval Augmented Generation (RAG) applications using PostgreSQL. Pamela Fox demonstrates setting up pgvector for vector search, full-text search, hybrid search with Reciprocal Rank Fusion, and orchestrating a complete RAG flow in Python. She then walks through a full RAG-on-PostgreSQL solution deployable to Azure. Joshua Johnson follows with a deep dive into Azure Database for PostgreSQL AI extensions, including the azure_ai extension for calling Azure OpenAI from SQL, in-database embedding models via azure_local_ai, and a demo combining vector search, geospatial queries, and translation services.
+
+00:00 - Introduction and RAG hack overview
+01:22 - What is RAG and simple RAG flow
+02:54 - Hybrid search: vector + keyword search
+03:52 - Simple RAG with hybrid search architecture
+04:37 - Setting up pgvector extension
+05:14 - Creating tables with vector columns and HNSW indexes
+07:11 - Computing vector embeddings with OpenAI
+08:00 - Inserting and querying vectors
+09:24 - Real-world example: videos table with embeddings
+11:22 - Vector search queries with distance operators
+13:00 - Live demo: vector search on YouTube videos database
+18:17 - Full-text search with tsvector
+21:08 - Hybrid search with Reciprocal Rank Fusion
+23:01 - Orchestrating a full RAG flow in Python
+26:29 - Full RAG with PostgreSQL solution (aka.ms/rag-postgres)
+27:43 - Demo of the deployed RAG app
+28:43 - Advanced RAG with query rewriting
+30:17 - Query rewriting with function calling for SQL filters
+33:04 - Code walkthrough and deployment with Azure Developer CLI
+34:14 - Application architecture on Azure
+34:44 - AI extensions for Azure Database for PostgreSQL
+36:42 - Azure AI extension: SQL interface to Azure OpenAI and AI services
+38:58 - Vector generation: remote and in-database embedding models
+41:21 - In-database embedding performance comparison
+42:18 - RAG pattern with Azure Database for PostgreSQL
+44:07 - eShop demo powered by Azure DB for PostgreSQL
+50:17 - Hybrid search with geospatial data and real-time translation
+53:43 - Q&A: Azure PostgreSQL pricing and free tier

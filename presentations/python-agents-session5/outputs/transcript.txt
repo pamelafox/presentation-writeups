@@ -1,0 +1,1519 @@
+[00:05] Hello everyone and thank you for joining
+[00:07] our live session today. My name is
+[00:09] Lissa. I'm an event planner at Reactor
+[00:11] joining you from Brazil. Before we
+[00:13] start, I have some quick housekeeping.
+[00:16] Please take a moment to read our code of
+[00:18] conduct. We seek to provide a respectful
+[00:20] environment for both our audience and
+[00:22] presenters. While we absolutely
+[00:24] encourage engagement in the chat, we ask
+[00:26] that you please be mindful of your
+[00:27] commentary. Remain professional and on
+[00:29] topic.
+[00:31] The session is being recorded and we'll
+[00:33] be available to view on demand here on
+[00:35] the Reactor YouTube channel within 48
+[00:38] hours. Keep an eye on the chat. We'll be
+[00:40] dropping helpful links and checking for
+[00:42] your questions.
+[00:44] I'll now turn it over to our speaker for
+[00:46] today. Thank you all and welcome here,
+[00:48] Pamela.
+[00:50] >> Hello. Hello everyone. Welcome to our
+[00:53] Python plus agents series where we are
+[00:56] learning to build agents and workflows
+[00:58] using the Microsoft agent framework in
+[01:01] Python. Our first week was all about
+[01:03] agents. If you miss missed that, you can
+[01:05] go back and watch the videos on it. And
+[01:08] this week, our second week is all about
+[01:10] workflows and how we can build workflows
+[01:14] that incorporate agents. Uh so today
+[01:16] we're going to be talking about advanced
+[01:18] multi-agent workflows and getting much
+[01:21] deeper into workflows than we did
+[01:23] yesterday. Uh if you haven't registered
+[01:25] for the series yet, you can do so still
+[01:27] and you'll get links sent to you and
+[01:30] notification of our upcoming streams.
+[01:33] There's just one more, but hey, might as
+[01:35] well register.
+[01:36] So for today, we are talking about
+[01:39] advanced workflows. Yesterday we saw the
+[01:43] basics of workflows and learn you know
+[01:45] how to set up our initial uh workflows.
+[01:48] Uh but today we're going to go into some
+[01:50] really more sophisticated patterns. If
+[01:53] you want to follow along with the slides
+[01:55] you can download from this URL here and
+[01:58] you're also welcome to deliver the
+[02:00] slides yourself uh if you want to teach
+[02:03] this topic to others.
+[02:05] So here's the plan for what we're going
+[02:06] to cover today. We're going to talk
+[02:08] about concurrency, aggregation patterns,
+[02:11] conditional routing with concurrency,
+[02:13] and then talk about three of the
+[02:15] built-in orchestrations, concurrent
+[02:17] builder, magenta builder, and handoff
+[02:19] builder. And then finally, we'll have a
+[02:21] demo of an ET application that you can
+[02:23] deploy yourself.
+[02:26] If you want to follow along with the
+[02:28] code, all of the code is available in
+[02:30] this repo. It's the repo we've been
+[02:32] using throughout the series. And uh you
+[02:35] can go ahead and navigate to the repo
+[02:37] and then you click on the code button
+[02:40] and you should see a big button that
+[02:43] says create code space. Uh you don't see
+[02:45] it on mine because I've already got one
+[02:46] open. Uh but if you haven't made a code
+[02:49] space yet, you'll see a big old button
+[02:51] that says create a code space. So you'll
+[02:53] click that and that will open up a VS
+[02:55] code in a browser tab and that VS code
+[02:58] will have the repository open and have
+[03:01] all the Python environment set up with
+[03:03] Python packages. So you just give it a
+[03:05] few minutes to start up and uh and then
+[03:09] it should have everything that you need
+[03:12] so that you can follow along with the
+[03:13] examples. Now when you're in the code
+[03:16] space what it will do is it'll use
+[03:18] GitHub models for the large language
+[03:20] models and GitHub models are free as
+[03:22] long as you have a GitHub account. Um
+[03:24] but they are also rate limited. So you
+[03:26] may find that with some of the uh you
+[03:28] know some of the workflows that use a
+[03:30] lot of calls to LMS you might get some
+[03:33] you know token capacity error. So we'll
+[03:35] see. Um but you know you can go through
+[03:38] and try and run the examples as I'm
+[03:41] running them. uh and you can also run
+[03:43] them with uh Microsoft Foundry models,
+[03:46] OpenAI uh etc.
+[03:50] All right. And if you do already have
+[03:52] that code space open, I do recommend
+[03:54] running gitpool inside your repo just to
+[03:58] get the latest changes because there are
+[04:00] always late breaking changes.
+[04:05] So little recap since this is our second
+[04:08] day talking about workflows. What is an
+[04:10] agentic workflow? Uh so it is a flow
+[04:13] that involves an agent at some point and
+[04:16] usually you're going to be using that
+[04:17] agent for decision- making like deciding
+[04:19] where to go next in the flow or some
+[04:22] sort of answer to this like looking at
+[04:24] the previous steps and and saying like
+[04:26] oh okay based off that you know this is
+[04:28] um this is some answers some content
+[04:30] we've generated based off those steps
+[04:31] right so there's a lot of uh processes
+[04:34] that you can that you have that you
+[04:36] might automate using agentic workflows
+[04:39] now specifically in agent framework
+[04:41] work. A workflow is a graph that has
+[04:44] nodes and edges and we call those nodes
+[04:46] executives. So you're going to see that
+[04:49] term exeutor
+[04:51] uh show up throughout today.
+[04:54] So the first thing we want to talk about
+[04:56] is concurrent execution.
+[05:00] Yesterday everything we saw was
+[05:02] sequential executor meaning that only
+[05:05] one exe exeutor runs at a given time.
+[05:08] Right? So in this case, we get the
+[05:10] input, it goes to executive, it goes to
+[05:12] another exeutor, we get the output. We
+[05:14] even added in conditional routing, but
+[05:17] even with conditional routing, it was
+[05:18] still only one executive at a time,
+[05:20] right? It was just that, you know,
+[05:22] between A and B, it was going to B, but
+[05:23] it was still one at a time. So that's
+[05:26] sequential execution. And, you know,
+[05:28] that that can be really helpful. But
+[05:30] things get really interesting when we
+[05:33] bring in concurrent execution. So here
+[05:36] we can actually send our input to two
+[05:39] executors or more that run in parallel.
+[05:43] So they're actually running at the same
+[05:45] time and then we send their outputs to
+[05:48] some sort of uh aggregator uh in order
+[05:51] to decide how to combine them. Right? So
+[05:53] concurrent execution is really
+[05:55] interesting because you know it's
+[05:56] parallel computing. means that
+[05:57] potentially we can achieve our tasks
+[06:00] faster uh because we don't have to wait
+[06:02] through things to go one after another
+[06:04] after another. We can actually
+[06:06] parallelize and uh you know run multiple
+[06:10] uh tasks at once as long as they don't
+[06:12] have dependencies between each other,
+[06:14] right? Like sometimes one executive
+[06:15] depends on the output from other ones.
+[06:17] So they do need to go in sequential
+[06:18] order but other times the executives
+[06:20] just they have different tasks that
+[06:22] they're doing and uh they can do those
+[06:24] tasks independently of each other and
+[06:27] then we can look at all their results
+[06:29] together.
+[06:32] So for a concurrent workflow uh this is
+[06:35] the most common you know topology for it
+[06:38] right we have some input and then we fan
+[06:41] that input out using what's called a fan
+[06:43] out edge. So we fan that input out to
+[06:45] multiple exeutors
+[06:48] and then those outputs from those
+[06:50] exeutors fan back in to a single
+[06:53] aggregator. Right? So we have the fan
+[06:55] out edges and the fan in edges and then
+[06:58] the aggregator.
+[07:00] So that's the most you know typical
+[07:03] topology of a concurrent workflow. Um
+[07:06] you know there's some variations as well
+[07:08] but this is what we're going to see
+[07:10] quite a bit.
+[07:12] So how do we actually set this up in
+[07:15] agent framework? Uh so what we can do is
+[07:18] we use workflow builder which is what we
+[07:21] were using yesterday and yesterday we
+[07:23] used it with add edge but now we're
+[07:25] going to use this add fan out edges
+[07:28] method here right so we say okay uh we
+[07:30] have our start exeutor we have an output
+[07:32] exeutor which is an aggregator and then
+[07:34] we add fan out edges. So the fan out
+[07:36] edges go from our start exeutor to uh
+[07:41] three different exeutors here. And then
+[07:43] we have fan in edges that goes from this
+[07:45] list of three to the aggregator.
+[07:48] So let's go ahead and try that out. All
+[07:53] right. So here here is our our workflow.
+[07:58] Right. So, we've got the start exeutor,
+[08:01] we've got output exeutors, and then
+[08:04] we've got the fan out and fan in.
+[08:09] So, let's run this. So, I'm going to say
+[08:11] UV run examples workflow fan out, fan
+[08:14] in. And I'm going to run it with WI
+[08:17] because I think it looks really cool in
+[08:20] WI.
+[08:21] Also, if you remember yesterday, we did
+[08:23] have some WUI issues. Um, those are now
+[08:26] fixed. Um so uh we we can run uh we'll
+[08:30] run most of them today will run in WI uh
+[08:34] so that we have this nice interface for
+[08:37] for seeing it all working.
+[08:41] All right. So here is our WI interface.
+[08:45] Uh so we can see that we have the start
+[08:48] executive which is the dispatcher, a
+[08:51] researcher, marketer and legal. So these
+[08:53] are all agents that are going to run
+[08:55] independently and they're all research
+[08:57] they're all thinking about different
+[08:58] aspects of something right. So uh let's
+[09:01] see our example here is we are launching
+[09:04] a budget friendly electric bike. All
+[09:06] right I like to give something funnier
+[09:09] when I do it but budget friendly organic
+[09:12] banana that's pink. Okay. All right. Go.
+[09:16] Uh so it's taking that input and it's
+[09:19] going to send See how they're all
+[09:21] working at once. So there you can
+[09:22] actually visualize this concurrency
+[09:24] happening here where every agent is
+[09:26] working at the same time. Now something
+[09:29] to note is that these agents are doing
+[09:31] LLM calls. So you do need to have an LLM
+[09:33] that has enough capacity to handle the
+[09:36] uh the amount of tokens and requests
+[09:38] being sent to them at the same time.
+[09:41] Uh in this case I'm using Foundry GPD5
+[09:43] model. All right. So it they all
+[09:46] executed and then they went to the
+[09:47] aggregator and the aggregator just
+[09:51] consolidated all all their outputs
+[09:54] together with just by concatenating.
+[09:56] Right? So we see research findings
+[09:59] um about pink bananas.
+[10:02] Uh we see a marketing there's the
+[10:04] marketing angle
+[10:06] and then at the end we should find the
+[10:08] legal legal compliance uh about organic
+[10:12] and GMO. Okay, great.
+[10:17] So, so there we have you can see that
+[10:19] they ran in parallel and then they
+[10:22] aggregated. Right now, what's
+[10:24] interesting is how does this aggregation
+[10:26] node work? Because this is a different
+[10:27] kind of node than we've seen before
+[10:28] because three nodes are all funneling
+[10:32] into this one exeutor, right? So, this
+[10:34] is um this is defined up here. So we
+[10:38] have this custom executive class and the
+[10:43] and we define this aggregate method and
+[10:44] we put the handler on it. So it knows
+[10:47] agent framework knows that this method
+[10:49] can receive messages and you can see
+[10:51] that the the type of message it receives
+[10:54] is a list of agent responses. So it
+[10:57] knows that it is going to receive a list
+[11:00] of responses from each agent executive.
+[11:04] And this you know this thing here this
+[11:07] just goes this is a very simple
+[11:09] aggregator. It's basically concatenating
+[11:11] the the results and um you know
+[11:15] consolidating the results into this
+[11:18] single string here and then yielding
+[11:21] that as the output. So this is this is
+[11:23] be the most basic aggregator that you
+[11:26] could have is just to take those results
+[11:28] and you know stuff them together and
+[11:30] output them.
+[11:33] uh but still really useful because
+[11:34] already we've saved time because we were
+[11:36] able to run all of those nodes at once.
+[11:43] So now let's talk more about aggregation
+[11:46] because there's a lot of really
+[11:48] interesting things we we can do with
+[11:50] aggregation. I I had a lot of fun
+[11:52] thinking about through this. Um, so what
+[11:55] are some aggregation patterns that you
+[11:58] might consider using with these uh
+[12:02] concurrent agents, right? So we already
+[12:04] saw concatenation. You know, that's
+[12:06] that's straightforward and you know that
+[12:08] that could work if you if that's what
+[12:10] you need, right? Uh but then we've got
+[12:12] some more things we could do. So we
+[12:14] could actually use another LLM call
+[12:16] based off of and send that LLM all the
+[12:19] outputs and ask the LM to you know
+[12:22] summarize it in a particular way. So
+[12:24] that's really helpful if we want to you
+[12:26] know shorten shorten the summary if we
+[12:29] want it in a particular format uh if we
+[12:31] need it in a table like you know we can
+[12:33] do all kinds of things with using LM
+[12:36] call.
+[12:37] Uh we can use uh we can we can do
+[12:41] voting. We can have voting that actually
+[12:43] looks and see like oh okay you know the
+[12:45] the maybe they're all different judges
+[12:47] and the judges were voting and then we
+[12:49] can pick a winner. Um we can do
+[12:51] structured extraction which is like
+[12:52] similar to doing a summary except we're
+[12:54] going to actually have the LM output
+[12:56] structured outputs so that we can you
+[12:58] know turn our analysis into something um
+[13:00] you know more uh that you know that's
+[13:03] more structured that we can you know
+[13:04] store in a database or something. uh we
+[13:07] can do scoring and ranking once here
+[13:09] we're going to use an LLM as a judge in
+[13:11] the final step. So we're going to see
+[13:12] all these um actual examples too. So
+[13:15] let's start off with using an LLM to
+[13:19] summarize the outputs. So let's try
+[13:22] that.
+[13:26] Okay. So this is workflow
+[13:30] aggregator summary and we'll do this one
+[13:33] in WI as well. And let me go ahead and
+[13:37] open it up so we can take a look. So
+[13:40] this one is very similar to the last
+[13:42] one. We've got the same agents we were
+[13:45] using before. Uh but this time the
+[13:47] output executive is a summarizer. So if
+[13:50] we look at that summarizer,
+[13:53] let me go up here and look at the
+[13:54] summarizer. The summarizer
+[13:57] has a internal agent that it can use. So
+[14:01] it has an internal agent and then when
+[14:03] it receives a list of responses,
+[14:07] it calls that agent with those responses
+[14:10] and says, "Hey, you're going to receive
+[14:12] an analysis and synthesize that into a
+[14:15] three sentence executive brief that a
+[14:17] CEO could read in 30 seconds."
+[14:19] Uh this sounds like actually a pretty
+[14:22] real use case. Uh and then you know we
+[14:24] get that response and that we yield it.
+[14:26] So let's try that out. Okay. Uh we are
+[14:30] launching
+[14:32] an organic pink kiwi. Pink kiwis are
+[14:35] actually a thing. They're really good.
+[14:37] All right. Uh so everything's running
+[14:42] concurrently now just like before. We
+[14:45] are doing the research, the marketing,
+[14:47] the legal,
+[14:49] and now it's going to the summarizer.
+[14:51] And so now or no, we're waiting on two
+[14:53] more. So that's interesting when you
+[14:54] have concurrent nodes, you know, some of
+[14:55] them can can uh finish earlier than
+[14:58] others and the aggregator is only going
+[15:01] to process them once they've all
+[15:03] returned, right? So your concurrent
+[15:05] duration is as slow as your slowest uh
+[15:08] executive. All right. Workflow complete.
+[15:11] A rare limited season organic pink kiwi
+[15:13] offers a high attention premium
+[15:15] maternity appealing to health focused
+[15:17] millennials and Gen Z.
+[15:19] Okay. All right. So, it looks like it uh
+[15:22] you know did come up with a three
+[15:26] sentence summary for the CEO to read.
+[15:31] Uh so there we go. So that's actually a
+[15:33] really a really common thing to do is to
+[15:36] use an LM to summarize in some form.
+[15:41] Now let's look at a similar approach is
+[15:45] we're going to use an LM call again but
+[15:47] this time we're going to ask the LM to
+[15:49] produce structured outputs right and you
+[15:52] can think of structured outputs is
+[15:53] basically a JSON that conforms to a
+[15:55] particular schema that we give the LM
+[15:58] we're say hey you need to look all this
+[16:00] and you need to output you know JSON
+[16:02] that looks exactly like this right um so
+[16:06] here for this example we're going to
+[16:09] have it review a potential uh candidate
+[16:12] for hiring.
+[16:14] Uh and if you do use agents for hiring,
+[16:17] please be very careful. It's very easy
+[16:19] to introduce bias into
+[16:22] uh hiring processes. There's been a lot
+[16:25] of research on that. Um okay, so uh
+[16:29] let's go ahead and run this one.
+[16:31] Workflow aggregator structured. I'll go
+[16:34] run this in WI.
+[16:37] Uh so here I'll copy this this um
+[16:42] description of the candidate
+[16:45] and run it.
+[16:48] All right. So now it is going to analyze
+[16:50] that candidate from three different
+[16:52] perspectives. A technical interview, a
+[16:55] behavioral interview, and a cultural
+[16:56] interviewer.
+[16:58] And each of these are just going to
+[16:59] output text. Right? So these are if we
+[17:02] look at these ones, these are all
+[17:03] standard agents. So they're just going
+[17:04] to output text.
+[17:08] But then what's interesting is the final
+[17:11] aggregator, the extractor, right? And
+[17:14] that one
+[17:16] has an internal client that it can use
+[17:19] to communicate with the LLM
+[17:22] and it receives that list of responses
+[17:26] and then it sends them to the LLM and
+[17:28] says, you know, you are a hiring
+[17:30] committee reviewer. produce a structured
+[17:32] candidate review and we ask for it to
+[17:34] use this response format here. So
+[17:37] response format is how we tell it to use
+[17:39] structured outputs. So we're telling the
+[17:41] LM like, hey, when you respond, you need
+[17:44] to output JSON that aligns with this
+[17:49] schema here. So it's going to output a
+[17:51] technical score, technical reason,
+[17:53] behavioral score, behavioral reason, and
+[17:55] a recommendation.
+[17:57] So, as a general best practice, if you
+[17:59] are ever having LLMs give scores, also
+[18:02] have them give give reasons. It is so
+[18:04] helpful to see the the way they justify
+[18:07] a score because it also helps you
+[18:09] improve your system. If you disagree
+[18:11] with a score, then you can look at the
+[18:13] reason and see, you know, why it came up
+[18:14] with it and then you know how to improve
+[18:16] your prompt so that it aligns better
+[18:18] with your thinking. So, always always
+[18:20] output reasons with your scores.
+[18:25] Okay. Uh so here we can see we got the
+[18:28] results and um in the output we do see
+[18:31] that the output is uh is JSON you can
+[18:34] actually see it here technical score
+[18:36] eight technical reason right uh we can
+[18:39] also see it over here so each of them um
+[18:43] comes in we've got a recommendation as
+[18:45] well uh which is higher with
+[18:48] reservations
+[18:49] right so we got these all out and this
+[18:52] is actually you know this kind of
+[18:54] renders funny but this is a Python
+[18:56] object. So then we could easily uh you
+[18:59] know have logic based off this logic uh
+[19:01] based off this output that said like
+[19:03] okay if review.technical technical sore
+[19:04] equals eight, then do this. Or if it's
+[19:06] greater than five, do this. Right? Um,
+[19:08] so that's what's really great about
+[19:09] structured outputs is that then you can
+[19:11] have logic based off of the fields that
+[19:14] come out. And you can also much more
+[19:16] easily store these in a database, right?
+[19:17] Because you might want to just store
+[19:18] this in a database and your database
+[19:20] might have a column for like technical
+[19:21] score, technical reason. So you can go
+[19:23] back through the structured responses
+[19:26] from your workflows and see what the
+[19:28] results were.
+[19:32] All right.
+[19:34] Now let's look at another way we could
+[19:36] use an LLM which is to rank the results.
+[19:40] Right? This is another really common
+[19:42] pattern where you want to uh use
+[19:45] concurrency to farm out a request to
+[19:48] multiple agents and those agents might
+[19:50] have either different system prompts or
+[19:52] different models. Uh I actually do this
+[19:54] a lot when coding is that I'll try the
+[19:56] same prompt with you know opus versus
+[19:59] 5.3 and then you know I decide which one
+[20:01] I think is the best. Right? So um you
+[20:04] could also do the same with code review
+[20:05] that's actually built into the copilot
+[20:06] CLI where you can just tell it hey
+[20:08] review with these five different models
+[20:09] and you can see them all. Um so so here
+[20:12] you know we can look at um you know farm
+[20:15] out to you know different agents that
+[20:17] have uh in this case different prompts
+[20:19] and then we can use an LLM to judge them
+[20:23] and give them a give them a score,
+[20:25] right? And so then we can pick the one
+[20:27] we like the best, right? We're like okay
+[20:28] this one got the best score. We're going
+[20:30] to use that one. Uh so let's go ahead
+[20:32] and run that one. Aggregator ranking.
+[20:36] py. We'll do this one in
+[20:41] uh WI again. Uh let's see. Ranked. Okay.
+[20:45] All right. And um this one is doing
+[20:49] marketing slogans.
+[20:51] Um what's a fruit salad with pink kiwi
+[20:55] and green banana.
+[20:58] I think I probably should have had
+[20:59] breakfast this morning. Everything's
+[21:00] going to be about fruit. Um, okay. So,
+[21:04] they are coming up with slogans now
+[21:09] and uh now the slogans are getting
+[21:12] ranked by our finer final LLM stage. So,
+[21:16] we'll see what slogans they came up with
+[21:18] and which one is the best. Okay, so
+[21:20] here's the rankings. It is a list of
+[21:22] Python objects. Um, so we can see rank
+[21:25] one. So, I think that means it's the
+[21:27] best. Bold writer, shockingly pink,
+[21:29] wildly green, impossible to resist. So,
+[21:32] that got a rank of one and a score of
+[21:34] nine. Uh, then we have a rank of two,
+[21:37] emotional writer. Surprise your taste
+[21:38] buds with pink kiwi and green banana.
+[21:40] Yeah, that wasn't as good. And then rank
+[21:42] three, minimalist writer, pink kiwi,
+[21:44] green banana bliss, score six. Okay.
+[21:47] Yeah, the bold writer definitely won
+[21:50] that one. So, how how did that work? Um,
+[21:54] so
+[21:55] here, you know, we've got the workflow
+[21:57] builder and it's going to that ranker.
+[21:59] And if we look at that ranker, we see
+[22:02] that it has its own client you can use
+[22:05] to make LM calls. And it receives a list
+[22:08] of responses and, you know, combines
+[22:11] them together, sends them to the LM and
+[22:14] say, "All right, you know, you got to
+[22:15] rank them. Uh, you need to give each of
+[22:18] them a 1 to 10 score and a
+[22:19] justification." So, it's actually
+[22:21] ranking and scoring at the same time,
+[22:23] which is which is convenient. And here
+[22:25] the response format is um it's a little
+[22:29] more complex. Uh the it has to output a
+[22:32] list of ranked slogans, right? And that
+[22:34] list is is going to be in order from um
+[22:37] best to worst, right? So, for each of
+[22:39] them, it includes the rank, the agent
+[22:42] that came up with it, the slogan, the
+[22:43] score, and the justification. So, you
+[22:46] can actually get really fancy with your
+[22:48] structured outputs, right? like you you
+[22:50] know here I've got a a list of um you
+[22:53] know of a different object type. Uh so
+[22:56] you know uh it's it's really amazing
+[22:59] what you can do with structured outputs.
+[23:03] All right. Now finally uh let's look an
+[23:05] example where are not using an LM in the
+[23:09] final um call because we're using the LM
+[23:12] earlier on with structured outputs from
+[23:14] these agents. Uh so let's go ahead and
+[23:18] look at this. This is aggregator
+[23:20] voting py. So this one
+[23:26] uh has classifi. So each of these agents
+[23:32] are actually outputting structured
+[23:34] outputs. So the concurrent agents are
+[23:36] outputting classification. So they're
+[23:39] trying to classify an input. So they're
+[23:41] outputting this classification type uh
+[23:44] which has a category which is either
+[23:46] bug, billing, feature request or
+[23:47] general. So each of the concurrent
+[23:50] agents outputs that you know outputs
+[23:52] that classification and then for the
+[23:55] executive all it needs to do is look at
+[23:59] those results and it just counts them
+[24:02] up. so that this executive actually does
+[24:04] not need to have an LLM. Uh because it's
+[24:07] just looking at the structured results
+[24:10] from the concurrent LLMs and saying,
+[24:12] "Oh, okay. You know, each of you know,
+[24:14] we had five bugs, two feature requests,
+[24:17] whatever." I'll run it so you can see
+[24:19] what the output looks like. And so this
+[24:21] one I'm going to run um just in the
+[24:24] terminal because it's got multiple
+[24:26] examples going to run with so you can
+[24:28] see how it decides for each of them. So
+[24:31] here it's trying to classify a customer
+[24:33] support ticket. So this is a pretty
+[24:35] common scenario, right? So this one is
+[24:38] very obviously a bug because all of the
+[24:40] classifiers voted for it as being a bug.
+[24:44] Uh this one um you know is is more
+[24:48] ambiguous. Uh this this report here, it
+[24:51] still got classified as a bug um from
+[24:54] two out of three votes. And then this
+[24:56] one uh is more of a feature request. And
+[24:59] this one got classified as a feature
+[25:01] request from two out of three votes.
+[25:03] Right? So, so that's another thing to
+[25:06] consider is that if you're using
+[25:08] structured output for the actual agents
+[25:11] that are running concurrently, then
+[25:13] maybe your aggregator is just doing some
+[25:16] analysis of, you know, of what they come
+[25:18] up with and then uh, you know, uh,
+[25:21] coming up with what's the best based off
+[25:24] of you what they came up with along the
+[25:26] way.
+[25:28] All right. So, those are some really
+[25:30] interesting aggregation patterns. And I
+[25:33] think you can, you know, I think you can
+[25:35] start thinking and brainstorming like of
+[25:37] some cool ways that you could use
+[25:39] aggregation for for workflows um as a,
+[25:43] you know, as a way of um being able to
+[25:46] use LMS, but also being able to collect
+[25:50] and compare results from LMS to get the
+[25:53] best out of them. So now we're going to
+[25:56] talk about conditional routing. Uh we
+[25:59] talked about conditional branching in
+[26:00] workflows yesterday as part of
+[26:02] sequential workflows. But now we have
+[26:06] the possibility of concurrency. So can
+[26:08] we combine conditional routing and
+[26:10] concurrency? Yes, we can.
+[26:14] So the idea here is that we get some
+[26:16] input and we have you know multiple
+[26:18] potential agents uh or executives that
+[26:21] could handle that input and we want to
+[26:23] decide which of those are going to
+[26:26] receive that input. Uh so the way we'll
+[26:29] do this is to use a selection function
+[26:32] that's going to decide based off the
+[26:33] input which of the executive send it to
+[26:36] and then it will send it to them in
+[26:39] parallel.
+[26:42] Now in order to do that we have to use a
+[26:44] new kind of edge group called a multi-
+[26:46] selection edge group. So that takes a uh
+[26:50] it takes this uh start exeutor it takes
+[26:52] the fan out uh fan in edges and then it
+[26:55] takes a selection function and it's
+[26:58] going to use that to decide what to send
+[27:00] it to. So let's just look at that uh
+[27:03] code here. Multi-edge group. Okay.
+[27:09] So here we set up the workflow with the
+[27:12] multi selection edge group and the
+[27:14] interesting thing here is that select
+[27:16] targets function. So this is going to
+[27:20] receive a ticket and um and this is
+[27:24] coming through as an object because we
+[27:25] are using uh we are using our our first
+[27:30] executive in this one is actually using
+[27:33] uh structured outputs. Uh so we should
+[27:35] actually look at that first. So this is
+[27:36] our first executive that takes a ticket
+[27:40] and gives it to the LLM and asks for it
+[27:43] to come back in this structured output
+[27:45] here which is ticket class and that one
+[27:48] has the text of the ticket and whether
+[27:50] it's a bug billing or urgent. So here
+[27:54] our start exeutor is going to determine
+[27:58] um you know going to turn the input into
+[28:00] structured output. Uh so this is really
+[28:02] helpful for our selection function
+[28:04] because now the selection function
+[28:06] doesn't have to do like fuzzy matching.
+[28:08] It can just look exactly at this ticket
+[28:11] object and say oh okay if the ticket's
+[28:12] bug we're going to send it here. If it's
+[28:14] billing we'll send it here. Uh so
+[28:16] basically it always sends to support but
+[28:19] then if it's if it's bug it'll send it
+[28:21] to a particular place and if it's
+[28:22] billing it send it to um another one
+[28:25] right
+[28:27] and then it returns back the list of
+[28:30] those uh those executives
+[28:34] and and then it'll so then based off
+[28:36] that it'll know which of these three to
+[28:39] send it to. So we saw it's always going
+[28:41] to send a support and then it's maybe
+[28:43] going to support an engineering maybe
+[28:44] going to send a billing. So, let's go
+[28:46] ahead and run that. And I'll run this
+[28:49] one just in the terminal because we've
+[28:50] got a few different examples that we're
+[28:53] going to run it on to see.
+[28:58] So, let's see. So, first we're going to
+[29:00] check it on this one. App crashes,
+[29:03] right? It says it's urgent. Uh, so that
+[29:06] gets routed to support and engineering.
+[29:09] This second question gets recorded to
+[29:11] support and billing because it's that
+[29:13] billing. And then the third question is
+[29:15] a feature request and that only gets
+[29:17] routed to support. Uh it doesn't get
+[29:19] routed to the other agents because it's
+[29:22] not a bug and it's not billing.
+[29:26] So, so there we go. So that's really
+[29:28] helpful. So then you can bet the
+[29:30] benefits of concurrency with being able
+[29:33] to have conditional routing. Now, the
+[29:35] key here is I think it's really
+[29:36] important that you're able to have a
+[29:38] clean selection function that really
+[29:41] knows where to send people. So, I did
+[29:44] that by having our first node output
+[29:46] structured outputs. Um, and I think that
+[29:50] that approach works really well. Just
+[29:52] just think about how you're going to
+[29:53] make that decision of where to send
+[29:55] something.
+[29:58] Okay. So, now that we've seen a lot
+[30:01] about workflows and edges and, you know,
+[30:05] being able to do concurrency and fan out
+[30:07] and fan in, all that stuff, now we're
+[30:09] going to switch gears a bit to talk
+[30:11] about built-in workflow orchestrations
+[30:14] uh that build on top of the concepts
+[30:17] that we've uh that we've already seen
+[30:20] that make it easy to do common patterns.
+[30:25] The first one is concurrent builder. Uh
+[30:28] so if you want to have do a concurrent
+[30:32] uh you know a concurrent workflow like
+[30:33] we've seen before
+[30:35] you can do that really easily by just
+[30:38] using concurrent builder right this we
+[30:40] saw sequential builder yesterday which
+[30:42] was similar where oh if you just want to
+[30:43] do sequential you can use sequential
+[30:44] builder. So this is just a class that
+[30:47] just makes it particularly easy to um
+[30:51] you know put together this this
+[30:52] concurrency theory. Now, this assumes
+[30:54] that all of your uh nodes are either
+[30:59] agents or are processing conversations
+[31:02] of some form. So, this is works the best
+[31:05] if you're chaining together multiple
+[31:07] agents.
+[31:09] Uh so, really like it it's going to look
+[31:12] very similar to
+[31:15] uh what we saw
+[31:17] before. It's just that it makes it
+[31:20] easier
+[31:21] to do it. Uh, so UV run examples. I'll
+[31:25] go ahead and open this one in Wii.
+[31:30] So, so we can see it's always
+[31:32] interesting to open these workflows, the
+[31:35] the built-in ones into WI to see what
+[31:38] nodes it adds on because sometimes it
+[31:39] adds on nodes. So, here you can see that
+[31:42] um our concurrent builder, if we look at
+[31:44] the code, all we did was that we gave it
+[31:46] a list of three agents and those are the
+[31:50] ones we see in the middle here. and
+[31:52] agent framework automatically added in
+[31:55] the dispatcher node and the aggregator
+[31:58] node. Right? So it's a default
+[32:00] dispatcher that takes a prompt and sends
+[32:02] it to all of them. And then there's a
+[32:04] default aggregator that takes the list
+[32:06] of messages and just outputs that list
+[32:08] of messages. Right? Uh so now we can say
+[32:11] launching
+[32:13] a um ebike for 10 people at once. Okay.
+[32:21] All right. So that gets automatically
+[32:24] dispatched to each of the agents
+[32:28] so that they can process it. And let's
+[32:30] go ahead and look at this timeline here.
+[32:33] Okay. And then and then in the the
+[32:36] aggregation, it's just a concatenation
+[32:39] of all the outputs. So the aggregation
+[32:42] here is very basic, but agent framework
+[32:45] does make it easy to override the
+[32:47] aggregator because you're almost always
+[32:49] going to want to have a different kind
+[32:50] of aggregator. So when you're doing
+[32:52] concurrent builder, you can override
+[32:54] that aggregator with your own custom
+[32:56] aggregator.
+[32:59] All right, so that's actually not that
+[33:00] exciting because really it's just
+[33:02] showing what we already knew how to do,
+[33:03] but now there's just like a slightly
+[33:04] easier way to do it. But I wanted to
+[33:05] make sure you know about that um because
+[33:07] it, you know, it might make your code
+[33:08] shorter.
+[33:12] Now let's get really interesting uh and
+[33:14] talk about magentic builder. So magentic
+[33:18] builder is based off some research from
+[33:22] uh Microsoft research and there's a
+[33:24] paper about it I've got linked down here
+[33:26] in the slides
+[33:28] and the goal is to have better
+[33:30] orchestration by using planning and kind
+[33:34] of progress management. So there's this
+[33:36] orchestrator and the orchestrator comes
+[33:38] up with a plan and based off of like you
+[33:42] know the agents it has a uh available
+[33:44] what facts it currently knows and what
+[33:46] facts it thinks it needs to look up. So
+[33:49] it comes with that plan and it starts
+[33:51] assigning tasks to the agents in order
+[33:54] to finish the plan and each time when an
+[33:58] agent completes it checks its progress
+[34:00] ledger and says okay is the task
+[34:02] complete yet? Uh is progress being made?
+[34:05] what should we do next? And it does this
+[34:08] all really explicitly. And this this
+[34:12] magentic one, it came out I think it
+[34:13] came out before reasoning models. Um, so
+[34:16] some folks might argue that you don't
+[34:18] need this anymore because reasoning
+[34:19] models are kind of maybe doing it behind
+[34:21] the scenes. Um, but it does make it
+[34:24] really really explicit this planning
+[34:26] process. And sometimes it helps to, you
+[34:28] know, when when you really want to be
+[34:29] thorough, it does help to make the
+[34:31] planning and progress more explicit.
+[34:36] Uh so it'll, you know, it's it's
+[34:38] checking constantly to see is the task
+[34:39] complete? Okay, it's not complete. All
+[34:41] right. Are we still making progress?
+[34:43] Right? It actually checks to see like,
+[34:45] oh, are we in a loop? Are we stalled?
+[34:47] Right? Um because you don't want to you
+[34:49] don't want to just infinitely um you
+[34:52] know work on something. So it it has all
+[34:54] these interesting checks that it does.
+[34:58] Uh so the first step is to coming up
+[34:59] with that initial plan, right? So this
+[35:01] is actually this prompt it use. So it
+[35:03] says, okay, we've got this team and
+[35:05] it'll, you know, look at all the agents
+[35:06] you give it and look at the description
+[35:08] of each agent and send that to the LM.
+[35:11] And it says, okay, we're going to, you
+[35:12] know, devise a plan based off of the
+[35:15] agents available.
+[35:17] So it comes up, the LM comes up with a
+[35:20] plan based off of the agents it has and
+[35:24] then this is what the progress ledger
+[35:26] looks like. It's actually um you know
+[35:28] structured output JSON uh that includes
+[35:31] these fields, right? So is the request
+[35:33] satisfied yet? Like is the task done
+[35:35] yet? Yes or no? Are we currently in a
+[35:37] loop? Are agents repeating themselves?
+[35:39] Yes or no? That happens actually a fair
+[35:42] bit with LLMs. Uh is progress being
+[35:46] made? like is there any point to
+[35:47] continuing yes or no? Who should go next
+[35:51] and what should that person do? Right?
+[35:53] So this is what it checks each time in
+[35:55] order to figure out what the next step
+[35:57] should be.
+[36:02] So here is how we use this inside of
+[36:06] agent framework. Um we use this magentic
+[36:10] builder uh built-in class. We tell it
+[36:12] all the agents it has available. We also
+[36:15] give it a manager agent and then we say
+[36:18] how we give some parameters like okay
+[36:20] you can you know do 10 rounds max. This
+[36:22] is how how many times you're allowed to
+[36:24] stall. Uh there different things here to
+[36:27] decide what to do when it sees that it's
+[36:29] being stalled or or just not making
+[36:31] enough progress.
+[36:33] And then agent framework does a lot of
+[36:36] magic behind the scenes in order to turn
+[36:39] your manager agent into a majestic
+[36:42] orchestrator. And that orchestrator is
+[36:44] going to take care of the plan
+[36:45] development and the progress ledger. All
+[36:48] right. So let's look at that code.
+[36:52] Magentic one. Okay.
+[36:55] Now most of this code is just printing
+[36:57] out the events. Like the actual code for
+[37:00] setting it up is not very long. Oh,
+[37:02] that's my Spanish. All right. Let's do
+[37:03] this in English. Okay. Here we go. All
+[37:08] right. Okay. So, we have some agents,
+[37:11] right? And you know we have this uh
+[37:12] local activities agent this foreign
+[37:14] language agent uh travel
+[37:17] uh travel summary agent um manager
+[37:21] agent.
+[37:23] So those are the agents we have. So we
+[37:25] create this magenta builder with these
+[37:28] with these three agents as the
+[37:29] participants and then we assign the
+[37:31] manager agent to that that manager
+[37:33] agent. And even though that manager
+[37:36] agent has you know it it has a pretty
+[37:38] short prompt.
+[37:40] actually got a lot of it's you know it's
+[37:43] going to get set up with a lot of
+[37:45] orchestration behind the scenes. Uh so
+[37:47] it really doesn't need much of a prompt
+[37:48] because it's going to get enhanced with
+[37:50] all the magentic one stuff. So let's go
+[37:53] ahead and run this and I'll run this in
+[37:55] the terminal because uh it has a lot of
+[37:58] pretty output that I added um just so we
+[38:01] can see the progress ledger and see
+[38:03] what's going on.
+[38:05] Okay, so the task is to plan a half-day
+[38:08] trip in Costa Rica for a family with two
+[38:10] children ages six and nine. I should
+[38:14] have changed that to three and six to
+[38:15] match my kids. Um, and it's going to
+[38:19] plan in itinerary.
+[38:24] So, the first thing it needs to do is
+[38:26] that uh plan development, right? So,
+[38:29] we're going to see
+[38:31] it come up with a plan. Now, you're
+[38:33] gonna notice that Magentic One takes a
+[38:37] bit more time than our other
+[38:40] orchestrations because it is doing it's
+[38:42] doing more behind the scenes. It is
+[38:44] doing more LLM calls. It certainly uses
+[38:46] more uh more tokens um than other ones
+[38:50] because it is doing so much uh so much
+[38:52] explicit steps. All right. So there we
+[38:55] got uh we had an update. So this was the
+[38:57] plan uh that it this is its original
+[39:01] initial plan. So you can see plan
+[39:02] created. All right, we are trying to
+[39:04] address this request. We have this team.
+[39:06] Here is our initial fact sheet. These
+[39:09] are facts to look up.
+[39:12] These are facts to derive. These are
+[39:15] educated guesses.
+[39:18] And here is the plan.
+[39:22] So it's got it's very thorough there.
+[39:25] And here's the progress ledger, right?
+[39:26] So is request satisfied? False. Is in
+[39:29] loop? False. Is progress being made?
+[39:31] True. Next speaker, local agent. And
+[39:34] here is the instruction that's going to
+[39:36] get sent to that local agent.
+[39:40] So now it's going off to the local
+[39:42] agent, which just came back. Okay. Uh
+[39:45] it's very long, too. Okay. So here's the
+[39:48] local agent. Um now local agent said
+[39:51] they can't access live websites right
+[39:53] now. This would of course all be much
+[39:55] better with real tools, but it is doing
+[39:57] its best job based off its weights and
+[39:59] and saying what it does know and doesn't
+[40:02] know. And now we go to the progress
+[40:04] ledger. And you know that one says,
+[40:07] okay, now the next speaker is going to
+[40:08] be the travel summary agent.
+[40:11] And now it's going to that travel
+[40:13] summary agent, uh, which is going to
+[40:15] look at the whole conversation and
+[40:17] decide what to do.
+[40:23] And um and this is yeah this is looking
+[40:25] at this this whole conversation here.
+[40:29] I see lots of discussion in the chat
+[40:32] about token limiting and whatnot right
+[40:34] remember we talked about um yeah so
+[40:37] obviously we saw in magenta builder
+[40:38] there's various parameters that you can
+[40:40] set that will you know limit uh limit
+[40:43] iterations installs and stuff like that.
+[40:45] So certainly you could look for that um
+[40:48] on these uh and remember also when you
+[40:50] just when you're building your agents
+[40:52] themselves, you could add um middleware
+[40:54] on the agents uh to do token management.
+[40:58] Uh for workflows, if you want to do
+[41:00] token management in a workflow, you're
+[41:01] probably going to do that as a custom
+[41:03] executive node that's uh you know
+[41:05] checking things, right? So on the agents
+[41:08] itself, you can use middleware for token
+[41:10] management. on the workflows. Uh if it's
+[41:12] a built-in one, you know, look at your
+[41:14] options here. But if you're making your
+[41:16] own workflow, then you probably want to
+[41:17] have executive nodes.
+[41:20] All right. And so,
+[41:23] uh, we have the language agent. Now,
+[41:26] we're getting some nice pronunciation.
+[41:30] And now it's going to go
+[41:33] to the travel summer agent to finally
+[41:36] finish the job.
+[41:38] So you're definitely seeing that this
+[41:40] takes you know longer than um you know
+[41:44] we could do a comparison of this with uh
+[41:46] you know with without using magentic
+[41:48] builder and we'd see it much faster. The
+[41:50] question is would it be as good? Would
+[41:52] it be as thorough? And we we talked
+[41:54] about evaluation on last Thursday's
+[41:56] session, right? Like when you're
+[41:58] developing these agents and workflows,
+[41:59] you want to evaluate them so that you
+[42:01] can decide, right? Like you need to know
+[42:04] what is the right answer for this. what
+[42:06] is the best out answer for this question
+[42:09] so that you could actually compare and
+[42:10] say like hey is it worth it to use
+[42:13] magentic builder or can I you know just
+[42:16] use a simpler pattern instead can I
+[42:18] reduce the number of calls I'm doing and
+[42:20] get the same result right that's always
+[42:22] you know the the question when you're
+[42:24] using LLM is can you can you achieve the
+[42:27] same result with less tokens with a
+[42:30] cheaper model with a faster workflow and
+[42:32] you really don't know that until you
+[42:36] have evaluations and ideally with
+[42:38] something like this you would have like
+[42:39] a ground truth evaluation
+[42:41] um or at least somebody who can look at
+[42:43] this and say like you know this like
+[42:46] doesn't work right to somebody say like
+[42:47] hey you can't get from San Jose to this
+[42:49] volcano I don't actually know but I know
+[42:51] it was hard to get to volcanoes when I
+[42:53] was there um right so you want somebody
+[42:56] who can look at it and actually say you
+[42:57] know good or bad okay it's still going
+[43:00] it's almost at I think we're almost at
+[43:02] the final output but you know we Yeah,
+[43:05] we got stuff to do here. We did Oh, we
+[43:06] went to the travel summary agent. So,
+[43:08] yeah, we got to that agent. And so, now
+[43:10] the final step is um Oh, it wants even
+[43:13] more stuff. It's going to keep going.
+[43:15] We're just gonna we're just going to
+[43:17] move on.
+[43:22] All right. So, we saw that magentic
+[43:24] orchestration and uh you know, we can
+[43:27] see that was being very thorough with
+[43:29] deciding which agents it was going to
+[43:31] select. The manager was saying, "Okay,
+[43:33] now it's travel agents job. Now it's
+[43:34] local Asian jobs, right? And and you
+[43:36] know going back and forth between them.
+[43:38] Now this might remind you of the
+[43:41] architecture I showed on the very first
+[43:42] day which was um basically what I called
+[43:45] like the supervisor agent or the agent
+[43:47] as tools architecture. And that one the
+[43:50] code um oh we did get the result by the
+[43:52] way it finished. Uh let me uh
+[43:55] supervisor. So that code was in agent
+[43:58] supervisor and this one basically you
+[44:01] know we had the supervisor agent and its
+[44:03] tools were rappers of sub agents right
+[44:08] so that's what I mean by the supervisor
+[44:10] architecture is that you have a
+[44:11] supervisor agent and it had its tools
+[44:14] are in fact just rappers on top of
+[44:17] agents
+[44:18] so you could try you know having doing a
+[44:21] comparison of if I give the same prompt
+[44:25] to with this architecture versus
+[44:26] magentic you know what is the result
+[44:30] uh so here I have a comparison between
+[44:32] the the the two orchestrations right so
+[44:34] with magentic this planning step is
+[44:37] explicit right very explicit we have
+[44:40] that initial plan and we have that
+[44:41] progress ledger if you're doing the
+[44:43] supervisor agent architecture there's no
+[44:46] explicit planning uh you're just kind of
+[44:49] relying on the fact that LLMs themselves
+[44:52] do some amount of planning especially
+[44:53] the new LLMs that are reasoning models
+[44:55] like the GB5s series like a lot of the
+[44:57] LMS coming out these days have been
+[44:59] trained with this you know reasoning uh
+[45:01] approach built in. So it is kind of it's
+[45:04] basically doing planning in its you know
+[45:06] as part of its inference process and you
+[45:09] can see what its decisions are by what
+[45:12] tool call it decides to make whereas
+[45:14] this you know this magentic one very
+[45:16] very explicit planning and um you know
+[45:19] checking in progress right u magentic
+[45:22] one does have built-in loop detection
+[45:24] that's nice uh the other one doesn't so
+[45:26] you'd have to build that in with you
+[45:27] know middleware or something like that
+[45:29] uh the agent context is different in
+[45:32] magentic Magenic one does actually share
+[45:34] the full chat history with all of the
+[45:36] agents. Um, so that's another reason why
+[45:38] it actually takes up more tokens because
+[45:40] it does share the same history. Whereas
+[45:42] the supervisor agent, it's just uh
+[45:45] calling calling the agent um with just a
+[45:48] very limited amount of context. Uh so
+[45:51] that does mean magentic one does use way
+[45:53] more tokens than the other one. Right?
+[45:55] So you know this comparison between them
+[45:58] uh there's a you know a lot more going
+[46:00] on in magentic one but that also means
+[46:02] that the output could be higher quality.
+[46:05] Uh so it's just you'd want to evaluate
+[46:07] and decide um whether it's worth it to
+[46:10] move to an architecture like magenta
+[46:12] one. You can also just think generally
+[46:13] of magentic one as inspiration for
+[46:16] workflows. Right? Maybe you don't like
+[46:17] how magentic one does it but maybe you
+[46:19] want to develop something similar to
+[46:21] that. you could just look, you know, how
+[46:23] it's done and build your own workflow
+[46:26] that has what you like from it, um, but
+[46:28] maybe doesn't do everything the same
+[46:30] way, right? So, I would think of these
+[46:31] built-in workflows as also just
+[46:33] inspiration for you for what kind of
+[46:35] workflows you might build yourself.
+[46:39] Now, we're going to look at another
+[46:41] built-in orchestration called handoff.
+[46:46] And this is going to allow us do dynamic
+[46:48] routing. So basically all the examples I
+[46:50] showed so far were graphs where I deci
+[46:54] define the edges. you know as a
+[46:56] developer I said okay I said you know
+[46:58] this thing can go to this edge and this
+[47:00] one can go to the ed edge right and we
+[47:02] had the LM pick the path in some cases
+[47:05] but I was still the one that defi like
+[47:07] defined all those edges and said like oh
+[47:09] B can only go to C B can't go to D right
+[47:12] so that does limit the d like the
+[47:16] dynamicism of this graph because I've
+[47:18] said like oh these are the only possible
+[47:20] edges allowed in this branch now we're
+[47:23] going to look at dynamic routing where
+[47:25] all the edges are possible and the agent
+[47:28] is going to decide what edge to go to.
+[47:32] Right? So, this potentially opens up uh
+[47:35] a lot more, you know, it's a lot more
+[47:37] flexibility within this graph. Uh but
+[47:39] it's also can be a little bit chaos.
+[47:42] We'll see. Uh so, this is what's known
+[47:45] as handoff orchestration. uh we have a
+[47:47] start agent that just kicks off the
+[47:49] workflow. But then after that, any agent
+[47:51] can hand off control to any other agent,
+[47:54] right? And that agent just deciding
+[47:56] they're saying, "Oh, I'm done with this.
+[47:58] Oh, I see I've got these other agents.
+[48:00] I'll pass it to you, right? It's like a,
+[48:02] you know, playing a game at recess where
+[48:04] you can you can throw the ball to
+[48:06] whoever you want, right? And then now
+[48:08] you once, you know, once that agent
+[48:09] receives a conversation, they now own
+[48:11] that conversation until it decides to
+[48:13] hand it to someone else, right? So the
+[48:16] this routing all emerges based off of
+[48:18] the current state of the conversation.
+[48:22] So we can do that using the built-in
+[48:24] handoff builder orchestration. Um so uh
+[48:28] let's go ahead and look at our example
+[48:32] for that. Uh so handoff builder.
+[48:37] Okay.
+[48:39] And so here we can see that we have
+[48:42] participants and the participants here
+[48:45] is triage agent, researcher, writer,
+[48:48] editor
+[48:50] and we also down here declare that the
+[48:52] triage agent is the start agent. So
+[48:54] you'll notice the triage agent is both a
+[48:56] participant and the start agent. So you
+[48:59] do need to have some sort of agent to
+[49:00] start off. So um you're you're almost
+[49:03] always going to have something that's
+[49:04] like like a triage agent. So it and it
+[49:07] it feels kind of like a supervisor, but
+[49:09] it really has much less control than a
+[49:11] supervisor. It's just it's just starting
+[49:13] it off and sometimes people will pass
+[49:15] back to it, right? Um so somebody has to
+[49:20] start it off and it's very often going
+[49:22] to be some sort of triage coordinator,
+[49:25] whatever you want to call it. Uh we do
+[49:26] need a termination condition. This is
+[49:28] tricky. When do you terminate? Uh in
+[49:30] this case, we're going to terminate when
+[49:31] the text starts with final. Obviously, I
+[49:34] don't love that because I hate doing
+[49:35] anything based off of just string
+[49:37] checking. Uh, so I think you want to,
+[49:39] you know, come up with um better ways of
+[49:41] termination. Um, but for this case,
+[49:43] we're just going to check to see if the
+[49:45] text is final.
+[49:48] All right. Uh, so this is doing a
+[49:50] research writer editor flow. So the
+[49:52] researcher does research. Um, it's got
+[49:55] access to the Microsoft learn docation.
+[49:57] So it's actually going to come up with
+[49:58] some technical documentation.
+[50:00] uh the agent uh is the writer is going
+[50:04] to write and the editor is going to
+[50:06] edit. So we are going to let it decide
+[50:09] based off this prompt
+[50:12] what how it should handle it. So it's
+[50:13] going to write a LinkedIn post about
+[50:15] deploying Python agents on Azure
+[50:16] container apps. This is a question I got
+[50:18] a lot in the last few weeks. So you know
+[50:21] let's see if I can delegate it. All
+[50:23] right. So we're going to go ahead. I'm
+[50:25] going to run this uh in the terminal uh
+[50:28] because I'm outputting the events uh
+[50:30] particular way so I can show you the
+[50:32] handoffs.
+[50:34] All right. So we are going to run this
+[50:41] and see what it decides to do.
+[50:47] Okay. So here we have the prompt and
+[50:50] it's going to start off with the triage
+[50:51] agent and that triage agent says you're
+[50:54] a coordinator hand it off and you know
+[50:58] gives some ideas about what to do. So
+[51:01] you can see it starts off with triage
+[51:03] and immediately does a handoff to
+[51:04] researcher.
+[51:06] So it decided that researcher was the
+[51:08] first thing we needed which makes sense.
+[51:11] Uh it does say that's the preferred
+[51:12] first step. So we kind of biased the
+[51:14] triage agent there. Maybe we shouldn't
+[51:16] have biased it. Uh then the researcher
+[51:18] is working, the researcher handed off to
+[51:20] the writer, the writer worked, the
+[51:22] writer handed off to the editor, the
+[51:23] editor's working, and we've got the
+[51:25] final. So that actually was a pretty
+[51:27] that was pretty clean. When I was doing
+[51:28] it earlier today, there was definitely a
+[51:30] lot more handoff happening. So you never
+[51:33] That's the thing with handoff is you
+[51:34] don't know like you can go you can go
+[51:36] back and forth and back and forth. They
+[51:38] just keep and it doesn't have um the
+[51:41] loop detection. I didn't put loop
+[51:43] detection in here or max uh rounds in
+[51:45] here. Um, so, uh, it could just it could
+[51:50] just keep going. All right. So, here
+[51:51] we've got our final and that's what
+[51:52] ended it because it starts the editor
+[51:54] prefaced with final
+[52:00] poetry. I would not have done poetry.
+[52:02] Okay. I would do UV. All right.
+[52:07] But the rest looks good. Okay. All
+[52:10] right. So, there we go. So that's that's
+[52:13] a a handoff where all the agents can
+[52:16] pass off to each other. So it could have
+[52:18] even passed back off to triage. Like
+[52:20] earlier today when I was running it, it
+[52:21] was like passing back off like it was
+[52:23] just doing a lot of pass passing back.
+[52:25] Um so you kind of never know what it's
+[52:28] going to do. Uh you'll also notice I
+[52:30] have this with autonomous mode. That's
+[52:32] because uh I wanted to let it know
+[52:34] there's no user that can answer
+[52:36] questions. A lot of times it does want
+[52:37] to ask the user more questions. uh but
+[52:40] we're not talking about that till
+[52:41] tomorrow. So for today we are doing
+[52:43] autonomous mode where um it just knows
+[52:47] that no user is available to answer any
+[52:50] uh you know questions for clarification.
+[52:53] All right so that is a handoff where
+[52:55] everyone can hand off to everybody else.
+[52:57] Now you can actually make rules and it
+[53:01] feels funny to do rules with handoff but
+[53:04] um but you can. So you can say hey
+[53:07] here's the rules like these are the
+[53:08] handoffs that are allowed. So this is a
+[53:10] way of having dynamic routing but with
+[53:14] more constraints because you might know
+[53:16] that you never want a particular um you
+[53:20] know interaction a particular handoff to
+[53:22] be allowed and that that only you know
+[53:25] some subset of handoffs is allowed. So,
+[53:27] here we've got one where we've got a
+[53:30] bunch of rules
+[53:32] and the rules really make almost
+[53:34] everything possible, but there's a
+[53:35] couple things that we don't allow. Um,
+[53:37] so a few a few edges that where handoffs
+[53:41] cannot happen.
+[53:43] Uh, so this one is going to do customer
+[53:45] support and uh here it's trying to
+[53:49] return a jacket. Okay, so it has access
+[53:52] to triage agent, order agent, return
+[53:54] agent, and refund agent. So let's see
+[53:56] what it decides to do when the access to
+[54:00] all of those agents.
+[54:03] Uh and let's look at let's look at each
+[54:05] of these. So triage agent um you know
+[54:08] acknowledge it and hand it off to the
+[54:09] right specialist has some information
+[54:12] about the specialist order agent
+[54:15] return agent and I gave it some little
+[54:18] tools just to make it feel like it's
+[54:19] done something and refund agent. Okay.
+[54:22] All right. So it is happening.
+[54:24] So we got triage agent acknowledged it
+[54:26] and then did a handoff to return. Return
+[54:29] gave it to refund. Refund gave it back
+[54:31] to triage. Triage gave it to return
+[54:36] and then return replied. So what you'll
+[54:38] notice here is a little bit of back and
+[54:41] forth. And um part of this might be
+[54:44] because we don't have a human in the
+[54:46] loop, right? Uh it's very possible that
+[54:48] like one of them wanted more information
+[54:50] and then triage was like no you can't
+[54:51] get that information or you know
+[54:53] something like that. And that's why we
+[54:54] see this back and forth happening here.
+[54:57] Um, but I I I like that this is
+[54:59] happening because this demonstrates the
+[55:00] fact that when you enable handoff, this
+[55:03] sort of thing can happen. You can have
+[55:04] this back and forth and back and forth.
+[55:06] And in the end, it like, you know, it it
+[55:09] did figure it out and went to the return
+[55:11] agent and then when that one went to
+[55:14] refund and refunds, I guess decided
+[55:16] didn't need to do anything. Went back to
+[55:18] triage agent and then triage agent said
+[55:20] goodbye and that ended the conversation.
+[55:24] So you'll notice there was like a lot of
+[55:27] handoffs there and each of those is an
+[55:29] LLM call, right? Every time you see a
+[55:30] handoff that was an LLM call deciding to
+[55:33] make that handoff. So this does increase
+[55:36] uh latency and token cost to have all
+[55:38] these handoffs. And that is the risk of
+[55:41] handoff architecture
+[55:43] um is that you know the more handoffs
+[55:45] that are allowed like the more you know
+[55:48] crazy back and forth you can have. So,
+[55:50] you do need to put a lot of effort into
+[55:53] your, you know, your instructions and
+[55:56] your um, you know, handoff uh, edges in
+[55:59] order to figure out what's going to
+[56:01] really work. And this also does work a
+[56:04] lot better with human in the loop. So,
+[56:06] we will see it with human in the loop
+[56:07] tomorrow. So, this is also just a plug
+[56:09] for tomorrow's session is come back so
+[56:12] you can see how we can do handoff with a
+[56:14] human in the loop and um, and there it's
+[56:16] going to generally work a bit uh,
+[56:18] smoother.
+[56:21] Now I also have a comparison here
+[56:22] comparing handoff to agent as tools.
+[56:27] Um because once again they look
+[56:29] superficially similar, right? The triage
+[56:31] agent kind of looks like a supervisor
+[56:34] agent, right? Uh the star agent um but
+[56:37] it's really quite different, right? Like
+[56:39] when the when the triage agent hands
+[56:41] over to another agent, that agent has
+[56:42] complete control and that agent might
+[56:44] decide never to hand back to the triage
+[56:46] agent. In fact, right? So it's very much
+[56:49] giving up control. Whereas in the
+[56:51] supervisor, it always keeps control.
+[56:53] Everything is always going to go back to
+[56:54] it because it's coming back. It's it's
+[56:56] working with its sub agents as tools and
+[56:59] tools always return back, right? So the
+[57:01] supervisor knows that it is going to get
+[57:04] control back. Whereas with handoff once
+[57:06] you've been handed off to like you've
+[57:07] got it all, right? Um so it actually it
+[57:11] may look superficially similar but it it
+[57:13] does end up being quite different in
+[57:15] practice.
+[57:18] So now uh let's look at a fulls stack
+[57:22] application that uses some of the
+[57:24] workflow features that we saw today. Uh
+[57:27] this is a uh repo that actually any of
+[57:31] you can deploy if you want to check it
+[57:33] out. It is for uh aentic investment
+[57:37] analysis. It uses agent framework fast
+[57:39] API azure openi cosmosd and blob
+[57:42] storage. It is using an older agent
+[57:45] framework version. So, um I think they
+[57:49] said I just talked with the team they're
+[57:51] going to update it like over the next
+[57:53] two weeks I think. So, you know, stay
+[57:55] tuned for this to get upgraded to the
+[57:57] very latest agent framework. Um but, uh
+[58:00] it's it's actually it's pretty cool.
+[58:01] I've got a deployed version of it. Uh
+[58:03] so, here's the repo so you can check it
+[58:05] out. And here I've got the deployed
+[58:09] version. So, we've see all these
+[58:11] investment opportunities. Uh, I'll go
+[58:14] ahead and look at the analysis of TechC
+[58:18] Corp. Very exciting sounding company.
+[58:21] And here we can see there's actually two
+[58:23] workflows. Um, and both of these are
+[58:25] using concurrency, which is why I wanted
+[58:27] to show them for today. And here you can
+[58:30] see they're using another way of
+[58:31] visualizing. This is called React Flow.
+[58:33] This is a component you can use in a
+[58:34] React app to to visualize things. And
+[58:36] it's pretty it's pretty. It's very
+[58:38] pretty. Uh so here you can you know see
+[58:41] that it's starts with data preparation
+[58:44] and then goes to different kinds of
+[58:45] analysis. So financial risk market
+[58:47] strategy compliance
+[58:50] and then goes to um a supporter agent
+[58:54] and a challenger agent and those ones
+[58:56] look like they also run concurrently.
+[58:59] It's got this like loop-de-loop here and
+[59:02] then finally goes to a summary, right?
+[59:03] And so that's the kind of summarizer
+[59:05] aggregation that we saw uh in the
+[59:08] example.
+[59:10] Uh so you can see the core analysis, the
+[59:13] investment perspectives and then the
+[59:15] overall summary here. Right?
+[59:20] So this is actually really similar to
+[59:21] that summarizing example that we show
+[59:24] but this is you know example how you
+[59:25] might actually use it for this
+[59:27] particular domain and how you might
+[59:29] visualize this in a you know userfacing
+[59:32] application right so this is a nice way
+[59:34] of visualizing you're visualizing the
+[59:36] outputs of the agents along the way and
+[59:38] also visualizing the final aggregation I
+[59:41] think this is a good best practice to be
+[59:42] able to see what's going on along the
+[59:44] way so that you know you can like check
+[59:46] your sources uh and dig deeper deeper
+[59:48] into anything you want to see more
+[59:50] about. So that's one of the one of the
+[59:53] workflows and this is what the code
+[59:55] looks like, right? We have our data
+[59:57] prep, we have fan out edges, we've got
+[59:59] fanin edges, um we've got another um
+[01:00:03] edge for the um the these supporter and
+[01:00:06] challenger and then finally we go to the
+[01:00:08] summary.
+[01:00:10] Now there's another one down here which
+[01:00:12] is you got a chat thing here. So we say
+[01:00:15] what if tech corp stock goes down by
+[01:00:19] 10%. I don't know I'm just asking it I'm
+[01:00:21] just asking a question that is going to
+[01:00:23] analyze and so this is another way of
+[01:00:25] interacting with workflows is that you
+[01:00:27] can interact with a workflow in a
+[01:00:29] chatike interface too and once again
+[01:00:31] we're going to see the event stream in
+[01:00:33] from the workflow. So here it's showing
+[01:00:37] its you know initial planning stage. So
+[01:00:39] that's a planning stage and then it's
+[01:00:41] concurrently sending off to risk
+[01:00:43] analysis, market analysis, financial
+[01:00:44] analysis and we'll we can like see the
+[01:00:48] results as as they come in and uh and
+[01:00:52] yeah, does it wait does this one have a
+[01:00:53] final let's see let's look at the code
+[01:00:55] for this one. So this is the whatif
+[01:00:57] workflow. So it's actually really
+[01:00:59] similar um you know it's just that we're
+[01:01:02] interacting with it a different way. So
+[01:01:04] this one uh yeah there should be a
+[01:01:06] summarizer agent that is working behind
+[01:01:08] the scenes as well. Uh I don't see the
+[01:01:10] output for it right now but uh but yeah
+[01:01:13] really similar and I think the summary
+[01:01:15] agent is still running right now. I had
+[01:01:17] it earlier but this gives you an idea
+[01:01:20] for how you might um decide to
+[01:01:24] make uh applications on top of workflows
+[01:01:27] and visualize those results.
+[01:01:32] All right, we are over time by one
+[01:01:36] minute. Thank you everyone for joining
+[01:01:38] today. I hope you learned uh learned a
+[01:01:41] bunch. And if you have more questions,
+[01:01:42] which I'm sure you do because I didn't
+[01:01:45] really have time to address any of the
+[01:01:46] questions chat, we have office hours
+[01:01:48] right now in our Foundry Discord. So,
+[01:01:51] come on over to the Foundry Discord and
+[01:01:54] bring your questions.
+[01:01:56] And uh it's always really fun to hear
+[01:01:59] what follow-up questions people have. We
+[01:02:02] have one more live stream in the series
+[01:02:05] about adding a human in the loop. So to
+[01:02:07] join us tomorrow for our final live
+[01:02:11] stream. All right everyone. Thank you so
+[01:02:13] much. See you in the discord. Bye.
+[01:02:18] >> Thank you Pamela. Thank you all for
+[01:02:20] joining. We are always looking to
+[01:02:22] improve our sessions and your
+[01:02:24] experience. So, if you have any feedback
+[01:02:26] for us, we would love to hear what you
+[01:02:28] have to say. You can find the link to
+[01:02:30] our survey in the chat or on the screen.
+[01:02:32] And we'll see you on the next one.

@@ -1,0 +1,3012 @@
+[00:02] Json the data format thank you
+[00:05] Jason for the introduction uh I do have
+[00:08] the slides available for those who want
+[00:10] to have a copy of the slides or follow
+[00:13] along with them you should be able to
+[00:14] get them from that speaker deck
+[00:17] link so today we're going to talk about
+[00:20] large language models briefly just to
+[00:23] you know set the stage um for that
+[00:25] terminology then go deep into rag which
+[00:28] is retrieval augmented generation uh go
+[00:30] and look at this open source rag chat
+[00:32] app solution that can be deployed on as
+[00:35] your talk about how to evaluate rag chat
+[00:37] applications and talk about
+[00:39] observability for rag chat applications
+[00:41] on
+[00:43] Azure so just to start off with talking
+[00:46] about llms uh so llm stands for large
+[00:49] language model it is a model that's so
+[00:52] large that it achieves general purpose
+[00:54] language understanding and generation so
+[00:57] example I like to give is sentiment
+[00:59] analysis which is you get a you know a
+[01:01] sentence and you say whether it's
+[01:02] positive or negative in the past what we
+[01:05] would traditionally do is we' train a
+[01:07] custom model with you know trained data
+[01:10] that said here's a sentence it's
+[01:11] positive here's a sentence it's negative
+[01:13] and then what we would get is a model
+[01:14] that could classify sentences as
+[01:16] positive or negative and we would
+[01:18] specifically use that Sate and now model
+[01:20] when that's what we needed but with an
+[01:23] llm we can just do this uh we don't have
+[01:26] to specifically train the llm to know
+[01:28] how to do it it just is able to do it
+[01:30] because it's just seen so much data and
+[01:33] been trained on such a large data set
+[01:36] and one way you can think about the size
+[01:38] of an llm is how how uh how many
+[01:42] training operations it's had so the
+[01:44] these graphs here are in turns of
+[01:46] training flops which is floating
+[01:48] operations per second I believe and what
+[01:50] you see is that there's this jump when
+[01:51] they've had 10 to the 24 training flops
+[01:54] they suddenly achieve this ability to do
+[01:57] really really well at these General
+[01:59] purpose tasks and these are the classic
+[02:01] ones that they do like modular
+[02:03] arithmetic word in context Etc um so
+[02:07] that this is observation they had is
+[02:08] that if they threw enough data at it
+[02:10] they threw enough compute at it then
+[02:12] they you know achieve these general
+[02:14] purpose models so you can there you can
+[02:16] call them Universal models Foundation
+[02:18] models large language models um but the
+[02:21] point is that we can use them for a wide
+[02:23] variety of tasks and that's really
+[02:24] really exciting um and it's kind of like
+[02:28] I don't know I feel like it's lowering
+[02:29] the barrier for more folks to get
+[02:30] involved with with uh Ai and using
+[02:34] models because you know you think of a
+[02:36] task you're like well maybe I can just
+[02:37] use an llm to do it maybe I don't have
+[02:39] to you know train one and learn how to
+[02:40] do training
+[02:42] well so there are lots of llms in used
+[02:45] today ones that are both hosted on you
+[02:48] know company infrastructure and also
+[02:50] ones that are open source that you can
+[02:51] even download to your computer and use
+[02:54] uh so you know the hosted ones the big
+[02:56] one of course uh are from open Ai and
+[02:58] that's the GPT model like gp35 gbd4
+[03:02] whatever GPT is coming next uh Google is
+[03:05] also in the game here you know it put
+[03:07] out Palm was like a year ago and now
+[03:09] it's put out Gemini and Gemini you know
+[03:13] looks like it might be pretty impressive
+[03:15] uh anthropic is a company I think they
+[03:17] forked off of Open Ai and they recently
+[03:19] put out the Claude 3 family which seems
+[03:21] to be pretty powerful and then we've got
+[03:24] the open model so there's a lot of open
+[03:25] models coming from meta like uh the
+[03:28] llama llama model uh and that one has
+[03:32] kind of variety of sizes and then
+[03:33] there's also this company mistro AI
+[03:36] that's been putting out some models as
+[03:37] well uh yeah I see a question
+[03:42] from so yeah can you go back to the last
+[03:45] slide and just want to understand when
+[03:46] you say this um um like model scale
+[03:50] training flops so what does it mean like
+[03:54] mod AR arthamatic mod task nlu and word
+[03:57] in context what does it mean these tasks
+[04:00] that they get the models to do so mod
+[04:03] arithmetic this is modular arithmetic so
+[04:06] typically we wouldn't expect like a
+[04:07] language model to be able to do modular
+[04:09] arithmetic since it's not trained for
+[04:11] math uh but you can see that its
+[04:13] accuracy does jump to like
+[04:16] 35% when it has been trained on a lat
+[04:19] enough data just because it ends up
+[04:21] seeing modular arithmetic a lot in the
+[04:24] data um this one is multitask natural
+[04:26] language understanding I don't remember
+[04:29] exactly what that test test looks like
+[04:31] um and then I don't remember what word
+[04:33] into context looks like so I'd have to
+[04:35] dig up the paper uh to remember what
+[04:38] these what these tasks look like it's a
+[04:40] good question thank you thank you so
+[04:48] much uh yeah so and I see a good
+[04:51] question about hallucinations so I'll
+[04:52] certainly talk about that throughout it
+[04:54] um so what we see is there's a variety
+[04:55] of LMS so some of them are hosted and
+[04:57] these are the like the most powerful
+[04:58] ones you can really only use on someone
+[05:00] else's infrastructure um unless you're
+[05:02] willing to go through a lot of effort to
+[05:04] figure out how to you know host one of
+[05:05] these powerful and set up the GPU and
+[05:07] all that stuff but you can totally get
+[05:09] started running with these smaller
+[05:12] models locally I recommend using olama
+[05:14] you can see I've got like a little llama
+[05:16] up here uh and here I've got it running
+[05:19] I typically have it running over here
+[05:21] yeah so let's see emojis for Boston I
+[05:24] always use it to generate emojis uh so
+[05:27] this is with llama 2 so I just write a
+[05:30] llama run llama 2 and what that does is
+[05:32] that it pulls down the model if I don't
+[05:34] have it already uh and then it lets me
+[05:36] just chat with the model so here are
+[05:39] some emojis to represent Boston so we
+[05:41] get a building a park and a person
+[05:43] walking they're pretty good ones I like
+[05:45] to walk around Boston when I go there uh
+[05:49] so I do recommend playing around with
+[05:51] olama it's the easiest way to get
+[05:53] started with these open models locally
+[05:55] and it's just fun to have an llm in your
+[05:57] terminal they're not as powerful as
+[06:00] the models you'll definitely get more
+[06:01] you know
+[06:02] hallucinations um as you know Lucas was
+[06:05] saying um but uh there's a lot you can
+[06:08] do with it h you know especially if you
+[06:09] just need a quick a quick Emoji quick
+[06:12] poem that sort of
+[06:17] thing so one thing that you might want
+[06:19] to know about terminology wise is GPT
+[06:22] what does that stand for it is
+[06:24] generative pre-train Transformer that's
+[06:26] what the open AI models are named after
+[06:28] you'll also just generally people talk
+[06:31] about he people talk about Transformer
+[06:33] architecture so that architecture was
+[06:35] actually first described in a research
+[06:37] paper from the Google brain team so it's
+[06:39] funny that you know open AI came up with
+[06:42] the gvd models first but uh you know
+[06:45] things happen uh so if you're interested
+[06:47] in seeing how this architecture actually
+[06:49] works and you like reading research
+[06:51] papers uh do check out that paper that's
+[06:54] where I got this diagram from um but
+[06:56] basically this Transformer architecture
+[06:58] m let uh was much better for language
+[07:03] because of its ability to see multiple
+[07:05] parts of the like kind of input the
+[07:08] sentence at the same time so that's my
+[07:11] very simp simplified and probably not
+[07:15] quite correct uh you know understanding
+[07:18] of the Transformer architecture there's
+[07:19] more in the paper and there's also some
+[07:21] great videos for f from folks that are
+[07:23] actually machine learning experts that
+[07:25] explain the attention architecture more
+[07:28] there's also a fantastic videos from
+[07:30] Andre karpathy who is a machine learning
+[07:33] expert and he was just uh he was
+[07:35] previously at open aai and at Tesla Ai
+[07:38] and he's got a great talk state of GPT
+[07:40] and then also he has a series where he
+[07:42] builds GPT from scratch in code using
+[07:46] python notebooks so that is a really
+[07:48] cool Theory I still haven't made it
+[07:50] through the whole series because it's a
+[07:51] little intimidating to build entire tvt
+[07:53] it takes quite a few hours but every
+[07:56] time I watch his videos I I just learn
+[07:58] so much so if you want to dig into how
+[08:01] these you know how these GPT this
+[08:04] transform architecture actually works
+[08:05] that is what I
+[08:08] recommend so how do we actually use
+[08:12] these uh these GPT models from open AI
+[08:16] uh one way you can do it is an Azure
+[08:18] Studio I'm guessing some of you have
+[08:21] already done that um so please you in
+[08:23] the chat uh let me know what your
+[08:25] experience so far has been in terms of
+[08:28] using open AI as your open AI that sort
+[08:31] of thing uh so there is this you know
+[08:34] Studio that you can use you can get to
+[08:36] it from the um from the
+[08:39] portal now the first thing you need if
+[08:41] you're going to use as your open AI is
+[08:43] that you do have to fill out a form in
+[08:45] order to get access and in that form you
+[08:46] have to say what your usage your
+[08:48] expected usage is going to be so that
+[08:49] Microsoft can say like okay that sounds
+[08:52] like a good responsible use of um of
+[08:55] open Ai and then once you got it then
+[08:57] you can deploy all these models you can
+[08:59] see I've got quite a few I have quite a
+[09:02] few deployments because
+[09:04] I spend way too much time doing this
+[09:06] stuff um so let's see I can go to my
+[09:10] model
+[09:11] deployments and then open those up in as
+[09:15] your open AI
+[09:19] Studio load load
+[09:22] load oh here we go oh I'm just
+[09:26] gonna all right so I'll go to as your
+[09:28] opening I Studio there is also something
+[09:30] called a your AI Studio which is
+[09:33] different from a your open AI Studio I
+[09:36] tend to only use a your open AI studio
+[09:38] um but a your AI studio is where you'd
+[09:40] go if you're you know using other models
+[09:43] making your own machine learn models
+[09:45] that sort of thing I think eventually
+[09:47] they're going to merge the two but right
+[09:48] now we've got two different Studios so
+[09:51] this one's really fun just the chat
+[09:53] playground it's just a you know just a
+[09:55] wrapper for playing with the API so we
+[09:57] can be like you know right haiku about
+[10:02] Boston and it'll send it off and we can
+[10:05] see Harbor City's charm Boston's history
+[10:08] unfolds proud Spirit endures okay so
+[10:11] that's cool but maybe we want to change
+[10:12] the system message so how people find
+[10:15] more you know you're AI assistant that
+[10:18] uses so many
+[10:21] emojis okay so I'll change the system
+[10:24] message I'll apply the
+[10:27] changes and now I'm going to ask ask it
+[10:29] to write a haiku about Boston
+[10:34] again and there we go we can see a lot
+[10:37] more emojis let's also we're talking
+[10:39] about hallucinations we can say what is
+[10:40] the weather in
+[10:43] Boston and those of you who are in in
+[10:47] Boston well there you go um it's still
+[10:50] doing hus and it's G Gabby a range here
+[10:54] so what is the temperature today I'm
+[10:57] trying to get it to lie basically
+[11:02] uh okay so sometimes it does this
+[11:04] response where it says I'm sorry it's an
+[11:06] AI I don't have real time data access so
+[11:08] that's good uh it's you know it's better
+[11:10] when the LM doesn't try to make
+[11:12] something up but let's just try to force
+[11:13] it so I'm going to change temperature to
+[11:15] one and top P to one to try and increase
+[11:19] its creativity
+[11:22] level and we'll
+[11:25] see yeah it still is refusing to answer
+[11:28] that's good
+[11:30] so sometimes you can get the llms to to
+[11:33] uh make stuff up and uh depending on you
+[11:36] know how it's been trained sometimes it
+[11:39] won't do that for
+[11:40] you all right so that's a little
+[11:42] playground and you can also grab code
+[11:44] from here so once you've played around
+[11:46] with something you can actually grab the
+[11:48] code uh you can get it in you know
+[11:50] they've got different ones they've got
+[11:52] curl C Python and
+[11:56] Json I'm not sure what the Json is for I
+[11:59] typically use Python and so most of the
+[12:01] code you're going to see me using today
+[12:03] is in
+[12:08] Python so as you see here here is an
+[12:10] example in Python uh so we pass in the
+[12:13] conversation so when we're working with
+[12:15] these chat tuned models so we call them
+[12:18] like chat tuned models uh so like CH
+[12:20] gp35 and gbd4 are chat tuned which means
+[12:23] they expect their input to be to look
+[12:26] like a conversation so we typically
+[12:28] start off with a message which is the
+[12:30] system prompt so it has roll system and
+[12:32] then it has the system prompt and that
+[12:34] gives it just overall tone format
+[12:37] expectations uh and then we have the
+[12:40] question from the user and then and we
+[12:42] can also keep going so we could pass in
+[12:44] you know multiple back and forth um so
+[12:47] that the you know the chat model could
+[12:49] see what messages happened
+[12:51] before uh we can choose to stream the
+[12:53] responses or just get the whole response
+[12:55] back at
+[12:58] once
+[13:01] so llms can be really great you just saw
+[13:04] we could get it to know write Haus and
+[13:06] use poems and all that stuff uh but you
+[13:08] know as Lucas was saying like you know
+[13:10] there's uh it can make stuff up right
+[13:12] and it can answer things incorrectly and
+[13:14] why is that well one is that llms are
+[13:17] have always have outdated public
+[13:18] knowledge right because they train the
+[13:19] llm you know on the internet up to a
+[13:21] certain point and then nothing after
+[13:24] that right so if we asked about
+[13:26] something recent that happened it would
+[13:29] you know it would have no idea uh the
+[13:31] other thing about llms is that they do
+[13:32] not have access to anything internal so
+[13:35] if you know if you have data that's
+[13:37] inside your internet there's no way that
+[13:39] an llm is going to know anything about
+[13:41] that so if you're trying to ask company
+[13:43] specific data it's just not going to
+[13:45] know right so those are you know the
+[13:48] limitations we run
+[13:50] into and then we try and figure out like
+[13:53] how can we work around these limitations
+[13:56] so there's you know three General
+[13:58] techniques to incorporating domain
+[14:00] knowledge the first technique is to do
+[14:03] try to do prompt engineering this prompt
+[14:06] engineering is only going to work if the
+[14:09] data is inside their inside the weights
+[14:12] somewhere right like let me see if I can
+[14:14] do an example of this um so I'll say um
+[14:18] write SQL Alchemy code uh that's a
+[14:22] particular python package for SQL
+[14:24] databases okay so yeah so it did this
+[14:28] this is the old way of writing seal
+[14:29] Alchemy code uh I'm going to see if I
+[14:32] can get it I don't know actually if it's
+[14:33] seen the 2.0 I think it has code using
+[14:36] the declarative base C
+[14:39] Class let's see if I can get it to fix
+[14:43] itself oh it says squal 2.0 doesn't
+[14:46] exist as of my knowledge so yeah
+[14:48] unfortunately in this case it can't do
+[14:50] it so what I was trying to show is the
+[14:52] the fact that if if you know imagine
+[14:54] there's you know two different versions
+[14:56] of a library in an llm weight you can
+[14:59] often get it to you know pick the most
+[15:02] recent one if you're giving it a hint
+[15:04] that that's what you're trying to get it
+[15:05] to do right but that only works if it's
+[15:08] in the weight somewhere right in this
+[15:10] example it actually didn't even have
+[15:11] anything in its you know in its training
+[15:13] data at all so we couldn't get it to
+[15:16] come out with the
+[15:17] code so prompt engineering is generally
+[15:21] not going to be that helpful when we're
+[15:22] trying to incorporate specific domain
+[15:24] knowledge only helpful if it is actually
+[15:26] somewhere in those weights and we're
+[15:27] trying to steer it the next approach
+[15:30] people talk about is fine-tuning that's
+[15:32] where you actually are kind of training
+[15:34] a subset of the weights and so you would
+[15:37] repair like you know maybe thousand
+[15:39] examples or or more and those examples
+[15:43] would be you know examples of uh you
+[15:45] know user questions and chat answer and
+[15:48] in that way the llm could actually learn
+[15:51] new skills permanently so it's a very
+[15:54] it's a it's a you know effective way of
+[15:56] getting an llm to you know update it's
+[15:59] weight to learn something more however
+[16:01] it is expensive right it's expensive to
+[16:03] do the fine tuning and then it's more
+[16:05] expensive to run uh to you know to use a
+[16:09] fine tune model than to use a base model
+[16:11] so I actually personally have not done
+[16:14] any fine tuning myself I haven't felt
+[16:17] the
+[16:18] need but uh and and a lot of people have
+[16:22] talked about where you know uh you could
+[16:25] do fine tuning or you can just use the
+[16:26] the the you know the most recent model
+[16:28] and and that is generally going to be
+[16:30] better so fine-tuning we like to
+[16:33] consider a last resort because of the ex
+[16:36] you know expense involved you know the
+[16:38] time and all that stuff um so it is it
+[16:42] is a tool in our toolkit but it's not
+[16:45] the thing we should necessarily reach
+[16:47] for
+[16:49] immediately the technique that I like to
+[16:51] use is retrieval augmented generation
+[16:54] which is a way of just giving the llm
+[16:56] the facts just in time right um you know
+[17:00] for example with the SQL Alchemy one
+[17:02] that I just showed if I you know wanted
+[17:05] to make sure it really did um you know
+[17:09] answer something correctly well I could
+[17:10] just give it information I could just
+[17:11] say like well you know
+[17:15] um you know here write a model for a
+[17:20] restaurant class based off this example
+[17:24] right so I'm basically going to like
+[17:25] give it current
+[17:27] code and and see if it can learn how to
+[17:31] do
+[17:32] it yeah it got a little bit better there
+[17:34] yeah uh so the idea here is that you
+[17:37] know we're we're going to give the llm
+[17:40] the information to answer a question
+[17:42] based off the domain data and we're just
+[17:45] get get going to give it to it at the
+[17:47] point where it's answering the question
+[17:49] so that it can see what we want to
+[17:51] answer the question based off and it can
+[17:53] still use its skills of answering
+[17:55] questions on that provided
+[17:57] data
+[18:00] so I have one question if you don't mind
+[18:02] previous so where does the few shot fit
+[18:05] into in this um yeah that's a good
+[18:09] question um yeah I should I should do
+[18:13] like an updated version of this I
+[18:15] actually I did talk about that in a
+[18:16] presentation on um Friday uh so me
+[18:26] find yeah ways to improve llm output
+[18:29] so F shot examples uh so we could even
+[18:32] do that in the playground too you can
+[18:33] add
+[18:34] examples and this shows the chat what
+[18:37] responses you want uh so I would say F
+[18:40] shot examples are the most useful
+[18:42] for format they could also help like in
+[18:46] this case with SEO Alchemy like it might
+[18:48] be enough to get it to write the
+[18:50] syntactically correct SEO Alchemy code
+[18:53] but usually few shot examples is more
+[18:55] about learning the format that you're
+[18:58] looking for
+[18:59] and less about the knowledge um because
+[19:03] typically your F shot examples are going
+[19:05] to be the same across all the questions
+[19:08] but the knowledge for each question
+[19:10] would actually be different um does that
+[19:13] make sense yes so that means a fuse shot
+[19:16] would be for the formatting and for the
+[19:18] you would use the rag or fine tuning if
+[19:21] it is knowledge based is it yeah yeah
+[19:24] and I I can show examples because we do
+[19:25] use few shots for our you know for for
+[19:28] formatting to try and show the LM this
+[19:30] is the kind of format we expect so we
+[19:32] use fuse shots in combination with rag
+[19:35] so it's definitely a good tool to use f
+[19:37] shot examples especially when you're
+[19:38] trying to get a particular format
+[19:40] particular length that sort of thing um
+[19:43] but it's uh I would say it's
+[19:45] complimentary to
+[19:46] rag got and and irres of which llm we
+[19:52] use is that a same how we interact with
+[19:56] the with the foundation models in terms
+[19:58] of let's say the F shot is the way that
+[20:00] we do it for GPT would it be the same
+[20:03] for the clot um do they follow the same
+[20:07] Pro you know similar way to interact
+[20:10] with
+[20:12] them yeah generally generally that would
+[20:15] be similar um you know you know you see
+[20:18] people talking online online about what
+[20:20] prompt engineering and few shots they're
+[20:22] doing for Claude and and other models
+[20:25] there are some differences in terms of
+[20:28] um if you're going to do something with
+[20:29] like function calling or Json output so
+[20:32] there there's a a lot of people try to
+[20:35] get the llms to Output structured data
+[20:39] uh like if you're trying to get it to
+[20:41] Output a Json that um you know like you
+[20:44] pass it in news article and then you say
+[20:46] output a Json that has the title of the
+[20:48] article the top you know cities
+[20:50] mentioned in the article and the top
+[20:51] people mention the article right so
+[20:53] doing like an any analysis to get Json
+[20:54] out if you're trying to get Json out of
+[20:56] an llm that actually is is going to vary
+[20:59] based off the model because some llms
+[21:01] have like
+[21:02] specific uh kind of API endpoints in
+[21:05] order to to get Json output because
+[21:07] they've been they've tuned it for that
+[21:10] uh and with like the open AI use the
+[21:12] tools parameter to the API um H but not
+[21:16] all the not all the API support that so
+[21:18] the main difference I've seen so far is
+[21:21] if you're trying to get structured
+[21:22] output out of the llm the way you do
+[21:25] that per model uh may vary okay thank
+[21:32] youh all right so retrieval augmented
+[21:36] generation let's dig into this so let's
+[21:39] say we have this example here do my
+[21:41] company perks cover underwater
+[21:43] activities and I actually have I have
+[21:46] this one open let's see is it over here
+[21:48] there we go yeah I'll
+[21:50] even try it again do my company perks
+[21:53] cover
+[21:55] underwater activities let me zoom zoom
+[21:58] zoom
+[22:02] so it is going off and trying to figure
+[22:06] out the answer to this
+[22:12] question and it should be doing it
+[22:15] in and this one's this one is actually
+[22:17] running
+[22:19] locally okay so there we go we see
+[22:21] underwater activity such as scuba diving
+[22:23] are covered under the perks plus program
+[22:25] now this is a chat that's specific for a
+[22:28] fictional fictional company's data and
+[22:31] it's managed to answer this question and
+[22:33] it does that using retrieval augmented
+[22:35] generation so how did this actually
+[22:38] work so we get the user question and we
+[22:41] use that to search a knowledge base
+[22:44] right so this knowledge base it's either
+[22:45] a search engine in this case it's as
+[22:47] your AI search it could be a database
+[22:49] we're searching some sort of SE search
+[22:51] engine it could even be a numpy array
+[22:53] actually like if you had a small enough
+[22:54] amount of data it could even be like an
+[22:56] inmemory array but you need to search
+[22:59] your data somehow based off this user
+[23:01] question in order to figure out what are
+[23:02] the pieces of knowledge that could help
+[23:04] an LM answer this question and then we
+[23:07] take that you know we get that
+[23:09] information back and we take that and
+[23:12] the original user question we send it to
+[23:14] llm and say hey answer this user's
+[23:17] question based off this data and make
+[23:20] sure you site your sources and then we
+[23:22] get back this answer that says yes your
+[23:24] perks do cover some under activities
+[23:26] like scuba diving lessons
+[23:29] so this is the general approach to rag
+[23:32] is that we're getting the search
+[23:34] documents back the search results back
+[23:36] and we're passing both the user question
+[23:38] and the documents to that llm
+[23:42] call and we can actually see that here
+[23:44] if we click on the thought process so
+[23:47] first we uh you know we search using
+[23:50] this query and we get back search
+[23:52] results from as your AI search and these
+[23:56] are Snippets from employee you know
+[23:58] employee HR handbooks type stuff and we
+[24:02] can see you know the page number and all
+[24:04] that stuff so we get back
+[24:06] these and then this is the actual
+[24:10] conversation we send to the model so we
+[24:12] have the system message and the system
+[24:14] message says You must do it according to
+[24:16] the data and the sources below then we
+[24:19] have the user question and actually here
+[24:21] is where you can see we do have few
+[24:23] shots so we have an example of a
+[24:26] question and sources and an example
+[24:29] answer and that's to show it how to do
+[24:31] citations right because we're trying to
+[24:33] get citations in a particular format
+[24:36] just trying to make it bigger bigger
+[24:37] bigger right so we're saying like Okay
+[24:39] this is an example this is how you
+[24:41] answer this is you know how you give
+[24:42] those
+[24:43] citations and then and then we have the
+[24:46] actual user question and the sources
+[24:49] that we got back and these are just
+[24:50] concatenated you know with new
+[24:53] lines and that's it that is what we send
+[24:55] to the llm so that is the heart of
+[24:58] retrieval augmented generation is that
+[25:01] you send the the information along with
+[25:05] the question and the LM is able to look
+[25:07] through that information in order to
+[25:09] synthesize an
+[25:14] answer have a question or
+[25:18] okay can can I ask a question yeah so P
+[25:23] how like what is this is this a python
+[25:26] based um web UI you have developed and
+[25:29] then how you have developed like what
+[25:31] what you are actually trying to achieve
+[25:33] from this how you have developed this UI
+[25:35] if you can explain that it will be
+[25:36] really great yeah so I'll dive deeper
+[25:39] into the actual code for this this is a
+[25:41] this is all open source it's a react
+[25:43] front end with a python back end and I
+[25:45] will I'll I'll step through the code as
+[25:47] part of this presentation in a
+[25:49] bit sure thank
+[25:55] youh all right so as we can see yeah
+[25:58] yeah have one small question so when it
+[26:00] comes to rag um and this might be just
+[26:03] you know your experience but how do you
+[26:05] balance the amount of data you're
+[26:09] actually putting in either that Vector
+[26:11] DB
+[26:12] or you know I'm kind of trying to
+[26:15] understand this because I've heard these
+[26:16] scenarios where people throw in just
+[26:18] mountains of PDF files in a vector
+[26:21] DB does that then I get to the point
+[26:24] like well can't I just search the vector
+[26:26] DB and what do I need the llm for so I'm
+[26:30] trying to understand the kind of like
+[26:31] the balance between you know how much
+[26:33] data you have in there or the quality of
+[26:35] the data or does it even matter I
+[26:39] mean you know for example in your case
+[26:42] here you have the HR information do you
+[26:44] just basically put the entire every
+[26:46] single PDF file you possibly can find
+[26:49] and you just scrape it and put it in the
+[26:52] vector DB and you're pretty much going
+[26:55] to
+[26:56] be getting quality results
+[26:58] or do you you know how do you balance
+[27:01] all the splits or whatever comes in I'm
+[27:04] just trying to get a better
+[27:05] understanding of that if that kind of
+[27:06] makes any
+[27:08] sense yeah so here you can see these are
+[27:10] the only bits of like chunks of
+[27:13] documents uh so when we're doing rag on
+[27:15] documents we do split up the documents
+[27:17] uh into chunks that are about this this
+[27:20] size here about like 500 Words uh so we
+[27:24] we split up the documents into these
+[27:25] chunks uh because the whole thing is
+[27:27] that we don't want send too much I
+[27:28] actually think that might be my next
+[27:31] slide so okay okay okay I can hold us uh
+[27:35] so yeah so as we see rag is beneficial
+[27:38] okay so yeah let's talk about that
+[27:40] search step and the what the data looks
+[27:42] like right um so we need to get good
+[27:45] results to the llm or we're not going to
+[27:47] get a good answer and yeah another point
+[27:50] is that what is the llm actually doing
+[27:52] right the llm in this case it's
+[27:55] synthesizing information so we're
+[27:57] basically I think of brag is making
+[27:59] search more accessible right so people
+[28:02] they don't want to have to search and
+[28:04] click through multiple documents and
+[28:05] like synthesize information in the head
+[28:08] so we are using an llm to synthesize
+[28:11] information and present it to the user
+[28:14] in a concise way um but really it's it's
+[28:17] it's really like kind of just you know
+[28:20] making a more friendly search interface
+[28:23] and it turns out like people like people
+[28:25] like having a more friendly search
+[28:26] interface where they just feel like the
+[28:28] answer is right there in front of them
+[28:31] um but in fact like we do need to focus
+[28:33] a lot on that search step because in
+[28:36] order to get a good answer synthesize we
+[28:38] need to have really good search results
+[28:41] right if we if we give the llm garbage
+[28:43] it's going to Output garbage um if we
+[28:46] give it gold you know it it it it should
+[28:49] you know output gold uh so we want to
+[28:52] figure out how can we really make those
+[28:55] you know those search results be really
+[28:57] helpful for that LM so our general goal
+[29:00] is to come up with a small number of
+[29:04] searches uh search results that contain
+[29:06] the answer uh we don't want to like we
+[29:09] don't want to find too much information
+[29:12] because if we send too much information
+[29:13] to an llm it does tend to get a bit lost
+[29:17] like either if we send too much
+[29:19] information either it just won't find
+[29:20] the answer at all because it'll kind of
+[29:22] just ignore it if it if it's just too
+[29:24] much being sent at it uh or if that if
+[29:27] we send so much information that we kind
+[29:28] of have conflicting answers in there and
+[29:30] we have some information that's like
+[29:31] misleading in there and doesn't actually
+[29:32] answer the question the LM could get
+[29:34] misled and answer the the thing wrongly
+[29:37] right so we really want the search step
+[29:39] to find the most relevant documents and
+[29:43] nothing more uh and not too many
+[29:45] documents right so in my example I'm
+[29:47] only retrieving three documents between
+[29:49] three to 10 would be the usual um so
+[29:53] that's we we don't want to send too much
+[29:55] this there's this paper here lost in the
+[29:57] middle uh where they were you know
+[29:58] looking at how many documents you could
+[30:00] send and basically like as you sent more
+[30:02] and more the accuracy went down because
+[30:05] the llms would you know find it too
+[30:08] noisy to find the answers in that large
+[30:12] chunk of
+[30:14] information uh so you can see here we
+[30:16] only got the three document chunks back
+[30:20] and uh and and you know these chunks
+[30:22] contain the answer and they don't
+[30:24] contain too much more that is that's the
+[30:26] goal um as like you know how many
+[30:29] documents do you throw into your search
+[30:30] index I mean you do want to throw in
+[30:32] everything that could possibly answer a
+[30:34] question that a user would have I I I
+[30:36] think that's that's true you just want
+[30:38] to throw it in in a way that you're
+[30:40] going to be able to to you know search
+[30:42] well um on that data later uh because
+[30:45] you don't want to just send your you
+[30:47] know too much information at an LM so
+[30:50] when we're doing the actual search uh we
+[30:52] want to use the best search strategy for
+[30:55] searching with the you know use your
+[30:58] question uh these days everybody's
+[31:00] talking about Vector search a vector
+[31:01] search it means that you turn the user
+[31:03] query into a vector and uh you know
+[31:07] Vector using like the open AI uh
+[31:09] embedding models and it basically like
+[31:12] that Vector encodes all this kind of
+[31:15] semantic stuff about what's what's in
+[31:17] that text so if you had a user question
+[31:19] about dogs then that would end up you
+[31:22] know in this similarity space where it's
+[31:24] similar to cats because dogs and cats
+[31:26] are both pets so they are sem atically
+[31:28] similar even though they're spelled
+[31:29] completely differently right uh so you
+[31:32] know this example here I asked about
+[31:34] underwater activities but the word
+[31:36] underwater is nowhere in the text at all
+[31:38] instead the word scuba diving is in the
+[31:40] text but underwater and scuba diving are
+[31:43] both similar in the vector space so
+[31:47] that's why everyone's talking about
+[31:48] Vector search because it's a way that we
+[31:50] can uh you know we can get results for
+[31:53] things that are semantically similar
+[31:55] even if they're spelled completely
+[31:57] differently so we definitely want to do
+[31:59] a vector search so that we can you know
+[32:01] find those semantically similar things
+[32:03] we still want to do a keyword search
+[32:06] because Vector search is not good for
+[32:08] some things and this is something I want
+[32:09] to stress because there's been such an
+[32:11] obsession with Vector search because
+[32:12] we're like we're all like discovering it
+[32:13] now that people are forgetting about
+[32:15] keyword search but oop um but keyword
+[32:18] search is still necessary for some stuff
+[32:20] like if I search for like an exact you
+[32:22] know number like you know what costs you
+[32:25] know $1 19991 1999 is not going to do
+[32:28] well in a vector search or if I search
+[32:30] for an exact name like you know
+[32:32] everything about hamla Susan Fox I want
+[32:36] that to be done with a keyword search
+[32:39] that's an exact name I don't want you
+[32:41] know things that people that have names
+[32:42] like me right I want Pamela Susan Fox so
+[32:47] we still want to have keyword searches
+[32:50] done as well so we need a search
+[32:53] strategy that's going to do a vector
+[32:54] search going to do a keyword search and
+[32:56] then is going to combine
+[32:58] those together right because you get
+[33:00] both those results right so you search
+[33:02] using your you your full text query you
+[33:04] search using your vector query you get
+[33:07] back results you need to somehow merge
+[33:10] those results together you know remove
+[33:11] duplicates figure out um you know which
+[33:14] which scored higher and then you want to
+[33:17] you know you need to have some sort of
+[33:19] way of ranking the vector versus the
+[33:21] keyword search so what uh people often
+[33:24] do is they use a reranking model so this
+[33:26] would be a machine learning model where
+[33:28] you say hey here's the search results
+[33:30] here's the user question could you
+[33:32] please rerank these search results in
+[33:33] the optimal way now this seems like a
+[33:37] lot of work and it it is actually
+[33:39] because I was actually trying to
+[33:40] implement this this morning myself so
+[33:43] typically we I use as your AI search
+[33:45] because it just does all of this for you
+[33:47] and it's very very good at it uh so I do
+[33:50] recommend as your AI search but if you
+[33:53] were going to do this on your own
+[33:55] database then you know you have to
+[33:57] implement it on on that database and you
+[34:00] can often find examples of how to do
+[34:02] that um but the thing I want to stress
+[34:04] is that you want to get the best results
+[34:07] and a small number of results and
+[34:08] generally the way to do that is with a
+[34:11] really good hybrid search so you
+[34:14] whatever you are using as your search
+[34:15] engine make sure that you can get good
+[34:18] results from that using a hybrid
+[34:23] search uh I see a question from Robert
+[34:26] in the chat is there way to leverage a
+[34:28] company ontology for vectors and tonies
+[34:31] for
+[34:32] keywords uh like we provide documents to
+[34:35] the llms
+[34:38] um yeah that's a good question when you
+[34:40] just do the vectors you're generally
+[34:41] going to use like the open AI models
+[34:43] because they're quite they're quite good
+[34:45] if you had your own ontology I mean one
+[34:47] thing that's interesting that you could
+[34:48] link into this isn't publicly out yet um
+[34:51] but I think it should be out in the
+[34:53] future this is called graph rag because
+[34:55] it sounds like you know you've got an
+[34:56] ontology ready uh so let me link to this
+[35:00] here um and it actually like in order to
+[35:02] use graph rag I think you have to
+[35:03] actually Define an an
+[35:06] antology and uh they they say it works
+[35:09] it can work better for some some types
+[35:12] of rag uh so it'll be interesting to see
+[35:14] I haven't had a chance to play with it
+[35:17] myself
+[35:19] um yeah that's a
+[35:22] good question um you could also do like
+[35:26] custom waiting with res searches and
+[35:28] stuff like that but I haven't dug much
+[35:30] more into it beyond
+[35:33] that uh
+[35:36] rajes yeah I have a question suppose you
+[35:39] have a millions of Records in a database
+[35:41] then you are going to go through
+[35:43] millions of record create a vector out
+[35:45] of it and then merge the keyword I think
+[35:48] then that case going to be very very
+[35:50] slow uh for the model to search those
+[35:53] many records isn't it so yes
+[35:58] yeah yeah you're right so doing a Brute
+[36:00] Force Vector search would be quite slow
+[36:03] um what uh you're usually going to use
+[36:05] an index either hnsw or IVF uh those are
+[36:09] the two main ones uh like as your AI
+[36:11] search uses hssw so you just tell it
+[36:13] which kind of index to use and this does
+[36:16] as you can see fast approximate nearest
+[36:18] neighbor surch so it's using heris in
+[36:21] order to be able to quickly search um
+[36:25] across so this is the current one that's
+[36:28] the most popular and that's supported
+[36:30] really well there's also IVF and there's
+[36:32] also I was even
+[36:33] reading uh people are really
+[36:35] experimenting with this space and how to
+[36:37] how to do uh Vector search faster so
+[36:39] this is an article from Nvidia about
+[36:42] doing uh GPU powered Vector search so it
+[36:46] is a very hot topic uh but you can
+[36:49] generally get pretty good performance
+[36:51] with hnsw and uh you can do it with
+[36:53] Azure AI search you can do it with
+[36:55] postgress um so
+[36:58] you can use one of those indexing
+[36:59] algorithms with whatever database you
+[37:03] use I I was watching some videos
+[37:06] nowadays people are talking about graph
+[37:17] databases uh yeah I saw somebody post on
+[37:20] LinkedIn about doing what is it like
+[37:23] neo4j or graph databases with rag I
+[37:26] didn't read into it to see what
+[37:29] particular approaches they they were
+[37:30] using uh but uh that is definitely
+[37:33] something look into so I don't know
+[37:36] Mindy if you have any videos or articles
+[37:39] you want to put in the chat that would
+[37:41] be very
+[37:50] helpful all
+[37:52] right uh and I do also recommend reading
+[37:55] this blog post from the Azure AI search
+[37:58] team uh so aka.ms rag relevance also
+[38:02] just put it in chat this nice chat here
+[38:06] and it really nicely demonstrates uh you
+[38:09] know the differences between just doing
+[38:11] Vector just doing keyword and doing you
+[38:13] know hybrid and ranker and and you know
+[38:15] for those of you interested in like you
+[38:17] know how do you decide how to index
+[38:19] documents this is just a really uh
+[38:22] really fascinating
+[38:26] article
+[38:30] so what does it really look like to do a
+[38:32] rag with hybrid search so this is just
+[38:34] my diagram before but broken down a
+[38:35] little bit more right so we get the user
+[38:37] query we take that user query and first
+[38:41] we actually send it to an embedding
+[38:42] model like Ada 002 or even one of the
+[38:45] new embedding models from open Ai and we
+[38:47] get back that vector and so then we take
+[38:49] the vector and the text and use both of
+[38:52] them to do a hybrid search which will
+[38:54] get back the merge results and then you
+[38:56] know with those result results we send
+[38:58] both the results uh and the user query
+[39:01] to the large language model and get back
+[39:05] the the
+[39:07] answer so this is still actually even
+[39:11] simpler than what we actually do in the
+[39:13] app but I'll I'll talk about that soon
+[39:16] um but as you can see there's various
+[39:18] steps involved here in doing a proper
+[39:21] rag with a hybrid
+[39:24] search now another thing to think about
+[39:26] is what is your rag searching uh is your
+[39:30] rag searching documents or you know I
+[39:32] would think of as unstructured data or
+[39:34] is it searching like rows of an existing
+[39:37] database right so
+[39:39] imagine uh you know you have like a an
+[39:42] online store and you wanted to have a
+[39:45] rag where customers could ask questions
+[39:48] about your store items right so those I
+[39:51] think of as actually being two fairly
+[39:53] different rag situations and a lot of
+[39:55] times when people are talking about rag
+[39:57] they're talking about rag on documents
+[40:00] because that's I think where people are
+[40:02] really like I don't know I think maybe
+[40:04] because it's harder and that's where we
+[40:06] tend to focus on it because it's you
+[40:08] know it's it's you know trying to figure
+[40:11] out how to ingest all those documents
+[40:12] but you could also totally do rag on
+[40:16] database rows and um and you can have a
+[40:19] really com compelling experience with
+[40:21] that
+[40:22] too so do you have any articles I
+[40:25] actually that's one of my
+[40:28] um kind of a research item to do uh do
+[40:32] you have any articles you could share on
+[40:34] how to do database
+[40:36] Rod uh yeah that's a good question um I
+[40:39] was actually working on it this morning
+[40:42] uh so I intend to put out various
+[40:45] samples so you can see um post from this
+[40:48] morning so the first thing I did was I
+[40:50] implemented a hybrid search for
+[40:52] postgress um you know postgress with PJ
+[40:55] vector and so you can see the search
+[40:58] right so I pass in a text and a vector
+[41:00] and then I get back to results so if you
+[41:02] can Implement hybrid search on your
+[41:05] database um you know it means you need
+[41:07] to have some sort of vector support with
+[41:09] so with postgress I use PG Vector um
+[41:12] various database extensions of different
+[41:13] ways of storing vectors so hopefully
+[41:16] there's one in your database of choice
+[41:18] once you do that it was actually really
+[41:20] easy just to swap it in to my um you
+[41:24] know to the app that that I've been
+[41:26] showing I just kind of substituted the
+[41:29] Azure AI search call with the call to
+[41:32] the uh hybrid search endpoint for the
+[41:34] postgress database uh but I will be
+[41:36] putting out uh some repos around this to
+[41:40] make it easier for folks so I guess want
+[41:43] to be clear so it's it's like you're
+[41:46] able to scan the whole database schema
+[41:49] and then ask questions in natural
+[41:52] language or did you just okay so when I
+[41:56] do I I said best shoes and that um that
+[42:00] turns into a a hybrid search query on
+[42:04] the well in this case just on the shoe
+[42:07] table so I did have to decide what is
+[42:09] this going to you know what Fields
+[42:11] that's the thing you have to decide if
+[42:12] you're going to be doing rag on database
+[42:15] rows you have to figure out which what
+[42:17] are your target columns like are you
+[42:18] going to be actually searching across
+[42:21] all the columns or just one column and
+[42:23] when you make a vector are you going to
+[42:25] make a vector for each of The Columns
+[42:28] and like search on each of those vectors
+[42:29] or what a lot of times people would do
+[42:31] is you know they kind of you can do like
+[42:33] stuff it so you you would concatenate
+[42:36] all the relevant columns together uh and
+[42:40] then compute the vector for that so you
+[42:42] would still just for each row have a
+[42:45] single a single column for the embedding
+[42:48] for that row as long as it encoded all
+[42:50] the stuff you thought would be
+[42:51] semantically relevant so that's that's
+[42:53] actually the decision that you have to
+[42:55] make is uh you know how many how many
+[42:58] embedding columns are you going to have
+[43:00] and and what is your you know full Tech
+[43:02] search going to search as
+[43:10] well yeah this a great question and
+[43:13] definitely something we need to talk
+[43:15] more about and have more examples
+[43:18] for uh so so yeah if you're doing
+[43:21] database rows you do need to figure out
+[43:22] a way to have Vector support um for the
+[43:25] ability to have a vector column and to
+[43:27] have efficient search right we were
+[43:28] talking about indexing right so you need
+[43:30] a database that has support for Vector
+[43:33] indexes so you're looking for support
+[43:35] for hnsw or IVF those are like the
+[43:39] efficient Vector
+[43:40] searches uh or just looking for a native
+[43:43] Vector database um you know that's an
+[43:45] option too so on
+[43:48] aure uh the options we have here are you
+[43:51] know uh for database rows you could do
+[43:55] as your AI search if you wanted to copy
+[43:57] the data over that's also an option if
+[43:59] you're okay with having a copy of the
+[44:01] data as your AI search can connect to
+[44:04] various databases and and index it uh
+[44:06] but then you'd have a copy of the data
+[44:07] so you know if your data changes a lot
+[44:09] you might not want to do that uh you can
+[44:12] do as your post grass flexible server
+[44:14] plus PG Vector you could do as your
+[44:16] cosos to be plus their new Vector
+[44:19] support you could use container app
+[44:21] Services uh with these built-in Vector
+[44:23] databases like milis quadrant or weate
+[44:28] uh and of course you could use the open
+[44:29] AI embedding models in order to actually
+[44:31] you know compute that
+[44:35] column so that's rag on database Rose
+[44:39] and I haven't done that as much as
+[44:41] saying like I only really did it this
+[44:42] morning to make sure that you know to to
+[44:45] kind of prove it um what I've spent much
+[44:47] more time on is rag on documents which
+[44:50] we can also think of as unstructured
+[44:51] data so that's just whatever documents
+[44:53] you have PDFs docs PowerPoint HTML
+[44:56] markdown IM images all of those are
+[44:58] things you could potentially uh you know
+[45:00] ingest into a search
+[45:02] engine but for that you do need an
+[45:05] ingestion process that's going to take
+[45:07] that document extract the data from it
+[45:09] split it into good siiz chunks because
+[45:12] remember we don't want to send too much
+[45:13] information at an LM then you know
+[45:16] compute vectors for each of those chunks
+[45:18] and then store those so on Azure the
+[45:20] best option for that is definitely a
+[45:22] your AI search uh in combination with
+[45:25] document intelligence for the raction
+[45:27] and open AI embedding models for the
+[45:33] vectorization uh so how would you
+[45:35] actually build a rag chat app on Azure
+[45:39] there are various Solutions ranging from
+[45:41] no code to low code to high code my
+[45:45] emphasis is always high code but I will
+[45:47] show the no code and the low code
+[45:48] options because hey if they get the job
+[45:50] done that's
+[45:52] great the no code option is co-pilot
+[45:55] studio and you know is is really meant
+[45:57] to be you know a user friendly way of
+[46:00] setting up your own co-pilot so you can
+[46:02] say like oh here's you know make a
+[46:04] co-pilot based off of this blog right so
+[46:06] I tried making one based off my blog and
+[46:08] it'll you know it'll try to do all the
+[46:10] ingestion and indexing for you and give
+[46:14] you this chat interface now the thing
+[46:16] about co- pilot studio is that I
+[46:17] actually don't really know how it works
+[46:19] behind the scenes right it is uh it's
+[46:22] you know kind of a black box uh I do
+[46:24] work at Microsoft but I don't I don't
+[46:26] actually know how to like find the code
+[46:27] Behind these things so I actually don't
+[46:29] know how is it doing the ingestion how
+[46:31] is it doing the searching I don't even
+[46:33] know actually if it's using gp35 or gbd4
+[46:36] um I'm trying to ask around just to find
+[46:38] out for my own edification but generally
+[46:40] if you're going to use a you know a no
+[46:43] code option like this it's you know
+[46:46] you're not going to be able to have that
+[46:48] much flexibility right you're not going
+[46:50] to be able to really um you know extend
+[46:53] it if you realize it's not working for
+[46:55] your use cases uh so it's always good to
+[46:57] start off with these things just to see
+[46:59] does it work for your use case
+[47:01] especially if you have like a really low
+[47:03] stakes use case um but then you know
+[47:07] keep in mind that you'll probably reach
+[47:09] a
+[47:13] wall now the next option is actually a
+[47:16] really compelling option because it
+[47:17] actually has some code that you can mess
+[47:19] with and that's that as your AI open AI
+[47:22] Studio on your data so I think I still
+[47:25] have this open here yeah so you can
+[47:27] actually go to this add your data Tab
+[47:29] and add a data source and you can click
+[47:31] you know as your AI search if you have
+[47:33] an existing index or you can use blob
+[47:35] storage Cosmos CB elastic search I think
+[47:39] they're even adding pine cone you can
+[47:41] specify a web address upload files so
+[47:43] they're trying to figure out what are
+[47:45] the common data sources that people want
+[47:47] to use and make it easy to connect to
+[47:51] them uh so it supports you know all
+[47:54] sorts of documents because you can use
+[47:56] aure I search uh you can upload
+[47:58] documents to it so lots of documents uh
+[48:01] it kind of supports databases in that
+[48:04] you could connect your as your AI search
+[48:06] index to a database um but I don't think
+[48:08] it's really uh kind of I don't think
+[48:11] it's really Geared for databases I think
+[48:13] it's a little more Geared for for
+[48:15] documents but uh but there is a cosmo
+[48:18] actually I mean there is Cosmos D for
+[48:19]  VOR so yeah so you could try that
+[48:22] out for for that if you've got your data
+[48:25] there and uh and yeah and how does it do
+[48:27] the searching it's got lots of different
+[48:29] search options right so even some non-
+[48:32] aier ones like elastic
+[48:34] search and you can choose whether you're
+[48:36] going to use three you know 3335 or four
+[48:39] so this is a pretty cool one because
+[48:41] actually once you you can make it and
+[48:43] you can deploy it entirely from the
+[48:46] studio and if you want to extend it you
+[48:48] can actually get the code for it from
+[48:51] their
+[48:52] repo so I believe that this you know
+[48:54] this is the code that powers it so if
+[48:56] you do deploy it and you like it you can
+[48:59] try to actually change the code if you
+[49:02] need to make some
+[49:04] tweaks now there is still limitations to
+[49:06] this because I'll I'll show the code um
+[49:10] what is doing let me find the relevant
+[49:12] bit of
+[49:13] code
+[49:16] Source uh trying to find the chat
+[49:18] completion call so a lot of options here
+[49:22] chat. completions do create okay
+[49:31] send chat request okay I haven't looked
+[49:33] through their code in a while um stram
+[49:38] okay let's
+[49:40] see yeah okay it's kind of hard to find
+[49:43] it but um what it does is actually using
+[49:46] a particular parameter to the chat
+[49:49] completion yeah these are basically the
+[49:51] parameters so it's actually telling the
+[49:54] chat completion API like hey here's the
+[49:56] elastic search index use this index and
+[49:59] search it so and behind the scenes that
+[50:03] as your chat completion API knows how to
+[50:06] do this this is only on aure you can't
+[50:08] do this with open AI um you know on
+[50:10] open.com you can only do this on Azure
+[50:14] right now at least uh so it's doing the
+[50:17] search for you so if you if this works
+[50:19] for you great if you end up needing more
+[50:21] flexibility over like the searching step
+[50:24] and like how it's actually combining the
+[50:26] search result
+[50:27] with the you know with the system prompt
+[50:29] and the user message and and all that
+[50:31] stuff then this you know this may not
+[50:34] work for you so you may reach a wall if
+[50:37] if you find you need to uh you need to
+[50:40] extend the actual rag flow more because
+[50:44] this basically is like rag orchestration
+[50:47] as a service so it there's code going on
+[50:50] behind the scenes that's figuring out
+[50:52] how to get the search results and how to
+[50:53] you know how to answer a question based
+[50:55] off the search results
+[51:01] oh I see a question from Robert like
+[51:02] what do you map it to from so you can
+[51:04] map stuff like if you're doing like
+[51:06] elastic search with you know with a your
+[51:08] studio on your data you have to tell it
+[51:09] what's the title column what's the URL
+[51:11] column what's the content column what's
+[51:12] the file name column so if you're you
+[51:15] know if your data matches you know you
+[51:18] know works with the assumptions they're
+[51:20] making here like the assumptions here
+[51:22] you can see is that you have a title and
+[51:23] a URL and a file name and a Content so
+[51:26] it's definitely assuming some sort of
+[51:27] document-based
+[51:28] rag but if if you're you know if that
+[51:31] works for your rag use case then the as
+[51:35] your opening eye on your data could work
+[51:38] really well for you so lots of folks do
+[51:40] start off in this ad data um and and
+[51:44] deploy that and um and some of them you
+[51:48] know stick with that and that works well
+[51:49] for them uh and then if it doesn't then
+[51:52] you can go to the full very high code uh
+[51:57] solution and this is the one that I
+[51:59] spend all my time on so I you know I
+[52:02] know you know that on your data a little
+[52:04] bit but I basically spend like way too
+[52:07] much of my time on this on this repo
+[52:09] here uh it came out in March of last
+[52:12] year and it just became really super
+[52:14] popular so you see it's got 5,000 Stars
+[52:16] so it's actually the most popular aure
+[52:18] sample in our aure samples repo so it's
+[52:21] been deployed thousands of times so
+[52:23] we've got lots of feedback from it we
+[52:25] we're continually you know improving it
+[52:27] you can check our releases to see you
+[52:29] know the sort of things were changing um
+[52:31] and it's all based off of feedback from
+[52:33] you know a your developers as your
+[52:35] customers so it's been a really great
+[52:38] way to learn about how to make a rag
+[52:41] chat application and see all the
+[52:43] different ways people are trying to use
+[52:45] rag chat
+[52:46] apps and it is I would say the most
+[52:48] flexible of all the options because uh
+[52:51] you know it's it's open source and if
+[52:55] something isn't working for you
+[52:56] generally you can go in there and mess
+[52:58] with it uh it is very much a high code
+[53:01] situation like the the code is not
+[53:03] necessarily
+[53:04] simple we try to do that but it's not
+[53:07] always going to work uh to make
+[53:09] something simple but um you know it's
+[53:12] very flexible and and that's can be the
+[53:14] advantage of it so it currently it's
+[53:16] geared for documents and for the search
+[53:19] engine it's only as your AI search so
+[53:22] that is certainly you know a limitation
+[53:24] if you were trying to use like elastic
+[53:25] search right
+[53:27] um but generally aure AI search is the
+[53:29] best way to search documents uh if
+[53:31] you're you know using aure
+[53:34] services and that's why uh we use aure
+[53:37] AI search for the LM you can switch
+[53:39] whatever you want uh so you can you know
+[53:42] have these multi-turn chats you know
+[53:44] whole conversations we've got user
+[53:45] authentication buil in we've got Access
+[53:47] Control built in so if you wanted some
+[53:50] users to have access to different files
+[53:52] than other users that you could do with
+[53:55] this uh you can even use gbd4 with
+[53:58] vision we have that as an experimental
+[54:00] feature that you can turn on if you're
+[54:01] interested in trying that out so a lot
+[54:04] of the stuff are features that you can
+[54:05] kind of turn on if you want to see if
+[54:08] they you know if they work for
+[54:14] you okay so now I'm going to dive into
+[54:20] that
+[54:21] solution so in order to deploy this you
+[54:24] need an as your account and subscription
+[54:27] uh you can use free account but it has
+[54:29] an awful lot of limitations so usually
+[54:31] better if not using a free account uh
+[54:33] you do need access to as your openai or
+[54:36] an open.com account you could use either
+[54:38] of them you could even use olama if you
+[54:40] really wanted I sometimes I do that just
+[54:42] to see how the local models do but they
+[54:44] don't do very well so I would recommend
+[54:46] gbd3 5 or gbd4 uh you do need as your
+[54:49] account permissions to be able to create
+[54:51] the rback roles uh and to make the
+[54:54] deployment so those are you know
+[54:56] prerequisites to
+[54:58] deploying uh and then to open the
+[55:00] project you can use GitHub code spaces
+[55:02] you can use VSS code with Dev containers
+[55:04] we like to set up everything with a Dev
+[55:05] container so that it's all all the
+[55:07] requirements are set up for you or you
+[55:09] can go ahead and set up a local
+[55:10] environment if you enjoy doing that I do
+[55:13] not and then you can deploy using the
+[55:16] Azure developer CLI I don't know if you
+[55:18] all have talked about the addd CLI
+[55:20] before but it is by far my favorite way
+[55:23] to deploy things to Azure uh basically
+[55:25] what we do is we Define the
+[55:27] infrastructure using bicep which is
+[55:28] infrastructure as code files like
+[55:30] terraform so we Define all the
+[55:32] infrastructure in bicep that's just in
+[55:33] the repo and that you know declares
+[55:36] everything that needs to be provisioned
+[55:38] and how they relate to each other and
+[55:39] environment variables and all that stuff
+[55:41] and then we just have to run you know
+[55:43] ACD up in order to get everything
+[55:45] provisioned and everything deployed uh
+[55:49] in you know onto the platform of
+[55:52] choice once it gets deployed what you
+[55:54] end up with is is a bunch of azure
+[55:57] services so for like the chat
+[55:58] application itself that's on aure app
+[56:01] service and it uses a your blob storage
+[56:04] in order to render the documents and the
+[56:06] citations uh it uses AZ your open AI for
+[56:09] the embeddings and the large language
+[56:10] model calls and it uses a your AI search
+[56:12] for the searching we also do data
+[56:15] ingestion in this repo and that one also
+[56:19] uses all those Services as well as a
+[56:21] your document
+[56:25] intelligence
+[56:27] so there's two ways that we do data
+[56:29] ingestion so this is another opportunity
+[56:31] we're going to talk more about data
+[56:32] ingestion so if there's any additional
+[56:34] questions uh I think from like George um
+[56:37] this is a good opportunity to to ask
+[56:40] them one question for data ingestion so
+[56:44] if it's a document and it's unstructured
+[56:46] I mean it's just text in a document so
+[56:48] if you want to feed it text from your
+[56:50] database I guess why would it need to
+[56:52] have specific like vector indexing or
+[56:54] anything special like that if you want
+[56:56] to just you know all the fields of this
+[57:00] one table you know are all the same type
+[57:03] of text Data no different than you'd
+[57:04] scrape it from like a
+[57:07] document um so so you're wondering about
+[57:09] scraping from a database yeah as data
+[57:13] source yeah if you're using a database
+[57:15] as a data source you do not need any of
+[57:17] this right so I I probably still have my
+[57:20] let me find my um here we go okay so if
+[57:25] we were going to do you know um this
+[57:28] this is like the code for my postgress
+[57:29] hybrid search it's not perfect yet but
+[57:32] but here I'm just doing uh you know so I
+[57:35] just have like you know you you just
+[57:36] need to have a database that has um you
+[57:40] know you've got your columns here and
+[57:42] then you've got an embedding and you
+[57:43] have to decide whether that embedding is
+[57:45] going to be the embedding of just like a
+[57:48] single You Know Field like just the
+[57:50] description or you could concatenate all
+[57:53] these together and make it embedding
+[57:55] based off that so that's probably what I
+[57:57] would do is
+[57:58] concatenate uh you know all like the
+[58:00] text Fields together the things that
+[58:02] kind of have semantic things in them
+[58:04] concatenate in one thing generate the
+[58:06] embedding based off that store that as
+[58:09] an embedding column so you can see here
+[58:11] like this is my schema um right so I've
+[58:14] got all like my standard columns and
+[58:16] then I've got a vector column for the
+[58:18] embedding and then when I do the search
+[58:22] I need to do the vector search with that
+[58:25] column and then the keyword search uh
+[58:28] right now I'm only searching one column
+[58:30] but probably I should do that across
+[58:32] multiple columns right and then I need
+[58:34] to you know merge those results uh but
+[58:37] yeah if you're working off a database
+[58:38] you don't have to have all this fancy
+[58:41] data ingestion you just really need to
+[58:44] have uh you know ideally have an
+[58:46] embedding column you could even just use
+[58:48] I mean you can also just do it you could
+[58:50] do just a full Tech search I I think
+[58:52] you're you would be happier if you also
+[58:55] had a vector search sech and a hybrid
+[58:57] search on top um but you just need some
+[59:00] way of searching your database based off
+[59:02] a user
+[59:03] query yeah that makes more sense okay
+[59:05] thank you yep yeah great
+[59:09] question all right so yeah so data
+[59:11] ingestion this is really relevant to
+[59:13] documents right imagine multi-page
+[59:15] documents your HR documents that sort of
+[59:17] thing right so we get the documents
+[59:19] first thing we do is uh you know upload
+[59:21] to blob storage actually that's even the
+[59:22] last thing we do um uh so we get them to
+[59:25] blob at some point just so we can and
+[59:27] that's just so that when we have the
+[59:29] actual app where we can um click on let
+[59:32] me see so I'm going to click on I'm G to
+[59:34] click on a bunch of citations and see
+[59:36] which of them loads first because
+[59:38] sometimes these PDFs can be a little low
+[59:41] to SL to load okay there you see so it
+[59:43] loaded the um this you know this PDF PDF
+[59:48] here uh this one was this one is a rag
+[59:51] based off my personal blog which is fun
+[59:54] for me and so here you can see it
+[59:55] actually loaded the HTML right uh so we
+[59:59] you know we need these things stored
+[01:00:00] somewhere so that we can uh you know
+[01:00:03] show the citation so this is coming from
+[01:00:05] blob storage and it's actually checking
+[01:00:08] our um user authentication when it grabs
+[01:00:11] it oh that one's going to be
+[01:00:12] slow so we put them in Blob storage just
+[01:00:15] so we can render citations um the next
+[01:00:18] thing uh is that you know we have the
+[01:00:20] documents and we need to extract data
+[01:00:22] from them so uh we typically use aard
+[01:00:25] document because it supports a ton of
+[01:00:28] formats these days including docx and
+[01:00:30] PowerPoint which was really huge for
+[01:00:32] people when they added that earlier uh
+[01:00:34] you know I think in the fall so it
+[01:00:36] supports lots of documents even supports
+[01:00:38] images it does OCR so it really tries to
+[01:00:41] get as much text as it can get out of a
+[01:00:44] document we do also have local parsers
+[01:00:47] that we make available just because they
+[01:00:49] can be cheaper or more customizable like
+[01:00:52] for my blog I actually just use the
+[01:00:53] local parser for HTML because I then I
+[01:00:56] can just do some custom parsing for HTML
+[01:00:59] uh and uh leave off the parts of my blog
+[01:01:01] I don't want like the comments uh but
+[01:01:04] generally the you know approach is to
+[01:01:06] use as your document intelligence
+[01:01:07] because it's very good at document
+[01:01:08] extraction now we have the text
+[01:01:11] extracted for the whole document but we
+[01:01:13] still need it in chunks because we can't
+[01:01:15] send like a 10-page document to an llm
+[01:01:17] or at least we shouldn't because it's
+[01:01:19] going to get lost right it's going to be
+[01:01:20] too noisy for it so then we split the
+[01:01:22] data into chunks uh so we have all this
+[01:01:25] you know python code that looks for
+[01:01:27] sentence boundaries and also tries to
+[01:01:29] you know split things appropriately so
+[01:01:31] that they're a good um you know a good
+[01:01:34] size to send to an
+[01:01:36] llm uh there's lots of other splitting
+[01:01:38] libraries out there like in Lang chain
+[01:01:40] that you could use as well then once we
+[01:01:42] have the chunks for each of the chunks
+[01:01:45] we compute an embedding of that chunk
+[01:01:47] and then finally we put them in as your
+[01:01:49] AI search uh and I can show you once
+[01:01:52] again the results
+[01:01:54] right so this is actually just straight
+[01:01:57] from a your AI search uh so this is what
+[01:02:00] the index looks
+[01:02:02] like so we can see the content and we
+[01:02:04] can see the
+[01:02:05] embedding we've got like an ID uh we've
+[01:02:08] got scores that come back from the
+[01:02:10] search that's only relevant you know
+[01:02:11] that we don't store that that depends on
+[01:02:13] the
+[01:02:13] query uh we've got what page it came
+[01:02:16] from and we also have access control
+[01:02:19] related information if we're using
+[01:02:20] access control like uh the user ID and
+[01:02:23] user
+[01:02:24] groups
+[01:02:29] so this is a local script uh so this is
+[01:02:32] actually like just in the repo um if you
+[01:02:35] know if I wanted to ingest something
+[01:02:37] right so I'll go ahead and run it just
+[01:02:40] to show you also Jason you can remind me
+[01:02:43] if I'm like going way too long there's
+[01:02:46] lots of good questions I no you're fine
+[01:02:50] okay let's
+[01:02:52] see all right I'm just going to see if I
+[01:02:55] can ingest something just to show you
+[01:02:58] okay I'll go
+[01:03:01] here and let's see what environment I'm
+[01:03:04] in right now okay it's a good one okay
+[01:03:07] let's see if my ingestion script is
+[01:03:08] working at the moment I'm always doing
+[01:03:11] so much hacking on this repo that you
+[01:03:13] never quite know what state it's in but
+[01:03:15] on my machine it's good on
+[01:03:22] Main okay so just running the the script
+[01:03:27] here and it's just setting up well first
+[01:03:30] it has to set up the environment to
+[01:03:31] bring in all the you know the AZ your
+[01:03:32] document intelligence SDK and all the
+[01:03:35] other things we use for for the
+[01:03:38] extraction
+[01:03:44] ingestion any questions as it's
+[01:03:51] running so I have quick question in
+[01:03:53] terms of the cost wise right
+[01:03:56] you know like you were saying earlier
+[01:03:59] when when we use the fine-tuning it's
+[01:04:02] definitely more expensive because there
+[01:04:03] are tokens involved and lot in the same
+[01:04:06] thing would it be more expensive when we
+[01:04:08] use Rack or is there a way we can reduce
+[01:04:10] the cost using any kind of caching in
+[01:04:13] it yeah that's good question um I don't
+[01:04:17] think you could use caching of user
+[01:04:18] questions because I think your user
+[01:04:20] questions would be so um so different i'
+[01:04:25] I'd be impressed users were were
+[01:04:26] actually asking the same thing uh
+[01:04:29] generally like ways to reduce cost well
+[01:04:31] I'll say this what are the expensive
+[01:04:32] things uh you know there's app service
+[01:04:35] but app service actually isn't too
+[01:04:37] expensive it can it can handle a fair
+[01:04:38] bit um without getting too expensive as
+[01:04:42] your AI search does cost uh a bit
+[01:04:45] especially if you're going to have if
+[01:04:47] you need multiple replicas for the
+[01:04:49] amount of traffic you think you're going
+[01:04:50] to get and especially if you use the
+[01:04:53] semantic ranker which is the ranker
+[01:04:55] which is actually you know the best
+[01:04:57] thing to do is to use the ranker but
+[01:04:59] both of those are the things that make
+[01:05:00] it the most expenses if you increase the
+[01:05:02] replicas and you do uh keep the semantic
+[01:05:05] ranker enabled so if you want to
+[01:05:07] decrease aure AI search cost you disable
+[01:05:09] the semantic ranker and you keep it one
+[01:05:11] replica if that works for your traffic
+[01:05:14] levels uh the your other approach with
+[01:05:16] Azure I search is you know to replace it
+[01:05:19] with a you know with a you know a
+[01:05:22] database search engine um you know like
+[01:05:25] the post one I was showing but then you
+[01:05:28] do have to reimplement everything that
+[01:05:30] as your AI search comes built in and
+[01:05:32] they are putting a lot of effort into
+[01:05:34] rag because rag is such a use big use
+[01:05:36] case for them right now uh but you know
+[01:05:39] that's just a decision to make and the
+[01:05:41] other big thing that costs well as your
+[01:05:43] document intelligence does cost money
+[01:05:45] and and uh it can it's a that can be a
+[01:05:48] decent amount if you have a ton of
+[01:05:49] documents so if you're trying to reduce
+[01:05:50] cost there you can use a local parser
+[01:05:52] and see if the quality is good enough it
+[01:05:54] depends on your kind of document um I
+[01:05:56] don't think it's that the local ones
+[01:05:57] that great for PDF but if you're doing
+[01:05:59] HTML you could do a pretty good job
+[01:06:02] parsing that H and then finally as your
+[01:06:05] open AI cost money uh you that one you
+[01:06:08] can't really reduce the cost except for
+[01:06:10] just making sure you're not sending too
+[01:06:11] much data right so it it's per token so
+[01:06:14] the less you send the better right so if
+[01:06:15] I do three search results that's
+[01:06:17] generally going to be cheaper for me
+[01:06:19] than doing uh you know five search
+[01:06:22] results got it thank you and then velle
+[01:06:26] asked uh does this service need GPU or
+[01:06:28] CPU no this one doesn't because we're
+[01:06:30] using azer open AI as like an API that
+[01:06:33] we're hitting up uh so that's you know
+[01:06:36] that's serve somewhere that has GPU
+[01:06:38] nothing that we're doing requires a uh
+[01:06:41] GPU we would need a GPO if we were
+[01:06:42] running our own model uh but we're not
+[01:06:45] running our own model for any of this
+[01:06:48] all right so here you can see um that it
+[01:06:51] did
+[01:06:52] decide yeah it skipped a bunch of things
+[01:06:54] because we'd already ined them then it
+[01:06:56] decided to ingest this PDF so first it
+[01:06:58] extracts the text then it splits it into
+[01:07:00] sections then it uploaded the file and
+[01:07:02] then it computed the embeding and then
+[01:07:04] it stored it so that's just what the
+[01:07:06] local script uh looks like now the other
+[01:07:10] option we have is integrated
+[01:07:12] vectorization this is something that's
+[01:07:13] now built into as your AI search which
+[01:07:15] is basically just doing everything we
+[01:07:17] just saw but in the cloud hosted you
+[01:07:20] know with uh you know geared for large
+[01:07:24] you know large scale uses uh and it has
+[01:07:26] a little it supports a little bit more
+[01:07:28] um data sources right because as your AI
+[01:07:30] search can be you can make indexers so
+[01:07:33] it's basically making indexers and skill
+[01:07:35] sets and tying them all together so you
+[01:07:37] can have your indexer based off like
+[01:07:39] blob storage or Cosmos Tob or whatever
+[01:07:42] and as your AI search will you can run
+[01:07:44] like a Cron job and basically like every
+[01:07:46] five minutes it would check to see oh is
+[01:07:47] there something new in Blob storage and
+[01:07:49] then reindex it and only index the the
+[01:07:51] things that have changed so if you use
+[01:07:54] integrative vectorization you can take
+[01:07:55] advantage of the indexer which can work
+[01:07:57] well if you want to be able to like you
+[01:07:59] know have it pulling off of some data
+[01:08:01] source dynamically and only indexing the
+[01:08:04] new stuff in that data
+[01:08:05] source then it'll do the it'll do the
+[01:08:08] data extraction and there I think it's
+[01:08:10] just I think it is using document
+[01:08:11] intelligence behind the scenes it'll do
+[01:08:13] the chunking using a similar splitting
+[01:08:15] algorithm it'll use the vectorization
+[01:08:17] using your open AI deployment and then
+[01:08:19] it'll index it but the big Advantage
+[01:08:22] here is that you know it's doing it all
+[01:08:24] it's doing it all the in the cloud and
+[01:08:26] you can connect it to the indexers so
+[01:08:29] that is an option to consider if you're
+[01:08:30] using as your AI search uh and it's an
+[01:08:33] option you can turn on in the repo that
+[01:08:34] I've been
+[01:08:37] showing okay so how does this code
+[01:08:39] actually work okay so let's do a little
+[01:08:41] code walk through just to
+[01:08:46] see all right I'm actually going to go
+[01:08:48] to the chat tab now because this one's
+[01:08:50] more fun uh does all right so let's see
+[01:08:53] actually let me go ahead and um and
+[01:08:57] point put a breakpoint
+[01:08:59] in let's see all right let's see can I
+[01:09:03] do run
+[01:09:06] okay all right I well I don't know if
+[01:09:08] you're gonna want watch me do breako to
+[01:09:12] can be a little slow all right I'll just
+[01:09:14] I'll just put one breakpoint and then
+[01:09:19] display so this is in vs code with the
+[01:09:23] uh the python debugger
+[01:09:25] uh I like to use the debugger when I can
+[01:09:28] because I am very often debugging
+[01:09:31] things so it'll it'll start
+[01:09:34] up but basically what we have is a uh a
+[01:09:38] front end that's in react so we have
+[01:09:41] like you know this chat you know chat
+[01:09:44] react stuff here and when we you know
+[01:09:47] type in a question it's going to make a
+[01:09:50] request to the chat API right so the SL
+[01:09:54] chat and that goes to our you know
+[01:09:58] python routes right so we look for Flash
+[01:10:02] chat here where is
+[01:10:05] it chat
+[01:10:08] chat oh that went that went to the wrong
+[01:10:11] place okay
+[01:10:14] app.py many app.py
+[01:10:18] okay okay so the frontend makes this
+[01:10:22] request to the chat sends a post with
+[01:10:25] the user message and the
+[01:10:27] history and then sends that to our other
+[01:10:31] Python and sometimes it streams it if we
+[01:10:33] ask it to stream otherwise it'll just
+[01:10:36] send it
+[01:10:37] back all right so we should be running
+[01:10:40] now so it say uh do company
+[01:10:45] perks hover
+[01:10:47] underwater
+[01:10:54] activities
+[01:11:00] it should let's see my chat retrieve
+[01:11:02] yeah it should pop open the um I think
+[01:11:05] it should pop open in the
+[01:11:18] debugger are there libraries so you can
+[01:11:20] do this from a c
+[01:11:21] project yeah uh so if you want this C
+[01:11:25] equivalent of this product it
+[01:11:30] is this repo here so uh the other
+[01:11:34] Advocates have been trying to Port the
+[01:11:36] python repo into other
+[01:11:38] languages you know because the python
+[01:11:40] repo is so popular uh the other ones
+[01:11:42] aren't as popular yet but you can make
+[01:11:44] them Popular by going into them I think
+[01:11:46] Jason haven't you been I feel like Jason
+[01:11:49] or maybe Jason's been on the JavaScript
+[01:11:50] one I saw Jason committing to one of
+[01:11:52] them yeah I I committed to the
+[01:11:54] JavaScript I'll put the links and so
+[01:11:57] I've reviewed the different ones on my
+[01:12:00] blog site I'll put the links in the chat
+[01:12:03] for people okay thanks
+[01:12:08] Jason okay wait it's it's being too slow
+[01:12:10] so anyway so I'll just show the the
+[01:12:12] thought process okay so right so you
+[01:12:15] know we go into the python H and now I
+[01:12:17] just wanted to show the chat tab because
+[01:12:19] it's a little it's actually more complex
+[01:12:21] and I think it's interesting the way and
+[01:12:23] it's more complex so this is thought
+[01:12:25] process for the for the chat tab so what
+[01:12:30] we see is the original user query and we
+[01:12:32] actually used an llm in order to turn
+[01:12:35] that search query into a good keyword
+[01:12:38] query and now this might seem a little
+[01:12:40] silly because all we did here is just
+[01:12:41] remove the question
+[01:12:43] mark But in other cases it actually
+[01:12:45] makes really helpful um modifications
+[01:12:48] especially based off of the history that
+[01:12:50] gets passed
+[01:12:51] in so that you so we get the generated
+[01:12:54] query and then we use that to search and
+[01:12:58] then we get back the results so uh let
+[01:13:01] me good an example like so then I'm
+[01:13:02] going to do a followup question like
+[01:13:04] more I'm just GNA more that's all I'm
+[01:13:06] going to say is more let's see how it
+[01:13:08] does with the um search query generation
+[01:13:13] here my hope is that it takes more and
+[01:13:16] turns it into a a longer a longer query
+[01:13:20] okay I think it did let's
+[01:13:23] see okay I'm going to click on thought
+[01:13:26] process okay great so the original user
+[01:13:29] query was more the generated search
+[01:13:31] query was sleep strategy so this is
+[01:13:34] where it's really helpful to use this
+[01:13:36] llm to turn the user query into a
+[01:13:39] keyword search because if we had just
+[01:13:41] passed more into our search engine what
+[01:13:45] would we have gotten right we would have
+[01:13:46] not gotten good results at all uh so we
+[01:13:50] you know we ask it like hey turn this
+[01:13:52] into a search query based off of the you
+[01:13:54] know convers a history so the llm
+[01:13:56] realizes like oh okay a good search
+[01:13:58] query would actually be sleep strategy
+[01:14:00] so it's actually going to just redo the
+[01:14:02] Sleep strategy from before and then it's
+[01:14:05] asking the llm down here it with the llm
+[01:14:08] it's saying it tells it the question
+[01:14:10] where it just says more right so the llm
+[01:14:12] can see like oh you wanted more sleep
+[01:14:14] strategies in addition to the ones
+[01:14:16] before so when you are doing you know
+[01:14:18] what we call like multi-turn
+[01:14:20] conversations you know conversations
+[01:14:21] whatever you want to call them when you
+[01:14:23] have chat history you need to keep in
+[01:14:25] mind that users are going to ask
+[01:14:28] follow-up questions that are not going
+[01:14:30] to be as well formed as their original
+[01:14:32] question and you can use the llm in
+[01:14:35] order to turn their followup question
+[01:14:37] into a much better keyword query for
+[01:14:41] your search
+[01:14:45] index
+[01:14:47] okay all right so I wanted to show that
+[01:14:49] so you know there's the general
+[01:14:51] architecture of the code and uh now our
+[01:14:55] code is using you know python for the
+[01:14:58] back end and it's just using the open AI
+[01:15:00] SDK with the Azure you know document
+[01:15:03] search SDK it's not using any fancy llm
+[01:15:07] orchestration libraries and people
+[01:15:09] always ask like why aren't you using
+[01:15:10] Lang chain why aren't you using this why
+[01:15:11] aren't you using that well part of the
+[01:15:13] reason I'm not using any of those is
+[01:15:14] because everybody has a different
+[01:15:16] favorite library for Python and I'd have
+[01:15:18] to pick one of them and I and then that
+[01:15:20] would like alienate other people right
+[01:15:22] so there are many popular rag
+[01:15:25] orchestration libraries and you could
+[01:15:27] totally use those as well you know
+[01:15:29] whichever one works for you uh so the
+[01:15:31] most popular ones in the open source
+[01:15:33] world are Lang chain and llama index and
+[01:15:36] both of them are available in multiple
+[01:15:38] languages and then from Microsoft we've
+[01:15:40] got Mantic kernel which is probably the
+[01:15:42] most similar to linkchain
+[01:15:44] and which is that's in Python and oh I
+[01:15:47] should have said net that's really what
+[01:15:49] it is is net we we'll fix that python
+[01:15:51] and.net I don't think it's in typescript
+[01:15:55] um I obviously haven't used it very much
+[01:15:58] at all and then there's also Microsoft
+[01:16:00] prompt flow and that's built into a your
+[01:16:02] AI studio so it works really well if
+[01:16:05] you're using as your AI studio and doing
+[01:16:07] other machine learning model stuff so
+[01:16:09] you can totally use these libraries uh
+[01:16:12] you know I tend to not use any libraries
+[01:16:15] because I like to work really you know
+[01:16:18] really close to the metal H because
+[01:16:20] things are changing all the time and I
+[01:16:21] want to be able to take advantage of
+[01:16:22] everything uh but these libraries do
+[01:16:24] have a lot of advantages as well because
+[01:16:26] they have like documented you know ways
+[01:16:28] of doing things right so llama index for
+[01:16:30] example it actually has a way of
+[01:16:33] indexing into postgress and doing a
+[01:16:36] hybrid search uh just already built in
+[01:16:39] there so they've already got that that
+[01:16:41] built in so definitely if you're you
+[01:16:42] know looking to do search on
+[01:16:45] documents and you're looking to do it
+[01:16:47] with you know you know various um you
+[01:16:49] know search backends check out llama
+[01:16:51] index they have all these different
+[01:16:52] retrievers all these different document
+[01:16:54] pars there's lots and lots of
+[01:16:59] options we also have more starter
+[01:17:02] repository so we just talked about
+[01:17:04] actually a bunch of them so the you know
+[01:17:06] this python one we're trying to Port it
+[01:17:09] into other languages they're they're
+[01:17:11] never going to be exactly the same and
+[01:17:13] generally the python one tends to have
+[01:17:15] more more features or at least more
+[01:17:17] experimental features because we're just
+[01:17:19] working on it so much because it's so so
+[01:17:21] popular but you know we're you know the
+[01:17:25] get more more eyes and more developers
+[01:17:27] uh interested in these then we can you
+[01:17:29] know the teams can spend more and more
+[01:17:31] time on them which would be great
+[01:17:32] because we would like to have full
+[01:17:34] featured rag applications for all
+[01:17:36] languages so if your favorite thing is C
+[01:17:39] definitely check out the C repo it's
+[01:17:40] actually been around for quite a while
+[01:17:42] um it it came out at a similar time as
+[01:17:44] the python one so it's it's got a good
+[01:17:49] number of features and then there's
+[01:17:50] JavaScript that team is great and
+[01:17:52] there's the Java one so those are
+[01:17:54] definitely options for you and if you're
+[01:17:56] seeing something missing in there in
+[01:17:58] there those repos that you want just
+[01:18:00] file an issue and let them know uh
+[01:18:03] there's
+[01:18:04] also uh the one that I showed earlier
+[01:18:06] which is the code that powers as your AI
+[01:18:08] Studio on your data uh so you can check
+[01:18:11] out the code for that uh another one is
+[01:18:13] chat co-pilot and this is a
+[01:18:16] demonstration of semantic colel but it
+[01:18:17] is actually really really cool it has
+[01:18:20] collaborative chat which I think is just
+[01:18:23] really fun um so just putting there
+[01:18:25] especially for those of you who are
+[01:18:26] doing net which is probably quite a
+[01:18:28] bit I see a question will the
+[01:18:30] demonstrated code still work with a free
+[01:18:32] account even in some limited way what
+[01:18:33] are the limitations yeah so that's all
+[01:18:36] documented on let me see H yeah this AA
+[01:18:41] I'll just place this okay yeah so I did
+[01:18:43] try to figure out how to get it working
+[01:18:45] on free and so you can get it on free
+[01:18:47] and I talk about all the limitations
+[01:18:53] here although I will say there is no
+[01:18:56] form of free open aai you're going to
+[01:18:59] have to pay for that somewhere whether
+[01:19:00] that's on open.com you could even you
+[01:19:02] can actually swap out AMA I I do have
+[01:19:05] support for that in the repo I think I
+[01:19:07] talked about that here yeah you can't
+[01:19:09] locally you could use an opening eye
+[01:19:10] compatible
+[01:19:14] model good
+[01:19:16] question all
+[01:19:18] right okay so it is now 4:30 is this the
+[01:19:22] time I meant to be over
+[01:19:23] Jason
+[01:19:27] sorry looking for the mute button um it
+[01:19:31] is but uh if you can go ahead and go
+[01:19:33] through this and I don't know say 15
+[01:19:36] minutes sure yeah so I won't do like the
+[01:19:39] demo like demo stuff I'll just talk
+[01:19:41] about this so okay so let's see you make
+[01:19:44] a rag chat application and you want to
+[01:19:46] know is it good right is it high quality
+[01:19:49] right you can't just write unit test I
+[01:19:50] mean you should write unit test for the
+[01:19:52] features but you can't just write a a
+[01:19:54] you know
+[01:19:55] test to say yeah it's good to go you
+[01:19:56] need to evaluate the answer quality
+[01:19:59] right so you want to know are these rag
+[01:20:01] answers correct relative to my knowledge
+[01:20:04] base right uh are they clear and
+[01:20:07] understandable usually uh and are they
+[01:20:09] formatted in the desired manner so if
+[01:20:11] you ask for citations in square brackets
+[01:20:14] with file extensions that is exactly how
+[01:20:16] the citation should come through right
+[01:20:18] so that's the stuff we're looking for in
+[01:20:21] our rag chat app answers right so here I
+[01:20:23] have three different answers that came
+[01:20:25] for the same question my favorite one is
+[01:20:27] the bottom one because it answered the
+[01:20:28] question correctly and it has the
+[01:20:30] citation in the right format and that's
+[01:20:32] what I'm looking
+[01:20:34] for lots and lots of things affect the
+[01:20:36] quality and that's what can make it kind
+[01:20:38] of hard to you know to figure out how to
+[01:20:42] improve uh improve quality right so the
+[01:20:45] first thing is the search right we
+[01:20:46] talked about search is really really
+[01:20:48] important right so what search engine
+[01:20:50] are you using are you cleaning up your
+[01:20:52] query like what are your actual queries
+[01:20:53] come in that they look look like are you
+[01:20:55] using hybrid search um any other search
+[01:20:58] options you're using how big is your
+[01:21:00] data like how large are your chunks uh
+[01:21:03] you know are do they overlap with each
+[01:21:05] other how many search results are you
+[01:21:06] returning these are all things that can
+[01:21:08] affect the results and then finally we
+[01:21:11] you know we pass things into the large
+[01:21:12] language model so there the system
+[01:21:14] prompt can affect things especially like
+[01:21:16] whether it uses citations or not uh the
+[01:21:20] language of the prompt if you're doing
+[01:21:21] something not in English you should
+[01:21:22] actually write your prompt in that Lang
+[01:21:24] Ang instead if you wanted to Output in
+[01:21:26] that language uh how much conversation
+[01:21:28] history you're passing in which model
+[01:21:30] you're using has a huge effect generally
+[01:21:32] qd4 is much it's like really it's just
+[01:21:36] really good at things so um you know
+[01:21:39] model definitely has effect I use gbd 35
+[01:21:41] a lot but I've definitely seen places
+[01:21:43] where gbd4 was just nicer better more
+[01:21:48] adherent to the instructions I'll say
+[01:21:51] temperature can affect things all these
+[01:21:53] parameters right so you know what do you
+[01:21:55] do like first thing you do is just do
+[01:21:56] manual experimentation right so in our
+[01:21:58] you know in this repo um we can
+[01:22:01] experiment using developer settings so
+[01:22:03] we can you know override the system
+[01:22:05] prompt here we can change the
+[01:22:06] temperature we can change our search
+[01:22:08] results we can do all these other you
+[01:22:10] know changes to the search results and
+[01:22:12] so we could just do manual
+[01:22:13] experimentation just to get a feel for
+[01:22:16] what changes when we change these
+[01:22:18] settings so that's a good thing just to
+[01:22:20] get some more intuition for how things
+[01:22:22] are
+[01:22:22] working but then what you really want to
+[01:22:25] do is to do an automated evaluation once
+[01:22:27] you think you've found settings that
+[01:22:29] work well right if you if your manual
+[01:22:31] tests are working well and you're like
+[01:22:32] okay I think this is working well then
+[01:22:34] you want to do an automated evaluation
+[01:22:36] on a lot of um question answer periods
+[01:22:39] to figure out is it really working well
+[01:22:40] right across lots of questions and
+[01:22:43] answers so the first thing you're going
+[01:22:45] to need is ground truuth
+[01:22:47] data that ground truth Theta is the
+[01:22:49] ideal answer for a particular question
+[01:22:51] so you generally want at least 200
+[01:22:53] ground truth question answer pairs uh
+[01:22:56] you can use an llm to generate these
+[01:22:59] question answer pairs but you should
+[01:23:02] definitely curate them manually go
+[01:23:04] through them make sure they're actually
+[01:23:05] legit and um you know and grounded uh I
+[01:23:09] have this script here okay so I have
+[01:23:11] this repo AI rag chat evaluator let me
+[01:23:16] uh P put this in the chat which everyone
+[01:23:19] it'll let me click on there we
+[01:23:22] go so this repo has a bunch of tools
+[01:23:24] that I've made to make it easier to
+[01:23:26] evaluate a rag chat app so one of them
+[01:23:28] is a tool that generates ground truth
+[01:23:31] data and it uses this as your AI uh
+[01:23:33] evaluate SDK so this will generate data
+[01:23:37] based off an Azure AI search
+[01:23:39] index uh you could change it if you have
+[01:23:41] a database instead you could just modify
+[01:23:43] it uh and so you could you know generate
+[01:23:46] that data look through it curate it uh
+[01:23:48] if you've got your rag chat live you
+[01:23:50] could add like thumbs up and thumbs down
+[01:23:52] buttons to you know actual answers to
+[01:23:55] find out which answers aren't working
+[01:23:56] well for people and then you should add
+[01:23:58] those questions with their correct
+[01:24:00] answer to your ground truth data to make
+[01:24:02] sure that you're evaluating according to
+[01:24:04] the kind of questions and answers that
+[01:24:06] users are
+[01:24:08] getting now once you've got that ground
+[01:24:10] truth data the next step is to evaluate
+[01:24:13] right so the way we're actually going to
+[01:24:14] do evaluation is hit up our you know our
+[01:24:17] our current version of the app uh
+[01:24:19] whether that's local or deployed or
+[01:24:21] whatever but hit up the version we want
+[01:24:22] to test with the question from the
+[01:24:24] ground to
+[01:24:25] Theta get the the you know the new
+[01:24:28] answer and then we send you know the the
+[01:24:31] new question you know the the current um
+[01:24:34] answer for that question along with the
+[01:24:35] ground truth answer for that question
+[01:24:37] and we actually send that to gb4 and we
+[01:24:40] ask
+[01:24:41] gp4 to rate it and we say hey gbd4 from
+[01:24:45] one to five how grounded was this answer
+[01:24:48] from 1 to five how coherent was the
+[01:24:50] answer from 1 to five how relevant is
+[01:24:52] this answer and our prompt is a lot
+[01:24:54] longer than that but the general idea is
+[01:24:55] that we use GPT in order to evaluate GPT
+[01:24:59] which is a funny thing to do but it
+[01:25:00] actually does work quite well and
+[01:25:01] there's a lot of research around it uh
+[01:25:03] we can also do other calculate other
+[01:25:06] metrics as well like look at how long it
+[01:25:07] was look at whether it had citations
+[01:25:09] look at whether the citation in the new
+[01:25:11] answer match the citation in the ground
+[01:25:12] truth answer that's actually my favorite
+[01:25:15] metric and that we can just do you know
+[01:25:16] with our python so then after we run
+[01:25:20] those evaluations we can compare them so
+[01:25:22] you can see here's a bunch of
+[01:25:23] comparisons I was doing doing where I
+[01:25:24] was playing around with different
+[01:25:26] prompts uh there's lots of things you
+[01:25:27] can change but in this case I was
+[01:25:28] changing prompts and so I was looking at
+[01:25:30] you know what was the groundedness and
+[01:25:32] coherence and then you know which of
+[01:25:34] them had citations because that's really
+[01:25:35] important to me so I can look across the
+[01:25:37] runs to get an idea for how well things
+[01:25:39] are
+[01:25:42] working and uh it can also compare
+[01:25:45] answers between runs and say like okay
+[01:25:47] well what was the answer like for this
+[01:25:49] run versus this other run to try and get
+[01:25:51] a feel for how things changed
+[01:25:55] and yeah I'm going very fast through
+[01:25:57] this part so as Jason said I do have a
+[01:26:00] um a whole video about evaluating chat
+[01:26:03] app and he linked to it there so thank
+[01:26:05] you
+[01:26:05] Jason okay so that's evaluation I
+[01:26:08] definitely recommend doing it because
+[01:26:09] you want to make sure you're putting out
+[01:26:11] a you know a quality application that
+[01:26:13] isn't making stuff up uh and the the uh
+[01:26:16] you asked about hallucinations earlier I
+[01:26:19] have a recent I think my most recent
+[01:26:21] blog post is actually about it yeah so I
+[01:26:24] added a metric specifically well this
+[01:26:26] isn't quite hallucinations this is just
+[01:26:28] making sure the app says it doesn't know
+[01:26:31] if something's just completely off topic
+[01:26:32] for it that it shouldn't know so it's
+[01:26:34] slightly different from huc naations and
+[01:26:36] something it should know but this is
+[01:26:37] also something that's really interesting
+[01:26:39] that I've been digging into
+[01:26:41] lately okay and just a few slides about
+[01:26:44] observability for rag chat apps
+[01:26:46] especially on azzer so the first thing
+[01:26:49] you might want to do is integrate with
+[01:26:50] Az your monitor because that's our
+[01:26:51] standard way of you know uh tracing our
+[01:26:54] apps on azir so you can use
+[01:26:56] instrumentation libraries to send uh the
+[01:26:59] open AI traces to application insights
+[01:27:01] so this is how we do it in Python using
+[01:27:03] this Library here and then when we look
+[01:27:05] in Azure monitor we can you know see the
+[01:27:07] nice little water flow and then click on
+[01:27:09] the chat request and we can see like
+[01:27:11] okay you know here's the parameters
+[01:27:14] here's the actual prompt here's the
+[01:27:16] question so we can actually see all that
+[01:27:18] in as your monitor uh it's not perfect
+[01:27:20] and we're trying to make some
+[01:27:21] improvements to it but it's pretty good
+[01:27:24] another thing you could use is an open
+[01:27:27] source tool called Lane fuse and I
+[01:27:30] really like it it is a um a you know
+[01:27:35] it's a tool specifically for open Ai
+[01:27:37] observability and it's also got
+[01:27:39] evaluations and stuff and it's just a
+[01:27:41] really nice UI uh so you know you have
+[01:27:44] to um you know you can deploy that UI to
+[01:27:47] to aser and I have a repo here where you
+[01:27:49] can do that and then you just uh you
+[01:27:52] know bring in their tracing like this
+[01:27:56] and then you get this really really cool
+[01:27:58] UI that's very focused on open AI uh
+[01:28:01] usage so it's very helpful to see all
+[01:28:04] your calls and see all the tokens they
+[01:28:05] use and see how slow your gbd3 calls are
+[01:28:09] versus your gbd4 and all that
+[01:28:13] stuff and okay this is my final slide so
+[01:28:17] uh yeah so if you're interested in this
+[01:28:18] you can try creating a rag app uh you
+[01:28:21] know and I pointed to the free
+[01:28:23] instructions here so so that you're not
+[01:28:24] spending money doing that and you can
+[01:28:27] read about the limitations air you can
+[01:28:28] try out the evaluation tools as well uh
+[01:28:31] anytime you try these please do raise
+[01:28:33] any issues I do see everything that
+[01:28:36] comes in I can't always respond the the
+[01:28:38] day that I see them but I try to respond
+[01:28:40] to everything so that we can make things
+[01:28:42] better and generally I recommend sharing
+[01:28:44] your learning so like Jason has all
+[01:28:46] these blog posts where he reviewed stuff
+[01:28:47] like so if any of you blog or tweet or
+[01:28:50] whatever please share what you learn
+[01:28:51] about building a rag app because I think
+[01:28:54] still early days for this and we still
+[01:28:55] all have a lot to learn in terms of best
+[01:28:58] practices and that's what I
+[01:29:03] have awesome that was awesome any uh any
+[01:29:07] other questions out
+[01:29:12] there I think you got it
+[01:29:16] all that was great that was uh that was
+[01:29:19] uh really
+[01:29:21] good I I've really gotten into the r
+[01:29:24] stuff
+[01:29:25] so the more that I uh see people present
+[01:29:28] it who really know this stuff is it's
+[01:29:30] just fantastic
+[01:29:33] to be there so I think this was probably
+[01:29:38] the most interactive session we've had
+[01:29:40] in a very long
+[01:29:42] time yeah you all had great great
+[01:29:45] questions I love getting the questions
+[01:29:46] because usually there's something
+[01:29:47] afterwards where I'm like oh I really
+[01:29:49] got to figure out a good answer to that
+[01:29:51] question and then it gives me an excuse
+[01:29:52] to dig into something
+[01:29:54] I don't think they asked too many things
+[01:29:56] you didn't have an answer to I have to
+[01:29:57] try harder next time no I gota like
+[01:30:01] export the
+[01:30:03] chat awesome well I I think that's it
+[01:30:05] Bill's going toh do a Hands-On thing
+[01:30:09] after um so yeah all right well thank
+[01:30:14] you
+[01:30:15] everyone thanks yeah thanks pam
+[01:30:19] pam thank you Pamela that was fantastic
+[01:30:22] so quick question great
+[01:30:24] can we get the recording of this session
+[01:30:26] is it possible to share the recording
+[01:30:29] yeah um it will be on
+[01:30:32] our Boston Azure YouTube channel it's
+[01:30:36] youtube.com Boston Azure isn't that
+[01:30:38] right bill I think it's the full boss
+[01:30:42] word yeah and um it'll probably be up
+[01:30:46] there late tonight or B tomorrow morning
+[01:30:52] sometime okay so so from meet up I
+[01:30:55] should be able to access that right and
+[01:30:58] no well we I believe we do have a link
+[01:31:01] to the YouTube channel in the Meetup
+[01:31:03] description so you should be able to
+[01:31:04] find it yeah okay thank you cool all
+[01:31:08] right okay bye
+[01:31:10] everyone have a good night thank you
+[01:31:14] thank
+[01:31:18] you Bill are you gonna take over can you
+[01:31:22] yeah I just I flipped on
+[01:31:27] um sharing and it's I got to go set a
+[01:31:30] permissions sorry folks give me a
+[01:31:41] second let's
+[01:31:47] see I have
+[01:31:50] here
+[01:31:52] um
+[01:31:57] so let
+[01:31:58] me share my screen why bills getting his
+[01:32:02] duck R
+[01:32:06] here so this is where we're at okay cool
+[01:32:09] Phil's there Bill's got it
+[01:32:13] cool um yeah so you can get the
+[01:32:15] recording at uh youtube.com Boston Azure
+[01:32:18] that'll have pelis stuff and um I'm
+[01:32:21] going to transition
+[01:32:24] um I can only share my
+[01:32:26] um my web browser without having to
+[01:32:29] configure something my apologies so I
+[01:32:31] have a couple of slides I was going to
+[01:32:33] share I'm going to speak to those um
+[01:32:36] what I'm going to show here is
+[01:32:40] a um we I'm I'm going to ask you to
+[01:32:44] create a simple python app or a simple
+[01:32:47] uh C app um per you know instructions I
+[01:32:52] um I basically think you know how to do
+[01:32:53] that that and I'm going to ask you to
+[01:32:56] basically do that and then I have some
+[01:32:58] code to uh to slam in to make it easier
+[01:33:01] the goal of the workshop this mini
+[01:33:03] Workshop is to see um if you've been
+[01:33:07] doing this for a while the this might
+[01:33:09] not be for you but if you're new to this
+[01:33:11] and you you don't really know what the
+[01:33:12] code looks like um my hope is that at
+[01:33:15] the end of this you'll have the aha
+[01:33:17] moment of wow I can do this in about 10
+[01:33:22] lines of meaningful code not everything
+[01:33:25] Pamela did but you can actually create a
+[01:33:29] program that can do
+[01:33:31] something using the llm that a
+[01:33:35] programmer just before this whole llm
+[01:33:37] thing came on it was impossible to do no
+[01:33:40] programmer was able to do this in you
+[01:33:42] know before this this is a
+[01:33:45] remarkable um change in just the
+[01:33:48] way uh the way the the tools that we
+[01:33:51] have access to as um as
+[01:33:55] developers so I am
+[01:33:59] sharing let's see I'm sharing in the
+[01:34:02] chat two
+[01:34:04] links
+[01:34:07] um this is um okay so I just shared two
+[01:34:11] links um I was also going to go through
+[01:34:15] and show you how to do this that's going
+[01:34:17] to be a little trickier now because like
+[01:34:19] I'm having trouble sharing Beyond just
+[01:34:21] my web browser uh but here's the the
+[01:34:23] idea if you're a a python developer um
+[01:34:28] go follow the python
+[01:34:30] link you know which is which brings you
+[01:34:34] here and if you're a net developer cop
+[01:34:37] developer follow that one and there are
+[01:34:40] directions at the top of each
+[01:34:43] file basically create a folder and then
+[01:34:47] um do do a couple of steps that are
+[01:34:49] normal things to do if you're a python
+[01:34:51] or. net developer and then replace or
+[01:34:54] create the the file if it's cop you're
+[01:34:57] going to replace
+[01:34:59] program.cs with um with this file tells
+[01:35:02] you to do that
+[01:35:04] here um and if you're a python developer
+[01:35:07] you're just going to create a file
+[01:35:09] called hello ai. py and you know do the
+[01:35:12] stuff mentioned here so these two links
+[01:35:15] are in the teams
+[01:35:18] chat um and after you do these few steps
+[01:35:20] up here there's a there's a challenge
+[01:35:22] that um um that you know once you have
+[01:35:25] it running I'll I'll I'll speak to that
+[01:35:27] so I I hope this only takes you know
+[01:35:29] five minutes for folks or maybe 10
+[01:35:30] minutes for folks to to get running but
+[01:35:32] if you have questions come off you know
+[01:35:34] go on audio or uh post up in the um in
+[01:35:37] the
+[01:35:41] chat bill you want me to share anything
+[01:35:43] and you can talk to it I had it all set
+[01:35:46] up on my um uh it a command lines I you
+[01:35:50] know I have windows open that um maybe
+[01:35:53] in the metime I can I can see if I can
+[01:35:55] even extend my
+[01:35:56] permissions um I so no it'll be hard to
+[01:36:00] give you something to to share Jason
+[01:36:01] unless you wanted to follow along the
+[01:36:03] lab and do that live okay I mean I can
+[01:36:06] do that
+[01:36:12] too meantime I'm going to go see if I
+[01:36:14] can enhance my permissions
+[01:36:22] here
+[01:36:46] [Music]
+[01:36:52] m
+[01:36:54] I share mine until you get yours going
+[01:36:59] Bill
+[01:37:01] see this
+[01:37:09] guy so let me take this
+[01:37:17] here so got empty
+[01:37:20] folder do this gu
+[01:37:52] e
+[01:37:57] all
+[01:37:59] right clob or the
+[01:38:02] content just copy and paste the
+[01:38:06] code all right
+[01:38:09] so
+[01:38:17] here
+[01:38:20] paste this
+[01:38:22] guy
+[01:38:26] save okay done it
+[01:38:49] run okay that worked
+[01:38:52] perfectly oh an interesting fact
+[01:38:55] that
+[01:39:01] fast cool if you
+[01:39:04] um so I'll wait I'll wait till to
+[01:39:07] proceed um I'll I'll talk a little more
+[01:39:10] once everybody has this at least
+[01:39:19] running I can do
+[01:39:21] it so I try to put this code in the
+[01:39:24] collab andun trying to run it think I'm
+[01:39:28] just having some issues like configure
+[01:39:30] environment for python no module name no
+[01:39:33] open some those kind of er maybe I need
+[01:39:38] to do few things
+[01:39:42] before so you did the python
+[01:39:46] one yeah I did the Google cab and did
+[01:39:50] the
+[01:39:52] python Google collab I'm not sure what
+[01:39:55] that
+[01:39:57] is yeah collab is the environment where
+[01:40:00] you can run the python Cod
+[01:40:06] um yeah I've heard of it I've never used
+[01:40:10] it okay so let's try the python
+[01:40:14] one where's the
+[01:40:20] link that python
+[01:40:43] [Music]
+[01:41:23] say mac thing um or Linux you know uh
+[01:41:27] thing my mistake you want to run
+[01:41:29] activate um so it's probably just B
+[01:41:34] activate on window
+[01:41:37] po I can do it in code if I don't have
+[01:41:41] any
+[01:41:42] luck let me look that one up that's I'm
+[01:41:46] kind of handicapped when it comes to
+[01:41:48] python so yeah this is
+[01:41:52] the let me start over with
+[01:41:56] this
+[01:41:58] close
+[01:42:02] CD
+[01:42:07] MK oh it's activate do PS1 I
+[01:42:12] think but it's do it well actually you
+[01:42:15] you figured out um or or if you're onto
+[01:42:17] something yeah I'm just going to do this
+[01:42:19] so if I go
+[01:42:22] here yeah I
+[01:42:25] do dude trying
+[01:42:27] to type sometimes
+[01:42:30] challenge over okay so now close this
+[01:42:34] welcome window so we'll take this what
+[01:42:37] do you want this to
+[01:42:39] be hello
+[01:42:41] AI well you um there's more to the file
+[01:42:44] than that unfortunately is there okay
+[01:42:47] it's it's above the comments too so I
+[01:42:49] would just do a control a and take the
+[01:42:51] whole thing
+[01:42:52] in
+[01:42:57] all copy paste all right see what we got
+[01:43:00] here so here we have this deployment
+[01:43:03] okay so that's that so now we
+[01:43:07] basically I think I already have
+[01:43:10] these you might not need to do anything
+[01:43:12] except just run
+[01:43:14] it yeah actually it's true um let me
+[01:43:17] just try to run
+[01:43:22] it
+[01:43:28] I could have done a
+[01:43:31] notebook there
+[01:43:33] a there we
+[01:43:35] go different
+[01:43:39] one
+[01:43:41] um and this a uh yes George contributed
+[01:43:45] a scripts activate command which maybe
+[01:43:48] is the one that you need for po
+[01:43:50] shell I probably should have opened the
+[01:43:53] mic let you guys struggle through that
+[01:43:55] but yeah just oh good I thought it was
+[01:43:59] quick on the chat I was like oh well I
+[01:44:02] know C SHP guys anyway
+[01:44:06] so yeah me too try
+[01:44:10] python I can fumble around and get most
+[01:44:12] things working
+[01:44:14] but slowly getting
+[01:44:17] there okay so anybody um anybody have
+[01:44:20] this working besides Jason either
+[01:44:24] one and you hit
+[01:44:26] the uh you keep score if you want to
+[01:44:30] check the I put put a comment in there
+[01:44:32] you could respond to you could click the
+[01:44:35] check
+[01:44:37] box no obligation but trying to have
+[01:44:40] some way to track how people are doing
+[01:44:43] all you got three of them
+[01:44:50] now what do they look like next to each
+[01:44:54] other
+[01:45:03] python anybody have any struggles they
+[01:45:05] want to
+[01:45:07] vocalize who's got
+[01:45:10] it you know my my struggle with these is
+[01:45:13] always the cost right whenever you do
+[01:45:15] any of these cloud computing especially
+[01:45:17] these services like this I'm always very
+[01:45:20] leery I mean I actually I'm working on a
+[01:45:24] project right now where it's all local
+[01:45:27] so our local CPU and GPU I got a local
+[01:45:31] llama 2
+[01:45:32] model that I'm using um you know the
+[01:45:35] stuff with an Azure is really awesome
+[01:45:37] but do you have any indication or you
+[01:45:41] know setting up like workflows like this
+[01:45:45] the cost involved I mean
+[01:45:48] I well th this one is um uh actually
+[01:45:53] actually that's a good question I don't
+[01:45:54] have a readymade answer for that uh my
+[01:45:57] perception is this is not expensive um
+[01:46:00] but um but if you add uh
+[01:46:03] like the Azure AI search um you know the
+[01:46:08] the it goes up to minimum of some number
+[01:46:11] $100 a month okay uh you add a vector
+[01:46:13] database you know the same thing this is
+[01:46:16] using um if I could show my da uh
+[01:46:19] Graphics here I made a beauti I had uh
+[01:46:22] uh do 3 make me a nice uh uh visual um
+[01:46:27] but um you know this is using the the
+[01:46:30] tip of the tip of the iceberg and um
+[01:46:34] this this just you're not using the the
+[01:46:36] heavyweight uh tools yet not using
+[01:46:39] um um you know the the responsible AI um
+[01:46:45] uh services to you know make sure your
+[01:46:48] your data is safe the the the safety uh
+[01:46:51] service and so forth yeah you're you're
+[01:46:54] in the the cheap Zone
+[01:46:57] here there are different approaches how
+[01:46:59] you can minimize the cost obviously you
+[01:47:02] can drive it to zero especially as you
+[01:47:06] mentioned when you work with Cloud
+[01:47:09] technologes um but you know you're using
+[01:47:13] llama deployed on um your local
+[01:47:16] machine you can deploy the servers so
+[01:47:19] you you kind of escaping that cloud
+[01:47:22] approach
+[01:47:23] Al together so making it a little
+[01:47:25] cheaper and then caching so you can cach
+[01:47:29] the responses so you are not calling the
+[01:47:32] service all the time if you are using
+[01:47:34] something like Azure open AI um or maybe
+[01:47:37] store most popular answers somewhere in
+[01:47:42] um like a a database or something like
+[01:47:46] that that's interesting I never thought
+[01:47:47] about caching the responses that come
+[01:47:51] back yeah so that's that's one uh that
+[01:47:56] it depends what you're building right um
+[01:47:59] so that that's one of the approaches how
+[01:48:01] you can minimize the cost um and then
+[01:48:05] you know something like rag you don't
+[01:48:08] have in in some cases you don't have to
+[01:48:11] call um Azure open AR or something like
+[01:48:14] that at all so if you're um doing the
+[01:48:17] search and then you're getting decent
+[01:48:19] response from the search then you can
+[01:48:21] escape that second and stop of calling
+[01:48:24] them um llm or ji service alog
+[01:48:32] together that's interesting I never
+[01:48:34] thought you got me thinking about maybe
+[01:48:36] cashing the common responses
+[01:48:40] okay thank you no
+[01:48:48] problem so I'm going to grab so does
+[01:48:52] anybody have any
+[01:48:56] struggles any struggles out
+[01:48:58] there who's still here is is doing
+[01:49:03] good so I'm going to grab the screen
+[01:49:08] back and walk through a couple things
+[01:49:18] here so um do you saw the output so I I
+[01:49:23] assume I assume you can see your output
+[01:49:27] and it basically shows um a prompt that
+[01:49:31] appears I'm I'm let me zoom in on this
+[01:49:34] code here that the code is essentially
+[01:49:36] the same between Python and uh
+[01:49:40] C so um this is the prompt that you're
+[01:49:45] that is being sent to the um under the
+[01:49:48] hood the open AI uh llm large language
+[01:49:52] model
+[01:49:53] and and this is the part that's you know
+[01:49:56] magic it's producing a response that is
+[01:50:00] uh unique text uh that you know a
+[01:50:04] response that the kind of a response
+[01:50:06] that was impossible before this um LM
+[01:50:10] Revolution uh started year and a half
+[01:50:13] ago that's like just amazing and if and
+[01:50:17] um one of the things that I claim is if
+[01:50:20] you look at the response there's
+[01:50:22] something wrong wrong about it and I
+[01:50:24] didn't want to spoil it give folks a
+[01:50:27] chance to look at the response but when
+[01:50:29] you look at the the response um um
+[01:50:33] there's there's a lack of um
+[01:50:38] grounding or or the opposite the other
+[01:50:41] side of the grounding coin is uh
+[01:50:43] hallucination of sorts happening in the
+[01:50:47] response so um I'm suggesting that um a
+[01:50:51] hint to
+[01:50:53] help you U solve for that don't want to
+[01:50:56] take a huge amount of time here but that
+[01:50:58] that's that's the point and um this
+[01:51:03] response setting the number of tokens we
+[01:51:07] can talk about these um April 20th
+[01:51:10] setting a
+[01:51:12] prompt um scrolling up here creating
+[01:51:15] this Azure open
+[01:51:16] AI uh you know
+[01:51:19] object and the rest of this is kind of
+[01:51:21] boiler plate stuff
+[01:51:23] um this is like 10 lines of code that
+[01:51:27] that you're now able to do something
+[01:51:29] that no software engineer could do for
+[01:51:32] the
+[01:51:33] first 75 years of the computer
+[01:51:41] industry let's go back here how we
+[01:51:45] doing um it ah so yay somebody declared
+[01:51:49] a date buug and they fixed it good two
+[01:51:51] people a couple people fix a date buug
+[01:51:55] so um the the date buug if you haven't
+[01:51:59] figured it out by now is actually Jason
+[01:52:01] would you mind sharing again and showing
+[01:52:03] um showing your uh your
+[01:52:06] output sure just
+[01:52:08] SEC let's see share this
+[01:52:13] one
+[01:52:16] the C output was here do you want to see
+[01:52:20] the code or the output the output
+[01:52:24] okay
+[01:52:26] so
+[01:52:28] H this was the python
+[01:52:31] code either one is the output is down
+[01:52:34] here and then up here is
+[01:52:37] the um other one up at the
+[01:52:41] top thank you so if folks look at that
+[01:52:44] you're seeing similar stuff you know
+[01:52:46] what today's date is because it's output
+[01:52:48] as a debug message um and the prompt
+[01:52:50] asks for something from some world
+[01:52:53] history event from today's date and and
+[01:52:56] it gives you one except with great
+[01:52:58] confidence uh on March 18th 18 uh 1965
+[01:53:02] uh Soviets walked in
+[01:53:04] space um but uh that great confidence is
+[01:53:08] uh untethered from reality because that
+[01:53:10] didn't happen on this day in history it
+[01:53:12] happened on a different day and that's
+[01:53:14] uh that's your llm
+[01:53:17] hallucinating returning a confident
+[01:53:19] result when it has no business doing
+[01:53:21] that and the way to ground it is to do
+[01:53:26] um basically rag this is this is exactly
+[01:53:30] what Pamela was talking about except
+[01:53:33] that with the rag um here it's a much
+[01:53:36] simpler rag where the augmentation is
+[01:53:40] simply the date so you don't have to
+[01:53:42] make a network call to get the the uh
+[01:53:44] the current current date you can just
+[01:53:46] make you know call a a python library or
+[01:53:49] a cop library to uh to get that then
+[01:53:52] weave it into the prompt uh I'll leave
+[01:53:54] that to your imagination how to do
+[01:53:57] that you know on this day in history you
+[01:54:01] know assuming this day is you know X or
+[01:54:03] something like that would do fine which
+[01:54:06] is date whatever you know choose your
+[01:54:08] style and see if you get uh consistent
+[01:54:11] results and if you do then that's that's
+[01:54:14] the win and um and and that was the the
+[01:54:19] goal is to uh to give you the the
+[01:54:22] hands-on experience hopefully a couple
+[01:54:24] of a
+[01:54:37] house quiet
+[01:54:42] group thank you
+[01:54:51] Tony
+[01:55:55] see I go
+[01:56:05] here and if you've accomplished the the
+[01:56:08] goal here and you want to try something
+[01:56:10] different you can instead of just uh
+[01:56:12] prompt engineering or or ragging to to
+[01:56:15] get the date inserted in the in the
+[01:56:18] prompt itself so that the respones um
+[01:56:22] more accurate better
+[01:56:24] grounded uh you can also say something
+[01:56:27] like uh and return the results in
+[01:56:32] French or translate the results to
+[01:56:34] German uh you know append that to your
+[01:56:38] prompt and see if that
+[01:56:48] works I I tested it earlier with
+[01:56:50] mandarin and it was happy to do that and
+[01:56:54] it also worked with pig
+[01:56:56] latin um Mandarin didn't display on my
+[01:56:59] my son was doing some testing on me um
+[01:57:03] uh and um he realized that Mandarin
+[01:57:06] didn't display well in some contexts on
+[01:57:09] his windows box mine is I I'm using a
+[01:57:12] Mac didn't have any trouble for me so
+[01:57:15] your mileage if it's a different
+[01:57:16] alphabet uh your mileage May
+[01:57:18] VAR my response looks gibberish
+[01:57:30] how many uh oh you didn't um no you got
+[01:57:32] 250 tokens used all the tokens it ran
+[01:57:35] out tokens I changed the temperature to
+[01:57:39] two I thought the temperature only went
+[01:57:41] up to one I goes
+[01:57:45] two those people between one Veronica
+[01:57:49] help what's going
+[01:57:51] on
+[01:57:55] yeah temperature can be more than
+[01:58:00] one that one's a little
+[01:58:03] better Al the the one above used all 250
+[01:58:07] tokens this one only used 50 so it hit
+[01:58:11] some cognitive limit there when it ran
+[01:58:13] out of
+[01:58:14] tokens
+[01:58:16] maybe I thought temperature was a was
+[01:58:19] like a zero to one real number I guess
+[01:58:21] you can scale it if way I know I've seen
+[01:58:23] it from negatives to positives and stuff
+[01:58:26] too
+[01:58:27] but one concept going into junk at 1.7
+[01:58:33] how about 1.6 1.5 was
+[01:58:40] good it's the top P that's you would
+[01:58:46] want that's also
+[01:58:48] gibberish starts off
+[01:58:51] good it's getting
+[01:58:54] tired it's passes
+[01:58:58] bedtime so
+[01:59:01] um SAR how to fix the date so the the
+[01:59:05] the challenge is that um oops somebody
+[01:59:10] um weighed in Tony so um Yep this this
+[01:59:14] looks like a python solution I don't
+[01:59:16] know which one you're using
+[01:59:19] sadar yes I'm using B
+[01:59:23] okay so T Tony's solution how to do it
+[01:59:25] basically you just want to uh Wordsmith
+[01:59:28] the prompt to also in normal English uh
+[01:59:33] declare what today's date
+[01:59:36] is and that becomes part of the
+[01:59:39] information that the llm uses and again
+[01:59:41] that's a very simple form of
+[01:59:44] rag I see I see
+[01:59:51] Conor
+[01:59:56] so the initial one you're not actually
+[01:59:58] passing what today
+[02:00:00] is on
+[02:00:04] purpose that's the bug that's the the
+[02:00:08] challenge the the my My Hope was people
+[02:00:11] would notice the you know discover for
+[02:00:13] themselves that there's a hallucination
+[02:00:15] there that you ask for today to
+[02:00:18] something today and it gives you
+[02:00:20] something you know in September and then
+[02:00:22] something in June and you know and so
+[02:00:25] forth because it has no concept of the
+[02:00:27] day that's a hallucination then you
+[02:00:29] ground it using rag you know rag light I
+[02:00:32] guess simple Rag by just inserting the
+[02:00:51] date
+[02:01:12] like that let's up with
+[02:01:21] that
+[02:01:28] Jason you you were playing with the uh
+[02:01:30] the temperature can you explain to the
+[02:01:32] to the room what what that um what that
+[02:01:36] means yeah so the temperature is what
+[02:01:39] you see most demos
+[02:01:42] change was it I just passed it fine
+[02:01:49] temperature okay so I guess this is the
+[02:01:51] top pie H interesting
+[02:01:54] um the temp here so this is a
+[02:01:58] temperature it's a float it's between
+[02:02:01] zero and
+[02:02:03] two but it typically uh is explained as
+[02:02:08] in it is
+[02:02:10] a spectrum of
+[02:02:13] creativity that you want in the response
+[02:02:17] so a lot of rag Solutions are geared to
+[02:02:19] zero because that you don't want
+[02:02:20] creativity but if you're say doing um
+[02:02:25] writing of some sort say fiction writing
+[02:02:28] you would want to get gaug it closer to
+[02:02:32] two the defaults one right middle of the
+[02:02:37] road a lot of the rag systems will be
+[02:02:40] zero or up to
+[02:02:42] maybe3 but not much more than that that
+[02:02:45] I've seen
+[02:02:47] anyways not saying they all are so this
+[02:02:50] is the one I want
+[02:02:53] nuc nucleus sampling
+[02:02:55] factor is a different
+[02:02:58] one and yeah so here if it's
+[02:03:04] set then temperature is kind of um
+[02:03:08] ignored it's going to be one of the
+[02:03:10] other but this one is geared more toward
+[02:03:14] the
+[02:03:16] sampling
+[02:03:18] here and it's between 0 and one
+[02:04:27] sorry what was the
+[02:04:30] question where's it at on the bottom
+[02:04:33] down here yeah so for co-pilot
+[02:04:37] or chat the creative balanced precise is
+[02:04:42] that basically the
+[02:04:44] temperature
+[02:04:47] yeah
+[02:04:50] sense
+[02:04:52] and then the co-pilot in like word
+[02:04:56] and Outlook have the same idea don't
+[02:05:00] they I don't have those running so I've
+[02:05:03] only seen
+[02:05:05] demos yeah I don't have those either but
+[02:05:09] they should they they're all based on um
+[02:05:11] the same
+[02:05:13] approach um if Pam was sh in both top PE
+[02:05:20] and then the temperature
+[02:05:23] um most people just use
+[02:05:26] temperature um but if you want it extra
+[02:05:29] creative you can adjust both top p and
+[02:05:34] um the
+[02:05:36] temperature
+[02:05:39] cool yeah you kind of just have to play
+[02:05:41] with it see what works for
+[02:05:44] [Music]
+[02:05:47] you I'll mention that in the code um
+[02:05:50] there's a comment up the the top uh that
+[02:05:52] says um do not do this in real code it's
+[02:05:55] a terrible idea uh because I in order to
+[02:05:58] simplify this mini Workshop rather than
+[02:06:03] externalizing the the the variables like
+[02:06:06] the API key value um I burned them
+[02:06:11] in so I'm going to roll those I'm going
+[02:06:14] to roll that key at some point after
+[02:06:16] after we hang up so your your onepage uh
+[02:06:21] AI machine will will uh cease to work at
+[02:06:24] that
+[02:06:26] point good
+[02:06:31] idea actually prepared um a a a bash
+[02:06:36] version a Powershell version a command
+[02:06:38] version and I struggled with it and I
+[02:06:41] ended up I still have them but I ended
+[02:06:43] up uh doing this just
+[02:06:47] to just to
+[02:06:49] simplify and uh I I don't know how much
+[02:06:53] it simplified it but probably at least a
+[02:07:03] little well does anybody um um than
+[02:07:07] thank you all for for attending I hope
+[02:07:09] this was uh useful for those of you
+[02:07:11] newer to the to the uh Azure AI world uh
+[02:07:15] does anybody have any uh closing
+[02:07:20] questions yeah this is great thank you
+[02:07:23] and H how many tokens does the open
+[02:07:27] asure support like um I know normally
+[02:07:30] they would charge right but in this case
+[02:07:33] um is it is it free for to use a or how
+[02:07:38] how long we can use this if I keep
+[02:07:40] running
+[02:07:41] it well I'm going to roll the
+[02:07:43] credentials after this uh call ends so
+[02:07:46] we'll stop working I I I see you know
+[02:07:50] five minutes uh it actually isn't free
+[02:07:53] uh but it's not terribly expensive this
+[02:07:56] is tied to my personal credit
+[02:07:59] card okay but it's it's not like it's
+[02:08:01] not a lot of money to do what we did
+[02:08:03] that's if you look in the comments
+[02:08:04] you'll see I put a comment to not raise
+[02:08:06] the max tokens above 250 so you could go
+[02:08:11] you know everybody could go crazy and
+[02:08:13] try to do a lot of stuff um but you know
+[02:08:17] this felt like a this is experimental
+[02:08:19] for for myself and uh roner and Jason
+[02:08:22] and because we have to also figure out
+[02:08:24] how to do what we going to whatever
+[02:08:26] we're going to do on the Azure um day
+[02:08:29] you know the full day event on April
+[02:08:32] 20th how do we light up this for
+[02:08:35] everybody because it's not an easily
+[02:08:37] available service so um I'll check the
+[02:08:41] the numbers later and see if this cost
+[02:08:44] me more than a dollar I I don't expect
+[02:08:46] it it will though I'd expect it to be
+[02:08:49] pennies if anything
+[02:08:52] so I hope that's that's the best answer
+[02:08:53] I have at the
+[02:08:55] moment oh thank you I really appreciate
+[02:08:57] that I I did run it some sometimes so
+[02:09:00] didn't realize that's the case sorry
+[02:09:02] about
+[02:09:03] that sorry I I think the volumes were at
+[02:09:06] um and it's kind of
+[02:09:09] in 10 people left or something Veronica
+[02:09:12] or Jason do either of you have any ideas
+[02:09:14] how to like what this exercise that we
+[02:09:17] did for this um mini Workshop um given
+[02:09:21] parameters that we were using and the
+[02:09:23] the volume that we were pumping into
+[02:09:25] that would you expect that to not even
+[02:09:27] be a penny or any
+[02:09:31] idea it should be really
+[02:09:33] cheap I'd say less than a
+[02:09:36] quarter um more than a penny though all
+[02:09:40] right
+[02:09:42] yeah uh what is actually hold on I can
+[02:09:46] bring up the pricing open AI
+[02:09:50] pricing it's um it's like it's kind of
+[02:09:53] like reminds me of
+[02:09:55] storage was like per thousand type
+[02:09:58] stuff uh so is it
+[02:10:02] gp4 or
+[02:10:04] 35 it's a 35
+[02:10:07] turbo5 tur of course this isn't the
+[02:10:09] pricing page uh let's
+[02:10:13] see this is the this doesn't tell me the
+[02:10:16] model
+[02:10:19] pricing uh that's for open a I um think
+[02:10:23] Azure is charging something on top of it
+[02:10:26] are they so Azure open AI model
+[02:10:35] pricing
+[02:10:36] now this
+[02:10:38] one
+[02:10:40]  this
+[02:10:42] thing can't see because of the bar at
+[02:10:45] the
+[02:10:46] top this
+[02:10:48] guy okay so per thousand token
+[02:10:56] so
+[02:10:57] for heading to 50 well see these input
+[02:11:01] output
+[02:11:03] but it does add up but not a lot I mean
+[02:11:08] th tokens if you cap it at 250 and you
+[02:11:11] hit the cap every time four of those
+[02:11:15] you're at this
+[02:11:19] much so time up by you'd have to have
+[02:11:23] like a 100 before you'd hit
+[02:11:27] five I I'll check the uh I I actually
+[02:11:30] have the cost analysis window popped up
+[02:11:32] on the Azure side and I'll say I don't
+[02:11:34] know how much latency there is before it
+[02:11:36] catches up it takes a while yeah I use
+[02:11:40] that in my
+[02:11:42] demo the
+[02:11:44] um but I mean this is a a good thing to
+[02:11:47] point out I mean look how much price
+[02:11:49] difference there is between GPT T4 with
+[02:11:52] 32k and
+[02:11:56] turbo I mean it's
+[02:12:01] huge this is a scent one penny for 100
+[02:12:04] or a th
+[02:12:06] tokens out and then so you could
+[02:12:10] easily
+[02:12:12] yeah
+[02:12:13] right but I was watching a video
+[02:12:17] actually a couple videos from the guys
+[02:12:19] over Lang chain and they've been doing
+[02:12:22] testing on the context window basically
+[02:12:26] finding I think they call it needle and
+[02:12:28] hay stack so they put like I forget how
+[02:12:32] many needles they were doing needles so
+[02:12:34] they put it something in the context
+[02:12:37] window that they're passing they put
+[02:12:39] were putting
+[02:12:40] like one to seven they did multiple
+[02:12:45] tests to see how often it would find
+[02:12:48] those four things and it
+[02:12:52] other test showed that the larger the
+[02:12:55] window was the more often it paid
+[02:12:58] attention to the end of the context it
+[02:13:01] would sometimes lose things at the
+[02:13:03] beginning of the
+[02:13:05] context so yeah it's
+[02:13:09] all interesting stuff
+[02:13:12] anyways so you did mention that you are
+[02:13:15] going to have some kind of a workshop in
+[02:13:18] the future like is is it to uh open to
+[02:13:30] everyone sure I can answer that sure
+[02:13:34] yeah it's open to everyone so we're this
+[02:13:36] is a um an event that Veronica and Jason
+[02:13:40] and myself have put on a bunch of times
+[02:13:42] over the years where we've been doing it
+[02:13:44] for more than 10 years where we have an
+[02:13:47] all day uh free usually vendor sponsored
+[02:13:51] so we can do food and and such um at
+[02:13:54] nerd in Cambridge
+[02:13:57] Massachusetts uh where uh you show up
+[02:14:00] with a laptop or you know we we'll we'll
+[02:14:02] uh we'll publish a page that describes
+[02:14:05] all this but show up at usually it's
+[02:14:07] around 8:30 or 9 or something and at the
+[02:14:10] at the site and you bring your laptop
+[02:14:13] like I mentioned and we code we do stuff
+[02:14:16] there's a usually a an
+[02:14:18] interwoven set of talks
+[02:14:22] like like the Pamela talk that you just
+[02:14:24] heard um as a you know one example there
+[02:14:29] might be a talk like that and then
+[02:14:31] there'd be um a hands-on experience
+[02:14:33] after that to take advantage of the
+[02:14:35] information there and then you know uh
+[02:14:39] you repeat that three four five six
+[02:14:41] times during the day you know new topic
+[02:14:44] new lab new topic new live that kind of
+[02:14:46] thing and at the end of the day um you
+[02:14:50] uh you leave presumably Having learned a
+[02:14:52] bunch more about Azure you know this is
+[02:14:54] the Boston Azure group but we're
+[02:14:59] um um we're we're expecting to have a
+[02:15:02] heavy AI emphasis on um on this
+[02:15:06] particular workshop on April
+[02:15:10] 20th well that's great I would love to
+[02:15:13] I'm in New Jersey but I would love to
+[02:15:14] come there and join
+[02:15:17] it love to have you great we so watch
+[02:15:21] the Meetup space there'll be a sign up
+[02:15:25] um soon um we like uh we we only found
+[02:15:29] out about this uh quite this is quite
+[02:15:32] recently this late breaking news so we
+[02:15:33] have a couple of details to square away
+[02:15:35] now that we know we have space but we'll
+[02:15:37] we'll get a sign up form out there and
+[02:15:40] um if you should you know assuming you
+[02:15:43] get Meetup notifications that should um
+[02:15:45] should let you know great thank you so
+[02:15:49] much yeah welcome
+[02:15:52] have you been to any in-person uh Boston
+[02:15:54] Azure or North Boston Azure
+[02:15:56] events no no I I haven't come to any
+[02:15:59] Boston a events but I did go to some in
+[02:16:02] New York New York City ah very
+[02:16:07] cool oh
+[02:16:09] welcome thank you any other um questions
+[02:16:14] out there
+[02:16:20] folks
+[02:16:23] we let everybody
+[02:16:24] go sounds
+[02:16:26] good have a good night okay thanks for
+[02:16:29] staying late all uh I'm
+[02:16:32] tired you are too good night everybody
+[02:16:35] Forest gum what's he say I'm tired I'm
+[02:16:39] gonna go home
+[02:16:42] now that's how I feel that's what I'm
+[02:16:44] gonna two and a half hours this is great
+[02:16:46] thank you guys thank you very
+[02:16:48] much take care thanks everybody thank
+[02:16:50] you
+[02:16:52] okay

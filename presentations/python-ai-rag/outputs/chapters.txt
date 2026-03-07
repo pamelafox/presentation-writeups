@@ -1,0 +1,28 @@
+This session covers Retrieval Augmented Generation (RAG), a technique for giving LLMs access to external data so they can provide grounded, accurate answers. The talk walks through RAG fundamentals, progressively more advanced RAG flows in Python, document ingestion and hybrid search, and full end-to-end RAG applications on PostgreSQL and Azure AI Search.
+
+00:00 - Introduction and series overview
+01:02 - Welcome and session overview
+02:56 - Setting up the code samples in GitHub Codespaces
+04:35 - Why RAG? Limitations of LLMs
+06:30 - Fine-tuning vs. RAG
+08:02 - RAG in the wild (Copilot, Bing, ChatGPT)
+09:29 - RAG 101: How retrieval augmented generation works
+12:04 - Basic RAG with CSV data using Python and OpenAI SDK
+17:39 - Why search matters even with large context windows
+18:18 - RAG with multi-turn conversation support
+20:46 - Query rewriting for better search results
+25:14 - RAG on documents: The ingestion flow
+28:11 - Why split documents into chunks
+29:03 - Optimal chunk size and splitting strategies
+31:19 - Document ingestion code walkthrough
+33:49 - Simple RAG flow on ingested documents
+37:11 - Hybrid retrieval: Combining keyword and vector search
+40:10 - Hybrid retrieval code walkthrough
+45:46 - RAG data source types: Structured vs. unstructured
+47:20 - RAG on PostgreSQL: Full-stack application demo
+50:05 - RAG on Azure AI Search: Document-based RAG demo
+53:38 - Data ingestion with Azure Document Intelligence
+55:13 - More ways to build RAG apps
+57:50 - Additional RAG resources and talks
+58:40 - Next steps and upcoming sessions
+59:44 - Q&A

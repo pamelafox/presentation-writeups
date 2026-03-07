@@ -1,0 +1,1389 @@
+[00:00] hello everybody Welcome to our rag hack
+[00:02] live
+[00:03] streams rag hack is a free Global
+[00:06] hackathon happening from September 3rd
+[00:08] to 16th rag is a technique to get a
+[00:11] large language model to answer questions
+[00:13] based off your data we have more than 25
+[00:16] live streams teaching you how to build
+[00:18] rag apps with different Microsoft
+[00:19] Technologies plus 10 cash prizes for the
+[00:22] best rag apps in each category so we
+[00:25] super excited to have you join us for
+[00:27] this rag hack and now a word for from
+[00:30] our friends at
+[00:32] reactor hi everyone thank you for
+[00:35] joining us for the next session of our
+[00:36] rag hack rag on postgressql my name is
+[00:40] Anna I'm an event planner for reactor
+[00:42] joining you from Redmond
+[00:44] Washington before we start I do have
+[00:46] some quick housekeeping please take a
+[00:49] moment to read our code of conduct we
+[00:51] seek to provide a respectful environment
+[00:53] for both our audience and presenters
+[00:55] while we absolutely encourage engagement
+[00:57] in the chat leid please be mindful of
+[00:59] your commentary remain professional and
+[01:01] on topic keep an eye on that chat we'll
+[01:04] be dropping helpful links and checking
+[01:06] for questions for our presenter to
+[01:07] answer live our session is being
+[01:10] recorded it'll be available to VI On
+[01:12] Demand right here on the Microsoft
+[01:14] reactor YouTube
+[01:15] channel with that I'd love to turn it
+[01:17] over to our presenters Pamela Joshua
+[01:20] thank you so much for joining
+[01:22] us thank you Anna I'm Pamela I'm a
+[01:26] python Cloud Advocate and I'm joined by
+[01:30] hi hi Joshua Johnson I'm a product
+[01:33] manager at on Azure database for
+[01:36] postgress sweet so we are going to be
+[01:39] talking about how to build rag with
+[01:42] postgress and I'm going to be starting
+[01:45] with just how to generally build rag
+[01:47] with postgress and walking through a rag
+[01:51] with aure postgress repo that you can
+[01:53] get started with yourself and then
+[01:55] Joshua is going to show us all these
+[01:58] cool AI extensions specific Ally for
+[02:00] Azure postrest where you can really
+[02:02] optimize your you know rag developer
+[02:06] experience so let's start off with
+[02:09] simple rag on post
+[02:12] grass it now you may have seen this
+[02:15] diagram before if uh if you've been
+[02:16] joining us for a lot of our rag hack
+[02:18] streams but this is generally what a rag
+[02:22] flow looks like rag stands for retrieval
+[02:25] augmented generation and it is a
+[02:27] technique that we can use to get an llm
+[02:30] to answer questions based off of our own
+[02:33] database right so we start off with the
+[02:36] user question we use that user question
+[02:38] to search our database for relevant
+[02:42] information then we send the user
+[02:44] question and those relevant bits of
+[02:45] information to the llm and we get back
+[02:47] an answer and that answer has citations
+[02:51] so that is a simple rag flow and it's
+[02:54] actually really really powerful when you
+[02:56] combine a great search with a great
+[02:58] llm now for for that search step General
+[03:02] best practice is to try to do a a hybrid
+[03:05] search with the user question so a
+[03:07] hybrid search means doing a combination
+[03:10] of a vector search and a keyword search
+[03:13] a vector search is going to find a
+[03:15] semantically similar things to the user
+[03:18] question which is going to find a lot of
+[03:20] really good results keyword search is
+[03:23] useful if the user is searching for
+[03:25] something exact like if they're looking
+[03:26] for an email address or you know
+[03:28] someone's EX ex first name last name
+[03:31] right that's where you want to have a
+[03:33] full text keyword search and then we
+[03:36] want to combine those results together
+[03:39] um fuse those results together to you
+[03:41] know rank all the results and and have a
+[03:43] Fus result so that is a hybrid search
+[03:47] and we're going to show how you can
+[03:49] actually do that using
+[03:52] postgress so if we look at this diagram
+[03:54] again if we're doing a simple rag with a
+[03:56] hybrid search we get the user question
+[03:59] we then use an embedding model to
+[04:02] compute a vector embedding for that user
+[04:05] question and we use both the vector
+[04:08] embedding of that question and the
+[04:10] original question in order to do a
+[04:12] search on the
+[04:14] database and then we get back the
+[04:16] results and we send the results and the
+[04:18] text question to the LM and get back the
+[04:22] answer so now we see what the simple rag
+[04:25] flow looks like if we're doing a a
+[04:27] hybrid search and we can see that
+[04:29] there's more technology involved because
+[04:31] now we need an embedding model as well
+[04:33] as a large language
+[04:35] model so how do we do this with
+[04:37] postgress so the first thing we need is
+[04:40] that if we want to be able to do a
+[04:42] vector search we need support for
+[04:43] vectors now luckily there's this amazing
+[04:45] extension from the community called PG
+[04:47] vector and it's really easy to install
+[04:49] locally it's also easy to enable on
+[04:52] Azure and if you want to get started
+[04:54] with it you can go to the pg Vector repo
+[04:56] and follow the guidelines there uh you
+[04:59] can also look at our documentation on
+[05:00] Azure to how to get started on azer I
+[05:03] also have this uh PG Vector playground
+[05:06] that I use when I want to play around
+[05:08] with it that sets it all up for you
+[05:10] inside a GitHub code space so that's
+[05:12] actually what I'm going
+[05:14] to what I'm going to you know use here
+[05:17] so let's actually just step step through
+[05:19] this all right so I have this um this PG
+[05:22] Vector playground that sets up postgress
+[05:25] plus PG
+[05:26] vector and it does that by bringing in
+[05:29] the Docker image so there is if you know
+[05:31] about Docker uh there is a Docker image
+[05:34] specifically for PG Vector which will
+[05:36] bring in both the most recent uh post
+[05:38] grass 16 and then also bring in the PG
+[05:41] Vector extension and set it up so that's
+[05:43] one way that locally you can get PG
+[05:46] Vector
+[05:48] running and so that's no that's got that
+[05:51] set up so now I've got access to PG
+[05:52] vector and post grass and it's all
+[05:55] running uh running locally so then I can
+[05:59] set up my PG Vector extension so here
+[06:03] I've got some Python scripts that set it
+[06:04] up you could you know also just do this
+[06:06] in straight SQL or in your language of
+[06:08] choice um but what you can see is that I
+[06:10] connect to the database right and so
+[06:12] here I'm just connecting to the local
+[06:15] database and the first thing I want to
+[06:17] do is say create extension if not exist
+[06:20] Vector so this will initialize the
+[06:23] vector extension in the this database so
+[06:27] that I can actually use it uh then I'm
+[06:30] going to create a table that uses the
+[06:33] vector column that comes from that
+[06:35] extension so you can see here this
+[06:38] creates a table that has a column named
+[06:40] embedding and it has a vector column in
+[06:44] it that has a length of three so
+[06:47] whenever we talk about Vector embeddings
+[06:50] uh every model produces embeddings of
+[06:51] different lengths uh so in this example
+[06:54] we're you know it's it's a list of
+[06:57] floating Point numbers so this is just
+[06:58] going to be a list of three num numbers
+[07:00] uh typically the actual models that
+[07:02] you're going to work with are going to
+[07:03] have lengths between 256 maybe even up
+[07:06] into the
+[07:08] 3000s so that creates a table and then
+[07:11] if I want efficient search of the
+[07:13] vectors in that table I need to create
+[07:17] an index and there's actually a few
+[07:19] different index algorithms you can use
+[07:21] here I'm using
+[07:22] hnsw which stands for
+[07:25] hierarchical so hard to say navigable
+[07:28] small world worlds hssw so this is a
+[07:31] particular algorithm that will do a you
+[07:34] know approximate search for
+[07:37] vectors and which is very efficient and
+[07:40] has shown have really you know generally
+[07:42] really good results so I'm going to say
+[07:45] you know make an index using hnsw on
+[07:49] that column so that way every time I do
+[07:52] a search on this column it's going to
+[07:55] actually use that efficient hnsw index
+[08:00] now to test this out I can insert a
+[08:02] bunch of vectors here so you can see I
+[08:06] create I actually insert a bunch of
+[08:07] numpy arrays that's the data tape that I
+[08:10] have to use in Python but generally
+[08:12] we're inserting lists of floating Point
+[08:13] numbers right so I insert a bunch of
+[08:15] floating Point
+[08:17] numbers and then I can start doing
+[08:19] searches so I can say hey what are the
+[08:21] closest vectors to uh you know to this
+[08:24] Vector right so I do a search with the
+[08:28] uh one of the distance operators here so
+[08:30] there's various distance operators you
+[08:32] can use if you look at the PG
+[08:35] Vector repo it talks about
+[08:38] all all the ones you can use oh it's
+[08:41] also listed on the PG Vector python repo
+[08:44] but let me go to the main repo for PG
+[08:48] vector and what we can see
+[08:51] here is that uh we've got this is the L2
+[08:55] distance also known as a ukian distance
+[08:59] uh they've got they've all got different
+[09:01] names uh but uh so this does this is
+[09:03] aition operator now the one that most
+[09:05] people actually use these days is coign
+[09:07] distance so that's probably the operator
+[09:09] that you're going to want to use um
+[09:11] sometimes I use inner product if uh
+[09:14] depending on the kind of vectors I'm
+[09:15] working with so you've got four
+[09:17] different distance operators that you
+[09:19] can use
+[09:21] here and yeah and then that gets it so
+[09:24] this is just showing an example with
+[09:26] really you know basic uh vectors but
+[09:28] what we're going to do in our actual you
+[09:30] know when we're doing rag is that we'll
+[09:31] take the tables that are in our database
+[09:35] we'll take the rows in
+[09:36] them my system always wants to update
+[09:39] when
+[09:40] streaming so we'll take you know a row
+[09:43] in our database we'll make an embedding
+[09:45] that represents that row and then store
+[09:47] that embedding okay let's not do this
+[09:51] right right
+[09:53] now all right uh so I have an example
+[09:56] table where I've actually already
+[09:57] computed the embedding
+[10:00] uh so
+[10:02] here uh let me look at my local table so
+[10:04] you can
+[10:07] see
+[10:08] and right uh so you know well we could
+[10:11] look at the table we just
+[10:13] made right so that's you know that's
+[10:15] what that table looks like that's really
+[10:16] basic now what an actual table might
+[10:18] look like is this one here right so here
+[10:21] you can see this is actually a table of
+[10:24] videos from the YouTube vsod channel uh
+[10:29] so so this is like the titles and
+[10:30] descriptions and YouTube IDs for each of
+[10:32] those videos right so you can see uh you
+[10:35] know title description and then
+[10:37] embedding and so this embedding is an
+[10:40] embedding that I computed uh using uh
+[10:44] one of the open AI embedding
+[10:46] models and uh let's see it
+[10:50] is let me see how long is this field
+[10:55] here it's not listenting it there but
+[10:58] it's either 153 6 or 1024 I think uh but
+[11:02] it's you know it's a fairly long vector
+[11:04] and these vectors you know represent
+[11:06] both the title and description uh you
+[11:09] know in this particular embedding
+[11:11] embedding
+[11:13] space so that's what it would look like
+[11:15] uh you know when actually using
+[11:18] it okay so let's see we've seen how you
+[11:22] know we're we can add a vector column we
+[11:24] can add an index for more efficient
+[11:27] searching uh we can figure out which you
+[11:30] know which of the operators that we want
+[11:31] to
+[11:33] use and then we can actually create a
+[11:35] table that has Vector embeddings now
+[11:37] this is one way that you could store
+[11:40] embeddings in your table later Joshua is
+[11:42] going to show a way that you can do it
+[11:44] using the Azure AI extensions for
+[11:46] postgress uh but what I did here is that
+[11:49] for each of the rows in my database I
+[11:52] made a call to the embedding model so
+[11:54] here I use the text embedding three
+[11:56] small model from open Ai and I specified
+[11:59] I wanted 256 Dimensions so I got back a
+[12:03] vector with 256 numbers in it and then I
+[12:05] said okay update uh update that row and
+[12:08] set the embedding to you know this uh
+[12:12] this list of numbers for that row so
+[12:15] this is one way that we could you know
+[12:17] process all the data in our database in
+[12:19] order to update the embedding of course
+[12:21] when the data changes we would want to
+[12:24] update those embeddings as well so you
+[12:25] could have functions or triggers or
+[12:27] Chron jobs or anything like that in
+[12:29] order to help you manage
+[12:35] that all right so now now let's see how
+[12:39] we could do some more Vector search with
+[12:41] this okay so going back to this example
+[12:43] so we saw that videos you know that
+[12:46] videos table here so let's do some
+[12:48] queries on this video table using you
+[12:51] know using all these fields we have here
+[12:53] so we've got title description embedding
+[12:56] and the
+[12:57] ID all right so let's go to this query
+[13:00] here all right um so you know I'm doing
+[13:04] the same thing I'm setting up the um you
+[13:07] know the extension uh so you know I
+[13:10] could do it just B you know very basic
+[13:12] select just to check all my videos okay
+[13:15] so now what I want to do is I want to do
+[13:17] a vector search all right now in order
+[13:19] to do a vector search I do need an
+[13:20] embedding um so in this case I'm
+[13:22] actually using the Azure AI inference
+[13:26] SDK so this is an SDK that you can use
+[13:30] to interact with a bunch of azure AI
+[13:32] models so that includes GitHub uh like
+[13:35] open AI models but it also includes like
+[13:38] mistro coh here A bunch of different
+[13:40] models and it includes all the GitHub
+[13:42] Marketplace models so I'm actually using
+[13:45] a Marketplace model here so that I can
+[13:47] just do this for free in a code space so
+[13:51] if you haven't signed up for gith
+[13:52] Marketplace models yet go ahead and sign
+[13:53] up for it there's a wait list now but
+[13:55] sign up early uh so that you can get on
+[13:59] uh so you can see here I've got you know
+[14:00] different embedding models I can use so
+[14:02] I can use this open AI text embedding
+[14:04] model so that's what I'm going to use uh
+[14:06] so I have to make sure that I compute
+[14:08] the embedding for the user question
+[14:11] using the same embedding model that I
+[14:14] used when I stored them in the database
+[14:16] table right so your embeddings your
+[14:18] embedding model always has to match
+[14:19] which means you need to remember what
+[14:21] model you use because every embedding
+[14:23] model has different embedding spaces
+[14:27] right they all have like different
+[14:28] brains
+[14:29] uh so you want you do need to make sure
+[14:31] you match so you can see I'm using that
+[14:32] text embedding three small model
+[14:35] again and so I to get a question right
+[14:37] so let's see like you know got any
+[14:40] videos for someone who wants to Learn
+[14:44] Python okay so maybe the user is asking
+[14:47] that question right so I then turn that
+[14:50] question into an embedding using this
+[14:54] embeddings client and get back the list
+[14:56] of numbers and then I want to actually
+[14:59] search for it so uh what can I do to
+[15:01] search for it right I can use code like
+[15:04] this
+[15:05] one uh so we're gonna do
+[15:08] SL okay forgot that we can't copy and
+[15:12] paste from PowerPoints that's fine
+[15:16] select uh so I'll just select the ID
+[15:19] from videos
+[15:22] where uh the
+[15:25] embedding uh and we'll just grab it from
+[15:29] from the other one
+[15:35] here
+[15:39] yeah all right we're embedding
+[15:46] okay and then we'll pass in the
+[15:48] embedding all
+[15:50] right and then probably want an order by
+[15:52] too huh did I have an order by here yeah
+[15:55] order by so we're g to oh so we're
+[15:57] actually going to select from we're
+[15:58] going to order order by that that
+[16:00] embedding distance and then we're going
+[16:02] to limit yeah so order by
+[16:07] embedding limit
+[16:09] 20 okay all right let's try that out
+[16:13] here good old live programming all right
+[16:16] great it worked so what you can see is
+[16:18] that the very top result is effortless
+[16:22] python with GitHub co-pilot uh then we
+[16:24] have Python and vs code then we've got
+[16:26] pylance a viral thing python so lots and
+[16:29] L on python here so the embedding model
+[16:32] definitely saw that I was asking about
+[16:35] Python and got back some stuff now what
+[16:37] about what about postgress like I don't
+[16:39] even know I feel like the only videos on
+[16:41] the vs Cod Channel about postgress are
+[16:43] probably probably for me we got to get
+[16:45] Joshua on there more but okay what we
+[16:47] see is there's one about Dev containers
+[16:50] uh and they could be talking about
+[16:51] postgress in there because remember this
+[16:52] is looking at both the title and
+[16:53] description this is the one I did using
+[16:56] postest inside Dev containers so it did
+[16:58] find that one
+[16:59] then we've got cobal I don't know
+[17:01] exactly what cobal has to do with B but
+[17:05] maybe it does you'd have to look at the
+[17:06] whole video in the description
+[17:09] right um but uh yeah so we got back we
+[17:11] got back some results and we can see
+[17:14] that you know that's what we can get uh
+[17:17] with you know with the vector search we
+[17:18] could also try databases generally right
+[17:21] and see like somebody wants to learn
+[17:23] databases we get can you build a website
+[17:26] with nothing but an iPad preparing for a
+[17:28] tech interview understanding link list
+[17:30] right link lists are like a data
+[17:32] structure so it's really interesting
+[17:34] because here we're searching so this is
+[17:35] what's instrumental Vector search here
+[17:37] I'm searching for things that they
+[17:39] actually don't really have a lot about
+[17:41] right the VSS code Channel doesn't
+[17:42] actually have a lot about postgress for
+[17:44] databases right and the thing about
+[17:46] Vector search is that Vector search will
+[17:48] always find results because there's
+[17:50] always some Vector that's closest to
+[17:53] your input Vector even if it's actually
+[17:55] really far away so one thing you can
+[17:57] look is like look at the actual distance
+[18:00] scores that come back and you could like
+[18:02] set a threshold um for for things that
+[18:05] come back if you get a feel for how how
+[18:07] close is close enough uh but that is
+[18:09] something to keep in mind when you do a
+[18:10] vector search you are always going to
+[18:12] get
+[18:17] results all right so now let's look at
+[18:20] being able to do a full teex search
+[18:21] because it's saying like best practice
+[18:22] is if you can try to do both a um you
+[18:26] know a full Tech search
+[18:29] and a
+[18:30] um you know and a and a vector search at
+[18:33] the same at the same time right so what
+[18:36] I'm using here is actually the builtin
+[18:38] fulltech search to uh that's part of
+[18:42] post grass right and it's called TS
+[18:45] Vector this is confusing the built-in
+[18:47] full Tech search is called TS Vector
+[18:49] because it uses like sub Vector like way
+[18:53] of representing the words and word
+[18:55] frequency and and stuff like that um but
+[18:58] it's not using like a vector embedding
+[19:00] model the way we think of it but it it
+[19:02] is it is called TS Vector which is a bit
+[19:05] of a you know bit of a confusing thing
+[19:08] um so let's
+[19:11] see I'm just gonna Escape out of it so I
+[19:13] can copy
+[19:15] paste so here we go all right so let's
+[19:18] go ahead and uh let me
+[19:21] try try this full text search here
+[19:26] [Music]
+[19:33] and then we'll pass in the question
+[19:36] okay all right so now we've got a full
+[19:40] text search query so let's see what kind
+[19:42] of results we get for a full text
+[19:46] query we got no results so here's the
+[19:49] thing is that the you know post the
+[19:51] postgress full text search query uh
+[19:54] support is not as like it's not fully
+[19:57] fully featured right there are there are
+[19:59] better full teex search options out
+[20:01] there you know like um Azure AI search
+[20:04] has really good full teex search they
+[20:05] use Lucine um you know there's like
+[20:07] elastic search and stuff like that so it
+[20:10] can work well for some things it's not
+[20:13] necessarily that great for this kind of
+[20:15] thing here now if I just search for post
+[20:18] resl then I should yeah I did get one
+[20:23] result which is probably also a video
+[20:25] for
+[20:25] me what if we do Post grass instead of
+[20:28] post gr you because you know you never
+[20:29] know how we're going to write it and
+[20:31] there we go this one this one
+[20:33] interesting this one postgress matched
+[20:35] the one that says postgressql in the
+[20:38] title oh maybe actually you know we
+[20:40] should check oh I'm only searching the
+[20:42] description in this one right so that's
+[20:43] why so it was what was in the
+[20:45] description I could also search I could
+[20:46] search the title and description and
+[20:48] that would be a better thing to do um
+[20:50] but that's something to keep in mind
+[20:52] with the postgress full Tex search
+[20:53] support it can be useful especially for
+[20:56] finding really exact uh exact names and
+[21:00] uh numbers and IDs uh but is certainly
+[21:02] more limited than um you know than other
+[21:06] full Tech search options out
+[21:08] there okay so we've seen you know full
+[21:11] text now let's go to a hybrid search
+[21:15] what does a hybrid search look like and
+[21:18] this looks like you know this looks like
+[21:20] quite a big query and I will admit I
+[21:22] totally got this query from the PG
+[21:24] Vector python repo it has this great
+[21:27] examples folder and it it has a hybrid
+[21:30] Stitch folder and uh you can see here
+[21:33] that it has this example here so
+[21:37] definitely check out that PG Vector
+[21:39] repos all the repos in order to find
+[21:41] more examples because they've got
+[21:43] they've got great examples they've got
+[21:44] great docs right so I can go ahead and
+[21:47] you know take
+[21:49] this and okay so now I need to pass in
+[21:52] several things I need to pass in the
+[21:53] embedding the query and K which is a a
+[21:57] number that's used as part of the using
+[21:59] algorithm so I'm going to do query
+[22:01] embedding K okay great and K we actually
+[22:03] usually set as 60 just because it's the
+[22:06] best number that people found for this
+[22:09] algorithm okay and so this time I was
+[22:12] searching for postgress I got postgress
+[22:15] as the first one that's good uh then I
+[22:17] got type safe database access okay well
+[22:20] it's a database then I got mongodb so I
+[22:22] think what we've concluded here Joshua
+[22:24] is that we need to get you on the bco
+[22:26] channel more
+[22:28] will have more postgress results um
+[22:30] because I think it did a pretty good job
+[22:32] of actually finding what's there
+[22:35] agreed yeah we we need to collab some
+[22:38] more yeah yeah and actually you know
+[22:40] what there I have a video coming out
+[22:42] later this we week on the visco channel
+[22:44] where I write rag with post Crest from
+[22:46] scratch so pretty soon awesome this data
+[22:50] that's why I actually have this this
+[22:52] this databases the bisco channel got it
+[22:53] for me for that all right so we've done
+[22:56] a hybrid search all right so finally
+[22:58] let's a rag flow because we said this
+[22:59] whole this whole thing is building up to
+[23:01] a rag flow right so I wanted to show
+[23:03] some of the options we have for
+[23:04] searching right you could do a straight
+[23:06] Vector search you could do a straight
+[23:09] full teex search but you probably don't
+[23:10] want to given given it's um you know
+[23:13] drawbacks um and but you can also do
+[23:15] this this hybrid search option here and
+[23:17] one thing you might want to do is like
+[23:18] look at your answer quality evaluate you
+[23:21] know what search results you're getting
+[23:23] try different options and see what's
+[23:25] working for you look at the performance
+[23:26] the latency and decide you know is is it
+[23:28] worth it to do both kinds of searches or
+[23:31] do you just want to stick with like just
+[23:32] Vector right it's going to depend on the
+[23:35] kind of user questions you have and your
+[23:37] original data source all right so let's
+[23:39] do a rag all right
+[23:42] so uh you know I'm setting up my
+[23:45] postgress database again uh let's see
+[23:48] let me do a new question like um how do
+[23:52] I use post grass inside VSS code all
+[23:56] right uh turn the question into an an
+[23:58] embedding so we get back that embedding
+[24:00] Vector uh then we have that hybrid
+[24:03] search that we just
+[24:05] saw then we fetch all the results we
+[24:09] grab the full information for each of
+[24:11] those we format the results in a way
+[24:14] that's nice for the llm so here I just
+[24:16] kind of put the title in the description
+[24:18] with some new lines and some
+[24:20] markdown then finally we are sending the
+[24:24] request to the LM so in the system
+[24:26] message I say you must answer answer
+[24:28] according to the sources say you don't
+[24:30] know if you can't find the answer in the
+[24:32] sources cite the title of each video
+[24:34] inside square brackets the title of each
+[24:36] video will be a m markdown heading so
+[24:38] I'm describing what the sources look
+[24:40] like and how I want citations and this
+[24:42] is a really common thing to have in a
+[24:44] rag system message then I send in the
+[24:47] user question plus the sources to the
+[24:50] llm I'm sending it to gbd 40 which is
+[24:54] pretty good llm I'm sitting a
+[24:55] temperature about 0.3 which I found to
+[24:57] be pretty good for rag we don't want it
+[24:59] to be too creative but we also want to
+[25:01] give it a little bit of
+[25:02] flexibility uh I'm setting the max
+[25:04] tokens to a th000 so that it won't get
+[25:05] too lengthy in its response and then
+[25:08] there's top PE one I'm going to drop
+[25:10] that because I usually don't mess with
+[25:12] top PE okay so there we go we've got it
+[25:16] and I'm going to go ahead and send this
+[25:19] request all right so here you can see
+[25:21] the results so I just printed out the
+[25:22] results just so we could see what it got
+[25:25] back and then it says to use postgress
+[25:28] inside vs code you can leverage Dev
+[25:30] containers and GitHub code spaces uh so
+[25:33] it says set up a Dev container inst
+[25:35] install the necessary
+[25:37] extensions and you know it didn't tell
+[25:40] me
+[25:41] exactly how to include the postc service
+[25:43] but this is basically
+[25:45] correct and I'm guessing it was from my
+[25:49] there you
+[25:49] go it was this was based off the the
+[25:52] video and this was just from basically
+[25:55] from that this this was probably a
+[25:57] combination of what found in the video
+[25:59] description and what it already had in
+[26:01] its weights that that would be my guess
+[26:04] right generally that's what happens when
+[26:05] we you do rag is that we both get you
+[26:08] know answers that are grounded in what
+[26:11] we actually sent to it and it might have
+[26:13] just existing information already in its
+[26:15] training data right like it already
+[26:16] knows a lot about vs code it's it's seen
+[26:19] a lot about that so it can kind of
+[26:20] combine you know combine that
+[26:22] information together in order to come up
+[26:25] with a nice answer
+[26:29] all right so that is a basic rag on
+[26:34] postgress and I will um I'm gonna you
+[26:37] know push this just make a branch for
+[26:39] this one and um push the branch and I
+[26:42] will share it in our GitHub discussion
+[26:45] thread for this rag hack session so you
+[26:48] can just check that after to find
+[26:51] everything um demo stuff there you go
+[26:55] all right I'll I'll push that after now
+[26:58] going back to the uh you know to the
+[27:02] presentation
+[27:03] here so now let's look at a full rag
+[27:06] with post grass solution all right one
+[27:09] that does a little more end to
+[27:12] end so this is uh from an open source
+[27:16] repo that you can check out yourself
+[27:19] clone and deploy uh it's aka.ms Rag
+[27:23] dpost and we'll put that in the chat so
+[27:26] that you can you know start cloning it
+[27:27] and start it today it is a rag with
+[27:30] postcg solution that can work entirely
+[27:33] locally and then also can be deployed
+[27:35] entirely to
+[27:37] Azure uh so uh let's see let's check out
+[27:40] the you know the demo of it all right
+[27:43] well that's the code uh I want to look
+[27:45] at how let's actually just bring up the
+[27:48] demo for it okay so okay so here we go
+[27:51] here's the deployed demo and I also even
+[27:54] have it
+[27:55] working locally too
+[27:59] here we go all right so rag on postgress
+[28:04] okay so this is a rag which is ask
+[28:06] asking questions about out uh a store
+[28:10] that has Outdoor Products right so they
+[28:12] got shoes and backpacks and you know
+[28:14] that sort of thing so we can ask a
+[28:17] question like best shoe for
+[28:19] hiking and you can see the response
+[28:21] streams in you can see a citation and
+[28:23] the citation you know references the row
+[28:25] of the table that it came from so we can
+[28:28] click on that and then you know actually
+[28:31] see that okay you know it it uh it you
+[28:34] know searched the the database for this
+[28:37] information and then sent it and got
+[28:40] back the response so that's what we saw
+[28:42] before now actually this did what I call
+[28:46] an advanced rag so if we go back here
+[28:49] right so we got the user question and we
+[28:53] actually first send it to an llm to do a
+[28:56] query rewriting so we say hey llm here's
+[28:59] the user's question could you please
+[29:01] rewrite it right and then we take the
+[29:05] Rewritten query and we use that to
+[29:06] search so if we go back to this you can
+[29:09] actually see there's a first step and
+[29:11] that's this first step this is the llm
+[29:12] rewriting step and this is really
+[29:15] helpful to have as part of your rag flow
+[29:17] so we say okay you know here's uh here's
+[29:21] the user's question can you please turn
+[29:23] it into a good query and in this case it
+[29:25] actually didn't do much it didn't do any
+[29:27] transformation at all really just
+[29:28] dropped that question mark but let's try
+[29:30] that one like what's a good shoe for a
+[29:34] mountain trail hike okay so here I've
+[29:38] got a spelling mistake I've got a lot of
+[29:40] unnecessary words right so we'll take a
+[29:42] look and see what it did so this time it
+[29:45] took that user question and it turned it
+[29:47] into Mountain trail hike shoe so now I'm
+[29:51] using that query Mountain trail hike
+[29:53] shoe as my query for both the vector
+[29:56] search and the full Tech search right so
+[29:59] I also think this is particularly
+[30:00] helpful if you are trying to do the you
+[30:02] know the keyword search as well and that
+[30:04] uh you know you're probably going to get
+[30:06] better results because we' gotten rid of
+[30:08] all this kind of unnecessary Cru that
+[30:10] the user wrote and we've really narrowed
+[30:12] it down to what is the important thing
+[30:14] that needs to be searched for so that's
+[30:17] that's one benefit of the query
+[30:19] rewriting phase let me show you one more
+[30:23] thing we can do with
+[30:25] it so here I asked do you have climbing
+[30:29] gear cheaper than $30 and we get back a
+[30:31] response it says oh there's a chalk bag
+[30:33] that's only $21.99 so great that's a
+[30:35] correct response now what happens this
+[30:38] time is that in the query rewriting
+[30:40] phase it also suggests a SQL filter that
+[30:44] I can apply to the price column so it
+[30:46] says hey we think you should search for
+[30:48] climbing gear and then also do a filter
+[30:51] of price less than 30 so I actually
+[30:55] apply that filter so that the SQL query
+[30:58] does that filtering down first and then
+[31:01] does the vector and hybrid search on
+[31:04] with just the climbing gear query so
+[31:06] that way we make sure the results we get
+[31:08] back are definitely less than 30 and
+[31:10] that we only send results to the LM that
+[31:13] are less than 30 so this is this is
+[31:16] really helpful to do is if you can you
+[31:19] know really we really are just trying to
+[31:21] get the best results possible right so
+[31:24] sometimes that means you know coming up
+[31:26] with you know more more advanced filters
+[31:29] in order to figure out what exactly we
+[31:31] should be searching for and filtering on
+[31:33] metadata in addition to like you know
+[31:36] the you know title and description
+[31:37] columns right uh so I can I also have
+[31:40] filters for other columns as well like
+[31:42] type and brand and stuff like that so
+[31:43] you can potentially have it suggest all
+[31:46] sorts of you know different um different
+[31:48] things in that query writing phase it's
+[31:50] a very powerful phase to have is part of
+[31:52] a rag
+[31:54] flow so we get that back that our right
+[31:58] and so we saw that example there and the
+[32:01] way this works is that I'm using an llm
+[32:03] that has function calling so function
+[32:05] calling is a way to get more precise
+[32:08] results from an llm right so here the
+[32:11] the llm is literally responding back
+[32:14] with this function call here it's saying
+[32:16] hey you should call this search database
+[32:19] function and you should pass in this
+[32:21] query and you should also use these
+[32:23] filters here right so it is telling me
+[32:26] all that information so I just directly
+[32:28] can take that and say okay I'm going to
+[32:29] use climbing gear as the surch and I'm
+[32:31] going to use this as the filter so it's
+[32:33] a great way of be able to get really
+[32:35] precise structured information from an
+[32:38] llm that then you know we can use to
+[32:41] build up a nice SQL
+[32:43] query and so then you can see you know
+[32:46] what does the actual flow look like well
+[32:47] first we get the user question then we
+[32:49] send it to the llm the llm will suggest
+[32:52] you know the search query to use as well
+[32:53] as any additional SQL filters we use
+[32:56] that to search the database table and
+[32:58] then send those results to the
+[33:02] llm and this is the general Code
+[33:04] walkthrough so if you do want to dig
+[33:05] into it this you know shows you what the
+[33:07] code looks like but basically we've got
+[33:08] a you know a JavaScript front end with
+[33:11] react and then we have a python back end
+[33:13] which has it's a fast API application
+[33:17] and it has both a simple Rag and
+[33:19] advanced rag file and they step through
+[33:21] those steps we saw in the
+[33:24] diagram you can also deploy this pretty
+[33:26] easily using the azard developer CLI and
+[33:28] you can follow the instructions in the
+[33:30] readme but this is basically what it
+[33:32] says is that you're going to log in and
+[33:34] you're going to run ASD up and that will
+[33:37] deploy everything to Azure so that it's
+[33:39] working on Azure so you'll have an Azure
+[33:43] container app which is actually serving
+[33:45] up you know the actual web app and then
+[33:47] that makes call to an Azure database for
+[33:49] postresql flexible server and also makes
+[33:52] call to as your open Ai and it used
+[33:54] keyless authentication for both of them
+[33:56] so it actually is using managed identity
+[33:58] to authenticate to the postgress server
+[34:01] and managed identity to associate to to
+[34:04] authenticate to open AI so there are no
+[34:06] keys involved in this app at all and no
+[34:08] passwords which I was really happy to
+[34:11] have happen because it's much better
+[34:12] from a security
+[34:14] perspective so there you go so that
+[34:17] that's a one of our ragon postgress
+[34:20] templates that you can get started with
+[34:22] if you are uh interested and that one
+[34:24] can also run entirely locally using a
+[34:27] local postcript grass and a local model
+[34:30] from AMA so that's another option is
+[34:32] that if you're trying to get started
+[34:34] with rag uh but you know don't have the
+[34:36] funds to start deploying to Azure then
+[34:39] you can also get started locally
+[34:41] too
+[34:44] cool so that is all I'm gonna show and
+[34:47] now I'm G to switch over to Joshua to
+[34:49] talk about AI
+[34:51] extensions awesome thanks panel I really
+[34:53] appreciate that and
+[34:55] uh nice to see the uh the app running uh
+[34:59] with without keys that's been a downfall
+[35:01] for for some of these for for quite a
+[35:04] while right
+[35:05] so let's jump into the AI extensions for
+[35:09] postrest um so postrest um is an
+[35:13] extensible database right we can we we
+[35:16] have tons of extensions for it out there
+[35:17] in the community we also have you know a
+[35:20] huge list of extensions that we support
+[35:21] on Azure database for postest right
+[35:24] under the covers we're still open source
+[35:25] postest we want to be that way right um
+[35:28] we commit back to the open source
+[35:30] Community um you know quite quite a bit
+[35:32] all the way through the the upcoming
+[35:33] pg-17 that's that's rolling out um so
+[35:37] for for us you know first off the vector
+[35:40] data type vectors are just it's just a
+[35:42] data type to us that's that's why we
+[35:43] have native uh Vector support um allows
+[35:47] you to do you know column level uh or
+[35:49] row level security and all those things
+[35:51] right that you would expect from an
+[35:53] Enterprise database um and and have that
+[35:56] on your vectors as well well um and then
+[35:59] you know with that comes you know Vector
+[36:01] indexing know Pamela talked about hnsw
+[36:04] hnsw is a great option um today because
+[36:07] it'll allow you to you can build that
+[36:10] actually Define that index on an empty
+[36:12] table empty columns doesn't matter right
+[36:15] you don't have to set up probes and
+[36:16] lists like you do with other other types
+[36:17] like IVF flat and it will just build
+[36:21] that index as you load data into the
+[36:23] into the table so it's pretty fun um in
+[36:26] in terms of that right
+[36:28] um that you can just keep rolling uh
+[36:30] also handles uh inserts updates and
+[36:32] deletes fairly well right um so that you
+[36:35] don't have to do index
+[36:37] rebuilds so where where we um where we
+[36:42] really differentiate ourselves right um
+[36:44] are with our specific AI extensions
+[36:47] right so um the the first one the Azure
+[36:49] AI extension um that opens a SQL
+[36:52] interface um to Azure open AI Azure ml
+[36:56] um if you use the ml catalog right you
+[36:58] just you know um or if you want to do a
+[37:00] bring your own model and use those
+[37:01] models right deploy it into the ml
+[37:03] catalog and call that endpoint um via
+[37:05] function call right so you never have to
+[37:07] leave your um your your SQL command
+[37:11] right if if you don't want to um allows
+[37:13] you to create embeddings from a SQL
+[37:14] statement um we'll look at the the
+[37:16] syntax of that um and then um also opens
+[37:20] the door to all the Azure AI Services um
+[37:23] formerly Azure cognitive Services right
+[37:25] if you still look at the code underneath
+[37:26] you're in your call calling those apis
+[37:28] it's actually cognitive um but that
+[37:31] includes language Services sentiment
+[37:33] analysis um you know text summarization
+[37:36] and abstraction all of that um so very
+[37:40] very powerful um with basically just
+[37:43] allowing you to call these endpoints and
+[37:44] you're off and running um so and then uh
+[37:49] other Integrations right we do play well
+[37:51] with others in terms of the the open
+[37:53] source Community um with with Lang chain
+[37:56] semantic kernel and llama index um Lang
+[38:00] chain the the official documentation was
+[38:02] originally was was recently updated to
+[38:05] actually list us as a as as uh Azure
+[38:08] database for postgress under the
+[38:09] Microsoft Services previously you had to
+[38:11] go just well go to the postgress
+[38:13] offering and anything they say there is
+[38:15] going to work with me right um but but
+[38:17] now we're out there as a officially um
+[38:22] so you know just kind of what does this
+[38:24] look like right it's it's the the Azure
+[38:27] EXT
+[38:28] right super simple out of the box right
+[38:30] because everybody's being asked to add
+[38:32] AI to their applications and we wanted
+[38:34] to make that as simple as possible right
+[38:37] um if if you're you know new to this
+[38:41] world which you know is just taken
+[38:43] Everybody by storm right um how do you
+[38:45] how do you quickly add you know some
+[38:47] some value to your application in terms
+[38:49] of you know all the different AI
+[38:51] services that are out there um and so we
+[38:53] allow you to do that with an extension
+[38:54] and some function
+[38:56] calls and so what does that look like so
+[38:58] for Vector Generation Um you have we
+[39:00] have two options right you can do um
+[39:03] your remote embedding model right which
+[39:05] is similar to what um you do from a lang
+[39:07] chain call to open AI or Azure open AI
+[39:10] or any of those right um we can do the
+[39:13] same thing right um text embedding a to
+[39:15] a to2 is is listed there um my my my
+[39:18] newer uh embeddings are are done with
+[39:22] text and betting 3 um and essentially
+[39:25] the application would call uh in into
+[39:29] postgress and then call the open AI
+[39:31] embedding model and then get that
+[39:33] embedding back now the embedding like
+[39:35] Pamela said that's just a floating Point
+[39:37] set of numbers right for for open AI
+[39:40] models the standard is 1536 Dimensions
+[39:43] right um but you can you can go down
+[39:45] right um uh but yeah so just just
+[39:49] depending on you know you're testing and
+[39:52] what makes the most sense for you in
+[39:54] terms of recall and accuracy right like
+[39:56] do you really need a 15 36 embedding
+[39:59] with which is uh 6 kb per row right when
+[40:02] when you start you know generating those
+[40:03] indexes and and generating those those
+[40:05] Vector embeddings so for for some folks
+[40:08] they want to test with a smaller
+[40:09] Dimension So to that end we actually
+[40:12] have a a unique offering right uh for in
+[40:15] database embedding um and currently in
+[40:18] preview we announced it at build and um
+[40:21] that is the Azure local AI extension um
+[40:24] so that is that is um unique to
+[40:28] um we actually deploy the multilingual
+[40:31] E5 small model into a uh container in
+[40:35] the same VM that's that's running your
+[40:37] Azure database for postgress instance so
+[40:39] this works with um any of the uh memory
+[40:43] optimized uh offerings uh four cores and
+[40:46] up um and and we we carve out a small 2
+[40:49] gig uh container on on that same VM and
+[40:54] we deploy that model for you um which um
+[40:57] that runs with um uh 384 Dimensions um
+[41:02] so
+[41:03] so roughly to KB right like we can sit
+[41:06] and do the n the napkin math on that um
+[41:10] in terms of size um but very very fast
+[41:13] in terms of um generating the embeddings
+[41:16] uh because you're not making that remote
+[41:18] call so um we we really drop the latency
+[41:21] down on
+[41:23] that and as you can see here like um
+[41:26] this is um
+[41:28] based on based on our internal testing
+[41:30] and and definitely reproducible right um
+[41:32] in in terms of basically an average in
+[41:35] terms of
+[41:36] milliseconds um you're hitting about 77
+[41:39] milliseconds right for remote embeddings
+[41:41] and uh 7 milliseconds for for in
+[41:44] database um so so much much faster um to
+[41:49] to generate those and um for your use
+[41:51] cases where you know you don't want your
+[41:53] data ever leing leaving your database
+[41:55] environment right you don't want it
+[41:56] leaving that um you know that's that's
+[41:59] something that that that's definitely
+[42:00] worth looking at also cost
+[42:02] predictability right you're not um
+[42:05] you're not running any additional
+[42:05] endpoints right you don't you don't have
+[42:07] to guess how many tokens you're going to
+[42:09] use you don't you don't have to know
+[42:10] anything about that right um it's just
+[42:14] going to use the the VM that you're
+[42:16] already paying for
+[42:18] right so and let's take a look I think
+[42:22] uh we we've had a couple of uh rag
+[42:24] pattern uh diagrams here but but as far
+[42:27] as as you know this one goes um you know
+[42:30] we're going to take a um take a a
+[42:34] question right like youve we've got um
+[42:39] an employee who's looking to see what
+[42:40] what does their insurance cover right
+[42:42] does my insurance cover lasic right and
+[42:45] you know this is something that really
+[42:47] you should have you know it grounded in
+[42:51] your actual documentation right but what
+[42:53] would happen if you didn't right um so
+[42:56] let's let's go to any model and ask it
+[42:59] that question right and of course
+[43:01] there's no rag it comes back lasic is
+[43:03] not typically considered medically
+[43:04] necessary and and most of them won't
+[43:06] cover it that's actually an answer from
+[43:08] a GPT model um I didn't make that up I I
+[43:11] I asked it the question and and put it
+[43:13] in here um so it came back with uh with
+[43:17] no but um let let's actually do it the
+[43:19] right way right as far as you know I'm
+[43:21] concerned let's create an embedding
+[43:23] we'll do a similarity search from that
+[43:25] that prompt it's going to get some
+[43:26] context text right it's going to see you
+[43:29] know from our insur now this isn't our
+[43:31] actual Insurance documentation we did
+[43:34] get an example of one um since we're
+[43:37] streaming this be sure but uh it's gonna
+[43:40] it's going to get the proper context and
+[43:42] then it's going to answer the answer it
+[43:44] says your insurance covers lasic with
+[43:46] some stipulations right so better answer
+[43:49] right um than uh then then the Flatout
+[43:52] no and then we could go back and forth
+[43:53] with it you know what are those
+[43:54] stipulations right um so
+[43:58] definitely um love those uh those
+[44:01] examples because uh we used an llm to
+[44:03] really generate them so see what you
+[44:05] might get back now for this next example
+[44:08] um this is this is the other one that
+[44:09] was shared I think the links already
+[44:10] went out as far as the U ESOP on on um
+[44:15] Azure which we ported over to Azure DB
+[44:18] for postgress um this is net Centric
+[44:21] right it's using semantic kernel uh
+[44:23] Azure open Ai and Azure database for
+[44:25] postgress um we only using the PG vector
+[44:28] and Azure AI extensions um for for this
+[44:31] example um a lot going on in the in this
+[44:35] architecture right um but essentially
+[44:39] you know any modern application
+[44:42] architecture right you're going to have
+[44:43] things split up into different Services
+[44:45] right your identity service and catalog
+[44:47] service um order Services here basket um
+[44:51] you know and and for this one especially
+[44:55] the the catalog service and and we've
+[44:57] we've taken this catalog for this
+[44:59] adventure company right um this is
+[45:02] actually winter outdoor gear company
+[45:05] that and um we've generated our vectors
+[45:09] from that catalog and the descriptions
+[45:11] and all of
+[45:12] that and so this one is it's quite a
+[45:16] large sets of of uh of services so when
+[45:20] you when you jump into that load that
+[45:23] into vs code don't get concerned it's
+[45:25] it's relatively easy to go through and
+[45:27] change it up change the prompt give give
+[45:30] the uh the chat bot a different
+[45:32] personality if you'd like right it's
+[45:33] just a little paragraph giving them
+[45:35] their their personality so um let's take
+[45:38] a look at this actually up and running
+[45:40] um so what I'm going to do I've I've
+[45:43] jumped into the website and I'm going to
+[45:46] start a chat with with the chatbot I'm
+[45:48] going to say you know um you know what
+[45:51] what jackets you know would would you
+[45:53] recommend you know to a new uh snowboard
+[45:58] right I'm in the Pacific Northwest I'm a
+[46:00] newbie tell me what you've got right so
+[46:03] get a couple of nice um AI generated
+[46:06] images that we stored as
+[46:08] well um and then I can ask it you know
+[46:13] um is it in in stock right and it's keep
+[46:16] and it's keeps my chat history right so
+[46:18] it's gonna it's going to understand now
+[46:20] the context from the chat and it's also
+[46:22] going to check my catalog API and uh or
+[46:25] sorry the the catalog log and see if
+[46:28] it's in stock I'm going to ask it to add
+[46:30] it to my
+[46:32] cart but it can't do that it doesn't
+[46:35] know who I
+[46:38] am because I don't want folks to just
+[46:41] add a bunch of stuff to their cart and
+[46:42] then run off right I want to be able to
+[46:44] know who they are and then I can send
+[46:45] them an email going hey that thing you
+[46:46] left in your cart it's still there you
+[46:49] know little little nudges right um you
+[46:52] know things things like that um so now
+[46:54] I'm logged in and it and it's it's got
+[46:57] me logged in actually this this works
+[46:59] with aad now intra intra ID rather I
+[47:02] should get used to saying that
+[47:04] um and so what gear would you recommend
+[47:07] do a new snow for a new snowboarder a
+[47:09] little bit different question and it
+[47:11] actually gives me a list of things that
+[47:13] I should go get um you
+[47:17] know so first let's start with a
+[47:20] snowboard
+[47:24] right let's see
+[47:31] and what's s word's best for a
+[47:43] beginner then I get a few options back
+[47:46] and I'll ask him if it's in stock
+[47:59] I ask it to add it to my
+[48:01] cart is this also I this probably isn't
+[48:04] doing it yet but this makes me want to
+[48:05] do a multimodal search with image
+[48:08] embeddings because you do have those
+[48:09] images right I assume it's not doing
+[48:11] that yet but it could this is not doing
+[48:13] that yet um these embeddings are the um
+[48:17] the descriptions so so like uh the name
+[48:20] of the item in the description of
+[48:22] it
+[48:24] and but yeah no it would be
+[48:27] really fun to build off of this one and
+[48:30] and add in um the multimodal uh models
+[48:34] yeah then you could be like oh I need a
+[48:37] orange a bright orange jacket or I need
+[48:40] like I need like a really looking
+[48:43] jacket yeah it'd be interesting on on
+[48:45] some of these like as far as they go
+[48:47] back like you know depending on how
+[48:50] detailed the description was right it
+[48:52] may actually find answers for that
+[48:55] that's true yeah so sometimes you find
+[48:57] in the description but you know if we
+[48:59] for uh you know like I was on a search a
+[49:02] product search site the other day and I
+[49:04] was looking for volcano t-shirts and
+[49:06] they had they they didn't have a
+[49:08] description of which of their shirts had
+[49:10] volcanoes on them this is for my
+[49:12] 5-year-old and and I was like really
+[49:15] upset because I'm like how am I supposed
+[49:17] to F shirts with volcanoes right that's
+[49:19] the sort of thing that in like an a
+[49:21] multimodal model would totally know if
+[49:24] there was a volcano on a
+[49:25] shirt yeah that would be really
+[49:28] fun um yeah and um yeah sorry I I've let
+[49:33] it go ahead and skip to the next slide
+[49:34] but um this is just showing that it was
+[49:38] out there running in in um and all the
+[49:40] different Services got created um we
+[49:42] didn't go into into the weeds of um you
+[49:46] know all the all the things that happen
+[49:48] when you azd to get it up and everything
+[49:50] as far as you know sorry ASD for Azure
+[49:52] deploy um from vs code um to to then
+[49:56] deploy it Direct to my Resource Group
+[49:57] for me um so I don't have to go out and
+[50:00] do all of these things one by one right
+[50:01] previously it was running on containers
+[50:03] you know Docker on my machine and all of
+[50:05] that with with postest and all and then
+[50:08] send it up so
+[50:14] um yeah awesome and then um now this
+[50:17] this isn't technically rag right like it
+[50:20] would be right if if I had an app to put
+[50:23] it in right um but but as far as
+[50:27] um some of the other features right that
+[50:30] you get from the AI extension right um
+[50:33] being able to do you know that that
+[50:34] hybrid search right um that that you
+[50:36] were showing off before and then you
+[50:38] know let's um this this is built off of
+[50:42] an older Airbnb data set right just an
+[50:44] open data set um for uh
+[50:46] Seattle and um looking at combining uh
+[50:51] semantic similarity search Vector search
+[50:53] right um geospatial data um so I did
+[50:56] have have to enable one additional
+[50:57] extension postgis uh which is available
+[51:01] and and fully supported by Azure
+[51:02] database for postgress flexible server
+[51:04] um and then I'm going to call the uh the
+[51:06] Azure AI
+[51:08] services and so um with with this one um
+[51:13] before I kick it off I'm just kind of
+[51:15] looking at at the query itself right um
+[51:19] I'm I'm setting the the um geographical
+[51:24] point right so the latitude and
+[51:25] longitude point for for um the uh Space
+[51:29] Needle right um and then in my data set
+[51:32] I've already added um the um the the all
+[51:37] the gis data for for all the different
+[51:39] listings there were a little over 2,000
+[51:41] listings in this data set and then I'm
+[51:43] going to use uh multilingual E5 small
+[51:46] I'm actually I'm going to combine um my
+[51:49] U small embedded model and then I'm
+[51:52] going to also call um the uh the
+[51:55] external Services right or the the Azure
+[51:56] AI
+[51:58] services so kick this
+[52:05] off and it's going to take that that
+[52:07] prompt and um it's going to generate an
+[52:11] embedding from that search right so the
+[52:13] properties in Seattle near the Space
+[52:14] Needle with three bedrooms that allow
+[52:16] pet and allow pets um quite a mouthful
+[52:19] right I asked um actually somebody uh I
+[52:22] asked
+[52:22] for input for for some of those queries
+[52:26] right because I'm too close to it and so
+[52:29] um that was that was one of the weier
+[52:30] ones I got back and so we wanted to see
+[52:33] how well this this would work um and as
+[52:36] you can see it actually um it came
+[52:38] through and it also um did the
+[52:41] translation service I didn't even talk
+[52:42] about that right um as as how it was it
+[52:46] was going to go out to the uh Azure AI
+[52:49] uh language service and is going to
+[52:51] translate um for me uh as well um and
+[52:55] you you set that up just uh based off
+[52:57] the two-digit code for for language
+[52:59] Sports over 100 languages um and also
+[53:02] that multilingual E5 small embedding
+[53:04] model supports 100 languages as well um
+[53:07] so is a cool combination of the two and
+[53:10] then thanks to the postgis extension and
+[53:14] um PG admin I can put a map up on the
+[53:17] screen and actually see the results see
+[53:19] how close they were to Seattle Center
+[53:21] and the Space Needle and see the uh the
+[53:24] summary in the original text and then
+[53:27] the uh the translation so very quick um
+[53:31] example of how you can add all of these
+[53:33] features right with just a little bit of
+[53:40] SQL awesome and that concludes my my
+[53:44] really quick demos I was trying to come
+[53:45] in under time so if we had questions we
+[53:47] were
+[53:48] good all right so thank you Joshua there
+[53:51] is one question specific to AER that I
+[53:53] tempted to answer uh which is just you
+[53:56] know pricing can you deploy as your
+[54:00] postgress for
+[54:01] free yep so so there is a
+[54:06] um uh I'll I'll I'll drop the link into
+[54:10] uh the the studio chat so it can get
+[54:11] thrown in there um there is a way to go
+[54:14] and deploy uh postc crest for free um
+[54:17] just like you can with um a lot of other
+[54:19] services right when when you go through
+[54:21] and sign up for um a trial account right
+[54:25] with with meure and we're listed in that
+[54:27] list of services that are that are
+[54:29] available um so if you are new to Azure
+[54:32] it's an option right yes your yeah I
+[54:35] think I I use that because I have a
+[54:37] personal website that's running on
+[54:39] postgress and I use that free postr
+[54:42] server for the first year I think for
+[54:45] the first year right and then it becomes
+[54:46] a paid server right yes yeah it'll it'll
+[54:50] become paid after that and now it's
+[54:53] about for me it's about like $12 a month
+[54:56] uh it depends like on region and and
+[54:58] skew and stuff like that but once it
+[55:01] does become paid that was about how much
+[55:02] it's costing me for my for the website I
+[55:05] run on as your
+[55:07] postgress got
+[55:10] it cool so that was the only question
+[55:14] that we had that's unanswered so if you
+[55:19] have if you're watching this and you
+[55:20] have any other follow-up questions do
+[55:22] post it in our GitHub discussion thread
+[55:24] that is just for this session we will be
+[55:27] watching that to see uh any any
+[55:29] follow-ups you have uh it just got
+[55:31] posted in the chat there that's also
+[55:33] where we'll post slides
+[55:35] recording um the I already updated it
+[55:38] with the code that I showed uh so you
+[55:40] know that's going to be where we put
+[55:41] everything as a reminder for rag Haack
+[55:44] if you're submitting to rag Haack there
+[55:46] is a prize specific for postgress best
+[55:49] in best of postgress so I do recommend
+[55:53] you know submitting for that prize and
+[55:55] using and using postgress and showing
+[55:57] what you can do with all the cool
+[56:00] features of postgress and the
+[56:02] extensions and uh yeah it's really fun
+[56:05] to see all the all the combinations I
+[56:07] think postgress is now the most popular
+[56:08] database in the world right because two
+[56:11] years in a row two years inow two years
+[56:13] in a row from stack Overflow and um
+[56:16] consistently in the top five um NDB
+[56:18] engines as well as as an engine right as
+[56:21] a database engine I'm not saying our
+[56:23] offering is but right right yeah does
+[56:25] post post generally I think postgress
+[56:28] generally just has a nice developer
+[56:30] experience and it has you know these
+[56:31] cool extensions uh like PG vector and
+[56:35] postgis so uh for me it's personally my
+[56:38] you know my my new favorite SQL database
+[56:41] you know as a child of course I used my
+[56:42] sequel you know as like a 12-y old
+[56:44] whatever but I've moved on and now and
+[56:47] now I like post grass in the chat we
+[56:50] have post for the win exactly love
+[56:55] it all right well thank you everyone for
+[56:58] watching thank you so much Joshua for
+[56:59] sharing all your as your postgress
+[57:01] expertise and we look forward to seeing
+[57:04] your rag
+[57:06] hacks bye everyone bye everyone thank
+[57:09] you hi everyone hope you enjoyed today's
+[57:12] session if you aren't registered yet for
+[57:15] rag Haack uh you can register now at
+[57:17] aka.ms rag Haack register and you can
+[57:20] introduce yourself on our Forum you can
+[57:23] start hacking either by looking at one
+[57:24] of our code samples or or just starting
+[57:27] from scratch if you have any questions
+[57:29] along the way feel free to post them in
+[57:30] our GitHub discussion forum and you can
+[57:32] also attend live office hours um in our
+[57:35] Discord once your project is ready make
+[57:38] sure to submit it before September 16th
+[57:40] at 11:59 PM PT to be eligible for our
+[57:44] cash prizes and of course make sure to
+[57:46] join our upcoming live stream to learn
+[57:48] more about rag thanks for joining thanks
+[57:51] again for joining thanks to both both of
+[57:53] our speakers to learn more about this
+[57:55] series Watch past episodes and register
+[57:57] for future sessions you can follow the
+[57:59] link at the bottom of the screen or in
+[58:01] the
+[58:02] chat we're always looking to improve our
+[58:04] sessions and your experience if you have
+[58:07] any feedback for us we would love to
+[58:08] hear what you have to say you can find
+[58:11] that link in the screen on the screen or
+[58:13] in the chat today's event code is
+[58:18] 23331 we'll see at the next one

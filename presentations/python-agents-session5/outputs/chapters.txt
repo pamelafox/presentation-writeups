@@ -1,0 +1,44 @@
+Session 5 of the Python + Agents series covers advanced multi-agent workflow patterns using the Microsoft Agent Framework. Topics include concurrent execution with fan-out/fan-in edges, aggregation patterns (summary, structured extraction, ranking, voting), conditional routing with concurrency, and three built-in orchestrations: ConcurrentBuilder, MagenticBuilder (planning-based), and HandoffBuilder (dynamic routing). The session concludes with a demo of a full-stack investment analysis application.
+
+00:50 - Introduction and series overview
+01:36 - Today's agenda: advanced multi-agent workflows
+02:05 - Following along with GitHub Codespaces
+04:05 - Recap: what is an agentic workflow
+04:54 - Concurrent execution vs. sequential execution
+06:32 - Anatomy of a concurrent workflow: fan-out and fan-in
+07:12 - Using fan-out and fan-in edges in WorkflowBuilder
+07:53 - Demo: fan-out/fan-in workflow in DevUI
+10:17 - How the aggregator executor works
+11:43 - Aggregation patterns overview
+13:15 - Aggregation with LLM summary
+14:30 - Demo: summarizer aggregator
+15:41 - Aggregation with structured extraction
+16:31 - Demo: structured extraction aggregator
+19:32 - Aggregation with LLM ranking
+20:36 - Demo: ranked slogans aggregator
+23:03 - Aggregation with majority vote
+23:20 - Demo: voting classifier aggregator
+25:28 - Conditional routing with concurrent execution
+26:42 - Multi-selection edge groups
+27:03 - Demo: conditional multi-selection routing
+29:58 - Built-in workflow orchestrations
+30:25 - ConcurrentBuilder
+31:09 - Demo: ConcurrentBuilder workflow
+33:12 - MagenticBuilder for dynamic planning
+34:36 - Magentic-One: initial plan development
+35:17 - Magentic-One: progress ledger updates
+36:02 - Using MagenticBuilder in agent-framework
+36:48 - Demo: Magentic-One travel planning
+43:22 - Magentic orchestration vs. Agent-as-tools comparison
+46:39 - Dynamic routing with HandoffBuilder
+47:45 - From fixed graphs to dynamic routing
+48:22 - Using HandoffBuilder with participants and termination
+49:34 - Demo: research-writer-editor handoff
+52:53 - HandoffBuilder with handoff rules
+53:43 - Demo: customer support handoff with rules
+56:21 - Handoff orchestration vs. Agent-as-tools comparison
+57:18 - End-to-end application: Agentic AI Investment Analysis
+58:03 - Demo: deployed investment analysis app
+59:55 - Investment workflow code with fan-out/fan-in
+01:00:10 - What-if workflow code
+01:01:32 - Next steps and resources

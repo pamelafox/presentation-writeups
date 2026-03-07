@@ -1,0 +1,39 @@
+1. Title slide for the "Python + AI" series.
+2. Schedule slide listing all nine sessions in the Python + AI series, with RAG highlighted as session 3.
+3. Title slide for the RAG session with speaker info (Pamela Fox, Python Cloud Advocate) and slide download link.
+4. Agenda slide listing topics: RAG fundamentals, simple and advanced RAG flows, RAG on PostgreSQL, RAG on Azure AI Search, and more ways to build RAG.
+5. Instructions for following along by opening the GitHub repository in a Codespace.
+6. Section divider slide: "Why RAG?"
+7. Slide showing two limitations of LLMs: outdated public knowledge and no internal knowledge.
+8. Comparison of fine-tuning (permanent skill learning, high cost/time) versus RAG (temporary fact learning) for integrating domain knowledge.
+9. Examples of RAG in the wild: GitHub Copilot (RAG on VS Code workspace), Teams Copilot (RAG on chats), and Bing + Copilot (RAG on the web).
+10. Section divider slide: "RAG 101".
+11. Diagram of the basic RAG flow: user question goes to search, retrieves data (e.g., car stats table), data and question sent to LLM, LLM generates grounded answer.
+12. Code example showing RAG with the OpenAI Python SDK using a CSV data source, system message, and user query with sources.
+13. Diagram of RAG with multi-turn support showing a follow-up question ("how fast is Insight?") searching and returning results.
+14. Code for multi-turn RAG using a while loop that appends messages to conversation history.
+15. Diagram of RAG with query rewriting: follow-up question "what about the insigt?" is rewritten to "insight speed" before searching.
+16. Code for multi-turn RAG with query rewriting, showing two LLM calls (one for rewrite, one for answer).
+17. RAG document ingestion pipeline: PDF → extract text (pymupdf) → split into chunks (Langchain) → vectorize (Azure OpenAI) → store in JSON/search index.
+18. Three reasons to split documents: limited LLM context windows, distraction from too much information (with accuracy graph), and cost/latency concerns.
+19. Research findings on optimal chunk size (512 tokens best recall) and splitting strategy (sentence boundaries with 25% overlap).
+20. Code for document ingestion: reading PDFs with pymupdf4llm, splitting with RecursiveCharacterTextSplitter, creating embeddings, and saving to JSON.
+21. Code for simple RAG on documents: keyword search on ingested chunks, formatting results with document IDs, and prompting the LLM to cite sources.
+22. Hybrid retrieval slide showing that combining keyword + vector search with reranking gives the best results, with a comparison table of search modes.
+23. Diagram of hybrid retrieval flow: keyword and vector search results merged via reciprocal rank fusion (RRF), then reranked by a cross-encoder model.
+24. Code for hybrid retrieval: full text search, vector search, reciprocal rank fusion, and reranking with a cross-encoder model.
+25. Comparison of RAG data source types: structured data (database rows needing vectorized columns) versus unstructured data (documents needing ingestion).
+26. Section divider slide: "RAG on PostgreSQL".
+27. Simplified Python code for RAG on PostgreSQL: execute SQL query, format results, send to OpenAI with system message.
+28. Open-source template for RAG on PostgreSQL using Azure OpenAI + Azure PostgreSQL Flexible Server + Azure Container Apps, with code and demo links.
+29. Diagram of the RAG on PostgreSQL flow with query rewriting: user question rewritten, searched against database, results sent to LLM for answer with citations.
+30. Section divider slide: "RAG on Azure AI Search".
+31. Simplified Python code for RAG with Azure AI Search: vectorizing the question, searching with vector queries, and sending results to GPT-4o.
+32. Open-source template for RAG with Azure AI Search using Azure OpenAI + Azure AI Search + Azure App Service/Container Apps, with code and demo links.
+33. Diagram of the RAG with AI Search flow including query rewriting, retrieval, and question answering with citations.
+34. Data ingestion pipeline for RAG with AI Search: Azure Blob Storage → Document Intelligence → Python chunking → Azure OpenAI vectorization → Azure AI Search indexing.
+35. Section divider slide: "Learn more".
+36. Table of RAG app components: ingestion tools, retrievers, LLMs, orchestrators, and additional features like chat history and access control.
+37. List of additional RAG talks and resources: RAG Deep Dive, RAGHack, RAG Time, and Building RAG from Scratch.
+38. Next steps slide with upcoming session schedule, links to past recordings, and office hours information.
+39. Thank you slide.

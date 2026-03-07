@@ -1,0 +1,39 @@
+This talk covers how to build a Retrieval Augmented Generation (RAG) chat application on Azure. It introduces large language models, explains RAG and the importance of hybrid search, walks through an open-source RAG chat app solution with Azure AI Search and OpenAI, and discusses evaluation and observability techniques for RAG applications.
+
+00:00 - Introduction and agenda
+00:43 - What are large language models
+02:42 - LLMs in use today
+06:17 - GPT and the Transformer architecture
+08:08 - Using OpenAI GPT models in Azure Studio
+12:01 - Using OpenAI GPT models in Python
+13:01 - The limitations of LLMs
+13:50 - Incorporating domain knowledge
+16:49 - Retrieval Augmented Generation explained
+21:35 - The benefit of RAG
+27:42 - The importance of the search step
+30:52 - Optimal search strategy: hybrid search
+38:30 - RAG with hybrid search diagram
+39:24 - What is the RAG searching: documents vs database rows
+45:35 - Ways to build a RAG chat app on Azure
+45:52 - Copilot Studio (no code)
+47:13 - Azure Studio On Your Data (low code)
+51:57 - Open source RAG chat app solution (high code)
+54:21 - Prerequisites for deploying
+54:58 - Opening the project
+55:13 - Deploying with Azure Developer CLI
+55:54 - Application architecture on Azure
+56:27 - Local data ingestion
+01:07:10 - Integrated vectorization
+01:08:37 - Code walkthrough
+01:14:47 - RAG orchestration libraries
+01:17:02 - More RAG chat app starter repositories
+01:19:18 - Evaluating RAG chat apps
+01:20:34 - What affects the quality
+01:21:56 - Manual experimentation of settings
+01:22:22 - Automated evaluation of app settings
+01:22:45 - Ground truth data
+01:24:08 - Running evaluations and comparing results
+01:26:07 - Observability for RAG chat apps
+01:26:46 - Integration with Azure Monitor
+01:27:24 - Integration with Langfuse
+01:28:13 - Next steps

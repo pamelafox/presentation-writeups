@@ -1,0 +1,49 @@
+1. Title slide for "RAG with JavaScript: From Concepts to Code" by Pamela Fox, Principal Cloud Advocate.
+2. LLMs have limitations: outdated public knowledge and no internal knowledge.
+3. Two approaches for integrating domain knowledge: fine-tuning (permanent, high cost) vs RAG (temporary, lower cost).
+4. RAG is used in products like GitHub Copilot, Teams Copilot, and Copilot in the browser.
+5. Simple RAG flow: user question is searched against a database, results and question are sent to the LLM.
+6. RAG flow with multi-turn support: the full conversation and latest search results are sent to the LLM.
+7. RAG flow with query rewriting: an LLM rewrites the user's follow-up question into an optimized search query.
+8. RAG data sources are either structured (database rows) or unstructured (documents like PDFs), each requiring different vectorization approaches.
+9. Section title slide: "Vector embeddings."
+10. A vector embedding model converts text into a list of floating-point numbers representing a point in multi-dimensional space.
+11. Comparison of vector embedding models with different input types, token limits, and vector lengths.
+12. JavaScript code example showing how to generate an embedding using the OpenAI SDK with Microsoft Foundry.
+13. Cosine similarity is the most common metric for measuring vector similarity, computed as dot product divided by magnitude.
+14. Vector search: encode the query as a vector, then find the K closest vectors using exhaustive or approximate search.
+15. ANN search algorithms (HNSW, DiskANN, IVFFlat, Faiss) with their JavaScript library and database support.
+16. Section title slide: "Optimal search strategy."
+17. Research table showing vector search alone is not enough — hybrid search with semantic reranking outperforms all other strategies.
+18. Hybrid search combines keyword and vector retrieval, with fusion (RRF) and reranking producing the best results.
+19. Keyword search uses an inverted index to match documents by term frequency; BM25 is the best algorithm.
+20. Vector search encodes queries as embeddings and finds semantically similar documents by comparing vectors.
+21. Reciprocal Rank Fusion (RRF) merges keyword and vector search results based on their relative ranks.
+22. A re-ranker model scores documents for relevance to the query, reordering results; cross-encoder models work best.
+23. Complete hybrid search flow diagram: keyword results + vector results → RRF fusion → reranking.
+24. Hybrid search support across Azure databases: PostgreSQL, Azure AI Search, Cosmos DB, and Azure SQL.
+25. Section title slide: "Data ingestion."
+26. RAG document ingestion flow: extract text from PDF, split into chunks, vectorize chunks, store in database.
+27. Three reasons to split documents: LLMs have limited context windows, too much info causes distraction, and more tokens increase cost and latency.
+28. Optimal chunk size research: 512 tokens performed best, with overlapping chunks preserving sentence boundaries yielding highest recall.
+29. Section title slide: "More RAG approaches."
+30. Graph RAG builds a hierarchical knowledge graph from ingested data to enable high-level queries across entities and relationships.
+31. RAG with graph queries using Azure PostgreSQL + AGE extension for Cypher graph queries across products, reviews, and features.
+32. Agentic RAG with Azure AI Search knowledge bases uses LLM-based query planning to search across multiple sources with iterative retrieval.
+33. Section title slide: "Evaluation."
+34. Many factors affect RAG quality: search engine, query cleaning, search options, chunk size, system prompt, model choice, temperature, and max tokens.
+35. High-quality RAG answers should be correct, clear, and properly formatted with citations.
+36. Manual evaluation: humans spot-check and annotate issues in RAG output for small data sets.
+37. Automated evaluation: AI models measure output performance at scale across larger data sets.
+38. Automated evaluation frameworks comparison: azure-ai-evaluation, RAGAS, DeepEval, Langsmith, and Promptfoo.
+39. LLM-as-a-judge evaluates groundedness, relevance, and similarity to ground truth across large data sets.
+40. Review evaluation metrics across runs to track which metrics increased or decreased, including latency and length.
+41. Compare individual answers when scores change to understand why and how answers differ.
+42. Lessons learned: know your data, test at scale, trust relative metrics, watch vector search noise, model choice matters, remove prompt fluff.
+43. Section title slide: "Code walkthrough."
+44. Open source RAG solution using Cosmos DB, Azure OpenAI/Ollama, with multi-turn streaming chat and session history.
+45. Three options to open the project: GitHub Codespaces, VS Code Dev Containers, or local environment.
+46. Deploy with Azure Developer CLI (azd): login and run azd up to provision and deploy.
+47. Data ingestion process: POST PDF to Azure Function, extract text, split chunks with Langchain.js, vectorize with OpenAI, store in Cosmos DB and Blob Storage.
+48. Application architecture: TypeScript frontend (Lit + Vite) on Static Web Apps, Node.js backend (Azure Functions + Langchain.js) with Cosmos DB and Azure OpenAI.
+49. Next steps: deploy the app, check out the RAG deep dive series, and join the Foundry Discord for questions.

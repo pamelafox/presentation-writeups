@@ -1,0 +1,39 @@
+1. Series overview slide listing all six sessions in the Python + Agents series with registration link.
+2. Title slide for Session 5: "Orchestrating advanced multi-agent workflows" with speaker info and slide download link.
+3. Agenda slide listing topics: concurrent workflows, aggregation patterns, conditional routing, ConcurrentBuilder, MagenticBuilder, HandoffBuilder, and E2E application.
+4. Instructions for following along using the GitHub repository and Codespaces.
+5. Recap of agentic workflows: a flow involving an agent for decision-making, implemented as a graph with Executor nodes and edges.
+6. Section divider: Concurrent execution.
+7. Comparison of sequential execution (one executor at a time) vs. concurrent execution (executors run in parallel with aggregated outputs).
+8. Anatomy of a concurrent workflow showing fan-out edges from input to multiple executors and fan-in edges to an aggregator.
+9. Code example using WorkflowBuilder with add_fan_out_edges and add_fan_in_edges to create a fan-out/fan-in workflow.
+10. Code example of an aggregator Executor that receives a list of AgentExecutorResponse results and consolidates them.
+11. Section divider: Aggregation.
+12. Table of aggregation patterns for fan-in agents: concatenation, output synthesis, structured extraction, score & rank, and majority vote.
+13. Code example of aggregation with LLM summary using a SummarizerExecutor that calls an internal agent to synthesize results.
+14. Code example of aggregation with structured extraction using an ExtractReview executor and CandidateReview Pydantic model.
+15. Code example of aggregation with LLM ranking using a RankerExecutor that scores and ranks slogans from multiple agents.
+16. Code example of aggregation with majority vote using a TallyVotes executor that counts classifications from concurrent agents.
+17. Section divider: Conditional routing + concurrency.
+18. Diagram showing conditional routing with concurrent execution where a selection function determines which agents receive input.
+19. Code example using add_multi_selection_edge_group with a selection_func to route input to selected executors.
+20. Section divider: Built-in workflow orchestrations with link to documentation.
+21. Section heading: ConcurrentBuilder with link to documentation.
+22. Code example using the built-in ConcurrentBuilder with a list of participants, showing automatic dispatcher and aggregator nodes.
+23. Section heading: MagenticBuilder for dynamic planning with link to documentation.
+24. Diagram of the Magentic-One workflow orchestration showing task ledger, progress ledger, stall detection, and agent delegation loop.
+25. Magentic-One initial plan development prompt showing how the orchestrator creates a plan based on the team composition.
+26. Magentic-One progress ledger updates showing structured JSON output with is_request_satisfied, is_in_loop, is_progress_being_made, next_speaker, and instruction fields.
+27. Code example using the built-in MagenticBuilder with participants, manager_agent, and max round/stall/reset parameters.
+28. Comparison table of Magentic orchestration vs. Agent-as-tools: explicit vs. implicit planning, loop detection, agent context, and token cost.
+29. Section heading: Dynamic routing with HandoffBuilder.
+30. Comparison of fixed graph routing (developer defines edges) vs. dynamic routing (agents decide next step at runtime) with HandoffBuilder.
+31. Diagram of handoff orchestration where any agent can hand off control to any other agent at runtime.
+32. Code example using HandoffBuilder with participants, termination condition, start agent, and autonomous mode.
+33. Code example of HandoffBuilder with explicit handoff rules restricting which agents can hand off to which.
+34. Comparison table of handoff orchestration vs. Agent-as-tools: delegated vs. centralized ownership, control flow, task ownership, and context management.
+35. Section divider: End-to-end application.
+36. Screenshot of the Agentic AI Investment Analysis sample app showing its tech stack and GitHub repository link.
+37. Code showing the investment workflow using WorkflowBuilder with fan-out to four analyst agents and fan-in to aggregator, then debate and summary.
+38. Code showing the what-if workflow using WorkflowBuilder with fan-out to four analyst agents and fan-in to a summarizer.
+39. Next steps slide with links for registration, past recordings, office hours, and list of remaining sessions.

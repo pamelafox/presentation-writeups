@@ -1,0 +1,43 @@
+1. Microsoft AI Tour branding slide with session title and event logo.
+2. Title slide: "Advanced retrieval for your AI Apps and Agents on Azure."
+3. Diagram showing four fictional Zava agents (Shopper, Interior Design, Inventory, HR) that each need to find different types of data.
+4. RAG flow diagram showing how a user question goes through search, retrieves product results, and sends them to an LLM for an answer with citations.
+5. Four example user queries to a Zava Shopper Agent ranging from general ("garden watering supplies") to specific ("25 foot drip hose") to Spanish ("manguera de 25 pies").
+6. Agenda slide with three topics: optimal search strategies, graph-based retrieval with PostgreSQL, and agentic retrieval with Azure AI Search.
+7. Section divider: "Optimal search strategies."
+8. Table comparing which queries are better handled by vector search vs. keyword search.
+9. Hybrid search stack diagram showing keywords + vectors merged via RRF then sent through a reranking model.
+10. Keyword search explanation with inverted index diagram, BM25 algorithm, and example query results.
+11. Vector search explanation showing query embedding, cosine similarity comparison, and approximate algorithm tips (HNSW/DiskANN).
+12. RRF (Reciprocal Rank Fusion) diagram showing how keyword and vector search results are merged using the RRF formula.
+13. Re-ranking diagram showing how a re-ranker model reorders merged results by relevance score.
+14. Complete hybrid search flow diagram: keyword results + vector results → RRF fusion → reranking.
+15. Table of Azure databases supporting hybrid search: PostgreSQL, Azure AI Search, Azure Cosmos DB, and Azure SQL with their specific features.
+16. Research table showing NDCG@3 scores across query types, demonstrating hybrid + semantic ranker outperforms other strategies.
+17. Three example queries that hybrid search alone cannot answer: external knowledge, relational queries, and multi-part questions.
+18. Section divider: "Agentic Graph RAG with Azure Database for PostgreSQL."
+19. Three example user queries requiring relational data: cheap hose with good reviews, headphones with noise cancellation reviews, hedge trimmer category comparisons.
+20. RAG with graph queries diagram showing user question → LLM → graph query → database → LLM answer.
+21. Apache AGE on Azure Database for PostgreSQL: Cypher + SQL hybrid queries, fast graph processing, graph visualization and analytics.
+22. Two-step graph building process using azure_ai.extract() to extract features and sentiment from reviews, creating nodes and edges.
+23. Cypher query example finding headphone reviews with positive sentiment about noise cancellation, with graph traversal diagram.
+24. Demo slide for "Agentic Shop with Azure Database for PostgreSQL" with link aka.ms/agentic-shop.
+25. Learning resources for Azure Database for PostgreSQL: blog post, learning path, team blog, and VS Code extension.
+26. Section divider: "Agentic retrieval with Azure AI Search."
+27. Three example hard queries about unstructured data: multiple questions in one, chained queries, and queries requiring external knowledge.
+28. Azure AI Search knowledge base architecture diagram showing query planning, knowledge source selection, results merging, and iterative retrieval.
+29. Retrieval reasoning effort spectrum from minimal (low latency, lowest cost) to medium (highest quality, more agentic).
+30. Knowledge base with minimal effort: skips query planning, sends intent to all sources directly.
+31. Minimal effort example: "what's best Zava paint for bathroom walls?" sent to search index and SharePoint, returning merged results.
+32. Knowledge base with low effort: includes query planning and answer synthesis but not iterative retrieval.
+33. Low effort example with Bing web knowledge: query planning breaks question into sub-queries, searches multiple sources, generates synthesized answer.
+34. Knowledge base with medium effort: adds iterative retrieval to the low effort capabilities.
+35. Medium effort example: multi-step query about efficient house painting, showing two rounds of query planning and search.
+36. Demo slide for open source RAG chat solution with links aka.ms/ragchat and aka.ms/ragchat/knowledgebase.
+37. Azure AI Search resources: get started link, Foundry IQ preview, and GitHub quickstart sample.
+38. Section divider: "What's next?"
+39. Advice slide: design agentic flows carefully, evaluate at each step, retrieval affects quality, data preparation matters, use automated evaluations.
+40. Thank you slide with download link for code and slides.
+41. Q&A slide.
+42. Download slide with QR code linking to aka.ms/MicrosoftAITour/BRK444.
+43. Next steps slide with links to create agentic AI solutions and the GitHub repo.

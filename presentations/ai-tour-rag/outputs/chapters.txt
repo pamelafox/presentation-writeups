@@ -1,0 +1,41 @@
+This talk covers advanced retrieval strategies for AI apps and agents on Azure. It demonstrates optimal hybrid search (keyword + vector + reranking), graph-based retrieval with Azure Database for PostgreSQL using Apache AGE, and agentic retrieval with Azure AI Search knowledge bases.
+
+00:00 - Introduction
+00:31 - Agents need to find relevant context
+01:22 - How agents use RAG
+02:18 - Diversity of user queries
+03:02 - Agenda overview
+03:20 - Optimal search strategies
+04:15 - Keyword search with BM25
+04:53 - Demo: Keyword search on PostgreSQL
+07:24 - Limitations of keyword search
+08:40 - Vector search with embeddings
+09:17 - Demo: Vector search on PostgreSQL
+12:27 - Limitations of vector search
+13:21 - Reciprocal rank fusion (RRF)
+13:55 - Demo: RRF hybrid search
+15:17 - Why RRF alone isn't enough
+16:00 - Re-ranking with cross-encoder models
+16:44 - Demo: Hybrid search with reranker
+18:39 - Complete hybrid search flow
+19:09 - Hybrid search across Azure databases
+21:03 - Impact of hybrid search on relevance
+21:30 - When hybrid search isn't enough
+22:35 - Graph-based retrieval with PostgreSQL
+23:21 - Users ask hard questions about relational data
+23:57 - RAG with graph queries using Apache AGE
+24:45 - Building the graph with semantic operators
+25:38 - Querying the graph with Cypher
+26:24 - Demo: Agentic Shop application
+28:44 - PostgreSQL learning resources
+29:24 - Agentic retrieval with Azure AI Search
+29:37 - Hard questions about unstructured data
+30:09 - Azure AI Search knowledge bases
+31:26 - Retrieval reasoning effort levels
+32:03 - Minimal effort example
+33:20 - Low effort with query planning
+34:35 - Medium effort with iterative retrieval
+36:05 - Demo: Open source RAG chat solution
+37:11 - Azure AI Search resources
+37:39 - Design agentic flows carefully
+38:43 - Thank you and resources

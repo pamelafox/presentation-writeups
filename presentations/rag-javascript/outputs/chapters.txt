@@ -1,0 +1,43 @@
+This session covers retrieval augmented generation (RAG) from concepts to code, walking through LLM limitations, RAG flows with multi-turn and query rewriting, vector embeddings, hybrid search strategies, data ingestion, advanced RAG approaches like Graph RAG and agentic RAG, evaluation techniques, and a JavaScript code walkthrough using Cosmos DB and Azure Functions.
+
+00:00 - Introduction and housekeeping
+01:07 - JavaScript AI buildathon overview
+04:28 - Session overview and speaker introduction
+05:40 - The limitations of LLMs
+07:17 - Integrating domain knowledge: fine-tuning vs RAG
+09:04 - RAG in the wild
+09:44 - Simple RAG flow
+11:33 - RAG with multi-turn support
+12:20 - Query rewriting for better search
+15:08 - RAG data source types
+16:59 - Vector embeddings explained
+19:04 - Vector embedding models comparison
+20:48 - Generating embeddings in JavaScript
+22:18 - Measuring vector similarity with cosine
+23:02 - Vector search and nearest neighbors
+24:16 - ANN search algorithms
+26:09 - Vector search is not enough
+28:07 - Keyword search with BM25
+29:04 - Hybrid search overview
+29:46 - Reciprocal Rank Fusion (RRF)
+30:42 - Re-ranking models
+32:26 - Complete hybrid search flow
+32:48 - Hybrid search database support on Azure
+34:18 - Data ingestion for documents
+35:59 - Why we still need to split documents
+38:14 - Optimal chunk size and splitting strategy
+39:54 - Graph RAG
+43:01 - RAG with graph queries
+45:01 - Agentic RAG across multiple sources
+46:39 - Evaluation overview
+48:25 - Manual and automated evaluation
+49:00 - Evaluation frameworks
+49:24 - LLM-based quality evaluation metrics
+50:24 - Reviewing evaluation metrics
+51:11 - Lessons learned from evaluating RAG apps
+51:37 - Code walkthrough: open source RAG solution
+52:55 - Opening the project
+53:26 - Deploying with Azure Developer CLI
+53:29 - Data ingestion code walkthrough
+54:52 - Application architecture walkthrough
+58:26 - Next steps and resources
