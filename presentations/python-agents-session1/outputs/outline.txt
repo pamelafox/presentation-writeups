@@ -1,43 +1,51 @@
-1. Introduction to the Python + Agents series with dates and topics for each session.
-2. Title slide for "Building your first agent in Python" by Pamela Fox.
-3. Overview of topics covered in the session including agents, tool-calling, frameworks, and architectures.
-4. Instructions on how to follow along with the session using a GitHub repository and Codespaces.
-5. Introduction to "Agents 101".
-6. Explanation of what an agent is, including components like LLM, tools, goal, and augmentations.
-7. Overview of popular Python AI agent frameworks with descriptions.
-8. Introduction to calling tools without a framework.
-9. Explanation of what tool calling is and how it works with LLMs.
-10. Diagram and explanation of the tool calling flow.
-11. Step 1 of tool calling: defining functions the LLM can call.
-12. Step 2 of tool calling: extracting function name and arguments from the LLM response.
-13. Step 3 of tool calling: calling a local Python function based on the LLM response.
-14. Step 4 of tool calling: sending tool results back to the LLM for final answer.
-15. Introduction to building agents with the agent-framework.
-16. Instructions for installing the agent-framework and required subpackages.
-17. Single agent architecture using a tool.
-18. Code example of a single agent with a tool using Python functions.
-19. Single agent architecture with multiple tools.
-20. Code example of a single agent using multiple tools.
-21. Local experimentation with DevUI for chatting with agents and tracing tool calls.
-22. Agent architecture for integrating with MCP server tools.
-23. Code example of a single agent using a local MCP server.
-24. Code example of a single agent using a remote MCP server.
-25. Explanation of the Model Context Protocol (MCP) for standardizing interactions between LLMs and external tools.
-26. Supervisor agent architecture with sub-agents for task delegation.
-27. Code example of a supervisor agent managing sub-agents with associated tools.
-28. Multi-agent architectures and workflows for complex orchestration.
-29. Appendix section introduction.
-30. Migration tips for moving from AutoGen to Agent Framework.
-31. Comparison table of MAF, Semantic Kernel, AutoGen, and Agent Framework.
-32. Guide for migrating from AutoGen to Agent Framework with links to resources.
-33. Guide for migrating from Semantic Kernel to Agent Framework with links to resources.
-34. Using GitHub Copilot to assist with migration from AutoGen to Agent Framework.
-35. Agent middleware overview and its role in agent execution.
-36. Code example of an asynchronous timing agent middleware.
-37. Code example of a chat middleware for logging and tracing messages.
-38. Code example of a function middleware for processing function calls.
-39. Code example of a class-based middleware subclass.
-40. Code example of registering middleware functions and classes per agent.
-41. Code example of registering middleware for a particular run of an agent.
-42. Summary slide of the Python + Agents series topics and dates.
-51. This slide presents a sample app called "Agentic Shop" that uses docker-compose to deploy multiple MCP servers, an API server running agents, and a frontend server, with a code snippet demonstrating how to create and run an agent for retail insights analysis.
+1. Series overview slide listing all six sessions in the Python + Agents series with registration link.
+2. Title slide for Session 1: "Building your first agent in Python" by Pamela Fox.
+3. Agenda slide listing topics: agents, tool calling, agent-framework, MCP servers, middleware, supervisor architecture.
+4. Instructions for following along using GitHub Codespaces with the demo repository.
+5. Section divider: "Agents 101".
+6. Definition of an AI agent: uses an LLM to run tools in a loop to achieve a goal, with augmentations like context, memory, planning, and humans.
+7. Table comparing four Python AI agent frameworks: agent-framework, langchain v1, pydantic-ai, and openai-agents.
+8. Section divider: "Calling tools without a framework".
+9. Explanation of tool calling (function calling): LLM generates function calls based on function definitions.
+10. Diagram showing the 5-step tool calling flow between developer code and the model.
+11. Code example: Step 1 — defining tool JSON schema and passing it to the LLM.
+12. Code example: Step 2 — extracting function name and arguments from the LLM response.
+13. Code example: Step 3 — calling the local function with the extracted arguments.
+14. Code example: Step 4 — sending tool results back to the LLM to get the final answer.
+15. Section divider: "Building agents with agent-framework".
+16. Installation instructions for agent-framework subpackages (agent-framework-core, agent-framework-devui).
+17. Architecture diagram: single agent with a single tool answering a user question.
+18. Code example: defining a tool with @tool decorator and creating an Agent with agent-framework.
+19. Architecture diagram: single agent with multiple tools, where the agent decides order of calls.
+20. Code example: agent with get_current_date, get_weather, and get_activities tools.
+21. DevUI: local development playground for chatting with agents and tracing tool calls.
+22. Section divider: "Integrating agents with MCP server tools".
+23. Overview of Model Context Protocol (MCP): an open protocol for LLM-tool interaction.
+24. MCP client-server architecture diagram showing hosts, clients, and servers.
+25. Architecture diagram: agent discovering tools from MCP servers, then calling them.
+26. Code example: agent connecting to a local MCP server using MCPStreamableHTTPTool.
+27. Code example: agent connecting to a remote MCP server (Microsoft Learn).
+28. Section divider: "Agent middleware".
+29. Architecture diagram showing three middleware layers: agent, chat, and function middleware with their contexts.
+30. Code example: agent middleware with timing (pre-process, call_next, post-process pattern).
+31. Code example: chat middleware with message logging.
+32. Code example: function middleware with call logging.
+33. Code example: class-based chat middleware tracking message counts.
+34. Code example: middleware with termination capability (blocking specific words).
+35. Code example: registering multiple middleware on an agent.
+36. Code example: registering middleware for a particular run only.
+37. Table of middleware scenario ideas for agent, chat, and function middleware layers.
+38. Section divider: "Multi-agent architectures".
+39. Architecture diagram: supervisor agent routing tasks to specialist sub-agents.
+40. Code example: implementing supervisor with sub-agents wrapped as @tool functions.
+41. Teaser for week 2: multi-agent workflows with conditional edges, approvals, and HITL.
+42. Next steps slide with registration and resource links.
+43. Section divider: "Appendix".
+44. Learn more resources: documentation, Ignite talks, and community office hours.
+45. Section divider: "Migration tips".
+46. Comparison table of MAF vs Semantic Kernel vs AutoGen.
+47. Migration guide from AutoGen to Agent Framework.
+48. Migration guide from Semantic Kernel to Agent Framework.
+49. Tip to use GitHub Copilot for migration with a sample prompt.
+50. Section divider: "E2E sample".
+51. Sample app "Agentic Shop" using docker-compose with MCP servers and agent-framework.

@@ -345,22 +345,22 @@
 [13:56] of you have used as well. There's
 [13:58] there's just so many. Uh sometimes we
 [14:00] joke that there's more AI agent
-[14:02] frameworks than agents in the world. Uh
-[14:05] everybody wants to build an agent
-[14:07] framework, right? Um so, uh yeah. So,
-[14:10] but here are some of the top four that I
-[14:12] work with the most that you may have
-[14:13] heard of, right? So, the one that we're
-[14:15] focusing on this series is the agent
-[14:17] framework from Microsoft. This is the
-[14:19] successor to autogen and semantic
-[14:21] kernel. So if you were previously using
-[14:24] autogen or semantic kernel, you should
-[14:26] be moving everything over to agent
-[14:28] framework um because it has basically
-[14:31] all the features of those and uh and
-[14:34] more right and it is more modern and
-[14:38] more flexible.
+[14:02] frameworks than agents in [laughter] the
+[14:03] world. Uh everybody wants to build an
+[14:06] agent framework, right? [clears throat]
+[14:08] Um so, uh yeah. So, but here are some of
+[14:10] the top four that I work with the most
+[14:13] that you may have heard of, right? So,
+[14:14] the one that we're focusing on this
+[14:15] series is the agent framework from
+[14:17] Microsoft. This is the successor to
+[14:20] autogen and semantic kernel. So if you
+[14:22] were previously using autogen or
+[14:25] semantic kernel, you should be moving
+[14:27] everything over to agent framework um
+[14:29] because it has basically all the
+[14:32] features of those and uh and more right
+[14:35] and it is more modern and more flexible.
 [14:41] And then there's link chain v1. So lots
 [14:43] of people knew no link chain because it
 [14:44] was basically the first LLM framework
@@ -583,6 +583,7 @@
 [23:31] in Los Angeles, right? I was born there
 [23:33] so I can claim that maybe in my in my
 [23:36] head in my memories it was always 75.
+[23:39] [laughter]
 [23:40] Um okay. So this is what it looks like
 [23:43] you know on the low level like if you
 [23:45] were doing like an HP call it would look
@@ -660,14 +661,14 @@
 [26:34] can see that they did cut a release
 [26:35] candidate two days ago. Um but already
 [26:38] that one's out of date so we're not
-[26:39] using it. Uh but there'll be like a
-[26:42] proper 1.0. You can see these are all
-[26:43] beta versions of 1.0. Uh so pretty soon
-[26:46] there should be a very proper 1.0 um uh
-[26:51] very soon. So that is what you would end
-[26:53] up pulling and the code should look
-[26:54] really similar to the code we're using
-[26:56] here.
+[26:39] using it. [laughter]
+[26:41] Uh but there'll be like a proper 1.0.
+[26:43] You can see these are all beta versions
+[26:44] of 1.0. Uh so pretty soon there should
+[26:46] be a very proper 1.0 um uh very soon. So
+[26:52] that is what you would end up pulling
+[26:53] and the code should look really similar
+[26:55] to the code we're using here.
 [26:58] Okay. So that's how that's how we're
 [27:00] installing today is we're installing the
 [27:02] sub packages we need and we are
@@ -783,8 +784,8 @@
 [31:16] and and output the response. Right? So
 [31:19] let's go ahead and run this. UV run uh
 [31:23] examples agent tool.py.
-[31:31] Oops. Uh sorry. UV run. UV run examples
-[31:35] agent tool. py.
+[31:31] Oops. Uh sorry. UV [clears throat] run.
+[31:34] UV run examples agent tool. py.
 [31:44] So now it's gonna go and
 [31:47] okay so we can see that it is calling
 [31:49] the function. This log came from the
@@ -863,6 +864,7 @@
 [34:39] weather. Um then it gets I probably
 [34:43] should actually change the weather
 [34:44] function to accept a date, too.
+[34:46] [laughter]
 [34:47] Um uh but you know what's cool here? So
 [34:49] it says okay getting activities for San
 [34:51] Francisco on February 28th and that is
@@ -1003,12 +1005,13 @@
 [39:57] it shows you everything that it does.
 [39:59] Um, oh, and right, I asked what's the
 [40:00] weather. Okay. Okay. Tell me what I can
-[40:03] do this weekend.
-[40:06] I forgot this is a activity planner. I
-[40:08] was like, why didn't you call the other
-[40:09] one? Well, I didn't tell last thing.
-[40:10] Like, it's only going to call the tools
-[40:11] it needs to call, right? Um, so now,
+[40:03] do this weekend. [laughter]
+[40:05] [gasps] I forgot this is a activity
+[40:07] planner. I was like, why didn't you call
+[40:08] the other one? Well, I didn't tell last
+[40:10] thing. Like, it's only going to call the
+[40:11] tools it needs to call, right? Um, so
+[40:14] now,
 [40:15] uh, let's see. So, now we're going to
 [40:17] get hopefully another call to the get
 [40:19] activities.
@@ -1016,58 +1019,60 @@
 [40:25] says tools six. Okay.
 [40:29] Where did the new one go?
 [40:32] Wait, I'm going to go back to events
-[40:34] and then refresh. Okay. Let me do I
-[40:38] don't I lost track of the tools. Okay.
-[40:40] What activities can I do in Berkeley CA
-[40:45] this weekend? Okay. All right. Let's do
-[40:48] that way. So, you also see the events.
-[40:50] These are the agent framework events.
-[40:52] Um, but it's helpful to see these events
-[40:54] because if you are building any sort of
-[40:56] thing that's like tying into the events,
-[40:57] it's really helpful to see like, oh,
-[40:59] okay, so as a agent framework is going
-[41:01] along, these are the events that it
-[41:03] streams out because then you can kind of
-[41:04] decide if if there's if you are doing
-[41:07] any sort of um, you know, event based
-[41:10] processing, you can see everything that
-[41:13] happens in their event stream. Okay, so
-[41:15] here we've got the tools. So this time
-[41:16] we got the date, we got the weather, we
-[41:18] got activities, we get the results,
-[41:20] right? Uh we can see the number of
-[41:22] tokens that it took here. We can see the
-[41:25] tool calls. Uh so yeah so this is so
-[41:28] this is pretty pretty helpful. Uh so you
-[41:32] can just quickly instead of having to
-[41:33] modify your code you can just interact
-[41:35] with your agent here. Um, and the way
-[41:37] that we started this up is that in the
-[41:39] example here at the bottom, I check to
-[41:42] see if we pass in devi. And if so, then
-[41:45] I bring in the devi package. And then I
-[41:48] call serve and I pass in the agent
-[41:51] itself because this agent is a global
-[41:53] variable in this function, right? In
-[41:54] this module. So I just pass in the agent
-[41:57] and say, hey, this is the agent and uh
-[42:01] and then told it to automatically open,
-[42:03] right? Um so that way I can either run
-[42:06] the example directly uh if I want to
-[42:09] just with this example query here or I
-[42:12] can run debui with the agent and then I
-[42:15] can just put an arbitrary input. Uh, so
-[42:18] I think this is just a nice thing to do
-[42:20] when you're developing agents is to make
-[42:22] it really easy to open up Dev UI because
-[42:25] you might find that that's a really
-[42:26] helpful playground for you when you're,
-[42:28] you know, when you're experimenting. Um,
+[40:34] and then refresh. Okay. [laughter]
+[40:38] Let me do I don't I lost track of the
+[40:39] tools. Okay. What activities can I do in
+[40:43] Berkeley CA this weekend? Okay. All
+[40:47] right. Let's do that way. So, you also
+[40:49] see the events. These are the agent
+[40:51] framework events. Um, but it's helpful
+[40:53] to see these events because if you are
+[40:55] building any sort of thing that's like
+[40:56] tying into the events, it's really
+[40:58] helpful to see like, oh, okay, so as a
+[41:00] agent framework is going along, these
+[41:02] are the events that it streams out
+[41:03] because then you can kind of decide if
+[41:05] if there's if you are doing any sort of
+[41:08] um, you know, event based processing,
+[41:11] you can see everything that happens in
+[41:13] their event stream. Okay, so here we've
+[41:15] got the tools. So this time we got the
+[41:17] date, we got the weather, we got
+[41:18] activities, we get the results, right?
+[41:21] Uh we can see the number of tokens that
+[41:23] it took here. We can see the tool calls.
+[41:26] Uh so yeah so this is so this is pretty
+[41:29] pretty helpful. Uh so you can just
+[41:32] quickly instead of having to modify your
+[41:34] code you can just interact with your
+[41:36] agent here. Um, and the way that we
+[41:38] started this up is that in the example
+[41:39] here at the bottom, I check to see if we
+[41:42] pass in devi. And if so, then I bring in
+[41:46] the devi package. And then I call serve
+[41:49] and I pass in the agent itself because
+[41:51] this agent is a global variable in this
+[41:53] function, right? In this module. So I
+[41:56] just pass in the agent and say, hey,
+[41:58] this is the agent and uh and then told
+[42:01] it to automatically open, right? Um so
+[42:05] that way I can either run the example
+[42:07] directly uh if I want to just with this
+[42:10] example query here or I can run debui
+[42:14] with the agent and then I can just put
+[42:16] an arbitrary input. Uh, so I think this
+[42:18] is just a nice thing to do when you're
+[42:21] developing agents is to make it really
+[42:23] easy to open up Dev UI because you might
+[42:25] find that that's a really helpful
+[42:26] playground for you when you're, you
+[42:28] know, when you're experimenting. Um,
 [42:30] especially all this logging, right? Like
 [42:32] I, you know, I add lots of logging
 [42:34] often, but, you know, this is just, this
 [42:37] is just nice. This is just better.
+[42:38] [laughter]
 [42:41] And, uh, so there we go. We can see all
 [42:44] those all those calls going out. I see a
 [42:47] question. What model am I using? Great
@@ -1268,10 +1273,10 @@
 [50:47] and this is how we're going to be able
 [50:49] to uh make agents that are more have
 [50:54] more interesting functionality in there.
-[50:56] Um so basically middleware is something
-[50:58] that you know sits in the agent at
-[51:01] different stages of the process of the
-[51:03] agent running. And with the agent
+[50:56] [laughter] Um so basically middleware is
+[50:58] something that you know sits in the
+[51:00] agent at different stages of the process
+[51:02] of the agent running. And with the agent
 [51:05] framework, there's actually three
 [51:07] different places that middleware can
 [51:09] sit. So they have this notion of the
@@ -1428,6 +1433,7 @@
 [56:45] requests as they're happening and you
 [56:47] can even terminate the request using
 [56:49] middleware.
+[56:52] [laughter]
 [56:53] Yeah, that one it's I will say this
 [56:56] example it helps to actually go through
 [56:59] you know the whole all the middleware
@@ -1487,7 +1493,7 @@
 [58:50] agent decides which specialist agents
 [58:54] should handle a task. Right? So here I'm
 [58:57] making this parenting helper agent that
-[58:59] I need
+[58:59] I need [laughter]
 [59:01] and it's a supervisor agent and it has
 [59:04] access to two different agents, the
 [59:05] weekend planning agent and the meal

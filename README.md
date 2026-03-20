@@ -1,6 +1,6 @@
 # Presentation Write-ups
 
-This repo turns presentations into annotated blog-style write-ups with embedded slide images. It uses Azure OpenAI to process video recordings and PDF slides.
+This repo turns presentations into annotated blog-style write-ups with embedded slide images. It uses GitHub Copilot agent skills and prompts (backed by Azure OpenAI) to process video recordings and PDF slides.
 
 ## Raw materials
 
@@ -41,52 +41,61 @@ You'll also need:
 
 ## Generating write-ups
 
-Create a `presentation.yaml` file in your presentation folder (see [examples/presentation.yaml](examples/presentation.yaml)):
+Create a `presentation.md` file in your presentation folder:
 
-```yaml
-title: "My Presentation"
-date: 2026-01-06
+```markdown
+# My Presentation
 
-# Video source: YouTube URL or local MP4 path (required)
-video: "https://www.youtube.com/watch?v=abc123"
+- **Date:** 2026-01-06
+- **Video:** https://www.youtube.com/watch?v=abc123
+- **Slides:** slides.pdf
+- **Transcript:** transcript.txt
 
-# Slides: PDF path, PPTX URL, OneDrive link, or RevealJS URL (required)
-slides: "slides.pdf"
-# OR for OneDrive sharing link:
-# slides: "https://onedrive.live.com/:p:/g/personal/.../..."
-# OR for RevealJS presentations:
-# slides: "https://example.com/my-presentation"
+## Notes
 
-# Optional: additional notes
-notes: |
-  Any additional context
+Any additional context
 ```
 
-Then run the script:
+Required fields: **Video** (YouTube URL or local MP4 path) and **Slides** (PDF path, PPTX URL, OneDrive link, or RevealJS URL). All others are optional.
 
-```bash
-uv run generate_writeup.py presentations/my-talk
+Then run the `generate-writeup` prompt in VS Code Copilot Chat:
+
+```
+/generate-writeup presentations/my-talk
 ```
 
-The script:
+This uses the prompt defined in [`.github/prompts/generate-writeup.prompt.md`](.github/prompts/generate-writeup.prompt.md), which orchestrates the full pipeline:
 
-1. Converts PDF slides to images (or fetches PDF from RevealJS URL first)
-2. Fetches transcript from YouTube
-3. Generates chapter summaries using Azure OpenAI
-4. Generates slide outline using Azure OpenAI
-5. Creates an annotated blog-style write-up with embedded slide images
+1. Fetches/converts slides to PDF (if URL provided)
+2. Converts PDF slides to images
+3. Extracts transcript from YouTube
+4. Generates chapter summaries
+5. Extracts slide text and generates slide outline
+6. Creates an annotated blog-style write-up with embedded slide images
 
 All generated outputs are saved to an `outputs/` folder, and intermediate results are cached for faster re-runs.
+
+### Agent skills
+
+The pipeline is built from individual agent skills in `.github/skills/`:
+
+| Skill | Purpose |
+|-------|---------|
+| `/fetch-slides` | Fetch/convert slides from URLs (PDF, PPTX, OneDrive, RevealJS) |
+| `/extract-transcript` | Get timestamped transcript from YouTube |
+| `/convert-slides-to-images` | Convert PDF slides to individual PNGs |
+| `/extract-slide-text` | Extract text from each PDF page into a markdown file |
+| `/outline-slides` | Summarize each slide image into a numbered list |
 
 ## RevealJS support
 
 For RevealJS presentations, provide the presentation URL as the `slides` value:
 
-```yaml
-slides: "https://pamelafox.github.io/my-talks/some-presentation/"
+```markdown
+- **Slides:** https://pamelafox.github.io/my-talks/some-presentation/
 ```
 
-The script will automatically:
+The `/fetch-slides` skill will automatically:
 
 1. Append `?print-pdf` to the URL
 2. Use Playwright to render the presentation
@@ -97,11 +106,11 @@ The script will automatically:
 
 For PowerPoint presentations hosted on OneDrive, provide the sharing URL as the `slides` value:
 
-```yaml
-slides: "https://onedrive.live.com/:p:/g/personal/..."
+```markdown
+- **Slides:** https://onedrive.live.com/:p:/g/personal/...
 ```
 
-The script will automatically:
+The `/fetch-slides` skill will automatically:
 
 1. Convert the sharing URL to a download URL
 2. Download the PPTX file
@@ -115,7 +124,7 @@ The script will automatically:
 ```text
 presentations/
   my-talk/
-    presentation.yaml      # Configuration: video URL, slides path/URL
+    presentation.md        # Configuration: video URL, slides path/URL
     slides.pdf             # PDF slides (if using local file)
     transcript.txt         # Optional: pre-made transcript
     outputs/               # All generated content
