@@ -1,34 +1,45 @@
-1. Overview of the Python + Agents series with session dates and topics.
-2. Title slide for the session on adding context and memory to agents.
-3. Agenda slide covering types of context, memory, knowledge providers, and context management.
-4. Instructions for following along with the session using a GitHub repository and Codespaces.
-5. Recap of what an AI agent is and how context improves agents.
-6. Explanation of what context is and examples of inputs that provide context to an agent.
-7. Title slide introducing the topic of memory in agents.
-8. Overview of different types of memory: session, chat history, and dynamic memory.
-9. Title slide introducing conversation sessions.
-10. Explanation of conversation sessions including an example dialogue.
-11. Code example showing how to create an in-memory conversation session.
-12. Title slide introducing persistent chat history.
-13. Explanation of persistent chat history with an example of storing sessions in a database.
-14. Explanation of storing persistent chat history in Redis with implementation details.
-15. Code example of using RedisHistoryProvider for persistent chat history.
-16. Explanation of storing persistent chat history in SQLite with an example schema.
-17. Code example of a custom SQLiteHistoryProvider implementation.
-18. Title slide introducing dynamic memory.
-19. Diagram explaining dynamic memory concepts including retrieving and storing memories.
-20. Explanation of dynamic memory implementation using Redis with details on retrieval and storage.
-21. Code example of using RedisContextProvider for dynamic memory.
-22. Title slide about knowledge in agents.
-23. Explanation of knowledge retrieval and why agents retrieve knowledge before calling tools.
-24. Code example of knowledge retrieval using SQLite database.
-25. Explanation of improving retrieval with hybrid search combining keyword and vector search.
-26. Code example of knowledge retrieval using PostgreSQL with hybrid search.
-27. Explanation of knowledge retrieval using Azure AI Search with query rewriting and multi-source selection.
-28. Title slide introducing context management.
-29. Explanation of context reduction using subagents to manage large tool call results.
-30. Code example of a coordinator agent calling sub-agents for specialized tasks.
-31. Explanation of query rewriting in a context provider to improve retrieval for multi-turn conversations.
-32. Code example of a PostgresQueryRewriteProvider implementation.
-33. Explanation of the importance of context window size and a table showing increasing token limits over time.
-34. Summary slide of next steps and session topics with links to recordings and office hours.
+1. Series overview slide listing the six Python + Agents sessions with dates and a registration link.
+2. Title slide for "Adding context and memory to agents" by Pamela Fox, with a link to slides.
+3. Agenda slide listing today's topics: what is context, memory (sessions, chat history, dynamic memory), knowledge providers, and context management.
+4. Instructions for following along by opening the GitHub repo (aka.ms/python-agentframework-demos) and creating a Codespace.
+5. Recap of what an agent is: an AI agent uses an LLM to run tools in a loop to achieve a goal, improved by better context (knowledge, memory, humans).
+6. "Context is everything" slide showing the different inputs to an agent: instructions, environment info, domain knowledge, memories, past messages, and tool calls/results.
+7. Section divider slide for "Memory."
+8. Overview of three types of memory: session (in-conversation), chat history (across conversations, persistent), and dynamic memory (LLM-remembered facts from past conversations).
+9. Section divider slide for "Conversation sessions."
+10. Diagram showing how a session includes all past messages (system prompt, user messages, tool calls, responses) in a conversation.
+11. Code example showing in-memory conversation sessions using agent framework's Agent and create_session().
+12. Section divider slide for "Persistent chat history."
+13. Diagram of persistent chat history stored in a generic database, with implementation questions about row size, user linking, and searchability.
+14. Diagram of persistent chat history in Redis, with session IDs as keys and message lists as values that can be truncated.
+15. Code example using agent framework's built-in RedisHistoryProvider as a context provider for persistent chat history.
+16. Diagram of persistent chat history in SQLite, with individual message rows keyed by thread_id and ordered by incrementing ID.
+17. Code example showing a custom SQLiteHistoryProvider subclass of BaseHistoryProvider with get_messages and save_messages methods.
+18. Section divider slide for "Dynamic memory."
+19. Diagram of dynamic memory architecture showing agent, LLM, and memory store interactions, with questions about retrieving, storing, and forgetting memories.
+20. Diagram of dynamic memory with Redis using RedisProvider: hybrid search for retrieval, stores entire user/assistant messages, no forgetting mechanism.
+21. Code example using agent framework's RedisContextProvider for dynamic memory with user_id, index_name, and application_id configuration.
+22. Diagram of dynamic memory with Mem0: uses LLM for retrieval search, LLM-suggested memory storage, and LLM-suggested memory removal/updating.
+23. Diagram of Mem0's memory update process: LLM extracts memories from response, compares to old memories, recommends ADD/UPDATE/DELETE/NONE actions.
+24. Code example using agent framework's Mem0ContextProvider with AsyncMemory client for dynamic memory.
+25. Slide about GitHub Copilot's memory system in production, with citation-based verification for memory accuracy.
+26. Section divider slide for "Knowledge."
+27. Diagram of knowledge retrieval: agent retrieves knowledge before asking LLM, useful when domain-specific knowledge is always needed rather than using a tool.
+28. Code example of a SQLiteKnowledgeProvider subclass of BaseContextProvider that searches and extends messages in before_run.
+29. Diagram explaining hybrid search combining keyword search and vector search with Reciprocal Rank Fusion (RRF).
+30. Code example of knowledge retrieval from PostgreSQL using hybrid search with semantic and keyword CTEs merged by RRF scoring.
+31. Diagram explaining query rewriting for multi-turn conversations, where an LLM rewrites the conversation into an optimal search query.
+32. Code example of PostgresQueryRewriteProvider that rewrites queries based on conversation history before searching.
+33. Diagram of Azure AI Search knowledge base with query planning, multi-source retrieval, iterative retrieval, and answer synthesis.
+34. Code example using agent framework's built-in AzureAISearchContextProvider for knowledge retrieval in agentic mode.
+35. Section divider slide for "Context management."
+36. Table of LLM context window sizes over time (GPT-3 at 2K to Claude Opus 4.6 at 1M), with three reasons context size still matters.
+37. Diagram of context compaction via summarization: when context reaches a threshold, summarize past messages to reduce size.
+38. Diagram of SummarizationMiddleware: checks token threshold before run, summarizes if exceeded, tracks tokens after run.
+39. Code example of SummarizationMiddleware subclass of AgentMiddleware with process method that summarizes and replaces messages.
+40. Code example of the SummarizationMiddleware class with token counting and message replacement logic.
+41. Diagram comparing a single agent with growing context from tool calls vs. a coordinator agent with sub-agents that return summaries.
+42. Code example of coordinator agent pattern with a research sub-agent that returns concise summaries.
+43. Token usage comparison: single agent (8,312 total) vs. coordinator (1,137) + sub-agent (9,074), showing coordinator's context stays small.
+44. Guidelines for when to use vs. skip sub-agents based on output size, task complexity, and latency needs.
+45. Next steps slide with links for registration, past recordings, office hours on Discord, and upcoming session schedule.

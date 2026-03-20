@@ -1,7 +1,7 @@
 # Python + Agents (Session 5): Orchestrating advanced multi-agent workflows
 
-:tv: [Watch the full recording on YouTube](https://www.youtube.com/watch?v=WtZbDrd-RJg) |
-:page_facing_up: [Download the slides (PDF)](https://aka.ms/pythonagents/slides/advancedworkflows)
+📺 [Watch the full recording on YouTube](https://www.youtube.com/watch?v=WtZbDrd-RJg) |
+📑 [Download the slides (PDF)](https://aka.ms/pythonagents/slides/advancedworkflows)
 
 This write-up includes an annotated version of the presentation slides with timestamps to the video plus a summary of the live Q&A sessions.
 

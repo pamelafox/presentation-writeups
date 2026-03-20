@@ -130,42 +130,44 @@
 [05:04] to call uh in order to get the answer
 [05:07] that it needs. So that is the basic
 [05:10] agent and an agent on its own with the
-[05:12] right tools is very very powerful.
-[05:15] Right? However, what we're going to see
-[05:17] today is that we can improve agents by
-[05:20] giving them even more context to help
-[05:23] them answer the questions. Right? So we
-[05:26] different kinds of context. Uh one kind
-[05:28] of context is knowledge. If we're
-[05:30] building the agent that's already
-[05:31] operating a certain domain, we can
-[05:33] either give them tools for that domain
-[05:36] or we can just always equip them um with
-[05:39] knowledge pulled from that domain. So,
-[05:41] we're going to see today uh ways of
-[05:43] providing knowledge that aren't just
-[05:46] about tools. Uh then there's also
-[05:48] memory. So, that giving the agent the
-[05:50] ability to remember things that the user
-[05:52] said before both in the current
-[05:55] conversation and in past conversations.
-[05:58] So, we're going to see actually three
-[05:59] different kinds of memory today. Uh, and
-[06:02] that can make the the agent seem like
-[06:04] it's learning. It's not ex really
-[06:07] learning. It's remembering, but it it
-[06:09] will feel a bit like it's learning, like
-[06:11] at least that it's learning about you
-[06:12] and your preferences. And that's really
-[06:14] helpful, right? And then humans can also
-[06:17] provide more context. We're going to
-[06:18] talk about that more next week when we
-[06:20] bring humans into the loop.
+[05:12] right tools is very [clears throat] very
+[05:14] powerful. Right? However, what we're
+[05:17] going to see today is that we can
+[05:18] improve agents by giving them even more
+[05:22] context to help them answer the
+[05:24] questions. Right? So we different kinds
+[05:26] of context. Uh one kind of context is
+[05:29] knowledge. If we're building the agent
+[05:31] that's already operating a certain
+[05:32] domain, we can either give them tools
+[05:34] for that domain or we can just always
+[05:37] equip them um with knowledge pulled from
+[05:40] that domain. So, we're going to see
+[05:42] today uh ways of providing knowledge
+[05:45] that aren't just about tools. Uh then
+[05:48] there's also memory. So, that giving the
+[05:50] agent the ability to remember things
+[05:52] that the user said before both in the
+[05:54] current conversation and in past
+[05:57] conversations. So, we're going to see
+[05:59] actually three different kinds of memory
+[06:00] today. Uh, and that can make the the
+[06:03] agent seem like it's learning. It's not
+[06:05] ex really learning. It's remembering,
+[06:08] but it it will feel a bit like it's
+[06:10] learning, like at least that it's
+[06:11] learning about you and your preferences.
+[06:13] And that's really helpful, right? And
+[06:16] then humans can also provide more
+[06:17] context. We're going to talk about that
+[06:18] more next week when we bring humans into
+[06:20] the loop.
 [06:22] Um, so, so here we go. So, what is
 [06:26] context?
 [06:28] And I think there's many definitions of
 [06:30] context out here, but what I went with
 [06:32] is that context is everything.
+[06:34] [laughter]
 [06:35] So I say that the context to an agent is
 [06:38] all the inputs that help the agent
 [06:40] decide what action it will take next and
@@ -565,15 +567,15 @@
 [21:55] history. Uh you could use local storage.
 [21:56] I was actually doing that last night for
 [21:58] a clientside only um example although
-[22:01] that was not in Python but the idea is
-[22:04] that you know you could you could in
-[22:06] theory use any database uh so in here
-[22:10] we're doing SQLite right um and for
-[22:13] SQLite I'm going to store it a different
-[22:15] way just to show you a different way of
-[22:16] storage so in this case I'm going to
-[22:18] actually store each message as a
-[22:20] separate row and this is helpful in
+[22:01] that was not in Python [laughter] but
+[22:03] the idea is that you know you could you
+[22:06] could in theory use any database uh so
+[22:09] in here we're doing SQLite right um and
+[22:13] for SQLite I'm going to store it a
+[22:14] different way just to show you a
+[22:16] different way of storage so in this case
+[22:17] I'm going to actually store each message
+[22:20] as a separate row and this is helpful in
 [22:22] cases where your databases have
 [22:24] constraints on the size for example
 [22:25] Cosmos DB has a constraint on the size
@@ -664,7 +666,8 @@
 [25:54] scratch. That's the nice thing about
 [25:55] SQLite. You can just yolo delete your
 [25:57] database when you feel like it.
-[26:01] I wouldn't do that with production.
+[26:00] [laughter and clears throat] I wouldn't
+[26:01] do that with production.
 [26:04] Okay. So now it's rerunning. So it
 [26:06] should be you can see it created the new
 [26:08] do thesqlite 3 file. created it fresh uh
@@ -1117,18 +1120,19 @@
 [43:03] post because it's just really really
 [43:04] interesting to see um and and also to
 [43:07] see about how they decide when to make
-[43:10] an uh memory obsolete. They actually tie
-[43:12] each memory to citations like to line
-[43:15] numbers in the source code so that they
-[43:17] can verify whether that source code
-[43:18] still exists. So that's a super
-[43:21] interesting way of seeing whether a
-[43:23] memory should be obsoleted. Right? very
-[43:25] specific to coding agent memory but uh
-[43:27] especially repo specific memory but I
-[43:30] thought it was really interesting so
-[43:31] definitely check out that article to see
-[43:34] how they implemented that
+[43:10] [clears throat] an uh memory obsolete.
+[43:12] They actually tie each memory to
+[43:13] citations like to line numbers in the
+[43:16] source code so that they can verify
+[43:17] whether that source code still exists.
+[43:20] So that's a super interesting way of
+[43:22] seeing whether a memory should be
+[43:23] obsoleted. Right? very specific to
+[43:26] coding agent memory but uh especially
+[43:28] repo specific memory but I thought it
+[43:30] was really interesting so definitely
+[43:32] check out that article to see how they
+[43:34] implemented that
 [43:38] okay so uh I see some great questions
 [43:41] about memory let's bring those to office
 [43:43] hours and move on to to knowledge
@@ -1505,11 +1509,12 @@
 [57:44] to make sure that you're adapting
 [57:45] correcting. So here, you know, we're
 [57:47] setting it really low. Oh, so we have to
-[57:49] even set it to 500. Super low. Okay. Um,
-[57:53] so each time when it gets when the agent
-[57:56] is called, each time we call agent with
-[57:59] agent.run, it's going to check. So in
-[58:01] this case, it says, uhoh, token usage
+[57:49] even set it to 500. Super low. Okay.
+[57:52] [laughter]
+[57:52] Um, so each time when it gets when the
+[57:56] agent is called, each time we call agent
+[57:59] with agent.run, it's going to check. So
+[58:01] in this case, it says, uhoh, token usage
 [58:03] exceeds the threshold. We're going to
 [58:05] summarize for history messages. We get
 [58:07] back this summary, and we replace the
