@@ -1,0 +1,998 @@
+[00:00] - Yeah, I guess we spend too
+much time with LLMs, huh?
+[00:02] - I think so.
+[00:03] - (laughs) We should really
+get out and touch grass.
+[00:06] - [Announcer] "The Shift", Agentic Edition
+[00:08] connects the people building AI tools
+[00:11] with those creating agents so
+we can all level up together.
+[00:15] Today we're taking a beat with
+the Microsoft Foundry team,
+[00:18] Allison, Pamela, and Matt,
+[00:21] to talk openly about a
+question we heard from you,
+[00:25] "Is Context Engineering the new RAG?"
+[00:31] - So today we're gonna
+dive into the topic,
+[00:34] what makes an agent knowledgeable?
+[00:37] So when I first think
+of knowledge for agents,
+[00:39] I immediately think of RAG.
+[00:41] However, we're in this
+era of agents everywhere
+[00:46] and I keep hearing that RAG is dead.
+[00:48] So can you tell me what
+RAG is? Is Rag Dead?
+[00:52] - (laughs) Okay, so RAG is
+retrieval augmented generation
+[00:56] and it's definitely not dead,
+[00:58] even though everybody likes to say that.
+[01:00] So idea of RAG is that
+we want LLMs to be able
+[01:04] to accurately answer questions.
+[01:06] So what we do is we go
+off, we look at a question,
+[01:09] we go and then retrieve some information
+[01:11] to answer that question.
+[01:12] And this way the LLM can
+synthesize all that information,
+[01:16] use its ability to have
+really fluent natural language
+[01:19] and give us a great
+answer to the questions.
+[01:22] That way we're getting
+the best of both worlds.
+[01:24] We get great conversational
+fluency, you know,
+[01:28] information synthesis
+[01:29] and we get accurate
+information for our domain.
+[01:33] So that's RAG and then
+there's agents, right?
+[01:35] You're saying like, yeah this
+is like the year of agents.
+[01:37] - Yeah, what's an agent?
+[01:38] - Right, an agent is an LLM
+[01:40] that uses tool calling in a
+loop in order to achieve a goal.
+[01:45] LLM has access to these tools.
+[01:46] It looks at the question says,
+[01:47] "Oh okay, like would these
+tools, I'm gonna call this tool
+[01:50] and this tool and pass these arguments
+[01:51] and that way I can get the answer."
+[01:53] So there we have RAG, we have agents.
+[01:56] So is RAG relevant in the age of agents?
+[02:00] And it's definitely relevant
+[02:01] because you give it a tool
+[02:02] that knows how to fetch
+information from your database.
+[02:04] You give it a tool that
+knows how to fetch stuff
+[02:06] from the web, you give it a tool
+[02:07] that can search your issue tracker,
+[02:08] that's all retrieval, right?
+[02:10] So we are still doing
+RAG like 90% of the time.
+[02:14] - So in the era of agents, RAG isn't dead,
+[02:18] it's just more sophisticated.
+[02:20] - Yeah, I really like what you said
+[02:22] about tool calling, right?
+[02:23] Because now we're graduating beyond chats
+[02:26] and we're actually having our
+LLMs take action in the world.
+[02:30] And that really to me is
+what agents are all about.
+[02:33] And I think the key thing
+about the connection to RAG
+[02:37] is that these agents
+are very smart, right?
+[02:39] We know that LLMs are
+trained on like the internet
+[02:41] and they know a lot of knowledge,
+[02:43] but they don't know a lot
+about your specific task.
+[02:46] And what makes them really
+remarkable is these LLMs,
+[02:48] they have something
+called the context window.
+[02:50] So here is where it
+gets really interesting
+[02:53] is that when you prompt an LLM, right,
+[02:56] you're just writing in a message,
+[02:57] you're putting that message inside
+[02:59] what's called the context window,
+[03:01] which is basically all the
+inputs the LLM can take.
+[03:04] Context is just kind of
+again, any of the information
+[03:08] that the agent is going
+to need to do its job.
+[03:10] And really the hard part
+about building an agent
+[03:14] is about making sure
+[03:16] that you have exactly the right context.
+[03:17] Like previously in the very beginning
+[03:19] they could only be looking
+at what we call tokens,
+[03:21] which are basically just
+fragments of texts and images.
+[03:24] They can only look at a
+couple of them at a time
+[03:26] and they weren't super useful.
+[03:27] But now you probably
+hear there's new models
+[03:29] with millions of tokens
+in the context window.
+[03:31] And even though they have
+that massive context window,
+[03:34] there are still kind of limitations
+[03:36] with the ability to understand it.
+[03:37] So finding that high quality
+context is really important.
+[03:41] Once you have that right mix of knowledge
+[03:43] put in the context window,
+[03:45] that's really when you
+unlock the magic of agents
+[03:47] and they can start being really useful
+[03:49] and be more of a colleague
+[03:51] or a tool for you to do your job.
+[03:53] - But the context can also include
+[03:55] like the conversation history.
+[03:56] It can also include if it's an agent,
+[03:57] like whatever tool calls
+it's done in the past
+[03:59] as part of the history.
+[04:00] And then there's also this, you know,
+[04:04] newer notion of memory.
+[04:05] So then like as I'm having conversations,
+[04:07] it can like make better recommendations,
+[04:09] I can answer questions better
+based off these like facts
+[04:12] that it's learned about us, right?
+[04:14] We're giving it the conversation history,
+[04:15] we're giving it the tool call results.
+[04:17] We're giving it any relevant
+memories that we have
+[04:20] about that person that's
+going to help the LLM
+[04:23] best answer this question.
+[04:25] - Connecting RAG to context,
+[04:28] it seems like context is
+just a new retrieval problem.
+[04:32] - I think context is
+just a newer term, right?
+[04:34] So I think you're using
+the term context more.
+[04:37] You're gonna hear the term
+context engineering a lot more.
+[04:41] - It's interesting how things have evolved
+[04:43] and like a lot of the techniques
+[04:44] and the foundations of prompt
+engineering have really been
+[04:47] the foundation for context engineering.
+[04:48] But at the end of the day,
+[04:50] it's really about the information
+[04:52] you're putting in the prompt.
+[04:53] Am I sending a clear example for the LLM?
+[04:55] Does it understand what
+is it supposed to do?
+[04:57] What is it not supposed to do?
+[04:59] And it's really enabling you
+[05:02] to build a more effective
+agent that can actually go
+[05:05] and do stuff and it's not just a chat bot
+[05:07] that's responding in a funny way.
+[05:08] - When I think of retrieval,
+[05:09] the first thing I think
+about are vector databases
+[05:13] and vector retrieval.
+[05:14] How should I think about vector databases
+[05:18] in this era of context?
+[05:20] Can I just buy a vector database
+[05:22] and that will help me ensure
+[05:24] that I'm getting the
+right context to my LLM?
+[05:28] - So vector databases
+are really, really cool
+[05:30] because they allow us
+[05:32] to do semantic searches for things, right?
+[05:34] So, you know, if I'm
+searching for a purple shirt
+[05:37] I can also get back a mauve shirt
+[05:39] or a Heliotrope shirt or whatever, right?
+[05:42] Like things that are semantically similar
+[05:43] that are not the same words
+[05:45] and users are able to describe
+their things with much,
+[05:49] you know, greater terms.
+[05:50] And I really love it
+[05:51] because also it allows us
+[05:53] to support users coming
+from other languages, right?
+[05:57] Because a lot of our technology
+[05:58] has been very English centric,
+but many of these LLMs
+[06:01] and vector embedding models are trained
+[06:04] with multilingual corpus,
+[06:05] which means that then suddenly
+[06:07] like we can start having people type in
+[06:09] their queries in Spanish
+[06:11] and then they can actually
+get answers, right?
+[06:14] But vector search is not enough
+[06:18] and I've like written blog
+posts with that title.
+[06:21] I give talks about this every month
+[06:23] because developers keep saying like,
+[06:26] "Oh all you need is vector database,"
+[06:27] and it is not true at all.
+[06:29] And I'm begging people to add
+more to their search stack.
+[06:35] So luckily Foundry IQ does have a really
+[06:38] full featured tech stack.
+[06:40] - When Foundry IQ was first created,
+[06:43] it actually kind of began life
+[06:45] as like a pure tech search engine, right?
+[06:46] There's a search bar, there
+might be some check boxes
+[06:48] on the side for like what
+type are you're searching for.
+[06:51] And this was kind of the foundation
+[06:53] of how Foundry IQ really got started.
+[06:56] And anyway, that's still relevant today
+[06:59] because a lot of times if you're searching
+[07:01] for something like how many times
+[07:03] have like gone to like a hardware store
+[07:04] being like I need a screw
+[07:05] and it's a specific length
+[07:07] and if I was semantically
+searching that screw,
+[07:09] I'd find a lot of interesting things
+[07:11] and I like picking through stuff
+[07:12] but I really just want a specific screw.
+[07:16] And that's kind of one of the weaknesses
+[07:18] of semantic based searches
+is that it's not exact.
+[07:20] - Right, actually we do
+that example all the time
+[07:22] with like our sample data
+is a hardware shop, right?
+[07:27] So we're always doing these like searches
+[07:29] like so if I search for a 25-foot hose,
+[07:32] it returns back a 50-foot
+hose and a 75-foot hose
+[07:36] and then like finally like way down there
+[07:37] there's that 25-foot hose
+[07:38] and that's what happens if
+you only use vector search.
+[07:41] - So you're telling me that vector search
+[07:43] is not enough, tech search is not enough.
+[07:45] I need both.
+[07:47] - That's exactly right.
+[07:48] So in Foundry IQ we put them together
+[07:50] using a technique, fancy name,
+[07:52] Reciprocal Rank Fusion.
+[07:54] Really all it is is just merging
+[07:55] two sets of search results together.
+[07:57] So what happens is tech
+search and vector search
+[08:00] kind of fix the weaknesses of each other
+[08:02] and you end up with a really good match
+[08:04] for whatever the query is.
+[08:06] We're not done yet.
+[08:07] So now that I have my kind of
+candidates set of documents,
+[08:11] we found stuff that is
+relevant to the query
+[08:14] but it might not be the best fit.
+[08:15] So the order of the
+list could be adjusted.
+[08:18] So we in Foundry IQ have actually trained
+[08:21] a much smaller model.
+[08:22] And again, fun fact this
+was around way before LLMs,
+[08:25] it's called a re-ranker.
+[08:26] And the core idea behind it
+[08:28] is that it's actually
+reordering the results
+[08:30] based on the actual query being searched.
+[08:32] And this provides a really
+significant boost in quality.
+[08:36] And connecting this back to agents,
+[08:38] when you have re-rank
+hybrid search results,
+[08:41] you're making sure that
+the best fit for the query
+[08:44] that the agent is searching
+[08:45] is ending up in that context window.
+[08:46] Which is so important,
+[08:48] especially because your
+agent is thinking about
+[08:50] so many other things.
+[08:51] - And there is one more
+benefit of the re-rankers.
+[08:53] So the re-ranker assigns a between,
+[08:55] is it zero to four?
+- Yeah.
+[08:57] - Right, so assigns score to zero to four
+[08:59] and it's based off like
+humans that trained it
+[09:01] and humans would look at search results
+[09:03] and they'd look at queries and say,
+[09:04] "Oh I think this is four,
+[09:06] like this is the best
+for this query, right?"
+[09:08] So that's the other nice thing
+[09:09] 'cause vector search and
+keyword search can both find
+[09:12] completely irrelevant results, right?
+[09:13] Like vector search, you know,
+[09:15] you think in vector search
+you search for something
+[09:17] and you're basically like
+[09:17] you're in this multidimensional space.
+[09:19] I always picture like an ice cream cone.
+[09:21] But anyway, you have all these vectors
+[09:22] in multidimensional space
+[09:23] and you have the like the target vector
+[09:25] and you're trying to find
+the vectors close to it
+[09:26] and you get like the 10 closest vectors.
+[09:28] Well it could be like
+the 10th closest vectors
+[09:31] actually like way over here.
+[09:32] But you got it because that
+was a 10th close of vector
+[09:35] just 'cause there's not
+that many similar things
+[09:36] to your question,
+[09:37] if you're asking something
+really weird, right?
+[09:39] And you still got that back, right?
+[09:40] So that's like a noisy
+result for vector search.
+[09:43] And then keyword search can
+also give back noisy results
+[09:46] because like it'll just be
+like, oh I did match that term.
+[09:48] Like for the hardware example,
+if I search for 25-foot hose,
+[09:52] I then get back 25-inch drain snake
+[09:56] and it's like how am I
+gonna use a drain snake
+[09:58] to water my garden, right?
+[10:00] Si it's irrelevant but it matched
+[10:02] because of that 25, right?
+[10:03] So with the re-ranker,
+if we set a threshold
+[10:06] we could just drop it
+if it's not high enough.
+[10:10] - So with context engineering,
+[10:12] the main goal is to provide
+the LLM with the most relevant
+[10:17] and only the most relevant content
+[10:20] for that particular query.
+[10:22] And hybrid search is one
+way to reach that goal
+[10:26] and then you add re-ranking as well,
+[10:29] which will give you only
+better results from that.
+[10:32] - As we kind of evolved Foundry
+IQ for the age of agents
+[10:35] and context engineering,
+we thought like, you know,
+[10:38] "What are all the things you need to do
+[10:40] to build a context engineering pipeline?"
+[10:42] We need to know if we have a query,
+[10:45] how do we get relevant results for it?
+[10:47] How do we even know what to query?
+[10:49] It will select the different
+sources of knowledge
+[10:51] that you need to go look at.
+[10:52] It will fetch from those knowledge sources
+[10:54] using state-of-the-art
+retrieval technology,
+[10:56] it will merge the results together.
+[10:58] It will figure out if it needs to go plan
+[11:00] another round of queries.
+[11:01] And did I find relevant documents
+[11:04] or where they route the documents off base
+[11:07] they need to be removed
+[11:08] because managing that context
+window is so critical.
+[11:11] So it's really a kind of
+multifaceted complex problem.
+[11:14] And the benefit of kind
+of encapsulating it
+[11:17] in a single knowledge base
+[11:18] is that now as you build other agents,
+[11:20] you get to reuse that knowledge base.
+[11:22] So you can avoid reinventing
+the wheel every time
+[11:25] you build a new agent
+[11:26] - And you use an LLM
+for that stitch, right?
+[11:29] The stage where you're trying to decide
+[11:30] whether you need to go
+and do another search,
+[11:33] how do you decide that?
+[11:35] - Yeah, so it's really interesting.
+[11:36] So an LLM definitely plays a role
+[11:38] and this is kind of a trade off
+[11:40] that when developing an agent makes.
+[11:42] So LLMs that are really smart
+aren't particularly fast.
+[11:46] There's a lot of
+techniques that people do.
+[11:48] like maybe they're gonna be
+streaming output from the LLM,
+[11:51] maybe they're going to be like,
+[11:52] "Hey, I'm going to like cache
+something to make it faster."
+[11:55] But for the most part there's
+a lot of additional latency.
+[11:57] So what we decided to do
+[11:59] was we decided to actually use
+a process called distillation
+[12:02] where you take a really large model
+[12:04] and you take some tasks that's performing
+[12:06] and you basically gather a bunch of data
+[12:08] about how it did that task.
+[12:09] And you go and you actually
+take a much smaller LLM,
+[12:13] we call them SLMs, small language models.
+[12:16] And we actually fine tune that SLM
+[12:19] to do almost on par with a larger model.
+[12:22] It is really a remarkable technique
+[12:24] and it allows you to get
+a lot of extra mileage
+[12:27] out of smaller models,
+[12:29] Because we're building a
+content engineering pipeline,
+[12:30] we said, hey, we have a very small model
+[12:33] that looks at the documents,
+looks at the query
+[12:35] and says, "Is this actually
+enough to go answer the query?"
+[12:39] And if it decides, you
+know, I need another pass,
+[12:42] it's going to trigger another
+query planning process
+[12:44] that's taking into account
+the documents we found.
+[12:47] - Even with the full retrieval
+stack, you have hybrid,
+[12:51] you have re-ranking, you
+still only have one shot
+[12:56] to get the most relevant
+information to a query.
+[12:59] But now with knowledge bases
+[13:02] and with Gentech retrieval,
+you're now able to try again
+[13:06] and make sure that you are
+getting the right information
+[13:09] and providing the right
+information in more than one go.
+[13:12] - Yeah, I mean I think at
+the end of the day we realize
+[13:16] that retrieval as it was,
+is very human driven, right?
+[13:20] It's like, I think I know
+what I'm searching for.
+[13:22] I go search, I go find some information,
+[13:25] I'm gonna like look at it
+[13:26] and then I'm going to like,
+do I need to keep searching
+[13:28] and do I change my query
+based on what I found?
+[13:31] And we really tried to
+recreate that experience
+[13:34] as the agentic retrieval product.
+[13:36] - It uses agenetic retrieval
+to deliver the right context
+[13:40] for your agent.
+[13:41] The main thing I hear from customers is,
+[13:43] "Wait, wait, wait,
+wait, agentic retrieval,
+[13:45] I'm still getting used to RAG,
+[13:47] I'm still getting used to
+connecting my data to my agent.
+[13:51] What do I need to do?"
+[13:53] And I also hear,
+[13:56] "I don't even know if my
+agent is performing well.
+[14:00] How do I know that my
+agent is actually giving me
+[14:03] the right answers?"
+[14:04] So can you tell me a little bit
+[14:05] about how we should be evaluating agents
+[14:09] and making sure that
+they're actually doing
+[14:10] what they're supposed to do?
+[14:12] - I'm glad they're asking
+those questions, right?
+[14:14] I would be more concerned if nobody
+[14:16] ever asked you that, right?
+[14:18] So yeah, a lot of times
+when developers are first,
+[14:21] like when they're
+building agents, you know,
+[14:22] they have like their favorite questions
+[14:24] that they send to the agent, right?
+[14:27] LLMs can be convincingly wrong.
+[14:29] The only you like...
+[14:30] Like you have to even
+like have a human expert
+[14:33] that knows the data
+[14:34] that's in that data set that says,
+[14:35] "Yes, that is a correct
+answer for that question."
+[14:38] Or you know, or "That's
+wrong in some way."
+[14:41] - Your agent is performing as it should,
+[14:44] you need to be measuring
+it for groundedness
+[14:47] and for relevance.
+[14:49] And regardless of what
+you do, what tweaks you do
+[14:52] to the agent overall,
+[14:54] you're gonna keep those same
+metrics steady and consistent.
+[14:58] So to be able to see if
+that change did anything
+[15:01] to affect those scores.
+[15:03] - Yeah, that's a great start.
+[15:04] Those are the two most popular metrics
+[15:06] that you'll hear about
+for RAG applications
+[15:08] specifically is
+groundedness and relevance.
+[15:10] So you definitely wanna
+start with those metrics.
+[15:12] What a lot of people
+do is they get started
+[15:14] with those metrics and then
+they start to actually analyze,
+[15:17] you know, production use cases
+[15:19] and see, you know, I have
+a human go through it
+[15:22] that has domain expertise
+and have that human annotate
+[15:25] and say whether they actually
+thought it was correct
+[15:29] and in what way it failed.
+[15:30] Because then you might
+determine your own metric.
+[15:33] And humans tend to score things
+highly if they sound good,
+[15:37] even if they're inaccurate.
+[15:39] So the fascinating thing
+is that you'll see these,
+[15:41] like the RHF metrics,
+[15:42] you'll see that helpfulness,
+the ranking goes up,
+[15:46] but hallucinations also
+goes up at the same time.
+[15:50] And so, you know, LLMs have
+been trained to please us
+[15:54] and humans like to hear
+what we want to hear
+[15:57] and that's, you know, we have
+to counter that sometimes
+[15:59] 'cause, you know,
+[16:00] we want to give people
+accurate information.
+[16:02] So I actually love the
+fact that GPT-5 realizes,
+[16:05] and specifically during their training,
+[16:06] they sacrificed helpfulness
+in favor of accuracy.
+[16:11] And I'm hoping more of the models do that
+[16:13] because I think accuracy
+is increasingly important.
+[16:15] - A really common thing
+you'll see in a lot of
+[16:18] LLM-based applications as
+they'll of like interactive,
+[16:20] clickable links in the
+answers that are generated.
+[16:23] And that really gives
+people the confidence
+[16:26] that this is not made up.
+[16:27] That if I really wanted to, I
+could go, I could read a page
+[16:30] and I could find where the answer is.
+[16:32] - So one I do think is a best practice,
+[16:34] we should provide citations.
+[16:36] We should also assume 99%
+of users are not gonna click
+[16:39] through those citations, right?
+[16:40] We're all too lazy, we're not gonna do it.
+[16:43] So we do like, that's
+why we do really need
+[16:46] to do these evaluations
+to really determine
+[16:49] whether we're giving back good results.
+[16:52] So for the prompt for
+like the RAG application,
+[16:54] what I say there is,
+[16:56] if the sources are not sufficient
+to answer the question,
+[17:01] indicate that you don't
+have sufficient sources.
+[17:04] Say, "I don't have full
+information for these sources."
+[17:07] And you can also indicate
+[17:08] whether you have partial
+sources available.
+[17:10] So it is really helpful to tell it...
+[17:13] If you tell it exactly how
+to handle the situation
+[17:16] of not having complete sources,
+[17:18] then it knows what to do.
+[17:22] - It seems like
+[17:23] there could be a major
+security risk with that.
+[17:25] How do you make sure that every user
+[17:28] is able to use the agent
+[17:30] and based on the information
+that they're allowed access to.
+[17:34] - So the interesting thing here is
+[17:36] if you're an organization
+and you're using like Foundry
+[17:39] and you're using Microsoft products,
+[17:41] chances are you already
+set up your security
+[17:43] through Entra just
+thinking about it as like,
+[17:45] hey, who's a member of my organization?
+[17:47] What role do they have?
+[17:49] Are they a member of like
+some security groups?
+[17:51] Do they have access to specific things?
+[17:53] The great thing about Foundry IQ
+[17:54] is that all that same exact
+access kind of flows through
+[17:58] so that documents are
+actually can able to be marked
+[18:00] with here's the specific
+user who can access it,
+[18:02] here's a specific group
+that can access it.
+[18:04] And we chose to make this
+more of a retrieval problem
+[18:08] and less of an LLM problem
+[18:10] 'cause at the end of the day,
+[18:11] the best way to make security
+a natural part of agents
+[18:15] is to put it at different parts
+[18:18] of where the agent's
+getting information from.
+[18:20] Not at the prompt part
+rather at the retrieval part.
+[18:22] - That shocks me
+[18:23] that anybody even thinks you
+could do it at the prompt part.
+[18:26] Because we've seen that
+you can even find out
+[18:29] like what data the LLM was trained with
+[18:32] by probing it enough.
+[18:34] So how could anyone imagine
+that you could hide anything
+[18:36] in that prompt is crazy to me.
+[18:39] - You know, I think LLMs are very helpful
+[18:42] and you chat with it a little bit
+[18:43] and you don't evaluate it, you
+kind of get a different idea
+[18:48] of its actual capabilities.
+[18:50] - Yeah, I guess we spend too
+much time with LLMs, huh?
+[18:53] - I think so.
+[18:54] - We should really get
+out and touch grass.
+[18:58] - Speaking of grass, MCP.
+[19:00] What is MCP?
+(all laughing)
+[19:04] - Unclear the connection
+there, but great transition.
+[19:07] I mean MCP, it's so big right now.
+[19:12] I actually went to MCP night
+very close to here a month ago.
+[19:17] It was the fanciest
+tech event I'd been to.
+[19:19] So to give a feel for like how big MCP is,
+[19:21] like this MP night was cocktail attire.
+[19:25] I've never been to a tech
+event with cocktail attire.
+[19:27] I had to buy these boots for it
+[19:31] and I had to buy everything.
+[19:33] And I had a lookbook and everything.
+[19:34] I think it was an AI generated lookbook.
+[19:36] But anyway, so MCP is so big
+[19:38] that is warranting fancy
+events, 2000 people,
+[19:42] and they said they're gonna like move
+[19:43] to like the Oracle
+Stadium next or something.
+[19:45] Because of the amount of
+people interested in it, right?
+[19:48] So it stands for model context protocol
+[19:51] and it is a standard protocol,
+[19:54] which is the way that
+we can give more context
+[19:57] to agentic applications.
+[20:00] Okay, that's like a mouthful.
+[20:01] So it came out from
+Anthropic's Claude Code first,
+[20:05] which is that they wanted a way
+[20:07] that people using Claude
+Code could bring in
+[20:09] more functionality
+[20:10] in order to make Claude
+Code more powerful.
+[20:12] And then once you have an MCP
+server, since it's a standard,
+[20:16] then like once that MCP server
+is working in GitHub Copilot,
+[20:20] then you can also bring it into anything
+[20:22] that understands MCP, like all
+the agent frameworks, right?
+[20:26] Like, you know, LangChain
+or foundry agents, right?
+[20:30] They all understand MCP as well.
+[20:32] So then becomes this way
+that like just a common way
+[20:35] of exposing like an API surface.
+[20:38] - Okay?
+- So that any source
+[20:41] of agentic applications
+can use the same tools
+[20:45] and be able to be more powerful for,
+[20:49] you know, different workflows.
+[20:49] So yeah, it's really big
+[20:52] and it's pretty exciting.
+[20:55] So as a developer, you know,
+[20:57] you might start thinking
+about when you're building
+[20:59] an application, does it have
+[21:01] to be an actual user facing application
+[21:03] or could you just build
+an MCP server, right?
+[21:06] Like it could you just
+expose this, you know,
+[21:11] this information via an
+MCP server, you know,
+[21:13] in the future maybe you'll
+write your MCP servers
+[21:16] before you write your front end.
+[21:19] - So going back to the original,
+what's an agent, right?
+[21:21] It's being able to use tools,
+take action in the world.
+[21:24] And to me MCP is really all about
+[21:27] where are those tools located?
+[21:28] Are they running right alongside the LLM
+[21:30] or are they somewhere else?
+[21:32] Hey, you know, I go to
+bing.com, I go to microsoft.com,
+[21:35] I'm accessing a resource over the web.
+[21:38] Agents can now do the same thing
+[21:39] and then be able to have
+their capabilities enhanced.
+[21:42] So when I think about the
+exciting thing about MCP
+[21:45] and what does that mean for
+context engineering, right?
+[21:48] So you can add that capability
+to any agent can now use
+[21:51] that content engineering pipeline.
+[21:53] And we're also working on adding other CPS
+[21:57] as knowledge sources to Foundry IQ.
+[21:59] So it goes both ways.
+[22:00] You can reach out to other things
+[22:02] that we never thought of
+when we built on Foundry IQ.
+[22:04] It's like maybe you want
+to do context engineering
+[22:07] and you're using another platform like,
+[22:09] "Hey, I want to use something with Jira,
+[22:11] I want to go to Wikipedia."
+[22:13] And you can basically just
+plug in new integrations
+[22:16] that because we have an LLM mediating
+[22:18] all these interactions,
+it can just figure it out.
+[22:21] And that to me is really exciting.
+[22:22] - So it's just MCP all the way down now.
+[22:25] - Yeah, I mean I think MCP is like,
+[22:27] the great thing about it
+is it's like the USBC of AI
+[22:31] because it is one plug
+that you can put anywhere
+[22:34] and it just kind of gets extended.
+[22:36] - I saw this really interesting talk
+[22:38] from a frontend engineer
+[22:40] and he's thinking about really interesting
+[22:42] 'cause he's trying to figure out
+[22:44] what is frontend
+engineering in the future.
+[22:46] And he thinks that frontend engineering
+[22:50] kind of might go away the
+traditional way we think of it.
+[22:52] 'cause right now we think, oh,
+we want to provide a service,
+[22:54] we're gonna build a website
+[22:55] and that website's gonna, you know,
+[22:57] have like a navigation menu.
+[22:59] But he's thinking in the future, you know,
+[23:01] we might be building MP servers first
+[23:03] when we provide a service.
+[23:05] And then you go to, you
+know, your favorite agent.
+[23:09] You say like, "Oh, I wanna book a ticket
+[23:11] and that's gonna use like
+the ticketing MCP server.
+[23:15] And then you never have
+to visit a website.
+[23:17] So you could still have a
+little bit of visual, right?
+[23:19] You need a map. Okay, here
+you go, here's a map, right?
+[23:21] So you still can have visuals,
+[23:23] it doesn't all have to be text.
+[23:24] You wanna see like the picture...
+[23:25] Like you say, "Oh I wanna like search
+[23:26] for cool purple shirts
+for this podcast, right?"
+[23:29] You can still like see those images there,
+[23:31] but you're interacting
+entirely over chat with this,
+[23:36] you know, shopping server over MCP.
+[23:38] So that's a potential future
+version of the web, which...
+[23:43] - So maybe RAGs not dead, the
+web interface might be dead.
+[23:47] - The web is dead.
+[23:47] Yeah, the web is dead, but you know...
+[23:49] - Web is dead.
+(all laughing)
+[23:51] - So you're gonna have to
+throw some cold water here.
+[23:54] Human verification is never
+gonna go out of style.
+[23:57] And when you build an
+agenda application, yes,
+[24:01] think about what to build first.
+[24:02] But having an interface where
+humans can at least check
+[24:05] and correct agent work, I
+think is really important.
+[24:08] - Well I would, I think I agree
+[24:10] because Copilot, they're
+all user facing interfaces
+[24:14] and they do keep a human in the loop.
+[24:16] It's just a different interface
+[24:18] for the human being in the loop.
+[24:19] How do we present
+different results to users?
+[24:23] Like Andrej Karpathy gave a
+great talk where he said like,
+[24:25] "Every interface needs a way
+of showing a diff, right?"
+[24:29] When we're doing code,
+[24:30] we see like when the agentic
+coding tool makes a change,
+[24:34] we can see the diff right?
+[24:36] Imagine that for everything,
+everything needs a way
+[24:38] of showing you the diff so
+that you can confirm or accept
+[24:42] or iterate, right?
+[24:43] So if you are using the, you
+know, you're using the agent
+[24:47] to create a PowerPoint presentation,
+[24:51] you ask the agent to
+make a bunch of changes
+[24:53] in a PowerPoint presentation.
+[24:55] What is the diff?
+[24:56] How do you visualize what changed
+[24:58] in that PowerPoint presentation
+[24:59] so that you can have confidence
+[25:00] that you liked what the agent did?
+[25:03] - Yeah, I mean I think it's up
+to all the builders out there
+[25:06] to make these kind of tough decisions.
+[25:08] And we're really excited,
+I think about the ability
+[25:11] to give agents better context
+so that they can do the work,
+[25:15] but there's a lot of open
+problems still to be solved.
+[25:18] - Yeah. I think if we
+can find really good ways
+[25:20] of keeping humans in the loop
+[25:22] and empowering them enough of information
+[25:24] to figure out whether
+they liked what happened.
+[25:27] People are working in so
+many different domains
+[25:30] and they come to us
+[25:31] with like the most fascinating documents.
+[25:33] They're like, okay,
+we've got this Excel file
+[25:35] and it's like semi-structured
+[25:36] and there's like diagrams of
+weird tables of there, da da.
+[25:38] How do we ingest this? Like
+that is a really good question.
+[25:42] Here's some ideas of how I
+might start off with that.
+[25:44] But you're really gonna
+have to experiment with that
+[25:46] and then do evaluations, right?
+[25:49] So I think like the high level is
+[25:52] you're gonna do some content engineering,
+[25:54] you wanna put some, you
+know, rigor into that.
+[25:56] You want to figure out
+what's going to really work
+[25:59] for your domain and see how
+you're going to evaluate that.
+[26:03] And we've got a lot of really
+great retrieval techniques.
+[26:06] We've also got a lot of great
+data ingestion techniques
+[26:09] that you can use for
+more complicated data.
+[26:12] And you know, you're
+gonna play around those
+[26:15] and see how you get best results.
+[26:17] And it's really fascinating.
+[26:19] Like it's a really fun space to work in
+[26:21] 'cause you kind of start to understand
+[26:23] like both how powerful these models are
+[26:26] and that they have these like
+[26:27] really interesting limitations, right?
+[26:29] You always talk about the jagged edge.
+[26:31] - Yeah, you know, when
+we talk about models
+[26:33] and we talk about how smart they are,
+[26:35] like it's really impressive how they can,
+[26:37] like, they can get a 1600 on the SAT,
+[26:39] they're the smartest person around.
+[26:40] - I also got a 1600 on the SAT.
+[26:42] I feel the need to mention that.
+[26:44] - Are you serious?
+- You could be an LLM
+[26:46] - That's amazing.
+- I'm very good
+[26:46] at pattern recognition.
+- That's amazing.
+[26:49] (all laughing)
+[26:50] - So when you talk about
+model intelligence,
+[26:53] you talk about a model
+that scores really well
+[26:54] on any standardized
+test, not just the SAT,
+[26:57] but also doesn't necessarily know
+[26:59] how many letters are in
+a word like strawberry.
+[27:01] And I think the builders
+who are figuring out
+[27:05] how to really get the most
+outta these models are the ones
+[27:07] who are like, "Okay, where
+are the strategies that work?
+[27:10] And how can context engineering
+really help me overcome
+[27:14] the model's limitations and
+let me get useful work done?"
+[27:19] - [Announcer] Thanks
+for hanging out with us.
+[27:21] Check out the link below
+[27:22] to get the latest Microsoft Foundry ebook.
+[27:25] See you next time.
+[27:26] (upbeat jazz music)

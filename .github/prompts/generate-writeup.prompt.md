@@ -155,8 +155,8 @@ Answer text here...
 ```
 
 WRITING GUIDELINES:
-1. Write in direct expository style. State facts and explanations directly.
-2. Never narrate what speakers said or did. No "The speaker explains..." or "Matt shows..."
+1. Write like speaker notes: state the actual information and explain how things work. Do NOT describe or analyze the talk from the outside.
+2. Never narrate what speakers, slides, or the talk itself did. Forbidden patterns include "The speaker explains...", "This slide shows...", "The talk demonstrates...", "This section marks the shift to...", "The diagram illustrates...". Instead, just state the content directly.
 3. Make every sentence information-dense without repetition.
 4. Provide enough detail per slide that a reader does not need to watch the video.
 5. Capture supplementary information from the talk that is NOT visible on the slides.

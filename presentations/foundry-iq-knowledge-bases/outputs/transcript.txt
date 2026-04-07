@@ -1,0 +1,889 @@
+[00:05] In the previous episodes, we looked at
+[00:06] how Foundry IQ brings knowledge together
+[00:09] from many different systems and prepares
+[00:11] it for agent use.
+[00:13] When an agent asks a question, Foundry
+[00:15] IQ finds and retrieves the right
+[00:17] knowledge automatically. It coordinates
+[00:19] retrieval across multiple sources, and
+[00:22] it assembles the relevant context and
+[00:24] presents it through a single consistent
+[00:27] interface.
+[00:28] That orchestration is handled by the
+[00:30] platform itself, rather than requiring
+[00:32] you to write custom integration code.
+[00:35] The result is a much simpler model for
+[00:38] agents. One endpoint, one way to access
+[00:40] across knowledge. This is the role of
+[00:43] knowledge bases in Foundry IQ.
+[00:45] In this final episode, you'll see how
+[00:47] knowledge bases unify multiple knowledge
+[00:49] sources behind a single endpoint. And
+[00:52] you're also going to see how queries
+[00:54] across multiple sources work in
+[00:56] practice, and how knowledge bases
+[00:58] simplify building scalable
+[01:01] production-grade agent experiences.
+[01:03] To walk through this end to end, I'll
+[01:05] hand it over to Pamela and Matt. Hi
+[01:07] everyone. Welcome to the IQ series. I'm
+[01:10] Pamela from Developer Advocacy at
+[01:12] Microsoft, and I'm joined by Matt from
+[01:15] the Foundry IQ team.
+[01:17] In the previous session, Gio walked us
+[01:19] through knowledge sources, which is the
+[01:21] way that content can enter Foundry IQ.
+[01:25] It could come from OneLake, Azure Blob
+[01:27] Storage, SharePoint, the web, lots of
+[01:30] places.
+[01:31] Now, today we're going to build on that
+[01:33] foundation to see how we can handle
+[01:36] doing retrieval across multiple sources.
+[01:39] And specifically, we're going to be
+[01:40] using knowledge bases to do that agentic
+[01:43] retrieval.
+[01:45] Thanks so much, Pamela.
+[01:47] If you watched that talk with Gia, you
+[01:49] know that knowledge sources are about
+[01:51] making your existing knowledge available
+[01:53] to agents.
+[01:54] In real applications, users will ask
+[01:57] complex questions that span multiple
+[01:58] sources, and they expect comprehensive
+[02:01] answers. Knowledge bases are designed to
+[02:03] exactly handle this problem.
+[02:06] In today's session, we'll start with
+[02:07] what a knowledge base actually is, and
+[02:09] why you'd use one instead of querying
+[02:11] individual sources. Then, we'll cover
+[02:13] retrieval reasoning effort, because
+[02:15] sometimes you want results fast and
+[02:17] cheap, and other times you need the most
+[02:19] comprehensive retrieval possible. And
+[02:21] we'll get to see it all in action in the
+[02:22] demo.
+[02:24] All right, let's get into it.
+[02:27] So, what exactly is a knowledge base?
+[02:30] Think of it as a single endpoint that
+[02:31] sits in front of multiple data sources.
+[02:34] When you're building an agent or a rag
+[02:35] application, you often need to search
+[02:37] across different repositories. Maybe
+[02:39] you've got product data in a search
+[02:41] index, company policies in SharePoint,
+[02:44] and you want to supplement that
+[02:45] information
+[02:46] with real-time updates from the web.
+[02:49] Now, question we get all the time from
+[02:51] developers,
+[02:53] how do I query multiple sources
+[02:54] information at the same time?
+[02:56] If you're going to do this yourself,
+[02:58] developers will end up writing a lot of
+[03:00] orchestration code, deciding which
+[03:02] sources are relevant for a given
+[03:03] question, calling each source in
+[03:05] parallel, merging results, handling
+[03:07] failures.
+[03:08] It's absolutely doable, but it will get
+[03:10] complex very quickly.
+[03:12] So, this is the problem that knowledge
+[03:14] bases are solving. We will handle all
+[03:16] the orchestration for you as part of
+[03:18] Foundry IQ.
+[03:19] We have three core components that will
+[03:21] work together.
+[03:23] This component is query planning. When a
+[03:25] conversation comes in,
+[03:27] it could be complex. It could have
+[03:28] multiple parts. So, the knowledge base
+[03:31] is going to use an LLM to analyze that
+[03:33] conversation and break it down into
+[03:35] focused subqueries.
+[03:37] Good example is somebody asks, "Hey,
+[03:39] what Zava paint is best for bathrooms,
+[03:42] and how much does it cost?"
+[03:43] There's really two separate information
+[03:45] needs in that question.
+[03:47] We need to find out which Zava paints
+[03:48] are best for the bathroom, and then how
+[03:50] much does that particular paint cost.
+[03:52] Now, each subquery is going to target
+[03:54] the exact information need here. Best
+[03:56] paint for bathrooms is going to hit the
+[03:57] product specifications. How much does it
+[03:59] cost hits the pricing data, which are
+[04:01] potentially in different sources of
+[04:03] knowledge.
+[04:04] Now, this is the second component,
+[04:06] knowledge sources.
+[04:07] All the data repositories your agent has
+[04:09] access to, search indexes, OneLake,
+[04:12] SharePoint, Bing.
+[04:13] When a knowledge base issues these
+[04:15] subqueries, they're going to fan out and
+[04:17] hit these different sources in parallel.
+[04:19] It's not waiting for them sequentially.
+[04:21] This means developers are not paying
+[04:23] latency penalty for searching multiple
+[04:24] sources. Your query is only as slow as
+[04:27] the slowest knowledge source.
+[04:30] When we search, we use a full hybrid
+[04:32] search, which is a very powerful search
+[04:34] mechanism on its own, and one of the
+[04:36] reasons I personally love Foundry IQ
+[04:38] retrieval.
+[04:39] Hybrid search is how we combine vector
+[04:42] and keyword search in parallel using the
+[04:44] most powerful algorithms for each task,
+[04:46] like hierarchical navigable small worlds
+[04:48] and BM25.
+[04:50] The hybrid search stack gives you the
+[04:52] best retrieval quality, and that's why I
+[04:53] always encourage developers to use it,
+[04:55] especially when your knowledge sources
+[04:57] contain messy unstructured data like
+[04:59] PDFs.
+[05:01] Once we have results from all the
+[05:02] sources, the third component brings it
+[05:04] all together, output merging.
+[05:06] All the results go through semantic
+[05:08] reranking to find the most relevant
+[05:10] matches. They get merged into a single
+[05:12] results list, and you get back three
+[05:13] things. The merged content for
+[05:15] grounding, source references for
+[05:17] citations, and an activity log that
+[05:19] shows exactly what happened during
+[05:20] retrieval.
+[05:23] Yeah, I actually I love that activity
+[05:24] log. It's one of my favorite things, cuz
+[05:26] it just makes it a lot easier to debug
+[05:29] your retrieval both, you know, with
+[05:31] local development and when your agents
+[05:33] are in production and you're you're
+[05:35] getting actual user queries, that
+[05:36] activity log shows you everything that
+[05:38] happened, uh so you can really
+[05:40] understand what the issues are and
+[05:42] improve them. And we'll see the activity
+[05:43] log later in the demos, and you'll see
+[05:45] how great it is.
+[05:48] So, now let's talk about knowledge
+[05:50] sources.
+[05:52] Yes, let's take a little bit of deeper
+[05:54] look at knowledge sources.
+[05:56] There are two main categories, indexed
+[05:58] and remote.
+[05:59] Indexed knowledge sources are ones where
+[06:01] we actually copy the data into Foundry
+[06:03] IQ.
+[06:04] You might have PDFs in a blob container,
+[06:06] files in a OneLake lakehouse, or
+[06:08] documents in SharePoint.
+[06:10] We are going to pull those files, chunk
+[06:12] them, which means basically slicing into
+[06:15] smaller bits that are easier to retrieve
+[06:17] using vector and text retrieval.
+[06:19] We're going to actually take those text
+[06:20] chunks, and we're going to convert them
+[06:22] into vector embeddings so they're
+[06:23] searchable with vector search. And then
+[06:25] we're going to store them in a search
+[06:27] index so that we can actually do that
+[06:29] hybrid search I talked about with the
+[06:31] extra reranking step where we're going
+[06:33] to find the most relevant chunks to your
+[06:35] query and then put them in the right
+[06:37] order. So, when you do an LLM
+[06:40] reasoning over those chunks, it's going
+[06:42] to see the most relevant information
+[06:43] first.
+[06:44] Now, that's indexed knowledge sources.
+[06:47] That means that we've actually made this
+[06:48] copy of the data inside the search
+[06:50] index. Remote knowledge sources are
+[06:52] going to work a bit differently. We're
+[06:54] going to query them directly runtime
+[06:55] without copying the data. A great
+[06:57] example of this is Bing.
+[07:00] If your agent needs real-time web
+[07:01] information, we're actually going to
+[07:03] call Bing's API and bring those results
+[07:06] in to um merge them with the other
+[07:08] knowledge source results.
+[07:10] Now, SharePoint is interesting because
+[07:12] we have offered SharePoint both ways.
+[07:14] You can either index it in a search
+[07:16] index for hybrid search, or you can
+[07:18] query it directly through the same
+[07:20] indexes that Copilot uses using the end
+[07:23] user's identity to ensure that you have
+[07:25] the same exact access control that you
+[07:27] would have in your regular SharePoint
+[07:29] applications.
+[07:31] Once you have multiple sources hooked up
+[07:33] to your knowledge base, you don't want
+[07:35] every query hitting every source. That
+[07:37] can be wasteful and potentially add a
+[07:39] lot of noise to your results.
+[07:41] When we do query planning using the LLM,
+[07:44] there's a couple ways that you're
+[07:45] actually going to influence this source
+[07:47] selection step. That is specifically,
+[07:49] how do I know which knowledge sources
+[07:52] queried by agentic retrieval?
+[07:54] First, the name and description of each
+[07:56] knowledge source matters a lot. If you
+[07:58] name one HR policies and describe it as
+[08:01] containing employee handbook
+[08:02] information, that means that the query
+[08:04] planning LLM is going to understand
+[08:06] exactly when to use it.
+[08:07] You can also provide retrieval
+[08:09] instructions, which work like extra
+[08:11] prompts to guide source selection.
+[08:13] Plus, you can always override and say,
+[08:15] "I always want to query this source." in
+[08:17] case you want it searched on every
+[08:18] request. Let's go over to Pamela for a
+[08:20] demo.
+[08:22] All right. So, what you can see is that
+[08:25] I have Foundry IQ set up, and we've
+[08:29] actually set up a few different
+[08:31] knowledge bases here, um but the one
+[08:33] that's the most exciting is this one
+[08:35] that has three knowledge sources
+[08:37] attached to it. So, let's go and check
+[08:40] out that knowledge base particularly.
+[08:43] And what you can see here is it shows
+[08:45] the three knowledge sources, and we can
+[08:47] actually click through and get more
+[08:48] information about each of them. So, the
+[08:49] first one
+[08:51] is a search index, and it has a
+[08:54] description that says it is a search
+[08:56] index containing PDFs describing Zava
+[08:58] products and prices. Zava is a fictional
+[09:01] hardware store, like a home improvement
+[09:03] store. And so, this search index was
+[09:05] indexed from a blob storage account, and
+[09:07] that blob storage account has all these
+[09:09] PDFs, like one per product, right?
+[09:12] And you can check out some additional
+[09:14] things we can customize about the search
+[09:15] index if we want to.
+[09:18] Then, the next one is a SharePoint. So,
+[09:21] this is an internal SharePoint website,
+[09:24] and in the description we say, "Oh, it
+[09:25] has Zava company overview documents and
+[09:27] Zava tutorials on common home
+[09:29] improvement processes." And for this
+[09:31] one, if we wanted to, we could use a
+[09:32] filter expression to narrow down, you
+[09:34] know, which part uh which parts of the
+[09:36] SharePoint site we want to index. Here,
+[09:38] we're indexing uh all of that particular
+[09:40] SharePoint site.
+[09:42] And then finally, we have the web
+[09:43] source. This is Bing web. And for that
+[09:45] description, this is a standard
+[09:47] description we use to describe all the,
+[09:49] you know, reasons that you might want to
+[09:51] search the web, right? Whenever you're
+[09:53] you know, needing to get up-to-date
+[09:54] information that is not inside the other
+[09:56] sources, right? So, there you can see
+[09:58] we've got a knowledge base, we've got
+[10:00] knowledge sources, each of them have a
+[10:01] description, and we probably also should
+[10:04] do, you know, describe this knowledge
+[10:05] base overall, like, you know, Zava,
+[10:08] uh Zava hardware store, you know,
+[10:11] documents and information, right?
+[10:14] Uh any all of this information helps to
+[10:17] give the agentic retrieval process more
+[10:20] information to do a good job.
+[10:24] So, now we'll talk uh let's talk more
+[10:26] about that agentic retrieval process,
+[10:28] specifically around reasoning effort.
+[10:33] Thanks so much for that demo.
+[10:35] So, when we set up knowledge bases, um
+[10:38] one of the first questions developers
+[10:40] will ask themselves is how do I know how
+[10:43] long a query is going to take? How do I
+[10:45] know how much it's going to cost? How
+[10:48] can I be more confident I'm going to get
+[10:49] quality results?
+[10:51] Um this configuration uh we provide to
+[10:55] you in the form of what we call
+[10:55] retrieval reasoning effort. It's a
+[10:57] single property that's going to control
+[10:59] exactly how much LLM processing is going
+[11:01] to happen during retrieval. We're going
+[11:03] to offer three levels: minimal, low, and
+[11:06] medium.
+[11:07] Let's start with minimal.
+[11:09] So, this is the fastest and cheapest
+[11:11] option because it does not use an LLM
+[11:14] much at all during the retrieval
+[11:15] process. This level it does it makes
+[11:18] sense for agent architectures where the
+[11:20] outer agent that's actually invoking the
+[11:22] agentic retrieval is already doing
+[11:24] reasoning.
+[11:25] Uh if you're using an LLM to kind of
+[11:27] think about, hey, what's the final
+[11:29] answer I'm presenting to a user, how do
+[11:30] I understand the conversation, you don't
+[11:32] necessarily need us to do the query
+[11:34] planning or answer synthesis for you.
+[11:37] So, when you use minimal effort, you're
+[11:40] actually going to provide us what we
+[11:41] call search intents, which are basically
+[11:43] queries, directly. The agent has already
+[11:46] figured out what it wants to search for.
+[11:48] Maybe it sent its own query planning, or
+[11:49] maybe you're accepting queries directly
+[11:51] from a user in a search box. You can
+[11:53] provide those directly to the knowledge
+[11:55] base, and each one of those queries gets
+[11:57] sent to every knowledge source, the
+[11:59] results are merged back together, and
+[12:00] you're going to get back your grounding
+[12:02] data fast. You're effectively using your
+[12:04] knowledge base as unified search layer.
+[12:06] You can fan out to the sources, merge,
+[12:08] re-rank, but your agent owns the query
+[12:11] strategy. Let's go do a demo with Amela.
+[12:15] All right.
+[12:17] So, here we have the sample application.
+[12:20] It's an open-source application that uh
+[12:22] is configured to use knowledge bases,
+[12:24] and it's actually an application that
+[12:25] you could deploy yourself.
+[12:27] And here I am pointing it at this, you
+[12:30] know, the same knowledge base I just
+[12:31] showed that has the multiple knowledge
+[12:33] sources. And I'm using minimal mode, uh
+[12:37] so that this application is actually
+[12:38] using its own LLM to do the query
+[12:40] planning. So, here I ask, what is the
+[12:43] best Zava paint for bathroom walls, and
+[12:45] we get back a good response. It says the
+[12:47] best one is the semi-gloss paint, uh
+[12:50] because it's moisture resistant, and we
+[12:52] see some nice references here to
+[12:55] products and in blog posts.
+[12:57] So, this great. We got an answer
+[12:59] grounded in our own data with citations,
+[13:02] right? That is what we want to see. Now,
+[13:05] in this application, we can see that
+[13:07] activity log that I talked about earlier
+[13:09] that's so great. So, I'll click on this
+[13:11] thought process here, and the first
+[13:14] thing we see is actually the
+[13:15] application's query planning step,
+[13:17] right? Cuz this is an example of
+[13:18] application that has its own query
+[13:20] planning step that's doing, you know,
+[13:22] deciding on the intents to send. And so,
+[13:25] the application decided to turn this
+[13:27] question into best Zava paint for
+[13:31] bathroom walls. Uh so, it turned it into
+[13:33] a single query, and then the knowledge
+[13:36] base took that query and sent it to all
+[13:38] of the sources. Uh so, in this case it
+[13:40] sent it to the index search and to the
+[13:42] SharePoint search. Uh I actually did not
+[13:43] enable the web for this one. So, it sent
+[13:46] it to all the search all the sources and
+[13:48] gets back the results across uh across
+[13:51] both the index and SharePoint, and then
+[13:53] it uses the semantic ranking model in
+[13:56] order to merge those results together in
+[14:00] this agentic reasoning step. And then
+[14:02] finally, it can take those results and
+[14:04] send them to the application, and then
+[14:06] the application uses its own LLM to come
+[14:10] up with the answer. Uh so, as you can
+[14:11] see, you know, with this minimal effort
+[14:14] mode, you know, there's not that many
+[14:16] steps, but we still get the unified
+[14:18] search layer, so that we're able to run
+[14:20] searches in parallel across multiple
+[14:23] sources, and that on its own is quite
+[14:25] powerful.
+[14:27] And um
+[14:29] and yeah, so we're, you know, we're we
+[14:31] think that this is a a good fit if you
+[14:33] have uh if you have your own outer agent
+[14:36] that is doing its own reasoning. Another
+[14:39] example of this is Microsoft Foundry
+[14:43] Agents. Uh so, here I'm back in Foundry,
+[14:46] and this is an agent here, and I've
+[14:50] configured this agent to point at a
+[14:53] knowledge base that has the Zava
+[14:54] information, and I've asked this
+[14:56] question, does Zava have products for
+[14:58] patching walls and then painting them
+[15:00] after? So, the Foundry agent, which has
+[15:03] its own LLM, took this question and
+[15:05] decomposed it into two intents. Uh so,
+[15:08] one about patching and painting, one
+[15:09] about wall repair,
+[15:11] and then sent them to the knowledge the
+[15:14] connected knowledge base. And then the
+[15:17] knowledge base took these two questions,
+[15:19] sent them to, you know, the search index
+[15:22] and the SharePoint, so uh sent all of
+[15:24] those in parallel, and got back all the
+[15:27] results, and sent those to the Foundry
+[15:29] agent, and then the Foundry agent looked
+[15:31] at the results and it came up with this
+[15:33] nice answer here.
+[15:35] So, here you can see two examples of how
+[15:39] we can use that minimal mode
+[15:41] and use it with existing agents and
+[15:43] existing applications so that we can
+[15:46] still have a multi-source query, but use
+[15:49] those uh you know, the LLMs in the
+[15:51] existing agents in order to do the query
+[15:55] decomposition.
+[15:56] So, that is minimal. Now, let's go over
+[15:59] to Matt to talk about low effort.
+[16:03] Thanks for a great demo. So, um we think
+[16:07] minimal is really great again in all
+[16:09] those scenarios, um but low effort is
+[16:12] really where a lot of the
+[16:14] characteristics we're talking about in
+[16:16] agentic retrieval kind of start to
+[16:17] emerge. Um this is where you kind of opt
+[16:20] in to using an LLM for query planning,
+[16:22] and you're actually giving agentic
+[16:24] retrieval a full conversation so that it
+[16:27] can actually generate these focused
+[16:28] subqueries during the query planning
+[16:30] process. It's also going to select which
+[16:33] knowledge sources are most relevant for
+[16:35] those subqueries. So, if you're asking,
+[16:37] for example, about product prices, maybe
+[16:40] it doesn't need to search over all the
+[16:41] HR policies. Let's go check out another
+[16:44] version of that demo using low effort.
+[16:47] All right.
+[16:49] So, here we have that same application,
+[16:52] and this one is configured to use low
+[16:55] effort instead, and I have a question
+[16:59] here, does Zava have exterior paint and
+[17:01] how much does it cost? So, we get back
+[17:03] an answer, we get back the price, and we
+[17:05] can see that it links to these product
+[17:09] descriptions here. And it got these from
+[17:11] the index based off the blob storage.
+[17:14] So, now, let's look at that activity
+[17:15] log. Here in the activity log, you can
+[17:18] see that we are using the query planning
+[17:20] from the knowledge base itself, and we
+[17:22] can see that that's the very first step
+[17:24] of the knowledge base is to do that
+[17:26] query planning. It uses about 1,600
+[17:29] tokens to do that query planning to
+[17:31] decide on how it's going to break down
+[17:33] this query, and it turns that query into
+[17:36] two queries: Zava exterior paint
+[17:38] availability and Zava exterior paint
+[17:40] cost. So, it takes those two queries and
+[17:43] then also decides which sources it's
+[17:45] going to send it to. And in this case,
+[17:47] it decided to only send those queries to
+[17:50] the search index. It looked at the
+[17:52] descriptions of each of the sources and
+[17:54] said like, "Well, I don't think I have
+[17:56] to search the web for this one, and I
+[17:58] don't think I have to search SharePoint
+[17:59] for this one. I think I can get all the
+[18:01] information I need from that uh just the
+[18:04] index." And it was right because that
+[18:05] index description says like, "Oh, it has
+[18:07] all the products, you know, descriptions
+[18:09] and prices. It's all it needs." So, it
+[18:11] does those two queries in parallel just
+[18:14] to the search index, gets back the
+[18:15] results,
+[18:16] uses the semantic ranking model in order
+[18:19] to merge those results together in this
+[18:21] final step here, and then sends back the
+[18:24] merged results to the application, and
+[18:27] in this case, the application uses its
+[18:29] own LLM in order to generate an answer
+[18:32] with the citations from the results.
+[18:36] So, low mode is a really nice mode to
+[18:38] use because you get, you know, you get
+[18:41] this query planning built in. You don't
+[18:42] have to build it yourself in your
+[18:43] application.
+[18:45] Um many developers might forget to do
+[18:46] that, so you get that built in, and it's
+[18:49] going to use best practices there. You
+[18:50] get the source selection, so you save
+[18:52] money, right? Like, why search the web
+[18:54] if you don't need to? Why search your
+[18:56] SharePoint if you don't need to, right?
+[18:57] So, you're, you know, you're you've got
+[18:59] that, you know, smart query planning and
+[19:01] source selection, and that's, you know,
+[19:02] a really nice feature to have.
+[19:05] Now, it can get fancier, so let's have
+[19:08] Matt talk about medium effort.
+[19:13] Yeah, absolutely. So, we have our kind
+[19:16] of final effort level available today,
+[19:17] medium, which offers the most
+[19:19] comprehensive results out of agentic
+[19:21] retrieval. And the key feature and
+[19:24] difference, why is this better than low,
+[19:27] is iterative retrieval. So, instead of
+[19:29] just doing a single pass over some
+[19:31] knowledge sources and here's what I
+[19:33] found, it's actually going to realize,
+[19:35] hey, I need to dig deeper, I need to
+[19:37] perform an additional iteration.
+[19:40] And the way we do this is super
+[19:41] interesting because we will do a first
+[19:44] search very similar to low, we'll go
+[19:45] through the query planning process,
+[19:47] we'll go through the knowledge source
+[19:48] selection process, and then we're going
+[19:50] to evaluate the results.
+[19:52] We actually have a uh much
+[19:55] special model called we call it semantic
+[19:57] classifier that's going to look at the
+[19:59] results of these searches and ask two
+[20:01] questions.
+[20:02] Is there enough information to answer
+[20:04] the underlying information need?
+[20:06] Remember that when we decompose the
+[20:08] conversation, we look at the actual
+[20:10] information needed to generate sub
+[20:11] queries. Are we actually solving those
+[20:14] sub queries with the documents we found?
+[20:16] And did we find at least one of those
+[20:18] documents is actually highly relevant?
+[20:21] If we don't think either of those things
+[20:23] are true, we're going to go back and say
+[20:25] take the documents we found, take the
+[20:27] queries that we generated, now go do
+[20:29] query planning again taking that into
+[20:31] account. So, this is really similar to
+[20:34] how if you were to research a problem
+[20:35] yourself, it would work, right? Because
+[20:37] imagine it's like, "Hey, I'm going to go
+[20:38] search. I'm going to go to Bing. I'm
+[20:40] going to see some results. I'm going to
+[20:41] click on the first thing I find. I'm
+[20:43] going to read it and realize, oh,
+[20:45] I actually misunderstood something. I'm
+[20:47] going to do a second query that's more
+[20:49] informed by the first thing I found."
+[20:51] So, the second iteration, just just like
+[20:53] a human researcher, it does a better job
+[20:55] the second time around. That second
+[20:57] iteration is going to benefit from what
+[20:59] was found in the first iteration to do a
+[21:01] better job. It knows what it found. It
+[21:03] knows what it's missing, so it
+[21:04] understands how to refine queries in a
+[21:07] targeted way. So, let's go see a demo
+[21:09] with Amala about how this actually
+[21:10] works.
+[21:12] All right.
+[21:15] Back over to the demo.
+[21:17] This time we have our most complex
+[21:18] question. Uh this one says, "Explain how
+[21:21] to paint my house most efficiently. Then
+[21:25] give me a list of the Zava products and
+[21:27] prices for each supply." So, this is
+[21:31] what I would call a dependent question.
+[21:33] In order to answer the second part of
+[21:35] the question, we need the answer to the
+[21:38] first part of the question. How does one
+[21:40] paint your house most efficiently?
+[21:42] Uh so, it's basically a two-part
+[21:45] sequential question, right? Um so,
+[21:47] hopefully it's going to use that
+[21:48] iterative step in order to answer this.
+[21:50] Uh we can see it is a very long answer.
+[21:52] You know, it says, uh "This is you're
+[21:54] going to use these step-by-step
+[21:55] guidelines here. Um you know, use
+[21:58] efficient tools like wide rollers." It's
+[22:00] a good tip. And then it says, "Here are
+[22:03] the Zava products that would help you do
+[22:05] this efficient painting." And we can see
+[22:07] a ton of sources. Here we can start to
+[22:08] see web sources for the first time. So,
+[22:10] we've got some web sources. We have the
+[22:13] products from actual Zava. Uh so, it's
+[22:15] basically a combination of Zava products
+[22:17] and web sources, which is, you know,
+[22:18] what we would hope for.
+[22:20] Now, let's check out that activity log.
+[22:23] If we click here, we can see First,
+[22:25] we've got that query planning phase.
+[22:26] Once again, taking about 2,000 tokens.
+[22:29] And it broke it down into two queries.
+[22:32] We see, "How to paint a house most
+[22:33] efficiently?" And then, "List of Zava
+[22:35] products for house painting supplies
+[22:37] with prices." Okay. So, it took those
+[22:39] two queries, and it decided to send it
+[22:41] to all of its sources. Um you know, it's
+[22:44] being very comprehensive here.
+[22:46] And it, you know, sent it, you know, to
+[22:48] the search index. It sent them to the
+[22:50] web and sent it to SharePoint. Uh so, we
+[22:52] can see, you know, depending on the
+[22:54] question and the source, uh we did get a
+[22:56] bunch of products here, and we got a
+[22:58] bunch of web searches here, especially
+[23:00] for how to paint a house most
+[23:01] efficiently. Uh you'll notice it got
+[23:03] nothing from the web for list of Zava
+[23:04] products because Zava is a made-up
+[23:06] company.
+[23:07] Uh and I you know, it's a probably good
+[23:08] thing it didn't find anything there.
+[23:10] And uh and yeah, so it it sees those
+[23:13] results. And then it goes through that
+[23:14] semantic classification stage that Matt
+[23:16] talked about where it says, "Okay, are
+[23:18] these results sufficient to answer the
+[23:21] question, or do we need to do a second
+[23:24] retrieval?" And in this case, it decided
+[23:26] yes to do a second retrieval. So, this
+[23:28] is our second iteration here. And in
+[23:31] that second iteration, it's once again
+[23:33] do going to do query planning, and it's
+[23:34] going to look at the original query, but
+[23:36] it's also going to look at all the
+[23:37] results we got and say, "Hey, like what
+[23:38] is the next query we need to do?" And
+[23:40] this is where I find things get really
+[23:41] interesting, and it got really specific,
+[23:43] right? It decided it needed to search
+[23:45] for Zava brushes, rollers, trays, tape,
+[23:48] drop cloth, and other house painting
+[23:50] supplies, right? So, it saw based off of
+[23:53] the blog post like, "Oh, we really need
+[23:54] like rollers." And it didn't find any
+[23:56] rollers earlier. So, it wanted to see
+[23:58] like, "Hey, does Zava have rollers? Does
+[24:00] it have drop cloth?" Right? This is the
+[24:01] stuff we need. So, it got really, really
+[24:03] specific. And that's really the benefit
+[24:06] here is that, you know, it can realize,
+[24:07] "Oh, there's a gap in my knowledge,
+[24:09] right? This is a gap. I've identified
+[24:11] it, and I you know, I need to I need to
+[24:14] try and close this gap." Uh so, it does
+[24:16] that search. Now, unfortunately, it
+[24:18] didn't find results for anything because
+[24:20] Zava just really needs to have more
+[24:21] products here. So, if this was like Zava
+[24:23] was looking at this, they could be like,
+[24:24] "Hmm, people want rollers. We should get
+[24:25] some rollers, right? Need rollers." Um
+[24:28] but, you know, if this was like a proper
+[24:29] company, it would have rollers.
+[24:32] Uh so, then uh you know, then it, you
+[24:34] know, merges um you know, any new
+[24:37] results in and then sends all those
+[24:39] results back, right? And you can see it
+[24:41] does stop at iteration two. Um you know,
+[24:44] we experimented with having lots and
+[24:45] lots of iterations, but there's like
+[24:47] only so many times you can
+[24:49] uh keep searching, and that does affect
+[24:51] the latency. So, on this effort mode,
+[24:54] it's, you know, it stops at iteration
+[24:55] two and then uh returns it. Now, in this
+[24:59] example here, we also have this answer
+[25:01] synthesis step. So, this is an option
+[25:04] that you can turn on for knowledge bases
+[25:05] where you can actually have the
+[25:06] knowledge base use its own LLM to
+[25:09] generate the entire answer as well. And
+[25:11] you know, that's something that you can
+[25:12] do that they added as a feature because
+[25:14] some people wanted Foundry IQ to handle
+[25:16] the entire process, right? Query
+[25:18] planning, search, iteration, and answer
+[25:21] synthesis. So, you really have the whole
+[25:23] flow entirely in here if you want to
+[25:25] take advantage of it. Uh if you don't,
+[25:27] fine. You can turn it off, right? Like
+[25:29] So, you know, as a developer, I just
+[25:30] like having lots of options. And as you
+[25:32] can see, we do have lots of options for
+[25:35] great retrieval using this Foundry IQ
+[25:37] knowledge base.
+[25:39] So, there's that demo. Uh so, medium
+[25:42] effort right now, that is the highest
+[25:43] effort mode. Um there's no high effort
+[25:46] yet because there's, you know, I think a
+[25:48] research question about what, you know,
+[25:50] what actually would high effort look
+[25:52] like. Um but, currently you've got low
+[25:55] uh you've got minimal, low, and medium,
+[25:56] and you can do a lot experimenting with
+[25:58] those different options.
+[26:01] Now, there's something cool we can show,
+[26:03] which is GitHub Copilot integration. And
+[26:05] we're going to use another
+[26:06] uh way of using knowledge bases here. Uh
+[26:09] Matt, if you want to talk about this
+[26:11] briefly?
+[26:11] >> Yeah. briefly? That sounds great. Yeah,
+[26:14] so um I think a lot of people today, you
+[26:17] know, um you're using a coding agent
+[26:19] most likely to help you kind of author
+[26:21] all your software. Like, "How do I
+[26:22] learn? How do I use agent frameworks?
+[26:24] How do I write all my apps?" I
+[26:26] personally also like to use coding
+[26:27] agents. And the really cool thing about
+[26:30] coding agents is they typically accept
+[26:32] what's called an MCP server, which you
+[26:34] basically think of it as a way to expose
+[26:37] a tool a language model can use. Um and
+[26:40] it can now do extra things it couldn't
+[26:41] do before. So, you can actually use a
+[26:45] knowledge base as an MCP server, and it
+[26:48] exposes a tool so a language model could
+[26:51] say, "Hey, I see a knowledge base. I
+[26:53] want to search it." And and the same
+[26:55] effort levels, the same all the
+[26:57] capabilities we described are actually
+[26:59] available to that agent. So, it can
+[27:01] decide uh how to search. So, let's go
+[27:04] check out an example of using GitHub
+[27:06] Copilot with this MCP server.
+[27:08] All right. So, I have GitHub Copilot
+[27:11] running in my Mac terminal here.
+[27:14] And I have it configured to use a few
+[27:17] different MCP servers, and one of them
+[27:19] is the Zava docs
+[27:21] uh MCP endpoint for the knowledge base
+[27:24] that we've been using all throughout
+[27:25] here. So, hopefully when I ask you the
+[27:27] question, it might decide to ask that
+[27:30] MCP server and use a tool from it in
+[27:32] order to answer the question. So, let's
+[27:34] try it out. What Zava paint
+[27:37] can I use for my bathroom? Okay?
+[27:42] So, this is going out to the GitHub
+[27:44] Copilot agent, and that agent is using
+[27:47] its LLM in order to think and decide,
+[27:49] "Okay, based off of
+[27:51] um you know, what I have available, what
+[27:52] am I going to use?" And you can see it
+[27:54] says, "I should use the Zava docs
+[27:56] knowledge base to find information." So,
+[27:58] it realized that it could use that MCP
+[28:00] server in order to help answer this
+[28:02] question, right? And it's actually
+[28:04] asking me for approval to run this tool.
+[28:07] So, this is the knowledge base retrieve
+[28:08] tool that's exposed from the MCP
+[28:10] endpoint. And you can see that the
+[28:12] GitHub Copilot agent has taken my
+[28:15] question, and it thinks it should turn
+[28:18] it into three different intents to send
+[28:20] to the tool. So, "What Zava paint
+[28:22] products are suitable for bathrooms?
+[28:23] Zava bathroom paint recommendations, and
+[28:25] moisture resistant or waterproof paint."
+[28:27] And that was actually a pretty clever
+[28:28] transformation there. I like that one.
+[28:31] So,
+[28:32] it says, "Hey, we want to send these all
+[28:33] to the MCP tool." And I can say, "Yes,
+[28:35] do it."
+[28:36] And now it is actually running that.
+[28:38] It's doing the search.
+[28:40] And uh that's doing the knowledge base
+[28:42] retrieval.
+[28:43] And we get it back.
+[28:46] And we get back an answer. So, great. It
+[28:48] works. And this is really cool. And I
+[28:49] think this is a great thing. Like, if
+[28:50] you've got developer documentation, put
+[28:52] it in a knowledge base, and now your
+[28:53] developers can use that while they're
+[28:54] coding.
+[28:56] So, knowledge bases at the end of the
+[28:57] day, they're all about applying agentic
+[29:00] methods of retrieval to your
+[29:02] information.
+[29:03] You can take complex queries and
+[29:04] decompose them into simpler sub queries.
+[29:07] Multiple knowledge sources, such as, you
+[29:09] know, indexes, SharePoint, web, sit
+[29:11] behind a single endpoint, and you can
+[29:13] merge results back together using the
+[29:15] same uh re-ranking mechanism that we use
+[29:18] in our regular search.
+[29:20] Effort levels allow you to control cost
+[29:22] and latency. You can use minimal for
+[29:24] agent-driven queries where you control
+[29:26] the planning. You can use low for most
+[29:28] conversational scenarios. And medium is
+[29:30] appropriate when you need that iterative
+[29:32] depth for really tough one queries.
+[29:35] For anyone who wants to dive deeper into
+[29:37] Foundry IQ
+[29:39] and knowledge bases, you can get all the
+[29:41] resources and sample code at
+[29:42] aka.ms/iqseries.
+[29:46] Now, thank you so much to Matt for
+[29:47] sharing all is knowledge. Thank you to
+[29:49] everyone for watching today's session.
+[29:51] And now we're going to go over to Tomomi
+[29:53] to do a doodle summary of everything we
+[29:55] learned today. Hey Daisy, it's Tomomi
+[29:57] and here's my recap.
+[29:59] A knowledge base is a single endpoint
+[30:02] that sits in front of multiple knowledge
+[30:03] sources.
+[30:05] Instead of a call in SharePoint,
+[30:06] OneLake, and all other sources
+[30:08] separately, your agent just needs a
+[30:10] single call. Let's say when you ask,
+[30:13] "What's up Andy's best for bathrooms and
+[30:16] how much does it cost?"
+[30:18] Inside the knowledge base, what happens
+[30:20] are, first, query planning.
+[30:22] The original questions get broken into
+[30:25] intent-specific subqueries.
+[30:27] Second, knowledge source selection.
+[30:30] The subqueries are sent to relevant
+[30:32] sources at the same time, not
+[30:34] sequential.
+[30:35] Each source runs hybrid retrieval,
+[30:38] keyword plus vector search, then applies
+[30:41] semantic reranking to surface the most
+[30:43] relevant result. Then, merge. Results
+[30:46] from all sources are combined.
+[30:49] All of that orchestration is handled
+[30:51] inside the knowledge base.
+[30:53] And you control how much reasoning
+[30:55] happens with level settings.
+[30:57] Minimum effort, no LLM inside retrieval.
+[31:01] Low effort, uses LLM once per subquery
+[31:04] for planning.
+[31:06] Medium effort, iterative retrieval when
+[31:09] depth is required.
+[31:11] So, architecturally, a knowledge base is
+[31:13] an agentic retrieval layer over multiple
+[31:16] knowledge sources.
+[31:18] One endpoint, multi-source reasoning.

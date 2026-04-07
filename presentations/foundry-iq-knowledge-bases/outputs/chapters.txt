@@ -1,0 +1,21 @@
+This video covers Foundry IQ knowledge bases, which unify multiple knowledge sources behind a single endpoint for agentic retrieval. Pamela Fox and Matthew Gotteiner walk through the architecture (query planning, knowledge sources, output merging), the three retrieval reasoning effort levels (minimal, low, medium), and demonstrate multi-source queries using an open-source sample app, Foundry Agents, and GitHub Copilot via MCP.
+
+00:00 - Introduction and series recap
+01:07 - What is a knowledge base?
+02:24 - Three core components: query planning, knowledge sources, output merging
+05:48 - Indexed vs. remote knowledge sources
+07:31 - Source selection and descriptions
+08:22 - Demo: Knowledge base setup in Foundry IQ portal
+10:24 - Retrieval reasoning effort overview
+11:07 - Minimal effort: fastest and cheapest
+12:15 - Demo: Minimal effort with sample application
+14:27 - Demo: Minimal effort with Foundry Agents
+15:56 - Low effort: LLM-powered query planning and source selection
+16:47 - Demo: Low effort with sample application
+19:05 - Medium effort: iterative retrieval
+21:12 - Demo: Medium effort with iterative retrieval
+25:39 - Summary of effort levels
+26:01 - GitHub Copilot integration via MCP server
+27:08 - Demo: Knowledge base as MCP server in GitHub Copilot
+28:56 - Recap and resources (aka.ms/iqseries)
+29:57 - Visual doodle summary

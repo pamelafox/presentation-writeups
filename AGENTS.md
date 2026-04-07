@@ -21,6 +21,7 @@ This repo also provides Agent Skills in `.github/skills/` for individual pipelin
 | `/convert-slides-to-images` | Script | Convert PDF slides to individual PNGs |
 | `/extract-slide-text` | Script | Extract text from each PDF page into a markdown file |
 | `/outline-slides` | Instructions | Summarize each slide image into a numbered list |
+| `/capture-video-frames` | Script + Subagent | Capture frames from YouTube video, describe each via `describe-frame` subagent |
 
 ### Full pipeline
 
