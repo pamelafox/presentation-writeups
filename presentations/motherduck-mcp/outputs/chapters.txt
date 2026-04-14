@@ -1,0 +1,16 @@
+This talk covers context engineering with MCP servers, drawing on MotherDuck's experience building and iterating on their MCP server. It discusses how to think about MCP server design as context management, balancing efficiency and effectiveness, and the challenges of testing and observing MCP-based workflows.
+
+00:00 - Introduction to MotherDuck and DuckDB
+02:01 - MCP overview and beyond tool calling
+03:44 - Why MCP over CLI plus skills
+04:41 - Evolution of the MotherDuck MCP server
+08:50 - Rethinking what an agent is
+10:00 - MCP servers as context engineering plugins
+11:07 - Ways to inject context through MCP
+13:03 - Balancing context efficiency vs effectiveness
+14:45 - Client fragmentation challenges
+16:02 - Different user types and adoption friction
+17:40 - Finding the right balance through iteration
+18:27 - Evaluation and testing challenges
+19:38 - Observability limitations in MCP
+20:23 - What's next: context layers and memory

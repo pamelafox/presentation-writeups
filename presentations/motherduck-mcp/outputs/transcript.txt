@@ -1,0 +1,466 @@
+[00:12] Hey everyone. I will be talking about
+[00:14] context engineering with MCP servers.
+[00:18] Uh specifically I will talk a lot about
+[00:21] what we what we did in Madak but also
+[00:23] try to generalize it a little bit. So
+[00:25] first what is Madak? It's a cloud data
+[00:28] warehouse um built on top of DTB. Uh DTB
+[00:32] is an open source analytical database
+[00:34] system and our users typically have
+[00:37] analytical questions and the users to
+[00:41] get answers to those questions and um
+[00:44] Madak um does a few things different
+[00:47] than the more traditional data
+[00:49] warehouses. It has a per user compute
+[00:52] isolation. So every madak user has their
+[00:54] own kind of ductb instance in a in a
+[00:57] cloud that is uh insulated from from the
+[01:01] compute instances of the other users.
+[01:03] That means like an agent running a super
+[01:06] inefficient query or so won't will
+[01:08] whenever um affect other users of the on
+[01:11] the platform. Um but also duct DB is a
+[01:14] super fast analytical database system
+[01:17] and um yeah it excels on medium and
+[01:20] small small size data especially
+[01:23] especially and that's what a lot of
+[01:24] people use it for and small doesn't mean
+[01:26] like hundreds or of megabyte or gigabyte
+[01:29] but it can really be like hundreds
+[01:31] hundreds of gigabyte or terabyte uh size
+[01:35] but um queries you usually um finish
+[01:39] quite quite quickly like most most of
+[01:41] the workloads are um very small queries,
+[01:45] fast running queries. Anyways, that's
+[01:49] our office in the Netherlands.
+[01:52] No, it's not. But uh
+[01:56] uh you could guess,
+[01:58] but I will get back I I will get back to
+[02:01] it. Um, so MCP, you probably have seen a
+[02:06] couple of talks about MCP servers or
+[02:08] mentioning MCP servers today, but just
+[02:10] like a quick quick refresher. So it's a
+[02:13] way to connect AI applications to your
+[02:16] system basically. Um, MCP servers
+[02:19] typically define tools. Those tools have
+[02:22] names, descriptions, and input output
+[02:25] schemas. And um these AI applications
+[02:29] can discover capabilities in those MCP
+[02:31] servers and then call them and um um
+[02:35] basically interact with your system
+[02:37] through it.
+[02:39] Um but it's a little bit more than that.
+[02:41] Like if you if you look at cloud or
+[02:45] chatgpt you see like when you connect an
+[02:47] MCP server it pops up an uh ooth flow
+[02:52] for authentication. Also there are
+[02:54] things like um you know the the the
+[02:57] connectors directory include and uh in
+[02:59] chat GPT you have like the app directory
+[03:02] very similar and um you can put your
+[03:05] your app or your product up there and
+[03:08] then also on the um in in the actual
+[03:11] user experience it goes beyond just an
+[03:13] agent calling a tool there uh things
+[03:15] like elicitation you know where the
+[03:17] where the native uh AI application
+[03:20] actually pops up like um you know
+[03:22] question or multiple choice dialogue or
+[03:25] or even things like MCP apps now which
+[03:28] are support in CHPT and and and cloud
+[03:30] where you can have interactive like
+[03:32] fully fully um uh fully custom to your
+[03:37] uh system uh UI components that are
+[03:40] natively integrated in the chat and they
+[03:42] are interactive as well.
+[03:44] Um so I uh sometimes hear this question
+[03:49] why not just CL CLI plus skills. So um
+[03:53] and I would mostly say that those those
+[03:57] like things that happen on the AI
+[04:01] natively in the AI application that go
+[04:03] beyond tool calling are really the the
+[04:05] things that that make it worth to build
+[04:07] an uh MCP server rather than just uh
+[04:10] providing an API.
+[04:12] um and and or CLI and a skill uh but
+[04:16] also uh a lot of users are using the
+[04:18] web- based uh AI clients like cloud AI
+[04:21] chat GPT web and um there might be some
+[04:25] shell sandboxes even in the web chats
+[04:28] but they're usually quite sandbox when
+[04:31] it comes to like network network
+[04:33] communication so um an MCP kind of makes
+[04:37] this makes this much easier and um yeah
+[04:41] so We made our own experience. We
+[04:43] started uh very early on or very late I
+[04:49] um like just just after the MCP spec
+[04:51] came came out. We basically built this
+[04:53] very um basic open source MCP server for
+[04:57] Madak
+[04:59] it only had one one tool the query tool.
+[05:02] I thought well yeah I mean it now agents
+[05:05] can do everything right. It's kind of
+[05:07] like it has this thing. It can put in a
+[05:08] se SQL query and like all of the power
+[05:11] and like all the features in mother duck
+[05:13] you can practically use through SQL. So
+[05:18] what what more would you need? Um but
+[05:21] then we noticed that users run into the
+[05:24] same problems over and over again. They
+[05:27] um for example the syntax and ductb to
+[05:31] um do schema explorations. So to list
+[05:33] all the columns in the table or to just
+[05:36] show me all the databases I have they
+[05:38] are that's ductb specific syntax and
+[05:42] ductb is not that prevalent in like pre
+[05:45] pre-training corporate. So the models
+[05:47] they just use post postgress SQL and
+[05:50] they start running in circles. Um so
+[05:54] we we added those tools to basically
+[05:57] deal with that but also what it gave us
+[05:59] is control over the output. We could
+[06:01] say, okay, this list list tables call
+[06:03] from ductb. It gives you back uh 11
+[06:05] columns or so, but the model only really
+[06:09] cares about the column names, types,
+[06:11] maybe some comments people put on those
+[06:13] columns uh and that's it. So why throw
+[06:16] all this other stuff into the LLM
+[06:18] context? So like with these tools, we
+[06:21] can very uh very targetly control what
+[06:24] the what the MCP server ingests into the
+[06:27] context.
+[06:29] And um later on we realized it was on a
+[06:34] on a on a hackathon where we where we
+[06:36] tried out these these these tools last
+[06:38] year and um people didn't have didn't
+[06:42] get stuck on the schema exploration part
+[06:43] anymore but they were curious how um how
+[06:45] do I do semantic search in mother duck?
+[06:49] I said it's in the docs you know you
+[06:51] just have to go to this docs page and
+[06:52] then read this or you can copy it and
+[06:54] give it to the agent. So, and that kind
+[06:56] of led to this uh uh ask docs question
+[07:00] tool then because you can also just give
+[07:03] the agent access to the documentation
+[07:05] and uh uh I mean some some agents can do
+[07:09] web search as well on their own and they
+[07:12] would usually also do that but again
+[07:14] like it crawls the entire website puts
+[07:16] it into the context. So why not reuse
+[07:19] the um basically the wreck uh chat we
+[07:23] already have in our website. We are
+[07:25] literally reusing the exact same same
+[07:27] same back end uh uh here wrapped into an
+[07:31] um uh MCP tool and we kind of off off
+[07:34] offload then this uh Rex search to an to
+[07:37] a sub agent and um lately we we added a
+[07:42] new feature called called called Dice
+[07:43] where people can build um basically
+[07:46] inter interactive dashboards fully
+[07:48] customizable. It's basically um uh I
+[07:52] would show them on the next slide but
+[07:53] it's quite quite an involved process for
+[07:56] the agent. The agent needs a lot of
+[07:57] context for that and um so we added this
+[08:00] like basically tool to load some kind of
+[08:03] a app skill and that that that really
+[08:06] helped with that. I can show a quick
+[08:08] quick demo of how kind of the end result
+[08:10] of all of this looks like. Um so here
+[08:15] user loads like CSV file says I want to
+[08:17] build this uh dashboard and then the
+[08:20] agent goes and builds it and um
+[08:24] I want to make some changes. Okay, does
+[08:27] it and here here we use the native
+[08:29] capabilities of of cloud cloud artifacts
+[08:32] for the preview and then users can save
+[08:34] it and it gets saved into into
+[08:36] motherduck and we wire up all the
+[08:38] queries. So this is then not a static
+[08:40] dashboard anymore but actually live
+[08:42] dashboard and all this all the
+[08:43] instructions for how to do that uh are
+[08:46] basically in this get get dive guide uh
+[08:48] tool call.
+[08:50] So um lot of words but
+[08:54] I I I often had this kind of definition
+[08:57] of agent in my mind and it's like well
+[09:00] how how a lot of uh people like explain
+[09:02] what an agent is. It's this loop and it
+[09:06] can call tools and it has a goal and it
+[09:08] calls the tools until it kind of has
+[09:11] reached reached its goal and I found it
+[09:15] um I found that view not super helpful
+[09:19] like while I was working on designing
+[09:21] these tools and I was always wondering
+[09:23] like what it is and I had to think back
+[09:25] of this building which is a you know um
+[09:30] battleship museum in the Netherlands.
+[09:33] So, but I had to think of these bottle
+[09:35] sh uh bottle ships. Yeah. Because as a
+[09:37] kid, I was always wondering like, you
+[09:40] know, how do people do this? And I felt
+[09:43] like building an MCP server for other
+[09:46] users, you know, feels very similar.
+[09:49] It's like very fiddly.
+[09:52] And um yeah, so I I started to look at a
+[09:58] problem more like this. So an agent is
+[10:00] really just a program that helps you do
+[10:04] context engineering in the context
+[10:06] window of your user and um the MCP
+[10:11] server is a plug-in for that program. So
+[10:13] you have this small like hole into the
+[10:15] agent behavior. Um, and that's all you
+[10:19] have and that's kind of the thing you
+[10:21] have to work with and that's what you
+[10:23] have to think about like okay how does
+[10:25] the how does the agent behave? Uh how
+[10:29] does adding this tool change the agent
+[10:31] behavior when I look at the entire
+[10:34] workflow that a user is uh going through
+[10:36] when it's using this MCP server. So, and
+[10:42] what is you know there are certain
+[10:45] things that an MCP server typically
+[10:47] ingests when a session starts and and
+[10:49] and and when you connect the MCP to the
+[10:52] agent is typically tool names, tool
+[10:54] descriptions, parameter descriptions. So
+[10:57] those things you can assume the agent is
+[10:59] is aware of at any given time of the
+[11:01] conversation. So that's one one way to
+[11:04] uh inject context into the conversation.
+[11:07] But then you have this submission
+[11:09] guidelines uh from from from Entropic or
+[11:12] OpenAI that say well these descriptions
+[11:14] they should actually be like human
+[11:16] readable and they should have like a
+[11:18] certain size limit. You know you
+[11:22] shouldn't put all your instructions into
+[11:23] the tool descriptions. It's also a field
+[11:25] for people to read when they want to
+[11:27] figure out or find find out what the MCP
+[11:29] server is doing. So um then there are
+[11:33] other ways to to inject knowledge uh
+[11:36] context into the conversation which is
+[11:38] um basically just indirectly through the
+[11:42] tool interface let's say uh we added
+[11:45] this this new tool dives
+[11:47] um and then when a when a user asks in
+[11:50] the chat okay like can you build this
+[11:52] dive for me it's just a tool name that
+[11:55] that that is in a context right but it
+[11:57] gives the agent a hint okay there's
+[12:00] something called dives in this MCP
+[12:02] server. So let me let me kind of call
+[12:04] this get dives guide. Um but also more
+[12:09] more normal uh tool calls like um the
+[12:12] list uh the query tool for example like
+[12:15] if you if you let the agent run a query
+[12:17] that runs into an error. You can just
+[12:20] return an error message and say, "Hey,
+[12:22] this query was wrong." Or you can uh
+[12:24] return like a very descriptive er error
+[12:26] message that explains the agent what was
+[12:29] what was specifically wrong about it. Or
+[12:31] you could go as far as oh maybe it's
+[12:33] useful to add actually the documentation
+[12:36] about this feature that the agent was
+[12:39] using in that moment and return it. Uh
+[12:42] so you can you can get quite quite
+[12:46] creative here. And then there are these
+[12:48] things uh agents can call on demand or
+[12:50] where you say really like this
+[12:52] documentation search is really something
+[12:54] I would rather offload to an to sub
+[12:57] agent to keep the context of the uh of
+[13:00] the main agent clean.
+[13:03] Um I want to show a few few examples. So
+[13:07] when you this the example I have just a
+[13:10] query tool basically and uh here's what
+[13:13] I what I described earlier like a user
+[13:16] is in a session and it ask a few
+[13:17] questions and then at some point the
+[13:19] agent gets stuck. Uh it's very context
+[13:22] efficient in that sense but it's not
+[13:24] effective.
+[13:26] Um what you can do instead the other
+[13:28] extreme you just ingest like all the
+[13:30] context the user could possibly need in
+[13:32] the entire conversation at the
+[13:34] beginning. That's great because you make
+[13:36] sure that the agent always knows exactly
+[13:38] what to do and how to do it, but it
+[13:40] comes as a uh comes at a cost that the
+[13:43] like users context window just blows up
+[13:45] halfway through the conversation. Um
+[13:49] yeah, so it's really really about um
+[13:52] yeah finding the right balance between
+[13:54] these things and um about thinking about
+[14:00] how does the user use the MCP server? um
+[14:04] what are the different workflows and
+[14:06] it's it's been super uh helpful for us
+[14:09] to just
+[14:11] give the give like some iteration of the
+[14:13] MCP server to like a non-technical user
+[14:16] and just say yeah you know do do this
+[14:19] with it and see what happens and it's it
+[14:22] can be quite surprising because uh I as
+[14:24] developer have like certain workflows in
+[14:27] mind that I'm building it for but it's
+[14:28] quite possible that the users are
+[14:30] actually uh using using it in a much
+[14:33] different way and then suddenly oh it
+[14:35] should actually call this tool now but
+[14:37] it doesn't so you have to instruct it to
+[14:38] do it but it's not not a quite polished
+[14:41] experience. Um
+[14:45] so what makes this hard is uh there's so
+[14:48] many nice features in the MCP spec. You
+[14:52] know there are things like initial
+[14:54] initial instructions you can send to the
+[14:56] uh MCP uh to your client application
+[15:00] when your server connects. But um some
+[15:04] clients just don't do anything with that
+[15:06] instruction you return. They don't don't
+[15:08] inject it into the context. So um if you
+[15:12] use it for some clients it helps for
+[15:15] others it it does not and um yeah I
+[15:20] don't know when when when like 80% of
+[15:21] your users are using you through through
+[15:23] cloud and it doesn't work in cloud it's
+[15:26] uh it's not really possible to build on
+[15:28] that. Um and the the only thing that
+[15:33] feels like it's kind of universally
+[15:36] supported is really just authentication
+[15:38] and tool calls. So um whether things
+[15:41] like elicitation and this app MCP apps
+[15:44] and so on. So um if you want to pro kind
+[15:48] of build just one version of the MCP,
+[15:50] it's you get a very small like
+[15:53] intersection of things that are actually
+[15:55] supported in all those clients.
+[15:58] Um, another thing is, uh, there are
+[16:02] different types of users really that use
+[16:04] the MCP. And I think that's that's also
+[16:06] a little bit where this CL uh CLI plus
+[16:09] skill versus MCP is coming from because
+[16:12] you you have web users, they have never
+[16:14] used the CLI, but they really love using
+[16:16] cloud. So, um, and they they make up up
+[16:21] a big fraction of the people that are
+[16:23] using our our MCP and they're using it
+[16:26] better or more it's more effective for
+[16:29] their work. It's a tool for we
+[16:31] practically built for them. Like there's
+[16:34] so many people like on a on a on a on a
+[16:36] sales side or wherever like in in in
+[16:38] non-technical areas of the company where
+[16:42] uh it's so it has been so empowering for
+[16:45] for those people to be able to query uh
+[16:48] to build their own dashboards or to to
+[16:50] get their own insights from from from
+[16:52] our internal data warehouse. And um
+[16:56] we had this open- source MCP uh for one
+[16:59] year and you had to insert like a
+[17:03] fiveline JSON file right into your JSON
+[17:06] snippet in into your cloud config but
+[17:08] that hurdle was already too much right
+[17:11] so so it's really like it's very hard to
+[17:15] like overestimate
+[17:17] uh the effect of like the friction
+[17:19] points like for for the adoption of of
+[17:22] things like that. And this is the same
+[17:23] for like friction while you're using it.
+[17:26] Uh also CS CLI of course has more
+[17:30] capabilities. People using the CLI they
+[17:32] have local file system access and those
+[17:34] those things can also really change how
+[17:36] you think about the workflow the users
+[17:38] are going through.
+[17:40] Um but how do you how do you now find
+[17:45] the right balance? And I think this
+[17:46] really I don't know how we how we found
+[17:49] it. It was just an iteration and I'm not
+[17:52] sure if that's the the best thing to do
+[17:55] like the thing we're currently doing but
+[17:57] it's um it works good enough for for for
+[18:01] our users. That's how it feels like. And
+[18:03] um
+[18:05] the next thing is really if we now start
+[18:08] we have we have quite sophisticated like
+[18:10] prompts in this uh dive guide for
+[18:13] example and now they people come with
+[18:16] feature requests. So, can we make it
+[18:18] behave like a little bit different, a
+[18:20] little bit more like this? And I'm get
+[18:22] more and more like hesitant to introduce
+[18:24] more changes. Um, because we don't
+[18:27] really have a very good way to automate
+[18:29] evaluation of all these different
+[18:31] workflows because I'm um I'm concerned
+[18:35] if I change a prompt here, another
+[18:36] workflow I didn't think about breaks
+[18:38] breaks on. So, so it's basically the
+[18:40] equivalent to unit testing. And that's
+[18:42] what I feel like is missing very much uh
+[18:45] in this MCP development process. And
+[18:48] then also it's not only about evaluating
+[18:50] the agent, it's also evaluating the
+[18:52] actual user experience. Client uh
+[18:55] clients behave differently. They also
+[18:58] add new features overnight or they just
+[19:00] do some a AB testing. But your open
+[19:02] cloud like on a random day might look
+[19:04] very different than the day before. and
+[19:07] also the the experience might be
+[19:10] impacted. Suddenly there's tool search
+[19:11] which wasn't there before. So um yeah so
+[19:16] it's
+[19:18] it's great to test these things actually
+[19:20] end to end that's useful and uh yeah
+[19:23] finally basic observability right how
+[19:27] many tools were like which tool is
+[19:29] called how how often we had one one tool
+[19:32] at one point in time it was practically
+[19:34] never called so we just took it out
+[19:36] again
+[19:38] um but then in MCP you only see the
+[19:41] inputs you don't really see what is
+[19:43] happening around it. So that's also
+[19:45] really limiting. That's a great benefit
+[19:47] if you're kind of self-hosting the AI
+[19:49] application as well because then you
+[19:50] have access to the traces and everything
+[19:53] and you can really debug the
+[19:54] conversations but in the MCP itself you
+[19:56] have like very limited visibility on
+[19:58] what happens like on the user side. So
+[20:01] there are some tricks like you can add
+[20:03] tools like in the tool call you can add
+[20:05] a new parameter that basically send like
+[20:07] your uh the context like pass the
+[20:09] context in which you're calling me and
+[20:11] then you can record that. Um I'm not
+[20:14] sure how users feel about that or would
+[20:17] would feel about that but um yeah it's
+[20:20] it's a bit of an open question.
+[20:23] Um well what I think is next um is this
+[20:28] whole context layer context layer and
+[20:30] memory stuff and and and how that fits
+[20:33] together with MCP servers. There's
+[20:35] definitely a need for people to have
+[20:38] consistency across sessions and I think
+[20:40] the MCP server can can help with that uh
+[20:43] to some degree. you know it can can they
+[20:46] could be like a safe safe uh they could
+[20:49] be safe tools for specific things or
+[20:51] they could be load tools for specific
+[20:53] things. Yeah. So uh how do you basically
+[20:56] customize the MCPS for for specific uh
+[20:59] for a specific user or for a specific
+[21:01] organization and how to do this
+[21:03] basically in a seamless way. Um
+[21:08] yeah and
+[21:11] that's it. Um, yeah. Thank you.
