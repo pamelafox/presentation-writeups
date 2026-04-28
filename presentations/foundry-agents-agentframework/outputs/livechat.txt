@@ -1,0 +1,91 @@
+[29621800:24] @MadeByGPS: hello all  happy to be here
+[29621819:33] @PamelaFox: Hi everyone! I'm streaming from California today.
+[29621819:45] @aquarist123: Good afternoon from East Anglia in England.
+[29621820:18] @mathis01-e2p: Hello @MadeByGPS, it's a pleasure to meet you. Hello everyone, I'm happy to be tuning in from North Carolina, USA!
+[29621820:27] @amritutube: Hi From India , 
+[29621820:56] @ericelzinga6624: Good evening from The Netherlands!
+[29621821:15] @AlbertoCancelado: Greetings from Bogotá 
+[29621821:18] @tligda: Attending from foggy San Jose, CA!
+[29621821:26] @cgourzis: Hello
+[29621821:38] @jaaasoonedyyytts9805: ecco ecco
+[29621821:44] @pixelsnbits: 
+[29621821:50] @BowserJay: Hello from wet, rainy Iowa!
+[29621822:16] @Silvestre-PO: Hola!  from 
+[29621822:25] @DarekKacban: Microsoft Agent Framework
+[29621822:27] @rajeev5582: hi
+[29621822:37] @MicrosoftReactor: Register at: https://aka.ms/foundryhosted/slides/a...
+[29621822:37] @ManishGandhi-d8p: Hello from San Francisco !
+[29621823:02] @GeertBaeke: Hello from Belgium
+[29621823:26] @DarekKacban: POLAND
+[29621823:27] @amritutube: India 
+[29621823:27] @NaveedHuq: hi from NYC
+[29621823:53] @FuturistSenpai: Hola desde Uruguay. Hi from Uruguay
+[29621824:17] @MicrosoftReactor: Register at: https://aka.ms/AgentsOnFoundry/series
+[29621824:25] @MadeByGPS: spanish version of this series starts tomorrow: aka.ms/agentesenfoundry/serie
+[29621824:41] @MadeByGPS: https://aka.ms/agentesenfoundry/serie
+[29621824:58] @IngoJobling: Hello from Montréal
+[29621825:06] @MicrosoftReactor: Code: https://aka.ms/foundry-hosted-agentfr...
+[29621828:09] @GeertBaeke: Every sample agent MUST use a weather tool
+[29621828:45] @tligda: Did I miss the link for the slides?
+[29621829:04] @MicrosoftReactor: slides are here: https://aka.ms/foundryhosted/slides/a...
+[29621829:18] @MadeByGPS: @GeertBaeke lol yes
+[29621829:26] @tligda: Thank you!
+[29621833:05] @asessolutions6621: is it started now?
+[29621833:14] @asessolutions6621: I just joined
+[29621835:37] @MicrosoftReactor: Welcome! 
+[29621835:39] @asessolutions6621: can we do with c# as well?
+[29621836:48] @DarekKacban: Microsoft Agent Framework is great in C# as well. @asessolutions6621 
+[29621838:46] @DarekKacban: Do you know which region supports the biggest number of models?
+[29621839:09] @amritutube: can we sgn in foundry
+[29621839:55] @RossPace: Do the claude models run on Azure's servers or Anthropic?
+[29621840:15] @asx: Azure is having issues right now. 
+[29621841:08] @asessolutions6621: can we do RAG system as well with this framework . or need to use langraph? my company has this requirement
+[29621841:31] @RossPace: You can do RAG
+[29621842:34] @GeertBaeke: you can do rag with any framework or the bare bones model apis
+[29621843:17] @mickwalker1980x: Can it support 3rd party knowledge bases such as confluence or would we need to create our own vector store of confluence documents and expose that?
+[29621844:28] @RossPace: I don't believe Foundry IQ it supports confluence out of the box
+[29621844:38] @alisaleh-g7i: for the sharepoint knowledge source, where is the embedding managed and how is it accessed? 
+[29621846:59] @SolFarahmandAI: So to do retrieval. you have to use MCP everytime? Is! 
+[29621847:28] @MicrosoftReactor: Resources: https://aka.ms/foundryhosted/resources
+[29621848:20] @GeertBaeke: You don't have to use MCP to do retrieval. You can use function calling like Pamela discussed with the weather tool and call the APIs directly.
+[29621848:38] @DarekKacban: @MicrosoftReactor could you please explain how deployment to Azure Foundry can improve AI agents scalability and availability?
+[29621848:41] @amritutube: cost goes up like anything .. 
+[29621848:41] @asessolutions6621: any alternative without MCP?
+[29621849:01] @amritutube: I utilised m 200$ during creation of the modesl only
+[29621849:09] @amritutube: munless osmeone explain how to limit token usage
+[29621849:12] @amritutube: its not usefull
+[29621849:55] @DarekKacban: MCP is handy, but you can use toolbox:)
+[29621850:28] @DarekKacban: No, toolbox ix MCP. Sounds good.
+[29621850:48] @MahroshAtif-t2q: Still waiting on the AI Dev Days Hackathon results! Any updates?
+[29621850:52] @MadeByGPS: @DarekKacban you will see more of the benefits of hosting agents in Foundry later in this sesison
+[29621851:52] @asessolutions6621: what could be the expected cost for implementation of this solution
+[29621858:58] @amritutube: for a rough estimate my multi agent workflow costed around 272$ . most of which was utilized by AI search 
+[29621859:24] @amritutube: I used gpt 4.0 and minin for most of models 
+[29621860:14] @GeertBaeke: On what do these MicroVMs actually run? Previous version of hosted agents was ACA right?
+[29621861:03] @asessolutions6621: is there difference between hosting in app service vs in foundry server?
+[29621861:36] @MadeByGPS: @asessolutions6621 yes, different compute platforms
+[29621864:08] @sprunkIle: can we run this agent first on local Foundry and then use AZD to deploy it to Azure Foundry ?
+[29621865:47] @chandu2240: is it possible to create the queries dynamically by agent and get the data from database based on user prompt?
+[29621865:55] @MicrosoftReactor: Code: https://aka.ms/foundry-hosted-agentfr...
+[29621867:05] @RossPace: @chandu2240 If you define the schema for the agent then it can write SQL 
+[29621869:19] @MicrosoftReactor: Please take a moment to take our satisfaction survey - https://aka.ms/AA10puci
+[29621870:01] @chandu2240: @RossPace thank you. one more question. how to decide the model for the db queries
+[29621870:54] @SolFarahmandAI: So the output one executer the input to the other?
+[29621872:30] @MicrosoftReactor: Resources: https://aka.ms/foundryhosted/resources
+[29621872:51] @amritutube: 
+[29621874:11] @SolFarahmandAI: What about memory?
+[29621874:17] @asessolutions6621: i want to do a poc project for demo. is there any way to do this locally with local model for a poc then use live model?
+[29621874:23] @MicrosoftReactor: Join us in Discord after this session for office hours https://aka.ms/pythonai/oh
+[29621874:59] @Silvestre-PO: Thanks Pam! 
+[29621875:13] @MicrosoftReactor: Please, take a moment to take our satisfaction survey - https://aka.ms/AA10puci
+[29621875:46] @SumitPandit-s5c: can the agents be hosted on Foundry Local ?
+[29621875:47] @vinays751: Can this code by executed in azure free tier. It is very difficult to get tokens in supported azure regions for azure free tier
+[29621875:48] @amritutube: can we sue Azure Redis management service for cache ?
+[29621876:31] @PamelaFox: https://learn.microsoft.com/en-us/azu...
+[29621876:50] @pablocotaimich: Can hosted agents be deployed to specific regions? What about the tracing?
+[29621877:57] @sanjunair7838: As of now there is a regional restrictions for hosted agents, so when can we expect support in EastUS
+[29621879:51] @MicrosoftReactor: Join us in Discord after this session for office hours https://aka.ms/pythonai/oh
+[29621880:50] @MicrosoftReactor: Please, take a moment to take our satisfaction survey - https://aka.ms/AA10puci
+[29621881:20] @amritutube: 
+[29621881:43] @ericelzinga6624: As always: Great session again! Thanks Pamela
+[29621882:10] @cgourzis: Thanks
