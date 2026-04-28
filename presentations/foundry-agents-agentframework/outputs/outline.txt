@@ -1,0 +1,42 @@
+1. Series title slide listing all three sessions in the "Host your Python agents on Microsoft Foundry" series with registration link.
+2. Session title slide for day 1: Microsoft Agent Framework, with slides link at aka.ms/foundryhosted/slides/agentframework.
+3. Agenda slide covering Agents 101, MAF, Foundry Models, Foundry IQ, Foundry Tools, Agent Service hosting, and multi-agent workflows.
+4. Code and GitHub Codespace setup instructions pointing to aka.ms/foundry-hosted-agentframework-demos.
+5. "Agents 101" section header slide.
+6. What is an agent: definition diagram showing an LLM using tools in a loop to achieve a goal, augmented by context, memory, planning, and humans.
+7. Agentic loop in action: step-by-step weather assistant example showing two sequential tool calls.
+8. Python AI agent frameworks: table comparing agent-framework (Microsoft, successor to AutoGen and SK), langchain v1, and pydantic-ai.
+9. Microsoft Agent Framework: open-source Python/.NET engine combining Semantic Kernel and AutoGen, now generally available.
+10. Installing Agent Framework: pip install agent-framework-core plus selective sub-packages; pin versions with a uv lock file.
+11. Simple local agent with tools: Python code using OpenAIChatClient with Ollama and the @tool decorator; full example at agents/stage0_local_model.py.
+12. "Building agents on Foundry" section header slide.
+13. Microsoft Foundry platform overview: Models, IQ, Agent Service, Tools, Machine Learning, and Security control plane.
+14. Foundry Models: 11,000+ models with leaderboards and side-by-side comparison UI.
+15. Agent with Foundry models: only the OpenAIChatClient base URL and token provider change; full example at agents/stage1_foundry_model.py.
+16. Foundry IQ architecture diagram: agentic retrieval across Azure AI Search, OneLake, SharePoint, and MCP sources, returning merged ranked results.
+17. Adding Foundry IQ as MCP tool: MCPStreamableHTTPTool pointing at the AI Search knowledge base MCP endpoint; full example at agents/stage2_foundry_iq.py.
+18. Foundry Tools and Toolbox overview: compose a toolbox from Foundry Tool Catalog (web search, code interpreter) and MCP servers including Foundry IQ.
+19. Creating a toolbox from code: REST API calls using httpx to create and version a Foundry Toolbox; full code in create-toolbox.py.
+20. Equipping an agent with the toolbox: MCPStreamableHTTPTool pointing at the toolbox MCP endpoint with ToolboxAuth; full example at agents/stage3_foundry_toolbox.py.
+21. Foundry Agent Service overview diagram: prompt agents vs. hosted agents, with Foundry Memory, Tools, IQ, Models, and control plane features.
+22. Hosted MAF agents architecture: container in ACR with a Responses API adapter in front, served by Foundry Agent Service.
+23. ResponsesHostServer usage: import from agent_framework_foundry_hosting, wrap agent, and run server; plus Dockerfile and agent.yaml.
+24. Full hosted agent Python code: FoundryChatClient + Agent + ResponsesHostServer.run(); full example at agents/stage4_foundry_hosted.py.
+25. Deploying with azd: azure.yaml, Dockerfile, and agent.yaml config shown; azd auth login + azd up provisions infra, builds image, pushes to ACR, and deploys.
+26. Screenshot of interacting with the deployed Foundry agent in the playground UI.
+27. Interacting from code: curl example and azure-ai-projects SDK using openai_client.responses.create(); full example at agents/call_foundry_hosted.py.
+28. Local development loop: azd ai agent run starts server locally; azd ai agent invoke --local tests it; full example output shown.
+29. "Observability" section header slide.
+30. OpenTelemetry overview: traces (spans), metrics, and logs explained with examples.
+31. Using OTel with Agent Framework: enable_instrumentation(enable_sensitive_data=True) emits gen_ai standard spans for agent, LLM, and tool calls.
+32. Exporting OTel to App Insights: ResponsesHostServer auto-detects APPLICATIONINSIGHTS_CONNECTION_STRING and configures the exporter; full example at agents/stage4_foundry_hosted.py.
+33. Viewing agent traces in Foundry: Traces > Conversations view shows spans for agent invocations, LLM calls, and tool calls.
+34. Viewing agent traces in App Insights: Monitor > Open in Azure Monitor shows agent runs, errors, tool call frequency, and average duration.
+35. "Multi-agent workflows" section header slide.
+36. What's a workflow: any flow involving an agent for decision-making or synthesis, shown as an input→processing→agent→processing→output diagram.
+37. Building workflows in Agent Framework: workflow is a graph of Executor nodes with edges; deeper coverage in the previous Python + Agents series at aka.ms/pythonagents/rewatch.
+38. Simple workflow example: UpperCase and ReverseText executors using send_message and yield_output; full example at workflows/stage1_simple_executors.py.
+39. Using agents inside workflows: AgentExecutor wraps an Agent for use as a workflow node; writer→formatter pipeline example; full example at workflows/stage2_agent_executors.py.
+40. Turning a workflow into an agent: workflow.as_agent(name="Content Pipeline") for compatibility with Foundry; full example at workflows/stage3_as_agent.py.
+41. Hosting a MAF workflow on Foundry: pass workflow_agent to ResponsesHostServer.run(); full example at workflows/stage4_foundry_hosted_as_agent.py.
+42. Next steps slide: register for series, watch past recordings, join Discord office hours; links to aka.ms/AgentsOnFoundry/series, aka.ms/foundryhosted/resources, aka.ms/pythonai/oh.

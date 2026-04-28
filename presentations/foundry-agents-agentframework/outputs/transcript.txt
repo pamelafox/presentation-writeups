@@ -1,0 +1,1535 @@
+[00:04] Hi everyone. Thank you for joining us
+[00:06] for our next live stream. I'll be your
+[00:09] producer for this session. Before we
+[00:12] start, I do have some quick
+[00:13] housekeeping.
+[00:14] Please take a moment to read our code of
+[00:16] conduct.
+[00:18] We seek to provide a respectful
+[00:20] environment for both our audience and
+[00:22] presenters.
+[00:23] While we absolutely encourage engagement
+[00:25] in the chat, we ask that you please be
+[00:28] mindful of your commentary. remain
+[00:30] professional and on topic.
+[00:33] Keep an eye on that chat. We'll be
+[00:35] dropping helpful links and checking for
+[00:37] questions for our presenters to answer
+[00:39] live.
+[00:41] Our session is being recorded. It will
+[00:44] be available to view on demand right
+[00:46] here on the Reactor channel.
+[00:48] With that, I'd love to turn it over to
+[00:50] our speakers for today. Thank you for
+[00:52] joining.
+[00:54] >> For joining.
+[00:57] >> Hello. Hello everyone.
+[00:58] >> Hello. Hello everyone.
+[01:01] >> Oh. Um, okay.
+[01:03] >> Um, okay.
+[01:04] >> I am still hearing an echo. So, to our
+[01:06] reactor host,
+[01:07] >> to our reactor host,
+[01:08] >> if you can fix the echo,
+[01:12] that would be great. All right. I think
+[01:14] we're good now. Okay. All right. Thank
+[01:16] you everyone. It's very distracting to
+[01:18] talk and hear yourself, so just wanted
+[01:20] to fix it up. Okay. Welcome to our
+[01:24] series, Hosting agents on Microsoft
+[01:27] Foundry. Uh this is a very uh timely
+[01:31] topic as there was just a huge new
+[01:33] release last week of a new platform for
+[01:36] hosted agents on Foundry that is way
+[01:38] faster and speedier and really designed
+[01:41] for agents. Uh so this is a great time
+[01:44] to be talking about this. So we are
+[01:47] doing a three-part series. Uh day one
+[01:49] today we're going to be using Microsoft
+[01:51] agent framework to deploy both agents
+[01:53] and workflows to Microsoft Foundry.
+[01:56] uh day two tomorrow uh actually
+[01:58] Wednesday for this series we'll be doing
+[02:00] langchain and langraph and deploying
+[02:02] those to Microsoft foundry uh because
+[02:05] that's a very popular community
+[02:07] framework that many folks are using and
+[02:09] then on our final day on Thursday we'll
+[02:11] be doing quality and safety evaluations
+[02:15] with Foundry on those agents uh so
+[02:18] hopefully we can give you a good
+[02:20] foundation for hosting your agents and
+[02:23] workflows on Foundry. Now, we also have
+[02:25] this series available in Spanish if you
+[02:28] do speak espanol. If you have not
+[02:30] registered for the series yet, please do
+[02:32] so. We'll share the link in the chat and
+[02:35] that way you'll get notified when you
+[02:37] know when each of the streams comes and
+[02:40] you know for all of the resources and
+[02:41] YouTube recordings.
+[02:43] Okay, so welcome, welcome everyone. I
+[02:46] see lots of folks in the chat coming
+[02:49] from all over.
+[02:52] We've got lots of folks from California
+[02:55] today, too. Actually, California
+[02:56] represent. Woo. But also, we've got
+[02:58] Europe, Netherlands. It's late there.
+[03:00] Bota, we've got South America. That's
+[03:02] central. That's awesome. All right.
+[03:04] Welcome everybody. It's great to see
+[03:06] people interested from all over the
+[03:08] world. So, let's dig into day one. How
+[03:11] we can host Microsoft agent frameworks
+[03:14] on Microsoft Foundry. Uh so if you want
+[03:17] to follow along with the slides or use
+[03:19] the slides for your own teaching or
+[03:22] learning they are available at this URL
+[03:25] and we will put this URL in the chat as
+[03:27] well so that you can grab them.
+[03:31] So we're going to cover quite a lot
+[03:33] today showing how we can use Foundry for
+[03:36] many components of agents not just the
+[03:38] hosting but also the models the
+[03:40] knowledge retrieval and the tools and
+[03:42] and also with workflows. So, lots to
+[03:45] cover today. Uh, that means that I won't
+[03:47] have much time to actually answer
+[03:49] questions in the chat, but I've got my
+[03:52] colleague Gwen in the chat. She's the
+[03:54] one who does our Spanish series and she
+[03:56] knows all the stuff as well. And we're
+[03:58] doing an office hours after every live
+[04:00] stream. So, if you do have questions
+[04:02] that don't get covered in the chat,
+[04:03] please come over to Discord afterwards
+[04:06] for office hours and that will give us
+[04:09] questions to talk about during office
+[04:10] hours.
+[04:13] So all of the code is available that I
+[04:15] am showing today. It is in this repo. Uh
+[04:19] so we'll put this URL in the chat as
+[04:21] well. And um you can you know clone this
+[04:24] repo locally, fork it to your account.
+[04:27] Um whatever you want to do. You can also
+[04:28] open it in GitHub code spaces. Uh so you
+[04:32] know here it is. It's all in this repo.
+[04:35] Um now you know normally we try to make
+[04:37] it so that you can follow along uh with
+[04:40] our code. um you know without having to
+[04:43] do anything. But since we're talking all
+[04:45] about hosting on Foundry, you you know
+[04:48] do need to deploy onto Azure. Uh so if
+[04:52] you want to afterwards if you want to
+[04:53] actually get this working on your
+[04:55] account, then follow the instructions in
+[04:58] the readme in order to deploy all this.
+[05:00] Uh but all the code is available. It's
+[05:02] got all the infrastructure, all the
+[05:04] scripts, everything you need in order to
+[05:06] run it locally and on Foundry with all
+[05:08] the Foundry resources. Um, so hopefully
+[05:11] that's helpful for you and if you have
+[05:12] any issues afterwards with running it,
+[05:14] please just file an issue in the issue
+[05:16] tracker and I will reply.
+[05:22] So let's start off briefly talking about
+[05:24] agents.
+[05:26] We have to always clarify what is an
+[05:28] agent. Uh, I think we've all basically
+[05:30] agreed at this point that an agent uses
+[05:33] an LLM to run tools in a loop in order
+[05:36] to achieve a goal. And it's really the
+[05:39] loop and the tools that makes agents so
+[05:42] powerful. Now, we often will add
+[05:44] additional things to agents. So, we
+[05:45] might add memory like short-term or
+[05:47] long-term memory. We might add an
+[05:49] explicit planning step or maybe we just
+[05:50] use a reasoning model that's, you know,
+[05:52] kind of got it built in. And we'll often
+[05:54] have human in the loop. Uh, so at
+[05:56] certain points, maybe the agent will
+[05:57] pause and ask a human for input. Uh, so
+[06:00] that's how we can make our agents more
+[06:02] sophisticated. But the general idea of
+[06:04] agent is that we've got a goal, we've
+[06:07] got tools, the user, you know, sends
+[06:10] something to agent and the agent says,
+[06:11] "Okay, well, you know, based on these
+[06:13] possible tools, which ones I'm going to
+[06:15] call in what order in order to answer
+[06:18] this question, right? Sometimes it might
+[06:21] need only one tool call and sometimes it
+[06:22] could need 20 tool calls once it, you
+[06:24] know, realizes, oh, this is actually a
+[06:26] hard problem." Uh and that's why it's
+[06:28] important that an agent is actually a
+[06:29] loop because it gives the agent that
+[06:31] ability to keep you know searching for a
+[06:34] solution using all the possible tools at
+[06:37] its disposal.
+[06:39] If you do want to learn more dive deeper
+[06:41] into agents uh we we did a whole
+[06:44] six-part series about Python and
+[06:46] building agents with agent framework. Uh
+[06:49] so you can rewatch that series at uh
+[06:51] this URL here uh if you want to dig
+[06:54] really deep into agents.
+[06:57] Uh so this is just an example of the
+[06:59] agentic loop right so if we say you know
+[07:01] we tell the agent hey you're a weather
+[07:03] assistant and we give it a some weather
+[07:05] tools right and then the user says oh
+[07:07] well what's the weather in Tokyo and
+[07:08] then the you know the agent will use the
+[07:10] LLM to say oh okay I think we should
+[07:12] call that get weather tool and pass in
+[07:14] Tokyo and so we call that tool and get
+[07:17] back a response and then the LLM says oh
+[07:19] okay well according to that tool
+[07:21] response you know it's sunny in Tokyo
+[07:22] and 25 degrees C right and then the user
+[07:24] says oh how about London like Okay, well
+[07:26] now we're going to call the weather tool
+[07:27] for London and we get back a response
+[07:29] for that and the LM says okay well based
+[07:31] on that response London is rainy. Uh so
+[07:34] that's the general idea of a aentic loop
+[07:37] with tools.
+[07:40] Now you can write your own agent just
+[07:44] using you know access to an LLM and and
+[07:47] some you know local tools but we
+[07:50] generally recommend using agent
+[07:51] frameworks. They will make it much
+[07:53] easier to handle that tool calling and
+[07:56] have a more sophisticated agentic
+[07:59] harness that can you know deal with
+[08:01] things like memory and context window
+[08:06] you know limits and all of that stuff.
+[08:08] Uh so you know that's that's why people
+[08:10] tend to use agent frameworks. Uh so from
+[08:12] Microsoft we have a framework that is
+[08:15] called agent framework. It's a great
+[08:16] name great name for an agent framework.
+[08:19] I like it. It's very descriptive. it,
+[08:21] you know, it does what it says. Um, and,
+[08:24] uh, you know, that's what we're going to
+[08:25] be using today. Uh, there's also the
+[08:27] very popular Langchain, uh, and they
+[08:29] have this new version, Langchain V1, and
+[08:31] we'll be using that for the next stream.
+[08:33] Uh, and then I also use Pantic AI quite
+[08:35] a bit, and that's from the creators of
+[08:37] Pyantic. Uh, so these are the top three
+[08:39] that I tend to use. Uh, you might have
+[08:42] your own favorite a framework. You can
+[08:44] mention that in the chat if there's one
+[08:45] you really like that you're not seeing
+[08:46] here. Um but uh you know generally it is
+[08:49] a good to use an established agent
+[08:52] framework because it will do do some of
+[08:54] the hard parts of the agent loop for
+[08:56] you.
+[08:59] So today we are focusing on a Microsoft
+[09:02] agent framework which is currently
+[09:03] available in Python and C. Uh we'll be
+[09:07] focusing on Python today because I like
+[09:09] Python. And so agent framework it is you
+[09:13] know open- source packages uh multi-
+[09:16] language packages that contain all these
+[09:19] useful primitives and classes and
+[09:21] functionality in order to build agents
+[09:23] and workflows. Now agent framework is
+[09:25] actually a combination of two
+[09:27] frameworks. So before we had semantic
+[09:29] kernel and autogen um so you know they
+[09:33] were both quite popular with different
+[09:36] crowds. Semantic kernel was more folks
+[09:38] writing these enterprise systems and
+[09:39] autogen was kind of more research
+[09:41] focused and had interesting agent
+[09:43] orchestration patterns. Uh so you know
+[09:46] and people were always like oh which
+[09:47] framework should I use from Microsoft.
+[09:49] Uh so now you don't have to pick now you
+[09:52] just use agent framework and you know if
+[09:54] there was something you liked from
+[09:55] semantic kernel or something you liked
+[09:56] from autogen you can generally find an
+[09:58] agent framework. And also agent
+[09:59] framework now has way more that you
+[10:02] couldn't find in either of those. Right?
+[10:03] So definitely if you're using any of
+[10:05] those two frameworks, you do want to
+[10:07] move over to agent framework. Now uh
+[10:10] agent framework is at least the core is
+[10:12] now generally considered generally
+[10:14] available.
+[10:17] So how do we install agent framework for
+[10:19] python? You actually have a few options.
+[10:22] Um so the first is that there is this
+[10:24] all-in-one package agent-framework and
+[10:26] that brings in a ton of um basically
+[10:30] like sub packages that have lots of
+[10:32] functionality. So you can do that if
+[10:34] when you're, you know, you're playing
+[10:36] around with it and you just want to have
+[10:37] access to everything. However, what I
+[10:40] would actually recommend um for your
+[10:42] more production scenarios is to be more
+[10:44] selective um because agent framework
+[10:46] gives you that option. So you're going
+[10:48] to start off with agent-framework- core.
+[10:51] That's the core. So you always want
+[10:53] that. And then you just would install
+[10:55] the packages that you need, right? So
+[10:57] maybe you need uh you know, maybe you
+[11:00] need Foundry, right? will be using
+[11:02] Foundry today. Maybe you want Foundry
+[11:03] local, maybe you want OpenAI, maybe you
+[11:05] want Lama, right? So you can see there's
+[11:08] all these subpackages that have specific
+[11:11] functionality. So that way you can only
+[11:13] bring in what you actually need for your
+[11:15] project. Uh and that's helpful because a
+[11:17] lot of these also have their own transit
+[11:20] dependencies that they bring in. And so
+[11:22] you don't want to have to bring in
+[11:23] dependencies that you're not using,
+[11:26] right? So I I like I like this is what
+[11:28] I'm going to recommend and this is what
+[11:29] we tend to do.
+[11:31] Now, it's also important that you pin
+[11:34] your versions. This is so important,
+[11:36] especially in this day and age with AI,
+[11:38] you know, causing all these
+[11:39] vulnerabilities. You want to pin your
+[11:41] versions, meaning that your code is
+[11:44] always using a particular version and it
+[11:46] only upgrade, you only upgrade it to a
+[11:48] new version when you've explicitly
+[11:50] tested it locally and verified that you
+[11:53] like that new version and the new
+[11:54] version has no se, you know, has no
+[11:57] actual um vulnerability issues, right?
+[12:00] Uh so there's many ways you could do
+[12:02] that uh depending on whether you're
+[12:03] using pip or UV. We are using UV today.
+[12:06] So I'll show you what we do. So I have
+[12:08] this pi project.toml.
+[12:10] And so in this pi projectl
+[12:13] you can see that I've uh included the
+[12:18] you know I've got the core and I said
+[12:19] okay it has to be at least 1.0.1 because
+[12:21] that's what has the foundry stuff that
+[12:23] we need. And then I've got openi I've
+[12:25] got foundry I've got foundry hosting.
+[12:27] Now you see some of these are only alpha
+[12:30] right now. So these are in public
+[12:31] preview right now. Um and that's you can
+[12:34] tell because of the alpha signifier in
+[12:37] the version number. Uh so this is what I
+[12:40] have in my pi projectl but I'm using uv.
+[12:43] So uv makes a lock file. So if you look
+[12:45] at the lock file it says hey we're
+[12:47] bringing in this exact version and
+[12:50] here's actually that you know the the
+[12:51] exact place that it's getting it from.
+[12:53] So this is what I mean by you know pin
+[12:55] your version. So here I'm saying, hey, I
+[12:57] need these packages and here's the
+[12:58] minimum version that works, but then I'm
+[13:00] using this UV lock file so that I have
+[13:03] to explicitly upgrade the versions and
+[13:05] change this lock file if I want to
+[13:07] change to a new version. So that's the
+[13:10] best practice. That's what I would
+[13:11] recommend.
+[13:15] So let's start off making the simplest
+[13:17] agent we can make that has a tool. And
+[13:21] this one I'm actually going to use a
+[13:23] local small language model uh that's on
+[13:26] my machine. So this is with Olama. Um
+[13:30] there's a few ways you can run models
+[13:31] locally. So there's Lama which works
+[13:33] well on the Mac. There's also Foundry
+[13:35] Local uh which works on Mac and Windows.
+[13:38] Um I think both Alama and Foundry Local
+[13:40] work on both of them. Uh so let me just
+[13:42] load this up.
+[13:45] Okay. So if we say Lama list, there we
+[13:48] go. So you can see I've got various
+[13:50] models locally. The one that I like the
+[13:52] best right now is Quinn 3.54B. Uh so
+[13:55] this is a 4 GBTE small language model
+[13:58] that I can use when testing locally um
+[14:01] when I don't have a you know a nice
+[14:03] deployed frontier model. So that's just
+[14:05] what we're starting here just to
+[14:06] demonstrate uh the basics of an agent,
+[14:08] right? Uh so here we're using the OpenAI
+[14:12] client. So this means we're using an
+[14:14] endpoint that looks like an OpenAI uh
+[14:16] endpoint uh from O Lama and then uh we
+[14:20] have this Python function here and we
+[14:23] decorate it using the tool decorator
+[14:25] from agent framework. So this is how
+[14:26] agent framework knows oh okay this is a
+[14:28] tool we're going to pass to an agent. Uh
+[14:30] so that agent is going to see the name
+[14:32] and you know the um return value and the
+[14:34] dock string and then we create the agent
+[14:36] and say okay here's our agent. This is
+[14:39] going to be the client. So, it's going
+[14:41] to use that OAMA client. Uh, here's the
+[14:43] instructions. This is our system prompt.
+[14:45] I gave it the today's date. And then
+[14:47] here's our tools. And our tools here is
+[14:50] only a local Python function. Okay. Um,
+[14:53] so we're going to see a mix of local
+[14:55] local tools and remote tools. But in
+[14:57] this case, it is just a local Python
+[14:58] function. And then I can run the agent
+[15:01] and pass in a query, right? So say,
+[15:03] okay, well, when does benefit
+[15:04] enrollments open? That's a query that it
+[15:06] should want to call this tool to answer.
+[15:09] So now let's check it out.
+[15:12] Um here I ran it ran it earlier. So
+[15:18] here we go. UV run on this file and I'm
+[15:22] also logging just so we can see what it
+[15:24] what it does. So we can see it made a
+[15:26] request to my local OpenAI endpoint and
+[15:29] then it decided to call the function and
+[15:32] it called the function. it got back a
+[15:34] response and then it sent that to the LM
+[15:38] in order to respond based off of the
+[15:40] tool call response. So that is our most
+[15:43] basic uh basic function here.
+[15:51] All right.
+[15:52] Uh so here we go. That was that was our
+[15:56] very basic agent with tools. So now we
+[15:59] are going to move to foundry. Right. So,
+[16:02] we've seen that we can run an agent
+[16:03] entirely locally using an SLM. How can
+[16:06] we build more powerful agents using
+[16:09] everything that's available in Foundry?
+[16:11] And that's what you're going to want to
+[16:12] do for production, right? That I mean
+[16:14] that SLM worked fairly well um for that
+[16:18] local query. Um but it's it's going to
+[16:20] have a harder harder time as you throw
+[16:22] more information at it and give it more
+[16:24] powerful tools.
+[16:26] So, Microsoft Foundry has a lot of
+[16:30] features that we can use when we're
+[16:31] developing these AI application. Uh, and
+[16:34] we're going to use almost all of them
+[16:36] today. Uh, so we've got Foundry models,
+[16:38] so we can get access to frontier models.
+[16:41] We've got Foundry IQ for knowledge
+[16:43] retrieval for rag as you might also know
+[16:46] it as. We have agent service and that's
+[16:48] how we're going to host it. And then
+[16:49] we've got tons of tools and also the
+[16:51] Foundry toolbox where we can collect all
+[16:53] those tools together. And then we've
+[16:55] got, you know, everything we normally
+[16:57] expect from Microsoft is the ability to
+[17:00] uh, you know, have security and um,
+[17:03] authentication and and governance and
+[17:05] all of that.
+[17:09] Let's start off with foundry models. So
+[17:11] that is the first thing we're going to
+[17:13] do is go from our small local model to a
+[17:16] foundry model. So Foundry uh, has uh,
+[17:20] technically access to more than 11,000
+[17:22] models. Most of these are because
+[17:24] they're from hugging face, right? Um, so
+[17:27] they there's just incredible number of
+[17:28] models on open source uh on on hugging
+[17:31] face. Now the models that matter to me
+[17:33] tend to be the ones that are like really
+[17:35] really the frontier models from the
+[17:37] frontier labs. So I'm usually using
+[17:39] either the opening eye models or now the
+[17:41] enthropic models which are on Foundry as
+[17:44] well. Um or we've also got Mistl Kimmy
+[17:48] like so there's there's a lot of options
+[17:50] and what's nice is that in Foundry you
+[17:52] can actually search at models and then
+[17:54] you can look at their leaderboards. So
+[17:56] there's leaderboards so you can see oh
+[17:57] okay which models are the best in
+[17:58] quality safety right especially like
+[18:00] when a new model like GBD 5.5 just came
+[18:02] out so we could you know go and check
+[18:03] its leaderboards and then you can select
+[18:05] two models and say hey I'm deciding
+[18:07] between you know opus 4.6 and um GBD 5.4
+[18:11] for you know compare these and and tell
+[18:13] me how they compare. So all of that is
+[18:16] available on on Foundry Foundry models.
+[18:19] Let me open that up just to show you
+[18:21] where we get to it.
+[18:24] Let's see.
+[18:27] We can navigate
+[18:30] to it
+[18:32] from and this is all in the new foundry
+[18:34] experience. Let me sign in again. Okay.
+[18:40] Uh, and you know, it's good. Everything
+[18:42] is very protected
+[18:45] um on uh on Microsoft that we've got our
+[18:48] two-factor authentication before I can
+[18:50] sign in.
+[18:52] And now we're getting redirected back to
+[18:56] Foundry.
+[19:01] And I saw there was a question about C.
+[19:03] Uh yeah, so we're doing everything in
+[19:05] Python for this series, but uh
+[19:07] everything that you can do in Python,
+[19:08] you should be able to do in C# as well.
+[19:10] So if you go to discover, then you'll
+[19:12] see the models tab. And in the models
+[19:16] tab, that's where you can search and
+[19:18] also where you can compare and where you
+[19:20] can view the leaderboard.
+[19:23] Let's see. Why am I getting zero? Oh, I
+[19:25] must be in a funny. All right, let me
+[19:27] change my
+[19:31] change my projects.
+[19:37] Okay. All right. Let's let's move on. Um
+[19:40] my there's something funny with my Azure
+[19:42] account today. So I do also have
+[19:43] everything preloaded because my Azure
+[19:45] accounts being funny today. So in order
+[19:48] to make an agent that uses Foundry
+[19:50] models, uh the only thing we have to
+[19:52] change is that OpenAI chat client. So
+[19:54] what we do is change the base URL to
+[19:56] point at our Foundry OpenAI endpoint. In
+[20:00] this case, we're using the OpenAI
+[20:01] models. If you're using Enthropic, uh,
+[20:02] it' be slightly different. Um, but for
+[20:04] using the OpenAI models, we'll just
+[20:06] change the base URL to point at our
+[20:08] Azure OpenAI endpoint. And then we'll
+[20:11] pass in our, um, our Entra credentials
+[20:15] as the token providers for keyless oth.
+[20:18] And then we'll pass in the model that
+[20:19] we've deployed. Right? So in this case,
+[20:21] I think I'm using GPD 5.4
+[20:24] for all of these ones. Uh, so that's the
+[20:27] only thing we need to change. Everything
+[20:28] else remains the same. All right? All
+[20:31] the rest of the code is the same. We
+[20:32] just changed that OpenAI chat client.
+[20:37] Uh so here um you can see that's
+[20:40] running. Uh so I ran that earlier. And
+[20:42] so really the only difference is that
+[20:45] now when we're making the request, that
+[20:47] request is going to my Foundry account
+[20:49] instead. Right? So it's it's saying,
+[20:51] "Hey LM, this is what the user wants to
+[20:53] do." The LM says, "Okay, let's call this
+[20:55] tool." It sends back the tool response
+[20:57] to the LM. and then we get back the
+[20:59] answer from the LLM.
+[21:02] Uh so very similar to using O Lama, it's
+[21:06] just that now our model is deployed onto
+[21:09] Foundry and we generally will get better
+[21:12] responses when we're using the more
+[21:14] powerful models.
+[21:20] So I just saw a question about Rag and
+[21:22] that leads as well into Foundry IQ. So
+[21:25] if you want your answers, your agents
+[21:28] answers to be grounded in knowledge uh
+[21:31] from you know from your internal
+[21:33] knowledge then we recommend using
+[21:35] Foundry IQ. Foundry IQ is basically
+[21:37] Azure AI search uh it's the way we refer
+[21:40] to it when it's inside Foundry. Um so it
+[21:43] is using the Azure AI search agentic
+[21:46] knowledge base in order to do uh aentic
+[21:50] retrieval and you can do it across
+[21:52] multiple knowledge sources which is
+[21:53] what's really nice. So uh you know
+[21:55] basically you want to get your data and
+[21:57] and have it available in one of these
+[21:59] possible knowledges sources right so you
+[22:01] might put in a search index if it's
+[22:02] something like you're just indexing
+[22:04] you've got like uh you know folders and
+[22:06] folders full of PDFs okay you go and
+[22:08] index them you put in a search index um
+[22:10] but you can also point AI search at one
+[22:12] lake uh at sharepoint at just an
+[22:16] arbitrary MCP that's in um private uh
+[22:19] preview right now uh but it can support
+[22:21] a wide range of knowledge sources
+[22:24] And then uh when the agent you know sees
+[22:27] that it so what we're going to do is say
+[22:29] hey you know agent you have the ability
+[22:31] to use this knowledgebased retrieval
+[22:33] tool and this gets exposed over MCP. So
+[22:36] MCP is a is a way of exposing
+[22:41] functionality uh so that um agents can
+[22:44] use tools from servers in a standard
+[22:47] way. So there is an MCP endpoint for
+[22:50] this AI search knowledge base and the
+[22:52] agent can then say okay I'm going to
+[22:54] call this the tool knowledgebased
+[22:56] retrieve and it decides what queries
+[22:58] it's going to send and then uh AI search
+[23:02] will send all those queries across uh to
+[23:05] all the possible knowledge sources get
+[23:07] back the results merge those results
+[23:09] using um the a semantic ranker step and
+[23:13] then get the results back to the agent
+[23:16] and so then the agent will see all those
+[23:17] merge results and decide what to do with
+[23:20] them.
+[23:23] So that uh is what we're going to use
+[23:25] and so we are using it use as an MCP
+[23:28] tool. So what we do is uh figure out we
+[23:31] set up our knowledge base in AI search
+[23:33] and so that knowledge base you know has
+[23:35] however many knowledge sources in it and
+[23:38] then we say okay this is our AI search
+[23:40] endpoint this is the knowledge base name
+[23:42] we're using we're using the slashmcp
+[23:45] uh you know URL here and then in order
+[23:49] to point the agent at that tool we use
+[23:52] this class from agent framework called
+[23:54] mcp streamable htc tool so this comes
+[23:57] from agent framework and you say, "Hey,
+[23:59] here is a MCP server and these are the
+[24:04] tools that we want to use from it.
+[24:05] There's just one tool. Um, and you know,
+[24:08] here's the URL. Uh, we give it a client
+[24:10] that has the authentication information
+[24:12] because of course we're authenticating
+[24:14] securely with our credential." And now
+[24:18] the agent inside the agent, you see
+[24:19] here, we say, "Hey, you're going to use
+[24:22] this MCP tool." So, this agent now has
+[24:25] two tools. It has the local tool which
+[24:27] is a Python function and it has this MCP
+[24:30] tool which is basically a remote tool
+[24:33] right and so at any point the agent can
+[24:35] decide all right I've got these two
+[24:36] tools I can either retrieve from a
+[24:38] knowledge base or I can get enrollment
+[24:39] info uh which tool do I want to use in
+[24:42] order to answer the question
+[24:46] uh so looking at that
+[24:49] uh example here so here when I run it so
+[24:52] here I'm saying okay we're going to run
+[24:54] this code and it actually starts starts
+[24:56] off with a lot more requests um than
+[24:59] than before because now it has to do a
+[25:01] little handshake with the MCB server,
+[25:03] right? So, it's saying like, "Okay, hi
+[25:05] MCB server. What tools do you have? You
+[25:08] know what? Which of those could I use?"
+[25:09] So, all of this is required. That's the
+[25:12] overhead of using MCP is that the agent
+[25:14] needs to do a handshake with the MCP
+[25:16] server and say, "Hey, MCB server, what
+[25:19] tools do you have? Uh, you know, what do
+[25:21] they look like? What are their names?
+[25:22] What are their arguments? you know, how
+[25:24] can I use them? Um, so all of these
+[25:26] calls here are just basically the, you
+[25:29] know, finding out from the MCP server
+[25:31] what tools are available. Uh, so then
+[25:33] it's all set up and it says, oh, okay.
+[25:36] Um, it actually suggests we, you know,
+[25:38] for this, uh, for this particular
+[25:40] question, it's going to call both that
+[25:41] MCP tool and the local tool and, um, and
+[25:46] then we get back the results, right? So
+[25:48] this is an example where uh, let me show
+[25:51] the the question that I sent to it. I
+[25:53] said, "What perks plus benefits are
+[25:54] there and when do I need to enroll by?"
+[25:56] So, this was a question where it
+[25:57] actually had to query both those tools
+[25:59] in order to answer them. So, I had to
+[26:01] both use the local Python tool and the
+[26:03] Foundry IQ uh MCP tool. So, then we get
+[26:07] back this answer. Here's the benefits.
+[26:09] Here's the source. It's from this PDF
+[26:10] that was indexed in the in the um search
+[26:13] index. And then this is when you need to
+[26:16] enroll by and that came from the uh
+[26:19] local tool up here, right?
+[26:23] So now we're starting to build a more
+[26:25] powerful agent that's able to, you know,
+[26:28] actually pull in our domain information
+[26:31] and use that in order to answer answer
+[26:34] questions, right? And so when we're
+[26:36] writing our system prompt, we also want
+[26:37] to make sure in our system prompt that
+[26:39] we make it clear like when it should be
+[26:40] using uh you know different um different
+[26:43] tools available. That'll just help it
+[26:45] with its decision process.
+[26:52] Okay.
+[26:54] Now, you might want other tools as well
+[26:56] besides just the knowledge retrieval
+[26:58] tool. And in fact, Foundry has access to
+[27:02] lots and lots of built-in tools and is
+[27:05] trying to make it easier for you to
+[27:07] bring in those tools for use by any
+[27:09] agent. Uh so, Foundry now has this thing
+[27:11] called the Foundry Toolbox. And this was
+[27:14] just released very recently. And the
+[27:16] Foundry toolbox can collect tools uh
+[27:19] from the Foundry tool catalog so that
+[27:21] you can just make a toolbox and say,
+[27:23] "Hey, I've got this toolbox of common
+[27:25] tools I like to use." And and any agent
+[27:27] you have can just point at that toolbox.
+[27:29] And that toolbox will basically be like
+[27:31] an MCP server as well that exposes each
+[27:36] of the tools that are in the toolbox.
+[27:38] Uh so what we can do is build a toolbox
+[27:43] that includes the that Foundry IQ MCP
+[27:46] server um but also includes the web
+[27:50] search tool which is a really cool tool
+[27:52] because it's powered by Bing. So you can
+[27:54] actually search the web and you know
+[27:55] that can make your agents have much
+[27:57] better answers if anybody's asking about
+[27:59] anything that's you know current today
+[28:01] uh that requires more grounding in web
+[28:04] results. It can also include code
+[28:06] interpreter which is another built-in
+[28:07] tool which does sandbox Python execution
+[28:09] and that is so helpful as well because
+[28:11] then your agents can answer questions
+[28:13] that require more complex like math
+[28:16] calculations or they can do like image
+[28:18] manipulation
+[28:19] um you know using like panda uh pillow
+[28:22] and stuff like that. So I really like to
+[28:25] have both web search and co interpreter
+[28:27] enabled for uh all of my agents to make
+[28:30] them more powerful. Um but it depends on
+[28:32] what you're building, right? So, you
+[28:33] know, for today we're going to use web
+[28:34] search, code interpreter, and foundry IQ
+[28:37] as our three tools for our agent.
+[28:44] So, the first thing we have to do since
+[28:45] we're using Foundry toolbox is create a
+[28:48] toolbox um uh from here I'm making it
+[28:51] from code uh just doing using the
+[28:53] toolbox rest API. I'm saying the toolbox
+[28:56] is a very very new concept. So right now
+[28:58] the only way to make a toolbox is um
+[29:01] programmatically is via the rest API. So
+[29:04] that's what we do here. We say hey we're
+[29:06] making this toolbox. It has these two
+[29:08] built-in tools. It also has this MCP
+[29:10] endpoint here um which is the knowledge
+[29:13] base and here's the information and it's
+[29:15] going to use a project connection uh in
+[29:18] order to connect to that securely.
+[29:20] So we make the toolbox and then once we
+[29:23] have the toolbox we can point any agent
+[29:25] at that toolbox.
+[29:30] So in order to do that we're this looks
+[29:31] really similar from to Foundry IQ
+[29:33] because the toolbox is itself just an
+[29:36] MCP server. Uh so we're going to make it
+[29:39] you know an MCP tool again and say hey
+[29:41] this is our toolbox. This is the Foundry
+[29:44] project endpoint. you're going to use
+[29:45] this toolbox and use its MCP endpoint.
+[29:49] And then this time when we do tools,
+[29:51] we're going to point it at our local
+[29:52] function and that toolbox tool.
+[29:56] Uh, and that way we have everything
+[29:57] together.
+[30:00] So then when we run that
+[30:05] or actually I already ran it so I can
+[30:07] show you. Um
+[30:10] uh so we can see that this time it's
+[30:12] actually going to uh let's see for this
+[30:14] question I had it search the web as well
+[30:17] as searching from a knowledge base. Yeah
+[30:20] I have to relog in. Um so
+[30:24] so let me just show you the actual code.
+[30:26] All right so let's go and look at the
+[30:27] code for this one3
+[30:30] foundry toolbox. Okay. All right.
+[30:36] So here we have our Foundry toolbox set
+[30:40] up here
+[30:47] and um and yeah and so it it's it's uh
+[30:52] it's got access to those tools and so it
+[30:55] decided to do both the knowledgebased
+[30:57] retrieve and web search and got them
+[31:00] both from the toolbox.
+[31:03] Uh and the question I asked for this one
+[31:05] was uh you know does perks plus cover
+[31:08] scuba diving and how does that compare
+[31:09] to perks plus at other companies? So it
+[31:12] had to use the knowledgebased retrieve
+[31:14] tool to answer this part of the question
+[31:15] because this was an internal question
+[31:17] and then it had to use the web search
+[31:19] tool to answer this part of the
+[31:21] question. Right? So now we can see how
+[31:23] we can ground answers in both our own
+[31:26] internal information and uh combine that
+[31:29] with information from the web in order
+[31:31] to be able to answer a wider range of
+[31:33] questions right and this is the kind of
+[31:35] question that you know people might
+[31:36] reasonably have right so we get back the
+[31:38] answer it says okay so for zava perks
+[31:40] plus yes it's covered compared to other
+[31:42] perks plus okay well Microsoft it
+[31:45] doesn't say uh united perks plus right
+[31:48] so it tried to go and find information
+[31:50] from the web in order to answer that
+[31:52] question and um you know it actually did
+[31:54] a a pretty decent job.
+[31:58] Uh so here we have uh so that's our
+[32:01] that's our toolbox right
+[32:05] and there's many other tools that you
+[32:06] could add to that and you can you know
+[32:08] add any um arbitrary MCP tool as well.
+[32:12] So finally let's talk about Foundry
+[32:15] agent service. Uh so we've got you know
+[32:18] now we've got those agents I was all
+[32:19] running those locally right. Um, but
+[32:22] once we're happy with our agent, we're
+[32:23] probably going to want to actually run
+[32:25] that on a server in production. Uh, so
+[32:28] Foundry Agent Service is a way of doing
+[32:32] that. It's a platform for running your
+[32:34] agents and it supports two kinds of
+[32:36] agents. The one it's supported for a
+[32:38] while and originally was called a prompt
+[32:39] agent and that's where you're just
+[32:42] telling Foundry agent service like oh
+[32:44] here's you know here's my instructions,
+[32:45] here's my tools. um and just using the
+[32:49] you know its way of it's its own agentic
+[32:51] loop that's built in. Uh but what we're
+[32:53] doing today is hosted agents and that I
+[32:56] like better because there we can bring
+[32:57] our own agent framework um and the use
+[33:01] the agentic loop and all the
+[33:02] functionality from the agent framework.
+[33:04] So hosted agents are is a more generic
+[33:07] platform that can potentially host any
+[33:10] sort of agent framework.
+[33:12] Uh so today we're doing agent framework.
+[33:14] We're going to do lang chain next. Um,
+[33:16] but in theory, if you had another agent
+[33:17] framework, you could bring it as well.
+[33:20] And both of these can use, you know, all
+[33:22] of this foundry functionality. Um, as
+[33:24] we've been seeing, as we've been
+[33:25] building up our agent to be more more
+[33:27] functional.
+[33:31] So, how does it actually work when we
+[33:34] want to host an Microsoft agent
+[33:36] framework agent? Uh, so there's uh
+[33:39] actually two ways of hosting the agent.
+[33:42] uh basically because we want to have a
+[33:44] common way of interacting with the agent
+[33:46] and so there's two options one is that
+[33:49] you put a responses API in front of that
+[33:51] agent and that becomes the way you
+[33:53] interact with the agent uh the responses
+[33:55] API is based off the open eye responses
+[33:57] API and now there's open responses spec
+[33:59] so it is like a fairly wellsupported way
+[34:02] of interacting with uh you know models
+[34:05] and and now agents so that's one option
+[34:07] and that's what we're going to be doing
+[34:09] today for this series is using the
+[34:11] responses API in front because it gives
+[34:13] you more functionality when you're when
+[34:15] you are when your agent is supporting
+[34:17] the responses API. Um but that in order
+[34:19] to do that that does mean on top of our
+[34:22] code right so we have our code we need
+[34:24] code that then adapts our code to re
+[34:28] receive input in the form of the
+[34:31] responses API messages and send output
+[34:34] in the form of responses API as well. So
+[34:37] we basically need some sort of adapter
+[34:40] between, you know, that's going to make
+[34:42] our code conform to that shape. Now, if
+[34:44] you don't want to write that adapter,
+[34:46] then you could use that more generic
+[34:47] invocations API, which is basically
+[34:49] just, you know, you get an HP endpoint,
+[34:51] you send whatever you want to it, right?
+[34:52] But I like doing the responses API route
+[34:55] because it unlocks more Foundry
+[34:56] functionality.
+[34:58] Uh so basically so we have our code we
+[35:01] put an adapter on top of it then that
+[35:05] gets packaged up using a docker file as
+[35:07] a container and that gets stored in as
+[35:08] your container registry. Uh and then
+[35:11] finally that uh we you know we set that
+[35:13] all all up on Foundry agent service so
+[35:15] that it can pull the container from the
+[35:18] container registry and serve it using
+[35:21] this new uh micro VM platform. So it can
+[35:23] serve it very quickly and um you know
+[35:27] and with great isolation as well.
+[35:31] So how this actually looks like with
+[35:34] agent service in Python is that we have
+[35:36] our code right. So remember our agent
+[35:37] code. So we have okay agent and this
+[35:39] time our client is going to be the
+[35:40] foundry chat client. Um and then our
+[35:43] adapter is from the foundry hosting
+[35:46] agent framework package. So we actually
+[35:48] import it from agent framework. So in
+[35:52] this case, agent framework itself has
+[35:54] decided to add formal support for
+[35:58] Foundryhosted agents to make it super
+[36:00] easy to bring uh to bring your agent
+[36:03] framework agents to Foundryhosted. So
+[36:05] you're going to bring in that special
+[36:08] package and that server uh and then wrap
+[36:11] your agent in it. So you're going to
+[36:12] say, okay, I'm making a new responses
+[36:14] server that's wrapping this agent and
+[36:16] then I'm running that server. And so
+[36:18] that will literally run a server that
+[36:20] has endpoints that uh look like
+[36:23] responses API endpoints. And then we use
+[36:25] a docker file and an agent.yamel in
+[36:28] order to describe our you know how we're
+[36:30] going to build that container and how
+[36:31] our agent works and then run it in agent
+[36:34] service.
+[36:37] So then if we look at the full Python
+[36:39] code here, right, we're bringing in um
+[36:42] mo everything from agent framework
+[36:44] including that new responses host server
+[36:47] and uh creating this foundry chat client
+[36:50] using that as the client running the
+[36:52] server and then and then boom
+[36:57] then we need to deploy it right because
+[36:59] now we need to actually get that
+[37:01] container built and up onto Azure. So we
+[37:03] are using the Azure developer CLI. Uh so
+[37:05] first we log into the CLI and then we
+[37:08] run a up. So what that does it makes all
+[37:10] the infrastructure based off of bicep
+[37:12] files. Uh it builds the image using the
+[37:15] docker file. Uh it pushes that image to
+[37:18] the Azure container registry and deploys
+[37:20] that new agent to foundry uh and auto
+[37:23] increments the version of the agent in
+[37:25] foundry.
+[37:27] Uh so just looking at how that works.
+[37:33] All right. So, we have
+[37:36] we've got a few components here. So,
+[37:37] we've got the agent.yaml, right? So,
+[37:39] here's the agent.yaml. So, it names the
+[37:41] agent and it says it's using the
+[37:42] responses protocol. And we also say, you
+[37:46] know, the CPU and memory resources
+[37:47] necessary for the the uh microVM that
+[37:51] it's going to launch. Uh we can also
+[37:53] inject some environment variables into
+[37:55] the container uh if needed. Then we have
+[37:59] the docker file and the docker file uh
+[38:03] you know installs all sets up a python
+[38:04] container installs all the requirements
+[38:07] and then does a little health check and
+[38:09] then runs runs this code here and then
+[38:14] in that code
+[38:16] that's where we bring in the responses
+[38:19] host server and um you know we just run
+[38:23] that server when that code gets run and
+[38:26] then for add here's what the ASD up
+[38:29] looks like um you know it'll package
+[38:31] things up. It'll provision anything um
+[38:34] in this case it didn't have to because
+[38:35] it was already done and then it'll
+[38:37] deploy and when it deploys it actually
+[38:39] what's really nice is it gives you a
+[38:40] link to try out the current version of
+[38:43] the agent. You see this is version 29.
+[38:45] That's the one I just did. Uh so this is
+[38:47] actually a link that opens up Foundry.
+[38:50] So then let's go to Foundry. So here it
+[38:53] is. I have it open. Um, so I already
+[38:56] asked that that same question. What
+[38:58] perks plus benefits are there and how do
+[39:00] they compare to other companies? Uh, so
+[39:03] we get back this really nice answer and
+[39:06] then how it compares and the cool thing
+[39:09] is you can see the log stream here
+[39:11] that's coming in from the container from
+[39:14] that microVM. Um, so it's like from a
+[39:19] development perspective, it's I really
+[39:20] love having the log stream right here.
+[39:22] Like I really really like this. I always
+[39:24] struggle with finding logs when I'm u
+[39:27] you know deploying on Azure but now
+[39:28] we've got the log stream right here. So
+[39:30] I think this is a really nice nice
+[39:32] feature and I I use this all the time so
+[39:34] I can see everything going on and I have
+[39:36] very verbose logging because I love my
+[39:38] logs. Uh so here we go. So it's you know
+[39:41] so here you can play around with it in
+[39:43] the playground um just to try it out but
+[39:45] you can also you know using the
+[39:47] responses API you can interact with it
+[39:49] anywhere else right. Um, so you could
+[39:51] also interact with it from code, right?
+[39:53] You just have to make a HP request using
+[39:56] the responses API to that endpoint, you
+[39:58] know, with the right authorization and
+[40:00] then you can get back a response. Uh, so
+[40:02] you could do that with HP, you could do
+[40:04] that with the Azure AI projects SDK, you
+[40:06] could do it with the open AAI SDK. As
+[40:08] long as you have a way of, you know,
+[40:10] using responses API, uh, then you can
+[40:14] interact with your deployed agent.
+[40:19] Yeah, I see a question about these
+[40:20] microVMs versus container apps. So, the
+[40:23] previous version did work run on
+[40:25] container apps. The change that was made
+[40:26] last week was this new platform and I
+[40:29] don't even think there's like an
+[40:30] official name for the platform yet. Uh I
+[40:32] think if you come to build in June, you
+[40:34] might hear an official name. Uh so,
+[40:36] right now I'm just been calling it like
+[40:38] the fast microVM platform. Um so uh yes
+[40:42] so they're they're running on some great
+[40:44] technology that has very fast startup
+[40:46] time and um is better for uh s uh doing
+[40:50] session isolation um for each of the
+[40:53] agent runs and um you know we'll have
+[40:56] more to talk about for it at build.
+[41:01] Uh let's see the other thing that's nice
+[41:03] is that we can also run the hosted agent
+[41:06] locally if you want to test out to see
+[41:08] what it's like. So you can see um you
+[41:11] just use a AAI agent run. Uh let's see
+[41:14] where did I start off my
+[41:17] you can see all my logs. Okay. So when
+[41:19] you do a AAI agent run then it'll start
+[41:22] up a local version of the responsive
+[41:25] server. So you can simulate what's going
+[41:26] to happen in deployment right because
+[41:28] you know you always want to be able to
+[41:29] simulate as much locally as possible. So
+[41:31] this is you know running that server and
+[41:33] then we can do um we can invoke that
+[41:36] server. So we say okay aai agent invoke
+[41:40] local and that's going to hit up that
+[41:42] local server local host URL and get an
+[41:46] answer to it right so you you have the
+[41:48] same experience locally as well so I
+[41:50] think that's really nice having that
+[41:51] local development experience in addition
+[41:53] to the the deployed experience because
+[41:56] you want to always test as much as you
+[41:58] can locally before you actually have to
+[42:00] do a deploy even though the deploys now
+[42:02] are really really fast because that's
+[42:04] another thing about this new um platform
+[42:06] is that the deploys are very fast.
+[42:09] Okay, now let's talk about observability
+[42:13] uh because that is a big feature of this
+[42:16] as well. So we're going to be doing
+[42:18] observability using open telemetry. Open
+[42:20] telemetry is an open standard for how
+[42:23] applications can emit emit traces,
+[42:25] metrics and logs. And um we generally
+[42:29] are big users of open telemetry at
+[42:32] Microsoft and like to have support for
+[42:33] it in all of our our products um both in
+[42:36] terms of emitting and also um you know
+[42:40] uh you know visualizing anything from
+[42:42] open telemetry. So that's what we're
+[42:43] going to be using for our um for all of
+[42:46] our um traces.
+[42:48] So how do we use that with agent
+[42:50] framework? Uh so agent framework
+[42:52] actually has uh several functions that
+[42:56] make it easy to use open telemetry. The
+[42:58] one we're using today is uh called
+[43:01] enable instrumentation. So we import
+[43:03] that from the agent framework
+[43:04] observability package and then we call
+[43:07] it um before any of our important code
+[43:10] runs. So we want to call it really
+[43:12] really early like at the very top um
+[43:14] before anything runs. So we enable
+[43:16] instrumentation and in this case I'd
+[43:18] said enable sensitive data true so I
+[43:20] could get my um tool call results in
+[43:22] there. Um you'll have to decide whether
+[43:24] you want to do that for your production
+[43:26] deployment. Um but when we call that
+[43:29] then it's going to instrument all of the
+[43:32] uh agent calls and tool calls so that
+[43:35] they emit open telemetry traces using
+[43:38] this um generative AI semantic
+[43:41] conventions and it's used across the
+[43:42] industry. So we're not the only ones
+[43:44] using this. So that means like there's
+[43:45] actually standardization across uh
+[43:48] multiple you know vendors and agent
+[43:50] frameworks for how these uh traces are
+[43:53] being exported which is nice. I always
+[43:55] like when we have standards. Um so
+[43:57] you'll see that like when a tool gets
+[43:58] executed you'll see all these like you
+[44:00] know genai.name ji.tool.call to
+[44:02] arguments right? So agent framework will
+[44:05] make sure that you know those those
+[44:08] spans get exported. Now we still need to
+[44:11] bring those spans into our you know into
+[44:14] a platform for viewing them right so
+[44:16] that's called exporting so we still need
+[44:18] to export those spans to somewhere so in
+[44:21] this case we're going to export to Azure
+[44:22] application insights because that is an
+[44:24] hotel compatible platform and that's
+[44:27] what foundry um uh integrates with
+[44:30] directly
+[44:31] uh so what we can do here is when we
+[44:35] actually we already did it so when we
+[44:36] set up responses host server that has
+[44:39] code that will look for the application
+[44:41] insights connection stream and it'll
+[44:43] automatically set up the exporter to
+[44:46] that app insight. So as long as you've
+[44:48] you know basically all you just have to
+[44:50] be using this you know this this code
+[44:52] here and it'll export to app insights
+[44:54] for you.
+[44:56] So then once we've done that then we
+[44:58] have access to traces in foundry. Um so
+[45:02] my favorite way to view them is to go to
+[45:04] the traces tab and that'll load up.
+[45:08] Okay, I see Foundry. Someone was saying
+[45:10] Azure was having issues. So, good thing
+[45:11] I took screenshots of everything. Um, so
+[45:14] you go to your traces tab, you click
+[45:16] conversations, and you will see all
+[45:18] these traces um from the conversations.
+[45:21] And when you click on one of those, then
+[45:23] you'll see this really nice um sequence
+[45:26] of of calls that happen, right? So, we
+[45:28] see like, okay, we invoked the agent,
+[45:29] then we called uh GBD 5.2, then we
+[45:32] called the web search tool, then we
+[45:34] called the knowledgebased retrieve tool,
+[45:35] then we called the LLM again, then web
+[45:36] search, right? So you can see the whole
+[45:39] sequence of steps that happened and when
+[45:40] you click on each of those you can see
+[45:42] all the attributes um you know that
+[45:45] describe everything that happened at
+[45:46] each point.
+[45:49] The other thing that's nice is that
+[45:50] Azure app insights also now has this new
+[45:53] agents tab that is um you know similar
+[45:57] but shows more like overall stuff. So
+[45:59] this will show agent runs, errors, like
+[46:02] which tool calls are happening the most
+[46:04] often, which ones have the most errors,
+[46:06] the average duration. Uh so you get
+[46:08] really really cool charts from app
+[46:11] insights now as well. Um and uh and
+[46:13] that's really easy to get to from
+[46:15] Foundry. You just select the monitor tab
+[46:16] and there's a button that will open as
+[46:18] your monitor. So you've got multiple
+[46:21] ways of you know browsing going through
+[46:24] all these traces and you know trying to
+[46:26] understand how your agent is working and
+[46:28] and um and and you can just use app
+[46:30] insights is you know just the regular
+[46:32] way too because this is all just using
+[46:34] open telemetry.
+[46:38] All right so now finally let's talk
+[46:42] about workflows. So you may want to go
+[46:44] beyond a single agent and actually be
+[46:46] putting together multi-agent workflows.
+[46:48] It's very common uh when you're starting
+[46:51] to to actually do some you know real
+[46:53] processing with agents.
+[46:57] Uh so a workflow is you know any flow
+[46:59] you make that involves an agent at some
+[47:01] point uh and usually that agent is
+[47:04] either deciding like kind of what branch
+[47:06] you know where where to go next in the
+[47:07] workflow or it's maybe synthesizing an
+[47:10] answer or maybe it's doing some um you
+[47:12] know entity extraction. There's lots of
+[47:14] ways you might you know use that agent
+[47:16] in a workflow. Um, but there there's
+[47:19] many workflows that you can start to add
+[47:20] agents to uh in order to make them more
+[47:22] powerful.
+[47:25] So in agent framework, there is built-in
+[47:27] support for workflows and uh the the way
+[47:30] that they describe workflows and the way
+[47:33] they make them is that a workflow is a
+[47:35] graph and the nodes in the graphs are
+[47:37] called executors. So each node is an
+[47:40] exeutor and there are edges between the
+[47:42] nodes. uh and there's you know start
+[47:45] there's a start edge and you know an
+[47:46] endge as well. So each of those
+[47:49] executors has to define methods that can
+[47:52] receive messages from you know the
+[47:55] previous executor and that will then
+[47:58] send messages to the next executor or
+[48:00] they'll just yield an output. Um so they
+[48:03] either need to send messages along or
+[48:05] output something. Uh we had a whole
+[48:08] three days talking about workflows in
+[48:10] our last series. So if you do want to
+[48:12] learn more about workflows and agent
+[48:14] frameworks, do watch those videos.
+[48:18] Here is a really simple workflow that
+[48:20] doesn't use any agents at all just to
+[48:21] show you what workflows look like in
+[48:23] agent framework. So we have two
+[48:24] executives. One of them turns text into
+[48:27] uppercase. I know this is very exciting.
+[48:30] And the other one reverses the text and
+[48:33] uh outputs it. Right? So this is to show
+[48:36] that um the first one uses send message
+[48:38] in order to send the message to the next
+[48:40] executor and the second executor just
+[48:42] does yield output in order to yield that
+[48:45] as an output that that can be queried uh
+[48:47] as an output from the workflow. Uh so we
+[48:50] create we use workflow building workflow
+[48:52] builder class and say hey this is our
+[48:54] start executor it's upper we're going to
+[48:56] add an edge from upper to reverse and
+[48:59] then we're going to build and then we
+[49:00] run the workflow and we get the outputs
+[49:02] from it and we'll get back the very
+[49:05] exciting reversed uppercased text.
+[49:09] So that's a really really simple
+[49:10] workflow just so you see the idea of how
+[49:12] workflows work in agent framework. Now,
+[49:15] a lot of times it's more exciting if
+[49:17] some of your executors or all of them
+[49:19] are agents. So, in this case, we have uh
+[49:22] these agent exeutor nodes. Um, and these
+[49:25] basically are just taking an agent and
+[49:27] then wrapping them to turn them into an
+[49:29] exeutor. Uh, so our agent, we've got a
+[49:32] writer and we've got a formatter, right?
+[49:34] So, we say, okay, we've got our two
+[49:35] agent exeutor nodes. Uh, this is the
+[49:38] start exeutor is the writer. The output
+[49:40] executor is the formatter. And then
+[49:42] we're going to add an edge between the
+[49:43] writer and the formatter. And then we
+[49:45] have that workflow. Uh so here uh this
+[49:49] is where I ran it. So I told it to write
+[49:51] a two sentence LinkedIn post. Why your a
+[49:54] AI pilot looks good but fails in
+[49:55] production. And so that went through the
+[49:58] writer and then it definitely went
+[50:00] through the formatter because I told the
+[50:01] formatter to add lots of emojis.
+[50:04] And I see a lot of emojis. So I can
+[50:07] definitely see that it went through both
+[50:09] steps here.
+[50:13] Now the next thing we need to do is turn
+[50:16] the workflow into an agent so that we
+[50:19] can make it compatible with um foundry
+[50:21] hosted agents. Uh so all we have to do
+[50:24] there is after we build the workflow we
+[50:25] just call as agent and we give it a name
+[50:29] and now we have an agent wrapping that
+[50:32] workflow
+[50:34] and it's going to I mean thing is it's
+[50:36] basically it's going to work the same as
+[50:37] the other one. It's just slightly
+[50:38] different code, right?
+[50:40] That leads us into the ability to host
+[50:43] our agents on Foundry because now well
+[50:46] we've got an agent class again. We can
+[50:48] just do exactly what we did before,
+[50:50] right? We're going to take our workflow
+[50:53] and say okay as agent and then pass that
+[50:57] workflow as agent to the, you know, to
+[51:01] that responses host server and then run
+[51:03] the server and then boom, we have a
+[51:06] workflow as an agent. Um, so I've got
+[51:09] that. Um, and then we'll do a up as
+[51:11] well. So in this repo, you'll actually
+[51:13] see this is basically a mono repo that
+[51:15] has both an agent and a workflow. And
+[51:17] each of them has their own um setup. So
+[51:20] if you look in the workflows folder,
+[51:22] you'll also find a Docker file there. So
+[51:24] that's running the workflow um file
+[51:27] instead. Uh you'll find it's got a pi
+[51:29] project.l as well. It's got an agent.l
+[51:32] and this one has a different name. So
+[51:34] this one's called dash workflow and it
+[51:36] has some different environment
+[51:37] variables. So you can actually have
+[51:40] multiple agents and workflows inside a
+[51:42] repo as long as each of them has their
+[51:44] own folder that has a docker file
+[51:47] agent.yaml
+[51:48] um and all its requirements in there
+[51:51] right
+[51:53] uh and then oh I've never showed our
+[51:54] azure.yaml. So our azure.yaml this is
+[51:57] used by add you can see in the
+[51:59] azure.yaml we have multiple services
+[52:02] listed. So, one of them is the agent
+[52:04] service um and that's referencing the
+[52:06] agents folder and the other one is the
+[52:08] workflows one. So, as you add more
+[52:11] agents and workflows that you're hosting
+[52:12] in Foundry to a repo um you would add
+[52:15] more to your Azure.yaml YAML as well um
+[52:18] so that it could deploy all of those at
+[52:20] once because then if you look at my easy
+[52:22] up you actually see that indeed it
+[52:24] deployed both the agent and the workflow
+[52:27] to the to Foundry and you know gave us
+[52:30] the links for both of them right so we
+[52:32] got our playground link our uh our
+[52:35] endpoint
+[52:36] uh and got them all deployed so that's
+[52:38] really nice as well the ability to
+[52:40] having you know support for being able
+[52:42] to deploy uh you know multiple things
+[52:45] from from one repo. All right, so let's
+[52:48] see. Uh, so here we go. This is the
+[52:50] workflow and you can see it looks the
+[52:52] same, right? Because to Foundry, this is
+[52:54] just an agent that is being exposed as
+[52:56] responses. The difference is that now,
+[52:59] you know, it's it's running it's running
+[53:01] different flows. Um, as you can see,
+[53:03] this has lots of emojis because it went
+[53:06] through both my writer and my form that
+[53:08] likes to add emojis. Uh, so the
+[53:10] workflow, you know, worked. And once
+[53:11] again we've got all the logs and um you
+[53:16] know we can actually see as it went
+[53:17] through the logs uh we can actually see
+[53:19] here you can see it says oh okay
+[53:20] starting steps of the workflow right
+[53:22] starting superstep one and it's going
+[53:24] through the various stages here and goes
+[53:27] through the next agent it saves a
+[53:29] checkpoint
+[53:31] um you know so everything we expect out
+[53:33] of workflows is working inside of
+[53:36] foundry
+[53:40] Okay. And what did I have open over
+[53:43] there? Oh, that's the thing loading.
+[53:44] Okay. Great. All right. So, now we've
+[53:48] seen workflows.
+[53:50] Okay. Uh it looks like I actually zoomed
+[53:53] through those and uh I know that I
+[53:56] didn't answer any of the questions at
+[53:58] all. We do have the office hours after.
+[54:01] I do have five minutes right now. Um so,
+[54:05] let me see um if uh if there's some good
+[54:09] questions here. Oh, there is a good
+[54:11] question. I just saw it. What about
+[54:12] memory? That's a great question. Um, so
+[54:15] Foundry does have memory. I have not
+[54:19] played with it yet. Let me see if
+[54:21] there's a um example for memory in we
+[54:29] did talk about memory in our last
+[54:30] series, right? And how to do memory with
+[54:32] like me zero, we did it with Reddus,
+[54:34] etc. Um, but there's also this Foundry
+[54:37] memory service that I haven't I haven't
+[54:40] tried yet. So, let me just take a look.
+[54:43] Um, so I always recommend for agent
+[54:44] framework uh for Python, check out the
+[54:46] samples folder. Um, that's where I often
+[54:49] go to just to see has something already
+[54:51] been, you know, done here. Okay, so we
+[54:54] got basic workflow blah blah blah. Uh,
+[54:57] so that one doesn't have memory
+[54:59] invocations. Oh, what's this? Breaking
+[55:02] glass. Fun. Okay. All right. All right.
+[55:04] So, I don't see an example there of
+[55:06] memory. Um,
+[55:08] yes, good question. Okay. What about our
+[55:12] foundry toolbox? Uh, create toolbox.
+[55:17] Uh,
+[55:20] which tools can we add?
+[55:24] Um,
+[55:28] yeah, we should figure out. Okay.
+[55:29] Introducing toolboxes in Foundry. Would
+[55:31] tools have?
+[55:36] This is a great question. I should
+[55:37] definitely figure this out. So, we we
+[55:40] did talk about memory. Like if you go to
+[55:42] our um our previous series, we we talked
+[55:44] about memory there. So, Python agents
+[55:48] um you know, and there when we did
+[55:50] memory, uh we did um you know, we we did
+[55:54] mem zero, right? So, you could certainly
+[55:56] do that. Um, and you know, that's that's
+[55:58] that's nice. But, um, but with Foundry,
+[56:02] we should also be able to do Foundry
+[56:04] memory. Um, because that's a that's a
+[56:06] you know, a hosted memory service. And I
+[56:09] just have not done that yet. Um, so here
+[56:12] we go. Oh, foundry memory. Okay, great.
+[56:14] So, create a memory store. Memory store.
+[56:17] Okay. All right. So I think that this is
+[56:21] definitely something we should add
+[56:24] um to to the sample so that we have a
+[56:28] good story for about how to use foundry
+[56:30] memory with hosted agents um because
+[56:32] we've pretty much done a lot of the
+[56:34] other stuff here. Uh so yeah that is a
+[56:36] great question. So uh I'll look into
+[56:39] foundry memory and see if there's like a
+[56:41] like a even tighter integration. Um you
+[56:43] can reference that article. Um you can
+[56:45] also of course set up memory with me
+[56:48] zero. Um, there's also, we looked at
+[56:50] Reddus. The built-in memory option for
+[56:53] Reddus isn't that great. It's a bit
+[56:54] naive. I think the Mezzero approach is
+[56:56] much nicer. I believe Foundry memory is
+[56:59] basically using a similar approach to me
+[57:01] zero where it's a little more um, you
+[57:03] know, curating of the memories. Um, you
+[57:06] know, so when when you're when you're
+[57:07] storing memories, you have this question
+[57:08] of what memories are in your store? What
+[57:10] are they going to look like? Are you
+[57:11] going to use an LM to extract the
+[57:13] memories? How are you going to update
+[57:14] old memories? How are you going to
+[57:15] delete memories? Right? So, uh, mem zero
+[57:18] does take care of all of that and I
+[57:20] believe Foundry memory has a similar
+[57:22] approach to mem.
+[57:25] All right. I So, yeah. So, we'll dig
+[57:27] more into that. U Pablo asked, can
+[57:29] hosted agents be deployed to specific
+[57:31] regions? All right. So, let's get the
+[57:33] docs for hosted agents up. Uh,
+[57:39] uh, so right now it is only specific
+[57:41] regions. Um, deploy a hosted agent. Uh
+[57:44] let's see if we get the region
+[57:47] support here. Nope.
+[57:50] Let's check here. Region availability.
+[57:52] There we go. All right. So it is a
+[57:54] limited number of regions right now.
+[57:55] Australia east, Canada Central, North
+[57:58] Central US, and Sweden central. Um so
+[58:02] hopefully you're near one of those. Um
+[58:05] and if not, you know, they're obviously
+[58:07] going to add more regions. Um and we
+[58:10] also in our bicep when I set up the
+[58:11] bicep
+[58:13] um I have the same I think I have mostly
+[58:16] the same ones here looks oh maybe I
+[58:18] don't have exact so north central Sweden
+[58:21] okay it looks like I have some
+[58:22] disagreement there so I should actually
+[58:25] update this uh boundary hosted
+[58:30] uh
+[58:32] um so it looks like actually I need to
+[58:34] update this so I am currently using
+[58:36] north central US uh that is what if we
+[58:39] were doing it today, that's what I'd
+[58:41] recommend. Um,
+[58:43] it's working. It works. It's working
+[58:45] pretty well. Um,
+[58:48] uh, that, you know, I was saying,
+[58:49] Foundry Hosted agents, like the new
+[58:51] version just came out last week. Uh, so
+[58:54] there are some, you know, some rough
+[58:56] edges at at like currently and you'll
+[58:58] see if when you look at my actual code,
+[59:01] you will see some some notes about
+[59:03] current bugs and workarounds and
+[59:05] whatnot. Um so you know we we are
+[59:07] learning it like while while it's in
+[59:09] public preview when it just came out. Um
+[59:12] so uh you know definitely try it out. Um
+[59:15] but also when you have issues do uh let
+[59:18] us know and u report them so that we can
+[59:21] make the product better so that when it
+[59:22] gets to be generally available then
+[59:24] it'll be you know all all shiny and all
+[59:27] the bugs worked out.
+[59:32] All right. Um great. Okay. So, it is now
+[59:37] at time. So, for additional questions,
+[59:40] I'm going to recommend we go to Discord
+[59:42] for them. Um, and here's So, here's a
+[59:45] link. So, remember, if you're not
+[59:46] registered yet, do register. Um, we will
+[59:49] link to everything um from this
+[59:51] resources thread. So, this resources
+[59:53] thread will have the slides. I will do a
+[59:57] writeup uh for each of them as well. So,
+[59:59] you get like slides and and and text
+[01:00:02] underneath the slides and just another
+[01:00:04] way of consuming it. I'll also probably
+[01:00:05] upload office hours to this thread too.
+[01:00:09] Um so yeah definitely uh you know
+[01:00:13] bookmark this as well so you get all the
+[01:00:15] resources
+[01:00:17] and now it is time for office hours. So
+[01:00:20] I hope to see you in office hours or on
+[01:00:22] Wednesday. Uh so we do not have a live
+[01:00:26] stream tomorrow and the reason we don't
+[01:00:27] have a live stream is because as your
+[01:00:29] Cosmos DB conference is happening
+[01:00:31] tomorrow all day on the reactor channel.
+[01:00:33] I do have a talk in that one as well. So
+[01:00:37] if you want to see that like you know
+[01:00:39] that'll be on the that'll be on the
+[01:00:40] channel. It'll be released uh I think in
+[01:00:42] the morning. Um but yeah as your Cosmos
+[01:00:45] DB conference is happening all tomorrow.
+[01:00:47] Uh so that's we will be waiting a day in
+[01:00:51] order to do our lang chain talk on
+[01:00:54] Wednesday.
+[01:00:56] Okay. So hope to see you in the discord.
+[01:01:00] I will end the stream now and head over
+[01:01:02] to Discord. Thank you everyone. Bye.
+[01:01:16] Thank you all for joining and thanks
+[01:01:18] again to our speakers.
+[01:01:20] This session is part of a series. to
+[01:01:23] register for future shows and watch past
+[01:01:26] episodes on demand. You can follow the
+[01:01:28] link on the screen or in the chat.
+[01:01:31] We're always looking to improve our
+[01:01:33] sessions and your experience. If you
+[01:01:35] have any feedback for us, we would love
+[01:01:37] to hear what you have to say. You can
+[01:01:40] find that link on the screen or in the
+[01:01:42] chat. And we'll see you at the next one.

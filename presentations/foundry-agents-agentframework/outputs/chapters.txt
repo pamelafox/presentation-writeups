@@ -1,0 +1,36 @@
+This session is the first in a three-part series on hosting agents on Microsoft Foundry. Pamela Fox walks through building Python agents using the Microsoft Agent Framework (MAF), progressively enhancing them with Foundry models, Foundry IQ knowledge retrieval, and the Foundry Toolbox. She then shows how to host those agents (and multi-agent workflows) on Foundry Agent Service using the Responses API adapter, `azd up` deployments, and OpenTelemetry observability.
+
+00:00 - Introduction and series overview
+03:10 - Code repository and following along
+05:22 - Agents 101: what is an agent
+07:40 - Python AI agent frameworks overview
+09:00 - Microsoft Agent Framework overview
+10:17 - Installing Agent Framework for Python
+13:15 - Simple local agent with tools (Ollama)
+15:59 - Building agents on Foundry: overview
+17:09 - Foundry Models for inference
+19:48 - Agent with Foundry models
+21:20 - Foundry IQ for knowledge retrieval
+23:23 - Adding Foundry IQ as MCP tool
+26:54 - Foundry Tools and Foundry Toolbox
+28:44 - Creating a toolbox from code
+29:30 - Equipping an agent with the toolbox
+32:12 - Foundry Agent Service overview
+33:31 - Hosted MAF agents: how it works
+35:37 - Full hosted agent Python code
+36:59 - Deploying with azd up
+39:10 - Interacting in the Foundry playground
+40:19 - Interacting with the agent from code
+41:01 - Local development loop (azd ai agent run/invoke)
+42:09 - Observability with OpenTelemetry
+44:56 - Exporting OTel to App Insights
+45:49 - Viewing traces in Foundry and App Insights
+46:38 - Multi-agent workflows
+47:25 - Building workflows in Agent Framework
+48:18 - Simple workflow example
+49:15 - Using agents inside workflows
+50:13 - Turning a workflow into an agent
+50:43 - Hosting a MAF workflow on Foundry
+51:53 - azure.yaml and multi-service deployment
+53:48 - Live Q&A: memory, region availability, toolbox
+59:32 - Wrap-up and next steps

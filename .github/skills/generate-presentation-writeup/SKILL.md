@@ -1,5 +1,4 @@
 ---
-agent: 'agent'
 description: >-
   Generate an annotated blog-style write-up from a presentation's slides and video recording.
   Orchestrates the full pipeline: fetching slides, converting to images, extracting transcript,
