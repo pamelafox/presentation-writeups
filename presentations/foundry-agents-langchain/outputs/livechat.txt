@@ -1,0 +1,78 @@
+[00:00:00] [@MicrosoftReactor]: Thanks for joining! This is Molly, your producer for today joining you from Washington state  From where are you tuning in?
+[00:00:00] [@PamelaFox]: Welcome everyone! I'm streaming from the bay area in California today as usual.
+[00:00:00] [@NikhilKabbin]: Princeton, NJ
+[00:00:00] [@BowserJay]: Hello from sunny Iowa!
+[00:00:00] [@aquarist123]: Hello from East Anglia in England.
+[00:00:00] [@amritutube]: Hi Delhi ,India
+[00:00:00] [@ettysekhon5281]: London 
+[00:00:00] [@udayshastri5288]: Hello from Detroit, MI
+[00:00:01] [@MadeByGPS]: hello from nyc
+[00:00:15] [@MohanKosireddy-x6l]: Hello
+[00:00:30] [@RSB_777]: hello 
+[00:00:35] [@tligda]: Attending from sunny San Jose, CA!
+[00:00:39] [@RSB_777]: from Dubai 
+[00:00:53] [@douglaskroencke7339]: Hello from Kansas City
+[00:01:10] [@MohanKosireddy-x6l]: hello
+[00:01:17] [@rajeev5582]: Hello
+[00:01:25] [@MicrosoftReactor]: Register https://aka.ms/AgentsOnFoundry/series
+[00:02:06] [@MicrosoftReactor]: Slides: https://aka.ms/foundryhosted/slides/l...
+[00:02:06] [@Silvestre-PO]: Hola!  from 
+[00:03:08] [@MicrosoftReactor]: Code: https://aka.ms/foundry-hosted-langcha...
+[00:03:41] [@katetaylor4862]: Hello, London calling 
+[00:04:29] [@AlbertoCancelado]: Greetings from Bogotá 
+[00:04:51] [@JorgeZunigaIT]: Hola from México!
+[00:05:16] [@AshkanMoradii]: Hi. Would you please send the link to the previous sessions about agents?
+[00:05:52] [@MohanKosireddy-x6l]: starting using thm
+[00:06:08] [@RSB_777]: I am new to this topic 
+[00:06:10] [@amritutube]: for context
+[00:06:44] [@misaedifo]: Hi From Miami
+[00:09:09] [@MicrosoftReactor]: @AshkanMoradii please check out the slides, https://aka.ms/foundryhosted/slides/l...
+[00:11:17] [@amritutube]: mythos will make it more easier to find such things
+[00:11:35] [@CYQ776]: I have an AI agent that audits all my libraries before installation. Do you think this is affective?
+[00:11:43] [@CYQ776]: Same with tools
+[00:12:42] [@MadeByGPS]: @CYQ776 how does it work? reviews the library code?
+[00:13:51] [@Silvestre-PO]: Ollama + gemma4:e4b | gemma4:e2b is good for edge device
+[00:18:48] [@MohanKosireddy-x6l]: yeahj. i am one of them
+[00:19:38] [@MicrosoftReactor]: Register: https://aka.ms/AgentsOnFoundry/series
+[00:20:25] [@MadeByGPS]: gemma is great
+[00:23:33] [@SiddheshPrabhugaonkar]: from India
+[00:23:43] [@SiddheshPrabhugaonkar]: I liked your honesty
+[00:24:40] [@robotglock6909]: MCP-ception
+[00:25:48] [@SiddheshPrabhugaonkar]: can you please increase font size and close terminal?
+[00:27:07] [@rwuniard]: I am curious how the terminal can print the log that nicely?
+[00:27:22] [@MadeByGPS]: @rwuniard it is a package called Rich
+[00:28:23] [@rwuniard]: Thanks @MadeByGPS 
+[00:29:56] [@blacktergum]: Can we use the foundry Short Term memory in a langgraph agent for Multi Turn conversations?
+[00:36:03] [@udayshastri5288]: Is Foundry memory means context?
+[00:36:36] [@robotglock6909]: Are they going to stick with the Foundry name for a minute? is Foundry the replacement for Semantic Kernel and Autogen'
+[00:37:46] [@MadeByGPS]: agent-framework is replacement for semantic kernel and auto gen
+[00:37:54] [@MadeByGPS]: Foundry is the platform :(
+[00:38:03] [@MadeByGPS]: :)
+[00:41:02] [@chandu2240]: why the response adapter required. why can't we use langchain ainvoke method?
+[00:41:51] [@MadeByGPS]: think of it like a translation layer... one speaks langchain, one speaks, Responses API
+[00:42:01] [@MadeByGPS]: so the adapter does that
+[00:44:25] [@MicrosoftReactor]: Resources: https://aka.ms/foundryhosted/resources
+[00:46:26] [@MadeByGPS]: i love microvms
+[00:46:30] [@araujoao]: can I run the docker in Azure Container Instance?
+[00:50:00] [@MicrosoftReactor]: Please take a moment to complete our brief survey: https://aka.ms/AA10rqfd
+[00:50:12] [@MadeByGPS]: @araujoao what do you mean?
+[00:50:56] [@BowserJay]: That's pretty cool!
+[00:53:33] [@blacktergum]: Conversations Only work with foundry hosted agents or can i use them with a custom langgraph agent hosted on an Azure Webapp/container App too?
+[00:56:04] [@MicrosoftReactor]: Resources: https://aka.ms/foundryhosted/resources
+[00:57:31] [@MicrosoftReactor]: Discord Office Hours after this session: https://aka.ms/pythonai/oh
+[00:57:50] [@araujoao]: how you compute the cost of all LLM calls for a solutions like that?
+[00:58:54] [@lee_stott]: There is this .NET workshop https://github.com/microsoft/Hosted_A...
+[00:59:00] [@MicrosoftReactor]: Register: https://aka.ms/AgentsOnFoundry/series
+[00:59:10] [@iambaljinder]: Great sessions, Pamela. Thank you!
+[00:59:14] [@chandu2240]: thank you
+[00:59:20] [@rajeev5582]: Awesome session
+[00:59:27] [@CYQ776]: @araujoao Cost Management and billing in azure
+[00:59:33] [@lee_stott]: And foundry toolkit extension workshop https://github.com/microsoft-foundry/... for hosted agents 
+[00:59:47] [@MicrosoftReactor]: Please take a moment to complete our brief survey: https://aka.ms/AA10rqfd
+[01:00:00] [@MicrosoftReactor]: Discord Office Hours after this session: https://aka.ms/pythonai/oh
+[01:00:14] [@araujoao]: extremely productive. I like you did not beefed up the example with lots of unecessary complexity. You just showed what is needed
+[01:00:17] [@abc1987625]: Where is the repository linked in this session (workflows/ etc)
+[01:00:52] [@CYQ776]: You always crush it Pamela!
+[01:00:56] [@PamelaFox]: https://github.com/Azure-Samples/foun...
+[01:01:29] [@abc1987625]: thank you
+[01:01:35] [@araujoao]: @MadeByGPS there is a docker file that runs something. Where does it run, and can I deploy my on docker in Azure Docker Instance 

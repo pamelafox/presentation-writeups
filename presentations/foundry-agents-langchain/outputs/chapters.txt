@@ -1,0 +1,41 @@
+This session is the second in a three-part series on hosting Python agents on Microsoft Foundry. It covers building agents with LangChain and LangGraph, integrating them with Foundry Models, Foundry IQ, and Foundry Tools, hosting them on Foundry Agent Service using the Responses API adapter, adding observability with OpenTelemetry, and building multi-agent workflows with LangGraph.
+
+00:00 - Introduction and series overview
+01:00 - Session overview and agenda
+02:34 - Following along with the GitHub repo
+03:05 - Agents 101: What is an agent
+04:01 - The agentic loop in action
+04:26 - Python AI agent frameworks
+05:21 - LangChain and LangGraph overview
+07:20 - Installing LangChain for Python
+10:30 - A simple local agent with tools
+14:37 - Building agents on Foundry
+14:50 - Ship AI faster with Microsoft Foundry
+15:53 - Using LangChain with Foundry (langchain-azure-ai)
+17:43 - What langchain-azure-ai provides
+18:12 - Foundry Models
+19:33 - An agent with Foundry models
+22:30 - Foundry IQ and knowledge bases
+24:38 - Adding Foundry IQ as MCP tool
+28:22 - Foundry Tools and toolboxes
+30:10 - Creating a toolbox from code
+31:01 - Equipping agent with toolbox
+33:19 - Foundry Agent Service overview
+36:10 - Hosted BYO agents architecture
+38:42 - Hosted BYO agents with LangGraph adapter
+39:37 - How the adapter works
+42:30 - A Foundry hosted LangGraph agent
+42:48 - Deploying with azd
+45:15 - Interacting with the agent in playground
+47:02 - Interacting with the agent from code
+47:52 - Local development loop
+48:56 - Observability with OpenTelemetry
+49:10 - Using OpenTelemetry with LangChain
+50:09 - Exporting OTel to App Insights
+50:17 - Viewing agent traces in Foundry
+51:33 - Viewing agent traces in App Insights
+52:02 - Multi-agent workflows with LangGraph
+52:53 - A simple workflow
+54:42 - Using LLM calls inside workflows
+55:50 - A Foundry hosted LangGraph workflow
+57:27 - Next steps and resources

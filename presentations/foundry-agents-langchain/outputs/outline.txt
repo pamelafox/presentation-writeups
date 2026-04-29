@@ -1,0 +1,44 @@
+1. Series title slide — three-part live stream series on hosting Python agents on Microsoft Foundry.
+2. Session title slide — "Host your agents on Foundry: LangChain and LangGraph" with speaker info and slides link.
+3. Agenda slide — lists topics: Agents 101, LangChain, Foundry Models, Foundry IQ, Foundry Tools, hosting agents, multi-agent workflows.
+4. Code repo setup slide — GitHub repository at aka.ms/foundry-hosted-langchain-demos with Codespace instructions.
+5. Section header — "Agents 101".
+6. What is an agent — diagram showing agent using LLM to run tools in a loop to achieve a goal.
+7. Agentic loop in action — weather assistant example showing tool calling sequence.
+8. Python AI agent frameworks — comparison table of agent-framework, langchain v1, and pydantic-ai.
+9. LangChain and LangGraph overview — two complementary libraries for building and orchestrating agents.
+10. Installing LangChain for Python — install commands for langchain, langgraph, and langchain-openai packages.
+11. A simple local agent with tools — code example using ChatOpenAI with local Ollama endpoint and @tool decorator.
+12. Section header — "Building agents on Foundry".
+13. Ship AI faster with Microsoft Foundry — platform overview showing Models, IQ, Agent Service, Tools, and Machine Learning.
+14. Using LangChain with Foundry — langchain-azure-ai package with opentelemetry and tools extras.
+15. What langchain-azure-ai provides — feature table: Foundry Tools, Agent Service integrations, OTel tracing, RAG utilities, Content Safety.
+16. Foundry Models — 11,000+ models with leaderboards and side-by-side comparison.
+17. An agent with Foundry models — code showing only the client constructor changes to point at Azure OpenAI endpoint.
+18. Foundry IQ — architecture diagram showing agentic retrieval across multiple knowledge sources via MCP.
+19. Adding Foundry IQ as MCP tool — code using MultiServerMCPClient to connect to knowledge base MCP endpoint.
+20. Foundry Tools — diagram showing Foundry Toolbox composed of web search, code interpreter, and Foundry IQ MCP.
+21. Creating a toolbox from code — REST API calls to create and configure a toolbox with multiple tools.
+22. Equipping agent with toolbox — code using AzureAIProjectToolbox from langchain-azure-ai.
+23. Foundry Agent Service — overview showing Prompt Agents vs Hosted Agents with shared Foundry components.
+24. Hosted BYO Agents architecture — container in ACR with Responses API Adapter and agent code.
+25. Hosted BYO Agents with LangGraph adapter — AzureAIResponsesAgentHost bridging LangGraph to Responses API.
+26. How the adapter works — input/output translation between Responses API and LangGraph message types.
+27. A Foundry hosted LangGraph agent — full code example with tracing, ChatOpenAI, create_agent, and AzureAIResponsesAgentHost.
+28. Deploy agent to Foundry with azd — azure.yaml, Dockerfile, and agent.yaml configuration for deployment.
+29. Interact with Foundry agent in playground — screenshot of Foundry playground UI.
+30. Interact with Foundry agent from code — curl and azure-ai-projects SDK examples for calling the agent.
+31. Local development loop — azd ai agent run and azd ai agent invoke --local commands.
+32. Section header — "Observability".
+33. Observability with OpenTelemetry — OTel overview covering traces, metrics, and logs.
+34. Using OpenTelemetry with LangChain — enable_auto_tracing function and gen_ai span attributes.
+35. Exporting OTel to App Insights — enable_auto_tracing with auto_configure_azure_monitor parameter.
+36. Viewing agent traces in Foundry — screenshot of Foundry Traces > Conversations view.
+37. Viewing agent traces in App Insights — screenshot of Azure Monitor agents tab.
+38. Section header — "Multi-agent workflows".
+39. What is an agent workflow — diagram showing processing nodes with agent nodes containing tools.
+40. Building workflows in LangGraph — StateGraph with node functions and edges.
+41. A simple workflow — code example with upper_case and reverse_text nodes.
+42. Using LLM calls inside workflows — writer and formatter nodes that invoke an LLM.
+43. A Foundry hosted LangGraph workflow — code wrapping a StateGraph in AzureAIResponsesAgentHost.
+44. Next steps — registration links, past recordings, and Discord office hours.

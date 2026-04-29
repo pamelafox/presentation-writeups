@@ -1,0 +1,1562 @@
+[00:05] Hi everyone. Thank you for joining us
+[00:07] for our next live stream. I'll be your
+[00:09] producer for this session. Before we
+[00:12] start, I do have some quick
+[00:13] housekeeping.
+[00:15] Please take a moment to read our code of
+[00:17] conduct.
+[00:19] We seek to provide a respectful
+[00:20] environment for both our audience and
+[00:22] presenters.
+[00:24] While we absolutely encourage engagement
+[00:26] in the chat, we ask that you please be
+[00:28] mindful of your commentary, remain
+[00:30] professional and on topic.
+[00:34] Keep an eye on that chat. We'll be
+[00:36] dropping helpful links and checking for
+[00:38] questions for our presenters to answer
+[00:39] live.
+[00:42] Our session is being recorded. It will
+[00:44] be available to view on demand right
+[00:46] here on the Reactor channel.
+[00:49] With that, I'd love to turn it over to
+[00:51] our speakers for today. Thank you for
+[00:53] joining.
+[00:55] >> Hello. Hello everyone. Welcome to our
+[00:58] three-part series about hosting your
+[01:01] Python agents on Microsoft Foundry. This
+[01:04] is day two of the series and we have one
+[01:07] more day after this. Uh so for our first
+[01:10] day we talked about Microsoft agent
+[01:12] framework and how to take agents and
+[01:15] workflows built in Microsoft agent
+[01:16] framework and use those with all the
+[01:19] Microsoft Foundry offerings. Today is
+[01:21] all about lang chain. Now, if you did
+[01:24] join us yesterday, we're going to cover
+[01:26] a lot of the same things we talked
+[01:27] about, you know, uh in the first
+[01:30] session, but today we're using a, you
+[01:32] know, a different framework. We're using
+[01:33] lang chain. Um, so if you're joining us
+[01:35] for day two and you're here for day one,
+[01:38] welcome back. And you're going to learn
+[01:41] a couple things twice. Yay. H. And then
+[01:44] day three will be completely different
+[01:45] talking about evaluations which is one
+[01:47] of the topics that I am the most excited
+[01:50] about. So uh if you have not registered
+[01:54] yet for the series you can do that in
+[01:55] with the URL that we're putting in the
+[01:57] chat and then you'll get notified about
+[01:59] the final session.
+[02:02] And uh here is our start our slides for
+[02:05] today. uh if you want to download the
+[02:07] slides for your own use, we will share
+[02:09] this link for the slides in the chat and
+[02:12] you can follow along. There
+[02:15] we are going to be talking about all
+[02:19] things link chain. So how we can you
+[02:21] know what are agents, how do we build
+[02:22] agents with link chain, how do we add in
+[02:24] different components from foundry, how
+[02:26] do we house host those agents and then
+[02:27] how do we use how do we actually build
+[02:29] workflows using lang graph and then host
+[02:32] those.
+[02:34] So for today our demos are all in this
+[02:37] repo. Uh so this is a new repo different
+[02:40] from Monday uh you know our day one repo
+[02:42] because that one was agent framework. So
+[02:44] we have a repo specifically um for today
+[02:49] with all the link chain related demos.
+[02:51] So if you want to follow along do um
+[02:53] check out this repo clone it fork it and
+[02:56] then you'll need to run a up in order to
+[02:59] actually get everything deployed that it
+[03:01] needs.
+[03:05] All right. So,
+[03:08] let's just talk briefly about agents. An
+[03:11] agent is a, you know, a piece of
+[03:14] software that is using a LLM in order to
+[03:19] achieve a goal by having the LLM call
+[03:21] tools. And it does this in a loop until
+[03:24] it finally reaches the goal and has, you
+[03:28] know, run out of tool calls that it
+[03:29] wants to make. Uh so that's the most
+[03:32] basic version of agent. We often add in
+[03:34] things like memory, you know, short-term
+[03:36] and long-term memory, dynamic memory. Uh
+[03:39] we might add in planning or we might
+[03:40] just use a reasoning model. Uh we might
+[03:42] also add human in the loop uh in order
+[03:44] to confirm that we really want to go
+[03:46] through with a tool call. So if you do
+[03:48] want to dive much more into agents,
+[03:51] check out our previous series where we
+[03:54] spent uh six sessions going much deeper
+[03:58] into agents. Here's
+[04:01] just an example of the aentic loop,
+[04:03] right? We have our system prompt. The
+[04:05] user asks a question. The LM so says,
+[04:07] "Oh, okay. I'm going to call this tool
+[04:10] here to help answer this question." Gets
+[04:11] back a tour result. And then the LM can
+[04:14] answer based off the tour result. And
+[04:16] then this conversation can keep going uh
+[04:19] and going and using different tools in
+[04:22] order to answer all the users questions.
+[04:26] There are multiple agent frameworks that
+[04:28] you can use to build your agents. Uh for
+[04:31] this series, we are focusing on agent
+[04:33] framework and lang chain. Those are some
+[04:35] of the probably the two most popular
+[04:38] ones from our audience. Um but there's
+[04:40] also pedantic AI that's also a fairly
+[04:42] popular one and I know pedantic AI uh
+[04:44] you can integrate that pretty well with
+[04:46] Foundry as well. Uh so you know there's
+[04:50] many frameworks out there that can help
+[04:51] you with you know building building your
+[04:54] agent building the harness. Now we talk
+[04:56] about harness engineering. So you know
+[04:58] these these frameworks are taking care
+[04:59] of your harness engineering for you,
+[05:01] your context management, your context
+[05:02] engineering, right? Uh all of the new uh
+[05:06] you know new considerations that we have
+[05:07] to think about when we're building an
+[05:09] agent, right? Um and you know they start
+[05:12] simple but then they can get really
+[05:14] really complex when you start getting to
+[05:16] more sophisticated agentic
+[05:18] architectures.
+[05:21] So today is all about lang chain and
+[05:24] langraph. uh in the chat if you're
+[05:27] already using those please share um
+[05:30] share what you're using them for share
+[05:32] why you like them uh you know these are
+[05:34] uh these these is you know very popular
+[05:36] framework so they're both they both come
+[05:38] from the lang chain company um and they
+[05:42] have an interesting history like lang
+[05:43] chain was basically the first uh open
+[05:46] source library for working with LLMs and
+[05:48] the first version of lang chain like
+[05:49] langchain bzero had like a crazy complex
+[05:53] code base because everybody was like
+[05:55] sending at PRs left and right to do this
+[05:57] XYZ right and had all these different
+[05:59] ways of doing things. Um and it actually
+[06:02] it did get like a little out of control.
+[06:04] Um and uh and you know at a certain
+[06:07] point they came out with lang graph
+[06:08] because they realized people needed to
+[06:10] be able to do things like workflows like
+[06:12] multi-node workflows that were you know
+[06:14] chaining together um you know different
+[06:19] um you know chaining together an agent
+[06:21] with a processing node with an agent
+[06:23] right and then they took the original
+[06:26] lang chain and they completely revised
+[06:28] it and made lang chain v1 so that is
+[06:31] what we're focusing on today is lang
+[06:33] chain v1 and Another interesting thing
+[06:34] is that lang chain v1 is in fact based
+[06:37] on top of lang graph. Uh so lang chain
+[06:39] v1 is designed to be like the easy way
+[06:42] to do the common thing of building a you
+[06:45] know building an agent and uh so that's
+[06:48] what you're going to start with if you
+[06:49] are building a you know a single agent
+[06:51] that has access to a bunch of tools you
+[06:53] start with lang chain and then once you
+[06:56] start needing to piece together to make
+[06:58] a workflow that has multiple agents and
+[07:00] other nodes in it that's when you might
+[07:02] move to lang graph. Uh but we're going
+[07:04] to start with lang chain. That's what
+[07:06] you know we recommend everyone starting
+[07:08] with now when you're building your first
+[07:09] lang agent. We'll start with langchain
+[07:11] v1 and then we'll move on to langra
+[07:13] graph at the end.
+[07:20] Now how do we install langchain for
+[07:22] python? Uh we're the main langchain
+[07:25] package is just called langchain. So
+[07:27] start with that one. Uh for lang graph
+[07:30] it's called lang graph. Now, since
+[07:32] Langchain is built built on langraph,
+[07:34] you actually probably don't technically
+[07:35] have to install both of those um could
+[07:38] just install lang chain and it'll pull
+[07:40] in a version of langraph, but you may,
+[07:43] you know, you may want to h have it as a
+[07:45] specific other package if you're
+[07:47] building langraph uh graphs. And then
+[07:50] for today, we are going to be using the
+[07:54] OpenAI provider package. So, LinkChain
+[07:56] has a ton of provider packages, like
+[07:59] dozens of them, because there's so many
+[08:00] LLM providers out there. But for all of
+[08:02] our scenarios, we can use the OpenAI
+[08:05] package because, you know, we're all of
+[08:07] the models that we're using today all
+[08:09] expose an OpenAI compatible endpoint.
+[08:11] Um, so it's not that we're necessarily
+[08:13] using all OpenAI models today, but we're
+[08:16] all using models that are exposed with
+[08:18] an OpenAI compatible endpoint, which
+[08:21] means that's the only provider package
+[08:23] that we need. U but there are many other
+[08:26] ones as well. So if you're working with
+[08:27] an enthropic or uh you know any other
+[08:30] models you could use that package. Uh
+[08:33] but for you know for today that's the
+[08:35] one uh best practice is to always pin
+[08:38] your versions and use a lock file. So
+[08:40] for our example we actually have this um
+[08:43] pi projectl. So we declare all of our
+[08:46] dependencies in here. So you can see
+[08:49] I've got lang chain I've got lang chain
+[08:51] openai.
+[08:53] I've got lang graph and these ones I
+[08:56] just have the greater than or equal
+[08:58] version specified on them saying like oh
+[08:59] this is the this is the oldest possible
+[09:02] version we should use but then what I
+[09:04] also have is a UV.lock file so we use UV
+[09:08] instead of pip and UV makes this lock
+[09:10] file and in this lock file you can
+[09:13] actually see let me find there is right
+[09:16] there what it'll do is say okay we are
+[09:19] using exactly 1.2.15 2.15 here is the
+[09:22] exact um you know wheel and zip file for
+[09:26] that for that version of the package. So
+[09:30] you know it's remembering exactly what
+[09:31] version we are using. Uh so you
+[09:34] definitely definitely want to do that.
+[09:35] That way uh you don't accidentally you
+[09:38] know bring down a newer version of the
+[09:40] package and not know that. Um but for
+[09:42] multiple reasons one is that new
+[09:44] versions may just be backwards
+[09:46] incompatible right there might be
+[09:47] something that breaks your code.
+[09:48] Obviously, you don't want to break your
+[09:50] code. Two is security vulnerabilities.
+[09:52] We've had so many instance this year
+[09:55] where uh packages have been compromised
+[09:57] and the hackers have pushed new versions
+[10:00] of the packages to Pi that have
+[10:02] vulnerabilities in them. And then if
+[10:04] whoever doesn't have it pinned, uh this
+[10:06] happened with light LLM earlier this
+[10:07] year. If they didn't have it pinned and
+[10:09] they did, you know, a pip installed,
+[10:11] then suddenly they've got this
+[10:12] compromised version of the package that
+[10:14] can do all kinds of things to their
+[10:15] computer. So, you really want to pin
+[10:18] your versions, use a lock file, and also
+[10:20] just probably like wait a day after
+[10:23] after each version release um just to
+[10:26] see, you know, if there's any
+[10:27] vulnerabilities in it.
+[10:30] [snorts] Okay, so now let's now that we
+[10:33] have it all installed, uh we can make a
+[10:36] simple local agent with tools. So, uh
+[10:39] let me just show the code for for that,
+[10:42] right? Um so you can see you know we
+[10:45] bring in various things from open AAI
+[10:47] the chat openai constructor create agent
+[10:50] tool
+[10:52] um and then here
+[10:55] we set up this chat openai constructor
+[10:58] and I'm pointing this at a local host
+[11:01] URL this is um this is the lama local
+[11:04] host. So for this first example I'm
+[11:06] actually using a local model that's just
+[11:09] running on my machine um using Lama. You
+[11:12] could also use Foundry local, LM Studio,
+[11:15] anything that can run local models,
+[11:16] right? So you, you know, just if you
+[11:18] want to start local and not have to
+[11:20] deploy any models. Uh so here it's
+[11:22] pointing at my local machine. Um doesn't
+[11:24] matter what the key is, it's doesn't
+[11:27] need a key. And then for the model, I'm
+[11:29] using Quen 3.54B.
+[11:31] This is a good like the best model that
+[11:34] I can run on my machine for aentic tool
+[11:37] calling. Uh I don't have a very capable
+[11:40] machine. I only have 16 gigs of RAM. I'm
+[11:43] working on upgrading that. Um, but for
+[11:45] this machine, um, that's the best one.
+[11:47] You can, you know, if you're curious,
+[11:49] you can go to can I run.ai
+[11:51] and it will look at your machine stats
+[11:53] and then try to estimate what's the
+[11:56] best. So, you can see for this one, it
+[11:57] says, okay, Quinn 3.5, Llama 3.8b are
+[12:00] pretty much the only two here that it
+[12:02] that it recommends. And we did various
+[12:05] uh sideby-side tests and found this one
+[12:07] works best. Okay, so we create that. Um,
+[12:10] we're telling it to use the responses
+[12:12] API instead of the chat completions API.
+[12:15] And then we create an agent. This is
+[12:17] using lang chains create agent. We pass
+[12:19] in the client information. So it knows
+[12:22] to connect to the URL. We pass in a list
+[12:24] of tools. So if we go back, we can look
+[12:26] at this tool. So this tool is just a
+[12:29] locally defined Python function. So that
+[12:31] is one way that you can provide tools to
+[12:34] your agents is just you write a Python
+[12:37] function. That Python function does
+[12:38] whatever it needs to do. You wrap it
+[12:41] with the at tool decorator and that
+[12:43] comes from link chain. So you wrap it
+[12:45] with that at tool decorator and you know
+[12:48] it's going to take in some args. It's
+[12:50] going to have a dock string. Now
+[12:51] whenever you write a tool you want to
+[12:52] put a lot of effort into the tool name,
+[12:55] the tool arguments and the tool dock
+[12:57] string because that is the information
+[12:59] that gets sent to the LLM when it's
+[13:01] trying to decide like hey is this the
+[13:03] tool that I want in order to answer this
+[13:06] question. So in fact your function
+[13:08] signature is a form of prompt
+[13:10] engineering. Uh it's you know it's not
+[13:13] just for your Python code. It is for the
+[13:15] LM. It gets turned into the tool schema
+[13:17] that the LLM sees.
+[13:20] Uh so here we have we give it the list
+[13:22] of tools and then we have our system
+[13:23] prompt which is of course also a form of
+[13:25] prompt engineering. So I say you're an
+[13:27] internal helper. Here's today's date.
+[13:29] Use available tools and always ground
+[13:31] your answers into results. Uh and then
+[13:34] finally when we run the code we invoke
+[13:36] the agent and say hey when does benefits
+[13:38] enrollment open um and we get back
+[13:42] results and we show it. Uh so here I've
+[13:44] already run it. So you can see
+[13:47] that uh it made we can actually see the
+[13:50] post that it made to the local model. So
+[13:52] it made the first call to the LLM to say
+[13:55] hey LM I have this question from the
+[13:57] user you know how am I going to answer
+[13:59] this? and the LLM said, "Oh, okay.
+[14:01] Actually, let's let's call this tool."
+[14:03] And so it goes into here and calls the
+[14:05] tool. And then that tool result uh which
+[14:09] is this JSON here gets sent to the LM.
+[14:11] And so now the LM sees, oh, okay, you
+[14:14] know, we want to know when is benefits
+[14:15] enrollment open. Uh I see this tool
+[14:17] result here. And then the LM answers,
+[14:20] all right, based on that timeline, the
+[14:22] benefit enrollment opens here. Right? So
+[14:24] this is our most basic agentic loop um
+[14:27] where the LM sees the request, sees the
+[14:30] tools, decides which tools to call, gets
+[14:32] back the response and answers based off
+[14:34] the tools.
+[14:37] All right, so that is all working
+[14:39] locally with link chain and
+[14:42] now let's talk about the point of today
+[14:45] which is how can we start building these
+[14:47] agents on Microsoft Foundry instead.
+[14:50] So Microsoft Foundry is a whole platform
+[14:54] with many components to it to help you
+[14:56] build your AI based applications and
+[14:59] we're going to attempt to bring many of
+[15:01] these components in today. Uh so there's
+[15:04] foundry models and that's what you often
+[15:06] start with is just being able to access
+[15:07] the really good models. So we've got uh
+[15:09] the GPD models now we have GP55 actually
+[15:12] now I have to update the slide because
+[15:13] there's new models every week. Uh you
+[15:16] know we've got we have the enthropic
+[15:17] models as well. Well, we've got actually
+[15:19] thousands of models because we've
+[15:20] accessed all the hugging face models as
+[15:22] well. So, you can access many many
+[15:24] models from Foundry models. Uh then we
+[15:26] have foundry IQ um which is based off
+[15:29] Azure AI search which helps us bring in
+[15:31] data for our knowledge retrieval. So for
+[15:34] rag applications uh then we have agent
+[15:37] service which is hosting the agents and
+[15:38] we'll see that today. Uh and we have
+[15:40] foundry tools uh which is just all sorts
+[15:43] of tools you can uh use that are built
+[15:45] in um that connect to different
+[15:47] services. So we're going to use a couple
+[15:49] of those today as well.
+[15:53] So when we are using lang chain with
+[15:55] foundry we do recommend using this uh
+[15:59] this package that we maintain on the
+[16:01] Microsoft side. Uh so that's
+[16:02] langchain-asure-ai
+[16:06] because that has a lot of tighter
+[16:07] integrations between lang chain and
+[16:09] azure to try and make it easier for lang
+[16:12] chain developer you know people using
+[16:14] lang chain to also use azure and foundry
+[16:17] uh so you definitely want to look at
+[16:19] that package and and install that into
+[16:22] your environment and see what you can
+[16:25] use and we're going to use various parts
+[16:26] from it today. So it also has some
+[16:28] extras as they're called. So when you
+[16:30] install a Python package and then you
+[16:32] put something in brackets that is called
+[16:33] an extra. So um some some packages are
+[16:37] designed to have extras so that they can
+[16:38] have like a core part and then if you
+[16:40] want an extra you say oh I want this
+[16:42] extra component and then it brings in
+[16:43] more code and more dependencies. So with
+[16:46] that package we're also going to install
+[16:48] the open telemetry extra and that's
+[16:50] going to help us uh emit traces for app
+[16:53] insights. And then we're also going to
+[16:55] install the new tools extra to help us
+[16:58] integrate with Foundry tools.
+[17:00] But there's lots of other um you know
+[17:03] parts of that package and then there's
+[17:05] also some sibling packages here for
+[17:07] different parts of Azure. So there's
+[17:08] Azure Cosmos DB, Azure Postgress, Azure
+[17:11] Storage, SQL Server, Dynamic Sessions.
+[17:13] Um, so yeah, so trying to make it easier
+[17:16] for folks to use Linkchain with Azure
+[17:20] because there's actually just a huge
+[17:21] number of developers that are combining
+[17:23] LinkedIn and Azure together. Uh, the
+[17:24] LinkedIn team shared some stats the
+[17:26] other day, some graph that showed the
+[17:27] number of uh, calls from Azure and it's
+[17:31] just it's it's pretty staggering. Uh, so
+[17:34] that's why we're doing, you know, that's
+[17:35] why we're trying to make it easier.
+[17:36] That's why we're doing today's session
+[17:37] because we know it's so popular. Um, so
+[17:39] yeah, hopefully we can just make it
+[17:41] easier for you.
+[17:43] Uh so in that langchain Azure AI package
+[17:46] uh you know this is just high level some
+[17:49] of the integrations that you can find
+[17:51] there some of them we'll be using today
+[17:53] like foundry tools um the the and the
+[17:56] open telemetry tracing uh but there's
+[17:58] also helpers for doing rag and document
+[18:01] ingestion uh there's also helpers for
+[18:03] doing AI content safety and guard rails
+[18:06] and middleware uh so lots of fun stuff
+[18:09] in that package
+[18:12] So now that we have that package, so you
+[18:15] can see I have that uh in the PI
+[18:18] project. We've got link chain uh Azure
+[18:21] AI with the open telemetry extra here.
+[18:25] So now we're going to talk about foundry
+[18:27] models. So I was saying we do have a
+[18:29] thousands of models uh and you know
+[18:32] including uh some of our favorite models
+[18:35] like uh the anthropic models and the
+[18:37] OpenAI models. Uh we also have the Kimmy
+[18:40] models. Those are cool. Uh so when
+[18:42] you're exploring the models, we've got
+[18:43] leaderboards where you can check out,
+[18:45] oh, who's the best in quality, safety,
+[18:47] cost, thoroughut, etc. Uh or if you're
+[18:50] trying to decide just between two
+[18:51] different models, you can actually
+[18:53] compare side by side, like, oh, hey, how
+[18:54] do they rank for those, right? And
+[18:55] you'll see there, this is where you're
+[18:57] going to see their overall metrics. Now,
+[18:59] if you're really trying to decide
+[19:00] between two models for a particular
+[19:02] application, then you really want to
+[19:04] write evaluations for your application
+[19:06] and do a true sideby-side comparison for
+[19:08] your domain, right? Because all of these
+[19:10] leaderboards are they're pretty generic,
+[19:12] right? They're like, okay, well,
+[19:13] generically for quality, right? But like
+[19:15] you're all writing all sorts of
+[19:16] different interesting applications in
+[19:18] different domains, so you're not
+[19:20] necessarily going to see the same
+[19:21] results. Uh so that's why you should
+[19:22] come tomorrow where we talk about
+[19:23] evaluations because that's how you
+[19:26] really get to see like okay how is this
+[19:28] model specifically handling my scenario.
+[19:33] So how do we use a lengchain agent with
+[19:35] foundry models? We only have to change
+[19:38] the very top of the code. Uh so we're
+[19:41] going to use that chat openi constructor
+[19:43] again. So the same constructor and we
+[19:46] just have to change the base URL. So
+[19:48] here you can see instead of you know
+[19:50] pointing at a llama I'm pointing at uh
+[19:53] my deployed Azure OpenAI endpoint and
+[19:55] then SLOPAI/V1.
+[19:57] Um this is our uh new new way of forming
+[20:02] the OpenAI endpoint. Um when you're
+[20:05] using OpenAI models on Foundry uh and
+[20:08] then uh so then we have that. So that's
+[20:10] our base URL. Uh then we can pass in our
+[20:12] API key. In this case, I'm actually
+[20:14] passing in a token provider callback
+[20:17] function that's going to give an entra
+[20:18] token. So that way I can do keyless. Um,
+[20:21] so it's up to you what you want to use,
+[20:22] but we try to use keyless whenever we
+[20:24] can, but you can also just pass in an
+[20:26] actual uh key from your foundry um
+[20:30] environment as well. Um, if you're using
+[20:32] keys, I usually disable those, but you
+[20:34] know, you do you. And then just really
+[20:37] take care of your keys. And then we say
+[20:39] what model we're using. Now when we're
+[20:41] say when we specify the model we're
+[20:42] actually doing the name of the
+[20:44] deployment. So one thing that's
+[20:45] confusing on Foundry is that we have the
+[20:47] models and then you actually have to
+[20:50] deploy the model and then you have the
+[20:51] name of the deployment. Uh now what I
+[20:53] usually do is I try to match the
+[20:54] deployment name to the model name just
+[20:56] for you know consistency in my head. Um
+[21:00] so a lot of times my deployment name
+[21:01] will be the same as my model name. Um so
+[21:04] this would be like GPD you know 5.5
+[21:07] right if that was my deployment name. Uh
+[21:09] so that's it. So that gives langchain
+[21:12] enough information to know how to make
+[21:16] calls to that open AAI compatible
+[21:19] endpoint. Uh so let's go ahead and look
+[21:22] at running that. Right? So and this is
+[21:25] you know really similar code otherwise
+[21:27] right same tool. Um really all that's
+[21:30] changed is that now you know we've got
+[21:32] that token provider that's generating
+[21:33] the keyless credential. We've got that
+[21:36] open constructor and then the rest is
+[21:38] all the same. So when we look at when it
+[21:41] runs, you can see that this time it's
+[21:43] making a post to my foundry uh openi
+[21:48] account here, right? So this is actually
+[21:50] posting to the openi model on foundry
+[21:55] and getting back the response. So you
+[21:57] know if we just compare it here you know
+[21:59] it's the same sequence of calls and you
+[22:03] know same tool call in the middle uh we
+[22:05] do get a slightly different answer just
+[22:07] because each LLM has their own flavor
+[22:09] right [laughter]
+[22:11] uh [clears throat] in this case I'm
+[22:12] using GBD 5.2 and GB 5.2 two is quite
+[22:15] serious, quite stoic. So, it gives me
+[22:18] just, you know, just the answer I was
+[22:20] asking for and, you know, isn't all
+[22:22] flowery like the other one. Uh, but you
+[22:24] know, every model has their own way of
+[22:27] being.
+[22:30] So, there we go. So, now we're using
+[22:32] Foundry models.
+[22:34] Next, let's talk about Foundry IQ. So,
+[22:37] Foundry IQ is um a way of doing
+[22:41] knowledge retrieval using Azure AI
+[22:44] search knowledge bases.
+[22:46] So, Foundry IQ is basically the name for
+[22:48] Azure AI search when you're using it uh
+[22:52] in this certain way. Uh it's it's kind
+[22:54] of a marketing thing. Uh but anyway, so
+[22:57] currently you just think of Foundry IQ
+[22:58] as you know uh using Azure AI search
+[23:01] knowledge bases um you know from
+[23:03] Foundry. Uh so the way it works is that
+[23:06] we make an Azure AI search knowledge
+[23:08] base and a knowledge base is composed of
+[23:11] multiple knowledge sources uh because it
+[23:13] acts as you do multissource parallel
+[23:15] retrieval which is really nice. So your
+[23:16] knowledge sources could be a search
+[23:18] index, it could be sharepoint
+[23:20] um it could be an MCP server that's in
+[23:23] private pre right now. uh but you can
+[23:25] compose all these all these knowledge
+[23:26] sources together and then um AI search
+[23:30] will take care of you know searching
+[23:33] those in parallel getting back the
+[23:35] results from all of them merging the
+[23:37] results and even reranking the results
+[23:39] using a ranking model to figure out like
+[23:41] oh okay for this query which results are
+[23:44] actually the best across all of these
+[23:46] sources
+[23:48] and then we um there's an MCP endpoint
+[23:52] for this knowledge base So we are going
+[23:54] to use this knowledge base
+[23:57] via its MCP endpoint. So it's it exposes
+[24:01] as MCP server that has a single tool
+[24:04] knowledge base retrieve which takes an
+[24:06] array of queries. So that you know the
+[24:08] agent is going to see oh okay I've got
+[24:10] this retrieval tool. The retrieval tool
+[24:12] accepts a list of queries. I based off
+[24:15] what the user is asking I'm think we
+[24:18] should search you know X and Y. I'm
+[24:20] going to send this, you know, list of
+[24:21] queries to this tool on this MCB server.
+[24:24] Then AI search is going to send that
+[24:27] query out to all of the connected
+[24:28] knowledge sources at once in parallel,
+[24:30] merge back the results, and then those
+[24:32] results go back to the agent.
+[24:38] So that's generally how it looks like.
+[24:40] How do we actually integrate that? So
+[24:42] for this, we're going to set up an MCP
+[24:46] client in Langchain. Um, and this one we
+[24:48] actually do need to bring in a another
+[24:51] package which is the lane chain MCP
+[24:54] adapters package here and that contains
+[24:59] the um this this uh multi-erver MCP
+[25:02] client that we're using.
+[25:05] So we set up this this MCP client and we
+[25:10] say hey this is you know we give it a
+[25:11] the server. So we say okay you've got
+[25:13] this server this is the URL for it. The
+[25:15] URL is this AI search endpoint for the
+[25:18] knowledge basemcp.
+[25:22] Uh so that's the URL. Um and uh we pass
+[25:26] in our off as well because we we're
+[25:28] doing keyless off again
+[25:31] so that we're avoiding keys. And then we
+[25:33] get the tools from that server. And when
+[25:36] we create the agent, we also pass in
+[25:40] those tools. Uh so here we uh this is
+[25:42] called the um what is it called? the
+[25:44] unpacking operator. So, we've um we
+[25:48] we're taking this list of tools and
+[25:50] we're adding it to this list here.
+[25:54] So, now the agent has access both to a
+[25:56] local tool and a remote tool. And so, it
+[26:00] can decide for a particular question
+[26:01] like, oh, I'm going to use the remote
+[26:02] tool. Am I going to use a local tool?
+[26:04] I'm going to use both. It could use both
+[26:05] for some of them, right? If it needs to,
+[26:07] it could call them in parallel or in
+[26:09] sequence and and answer the question.
+[26:11] Um, [clears throat] so we're giving it
+[26:13] we're giving it more options here. I see
+[26:15] we want a larger font size. Let's see
+[26:17] what we can do. Okay,
+[26:21] so let's check that out. Um, so here I'm
+[26:25] running, you know, I've run it. And
+[26:27] what's interesting here is I have
+[26:29] enabled quite a lot of logging just so
+[26:30] you can see what's going on. So it does
+[26:33] make a lot of HP requests to that MCP
+[26:36] server in order to set up the connection
+[26:38] to the server. So it says, "Oh, hey
+[26:40] server. Hey, you know what? You know,
+[26:42] what tools do you have? Um, you know,
+[26:44] what protocol are you using? Uh, so it's
+[26:47] basically doing like a handshake. So,
+[26:48] you can imagine anytime an agent is
+[26:50] using the MCB server, it has to do a bit
+[26:52] of a handshake with that server to say,
+[26:54] you know, hey, you know, who are you?
+[26:56] What tools do you have? How can I use
+[26:58] you? Uh, so that's what all these calls
+[27:00] are for is, you know, doing that
+[27:01] handshake and figuring out the list of
+[27:03] tools that are available on that server.
+[27:05] Then finally it can send a request to
+[27:07] the actual LM and say hey here's the
+[27:10] tools we have. Here's the user's
+[27:11] question. Um and here you see this
+[27:14] question is basically a joint question
+[27:16] uh where it's going to need to use
+[27:17] multiple tools. And so it does it calls
+[27:20] the local tool and you can see that it
+[27:23] does also call the MCP endpoint as well
+[27:27] in order to um get back a response. And
+[27:30] so then finally sends that to the um to
+[27:34] this uh the LM endpoint. So then we get
+[27:38] back an answer that references what's in
+[27:40] the knowledge base. That's what all this
+[27:41] is is from the knowledge base. And then
+[27:44] uh also the enrollment deadline. It said
+[27:46] okay this is what I found for the
+[27:47] enrollment deadline and that came from
+[27:49] the local tool.
+[27:53] So that's pretty neat because now we are
+[27:55] actually grounding our agent in uh you
+[27:58] know in answers from our knowledge base
+[28:01] and these knowledge bases are uh are
+[28:04] really really powerful. There's because
+[28:06] you can hook them up to so many
+[28:08] different uh you know so many different
+[28:10] kinds of knowledge sources and set up
+[28:12] different ingestion pipelines. Um so
+[28:14] there's there's quite a lot you can do
+[28:16] with these knowledge bases.
+[28:22] Okay,
+[28:24] now let's talk about Foundry tools
+[28:27] because we've got some great knowledge
+[28:29] now and we've got some local tools, but
+[28:31] there's, you know, there's other sorts
+[28:33] of tools we might want to bring into our
+[28:34] agent. Um, and uh, Foundry is trying to
+[28:39] make that easier by having a whole
+[28:41] Foundry tool catalog that you can pick
+[28:43] tools from. And now they have something
+[28:45] called Foundry Toolbox. This is very new
+[28:48] u but with foundry toolbox you can
+[28:49] basically say hey uh you know I I always
+[28:52] want to use this bundle of tools I'm
+[28:54] going to package these together into a
+[28:56] toolbox and it will expose a unified MCP
+[29:00] server around those tools that then you
+[29:03] know lists all of those tools right so
+[29:05] then our agent can connect to that MCP
+[29:07] server and have access to any of the
+[29:09] tools that are in our toolbox. So that's
+[29:11] how we're going to work with the Foundry
+[29:13] tools today is by making a Foundry
+[29:15] toolbox. And what's cool about the
+[29:16] Foundry Toolbox is that it can use any
+[29:18] of the tools from the Foundry tool
+[29:20] catalog. It can also use any MCP server
+[29:24] um [clears throat]
+[29:25] that you know that is out there. So it's
+[29:27] designed to be fairly flexible.
+[29:30] For today, we're going to make a toolbox
+[29:32] that has my favorite tools. Um so it's
+[29:35] going to have web search so that we can
+[29:37] actually search the web and get more
+[29:39] up-to-date answers. It's going to have
+[29:41] code interpreters so it can do sandbox
+[29:43] Python executions that run in these uh
+[29:46] isolated uh VMs on container apps and so
+[29:49] that way you can you know do more
+[29:51] complex code pandis pillow like all
+[29:54] sorts of cool things you can do with
+[29:55] code interpreter. I always use it to
+[29:57] generate graphs because I love graphs.
+[29:59] Uh and then we can also add the foundry
+[30:01] IQ MCP to this toolbox or we can use it
+[30:04] separately. So I think actually in the
+[30:06] code I'm currently using it separately
+[30:08] today.
+[30:10] So how do we create a toolbox from code?
+[30:12] Um so in this example you can see how we
+[30:15] first add in the two built-ins and then
+[30:17] if we do want to add the foundry IQ MCP
+[30:20] to the knowledge base uh this is this is
+[30:23] how we add it um with this uh you know
+[30:26] this additional
+[30:28] um uh you know addition to the list uh
+[30:32] which defines everything about it. So
+[30:33] it's an MCP this is what we're going to
+[30:35] call it. Here's URL and it's using a
+[30:37] project connection in order to handle
+[30:39] the authentication here.
+[30:42] Uh and then we just use the toolbox CRUD
+[30:44] API, the rest API in order to make a new
+[30:46] toolbox and say what our default version
+[30:49] of the toolbox is. Uh so we're using the
+[30:51] rest API here because we don't have an
+[30:53] SDK to do this yet. In the future, we
+[30:55] should be able to use a Python SDK in
+[30:57] order to do this more easily.
+[31:01] Next, we need to equip the agents with
+[31:03] the toolbox. And this is where that link
+[31:05] chain Azure AI package becomes really
+[31:07] handy because it has built-in support
+[31:10] for the toolbox. Um, so we're going to
+[31:12] import from the link chain Azure AI this
+[31:15] project toolbox and we just say hey
+[31:16] here's our toolbox name, here's our
+[31:18] credential. Uh, let's get back the tools
+[31:21] from that toolbox and then let's pass
+[31:24] those to our create agent. Uh, so let me
+[31:27] also show that code
+[31:31] uh locally here.
+[31:35] All right. So, here we've got we've got
+[31:37] our toolbox
+[31:40] and um
+[31:43] you know, we passed all those toolbox
+[31:45] tools in
+[31:48] and then here I'm asking a question
+[31:50] that's going to require a web search.
+[31:56] So now looking at the actual running
+[31:58] code for this and I enabled a lot of
+[32:00] logging once again to show you. Um, so I
+[32:03] said, "All right, we're going to run
+[32:04] this Foundry Toolbox."
+[32:08] And you can see it makes a lot of
+[32:09] requests. So once again, since the
+[32:11] toolbox is an MCB server, the agent is
+[32:14] going to start off with a handshake that
+[32:15] says, "All right, hi MCB server. Um, you
+[32:18] know, what tools do you have?" You can
+[32:19] see loaded two tools from toolbox. So it
+[32:21] found in this case, I I only did um I
+[32:24] changed my toolbox to only have web
+[32:25] search and code interpreter. Uh because
+[32:27] there is actually currently a bug with
+[32:29] using MCP servers in the toolbox. should
+[32:31] be fixed this week but uh not yet today.
+[32:34] Uh so here I just have two tools right
+[32:36] so it loads those two tools from the
+[32:37] toolbox and that's what this MC server
+[32:40] is exposing. Uh then you know we make
+[32:43] the request to the LM and the LM decides
+[32:46] it's going to call the tool from the
+[32:48] toolbox and in this case it's going to
+[32:50] use the web search tool and that way I
+[32:53] can find out the weather today. Looks
+[32:55] like it's going to be nice outside.
+[32:57] Maybe I can do a little bit of
+[32:58] gardening. Oh, and air quality looks
+[33:01] good, too. Sweet. Um, so, so there we
+[33:04] go. So, that was an agent. Now, the
+[33:06] agent has the ability to search the web,
+[33:08] and that's really nice because it can
+[33:10] start grounding its information whenever
+[33:13] somebody's asking about something about
+[33:14] like current events, news, that sort of
+[33:16] thing.
+[33:19] Okay,
+[33:22] now let's talk about Foundry Agent
+[33:25] Service. So, Foundry agent service is a
+[33:29] way that you can then take these agents
+[33:31] and actually host them, right? Because
+[33:33] you see all those agents I was running,
+[33:34] I was running them locally, right? That
+[33:35] was just saying, "Oh, you rerun this
+[33:37] agent, right?" Um, which could be fine
+[33:39] for some of your agents if they're just
+[33:40] to, you know, for your own um your own
+[33:43] productivity locally. But many of
+[33:44] agents, you're going to actually want to
+[33:46] run on a server in production so that
+[33:48] other people can access them um you
+[33:51] know, from different endpoints. So that
+[33:52] is the goal of Foundry agent service is
+[33:54] to make it easy for you to host your
+[33:56] agents um with you know production grade
+[33:59] technology. So there are two different
+[34:01] types of agents in Foundry agent
+[34:02] service. One is prompt agents and those
+[34:06] you have to use um you know you have to
+[34:08] use a uh the Azure AI project SDK to
+[34:10] make them and you have to say okay
+[34:12] here's my system prompt here's my tools
+[34:13] and they're pretty limited in that you
+[34:16] you know basically all you get is the
+[34:17] ability to say prompts and tools and you
+[34:20] can't customize it that much. um because
+[34:23] that those agents are actually running a
+[34:25] agent loop in the cloud. Their their
+[34:28] loop is like a service that's running on
+[34:31] Foundry. Um and you don't have that much
+[34:33] control over it. Um so you can use
+[34:36] those. I mean if those work for you,
+[34:37] great. Uh you can use those. Um I like
+[34:39] the idea better of hosted agents because
+[34:41] then we can bring our bring our own
+[34:44] agent frameworks to it and um and then
+[34:47] we have more flexibility. as a
+[34:49] developer, I always want to have more
+[34:50] flexibility, but I also, you know, want
+[34:52] easy hosting. Um, so that's the goal of
+[34:54] hosted agents. Uh, it's very new. So,
+[34:57] it's in, you know, public preview right
+[34:59] now, and the brand new version just came
+[35:01] out last week where it's running on a
+[35:03] new platform. And so, it it is very new.
+[35:06] Um, and it does have rough ages right
+[35:08] now. But generally I like the idea of
+[35:10] hosted agents where we could bring our
+[35:12] own agent framework and we have much
+[35:13] more flexibility as a developer to be
+[35:15] able to do what we need to do in our
+[35:17] agent code.
+[35:19] Uh now both of these should be able to
+[35:21] uh use all these different components of
+[35:23] foundry right so we you know we saw
+[35:26] foundry tools foundry IQ foundry models
+[35:28] there's also foundry memory I saw we
+[35:30] just had a question about that um we
+[35:33] don't have foundry memory in uh you know
+[35:35] in in the sessions of this series um but
+[35:38] there are definitely code examples that
+[35:40] show you how you can use the manage
+[35:42] foundry memory service uh there's this
+[35:44] like foundry memory store class that you
+[35:46] can use um so that is another aspect
+[35:49] foundry that you can use with your
+[35:51] agents.
+[35:52] Uh [clears throat] and then you know
+[35:53] once you do all this then you get
+[35:55] observability and security and
+[35:57] everything on top. So today we are
+[36:00] focusing on hosted agents and being able
+[36:03] to bring our lang agents to foundry
+[36:06] agent service and still get hosting from
+[36:08] it.
+[36:10] So how does okay how does this work? So
+[36:13] generally here's the idea behind the
+[36:17] hosted agents for foundry agent service.
+[36:19] So you have some code you know it's it
+[36:21] could be in any language right I I even
+[36:23] know my net and java colleagues have
+[36:24] been messing with it this week. So
+[36:26] you've got some code in some language in
+[36:28] our case it's python. Now that code we
+[36:31] can we need to expose it in a way that's
+[36:34] compatible with the OpenAI responses API
+[36:37] right so if we can ex and and this is a
+[36:40] well doumented API because there's also
+[36:42] an open responses spec because they're
+[36:44] trying to make it a standard um so we
+[36:46] need to expose it in a way that's
+[36:47] compatible with that responses API so
+[36:50] that it accepts input in the form of you
+[36:53] know responses input and it outputs in
+[36:56] in the responses um output
+[36:59] Uh and then we make a docker file that
+[37:02] can run this server that um you know is
+[37:05] a responsive server. And once we have
+[37:07] that container and you know upload that
+[37:10] to Azure container registry then Foundry
+[37:12] agent service can run that container.
+[37:16] And as long as everything is compatible
+[37:18] with what agent service expects then you
+[37:20] get lots of um you know benefits out of
+[37:23] the agent service. You get easier
+[37:24] observability, you get a playground, you
+[37:26] get evaluations, uh you get all sorts of
+[37:28] fun things in agent service. Uh so this
+[37:31] is the option if you're doing responses
+[37:33] API. There's also a more generic
+[37:36] invocations API where basically you just
+[37:38] need to expose an HP endpoint, right? If
+[37:40] you expose your server and your server
+[37:42] would just take whatever, right? Like
+[37:44] maybe it accepts files, maybe it accepts
+[37:46] audio, like who knows, right? So so with
+[37:49] that one, you can also run that on
+[37:51] Foundry agent service as well. um you
+[37:53] won't get as many of the uh as much of
+[37:56] the built-in functionality as Foundry
+[37:58] Agent Service uh when you if you're not
+[38:00] supporting the responses API
+[38:02] uh you know layer there but you can
+[38:05] still host it on Foundry agent service
+[38:07] and still get some of the benefits. Uh
+[38:09] so generally if you are going to use
+[38:11] hosted agent service and you're bringing
+[38:14] your own agent framework you're going to
+[38:15] have to decide do I want to you know
+[38:17] make it work with the responses API or
+[38:20] am I happy to just use this generic
+[38:22] invocations API. Um for this this series
+[38:25] we are focusing on the responses API
+[38:27] because one it's harder so we'd rather
+[38:30] like help you figure out that harder
+[38:32] one. Uh and two it's like more powerful
+[38:34] like once we have it figured out we get
+[38:36] way more functionality out of Foundry
+[38:37] agent service.
+[38:42] So how is this specifically going to
+[38:44] work for lang chain and lang graph? Um
+[38:47] so what we have is a um an adapter you
+[38:52] know written by um our actually by our
+[38:56] colleague who's also a part of the
+[38:58] community.
+[38:59] uh we we've ran an adapter and we've got
+[39:01] the code um in the repo uh that
+[39:04] basically creates the responses layer on
+[39:07] top of a link chain agent and uh you
+[39:11] know so what we do is we create our link
+[39:12] chain agent and then we bring in our
+[39:15] adapter class and say all right adapter
+[39:17] class here's the agent you know run this
+[39:20] agent and expose it as a responses API
+[39:24] endpoint uh and then we have also a
+[39:26] docker file and an agent.yamel ML and we
+[39:28] can upload all that. So, uh let me show
+[39:34] that code.
+[39:37] Okay. So, you can see here you know we
+[39:40] create our agent and this is you know
+[39:42] basically what we did before with
+[39:44] creating an agent. Uh but now this time
+[39:46] we wrap it in this adapter class and
+[39:50] this adapter class is just we just have
+[39:52] it checked in here. um you know it's
+[39:55] from this this module here that our
+[39:59] colleague wrote. Uh so we bring in that
+[40:01] adapter class and it exposes the agent
+[40:06] behind a responses API layer and then we
+[40:09] have a docker file and the docker file
+[40:11] says okay you know we're going to
+[40:13] install Python
+[40:15] uh we're going to you know bring in our
+[40:17] dependencies
+[40:18] we're going to run this code here and so
+[40:22] that'll that'll start up the server.
+[40:25] Uh next we also have an agent.yaml this
+[40:28] is required for deployment. Uh you can
+[40:30] see I have a little thing that says
+[40:32] deploy and this agent.yaml says all
+[40:34] right here's the name of our agent.
+[40:36] That's how it's going to show up in
+[40:37] Foundry. Here is the protocol we're
+[40:39] using. So here we're using responses
+[40:41] instead of invocation. Um here's the
+[40:43] resources we need for the microVM that
+[40:45] each session is going to use. And here's
+[40:47] any additional environment variables
+[40:49] that we want injected into that
+[40:51] container when it starts up.
+[40:54] So that determines how it gets deployed.
+[40:56] Uh and then also we have an Azure.yamel
+[40:59] YAML uh which says which agents get
+[41:02] deployed. So that aure.yaml once again
+[41:05] references that agent name says okay
+[41:06] you're going to deploy this agent using
+[41:08] the agent platform. Uh you're going to
+[41:11] build it with docker and um here's the
+[41:14] startup command. There's a little
+[41:16] redundancy between these two files. Um
+[41:18] and we're working on the redundancy
+[41:20] right like like resources startup
+[41:22] command. uh but this is currently what
+[41:24] you need in order to be able to run um
+[41:27] you know to to deploy these to agent
+[41:29] service.
+[41:31] So how does that adapter work? I mean
+[41:34] generally the idea is that we need to
+[41:35] take the lang chain you know the shape
+[41:37] of the lang chain API and we need to
+[41:40] turn that into the responses API right
+[41:43] so when we get input because the input
+[41:45] always comes as responses API input so
+[41:48] when we get that input we then convert
+[41:50] it into the lang chain equivalent so um
+[41:52] you know for responses API it's you know
+[41:54] message text content and we turn that
+[41:56] into human message for lang chain which
+[41:59] I I like that class name actually um and
+[42:02] then similarly if it's you know if it's
+[42:05] uh it has a different role then it
+[42:06] becomes an AI message um system
+[42:08] developer role becomes a system message
+[42:10] right so we have to translate our input
+[42:13] into the lang chain equivalent so that
+[42:15] we can then pass it to lang chain and
+[42:17] then for output similarly we you know
+[42:19] take um we have to do translation there
+[42:21] as well so the general idea is that you
+[42:23] know we're turning these lang chain
+[42:25] classes into responses API input and
+[42:27] output
+[42:30] uh so here's you know here's
+[42:33] the overall code that we need, right?
+[42:35] Um, and we already saw we basically
+[42:37] already saw this, but we create the
+[42:38] agent, we wrap the agent in that
+[42:40] responses host and we run that server
+[42:42] and that starts running the responses
+[42:44] API endpoint.
+[42:48] Then in order to deploy it, we are using
+[42:51] the Azure developer CLI. And um, AZD
+[42:55] looks at all those files I just showed
+[42:57] you. So it's going to look at the
+[42:58] Azure.yamel in the root. It's going to
+[42:59] look at the Docker file. It's going to
+[43:00] look at the agent.yaml. YAML and so and
+[43:03] it's also going to look at all the
+[43:04] biceps. So we have a lot of bicep files
+[43:06] that's infrastructure as code. So
+[43:08] there's a ton of bicep files in our
+[43:11] repo. Um but AZD can also write those.
+[43:14] So if you're starting fresh, AZD can
+[43:15] help you write those bicep files too. Uh
+[43:18] we've already got our bicep files here.
+[43:20] U but when you're building a new one uh
+[43:23] it can actually uh write help write you
+[43:25] those files. So it provisions all the
+[43:28] infrastructure using the bicep files. Uh
+[43:30] then it builds the Docker image based on
+[43:32] the Docker file. It pushes that Docker
+[43:35] image to the container registry.
+[43:38] Uh and then it deploys the new agent
+[43:41] version to Foundry. It says, "Hey
+[43:42] Foundry, we've got this new Asian
+[43:44] version. It's based off this uh you
+[43:46] know, this image. Uh you know, here's
+[43:48] the new version number, right?" And then
+[43:50] Foundry has this new version. Uh so I
+[43:53] have, let's see, I ran it earlier today
+[43:55] so I can show you, you know, what this
+[43:57] looks like when we do a
+[44:00] AZ up. So a up we'll start off with the
+[44:03] provisioning. So you can see when it
+[44:05] provisioned in this case uh it needed to
+[44:07] provision the foundry model. Um
+[44:11] provisioned some app insights. It
+[44:12] provisioned the foundry project. Uh it
+[44:15] made a storage account. It made some
+[44:17] connections. It made the search service
+[44:19] since we're doing Foundry IQ. It made
+[44:21] the container registry. Made some more
+[44:23] connections. Um then I did a little
+[44:25] post-processing just to set up that
+[44:27] index. Right? So this is how I created
+[44:29] my index. I did some uh uploaded to the
+[44:32] search index. Uh then I created the
+[44:34] toolbox and then it deployed the agent.
+[44:37] So in this case it actually we're
+[44:39] deploying both an agent and a workflow.
+[44:40] So we're going to talk about workflows
+[44:42] soon. So it said all right I'm deploying
+[44:44] this agent. This is how you can access
+[44:45] the agent. So it has a link so that you
+[44:47] can just play with it in the playground
+[44:48] which we're going to do in a second. Um
+[44:51] and uh and yeah has a link. Okay. So
+[44:55] that's generally the the process. Mine
+[44:58] my process is a bit longer because I am
+[45:00] doing all this setup of Foundry IQ and
+[45:02] Foundry Toolbox and I like to
+[45:04] incorporate that into the deployment. Um
+[45:07] the basic thing is you know doing that
+[45:09] provisioning and then doing that
+[45:11] deployment.
+[45:15] Okay. So what's fun like you know as
+[45:17] soon as you deploy it the first thing I
+[45:18] usually do is I go over to the foundry.
+[45:22] I go to the agent. Um, and here's the
+[45:24] playground, right? And, um, so here we
+[45:27] can have we have a question, right? Um,
+[45:29] this is my joint question. Uh, so what
+[45:31] perks plus benefits does Zava have and
+[45:33] how does that compare to other
+[45:34] companies? So, I like this question
+[45:35] because it requires both Foundry IQ and
+[45:38] web search. Uh, so it should have to,
+[45:40] you know, use multiple tools. So, we can
+[45:43] see, okay, from our internal
+[45:44] [clears throat] docs, you know, this is
+[45:45] what we know about, uh, about the
+[45:47] benefits and then how that compares to
+[45:49] other companies from external
+[45:50] benchmarks, right?
+[45:52] And this is what it actually got from
+[45:54] the web search.
+[45:56] And what's cool is that you can also
+[45:58] just see the logs from from this
+[46:01] container. So this is running on our new
+[46:03] very fast microVM platform that starts
+[46:06] up really fast and isolates um you know
+[46:08] the sessions for each user and um and it
+[46:12] shows the logs for each of these
+[46:13] sessions. So as you're playing in the
+[46:15] playground, you can see all of the logs
+[46:17] come through. And I love logs. So I have
+[46:20] a lot of them. Um so these logs can be
+[46:23] really helpful especially if there's an
+[46:24] error. So you of course always check
+[46:25] your logs or you know copy paste them
+[46:27] give them to co-pilot and say hey help
+[46:29] me with this error. Uh I'm doing that
+[46:31] all the time.
+[46:33] Now what's also cool is that we can um
+[46:38] yeah we can also look at the traces.
+[46:39] Actually we'll we'll talk about that in
+[46:40] a sec. Okay. So yeah. Yeah. So, here's
+[46:42] the playground and uh you know, it's a
+[46:45] fun way to test it out um is just play
+[46:48] around in the playground and you know,
+[46:49] anyone who's in your tenant can play
+[46:50] around. So, this is actually Gwen's
+[46:51] agent that I'm using here um uh because
+[46:55] we're all in the same tenant. So, you
+[46:56] know, I can experiment with Gwen's agent
+[46:59] in her playground.
+[47:02] Now, of course, you know, practically
+[47:04] when you're running something in
+[47:05] production, you're not just going to be
+[47:06] using a playground for it, right? you're
+[47:08] going to actually want to use that agent
+[47:10] uh to integrate with other systems in
+[47:11] some way, right? So when you want to use
+[47:13] it, you're going to interact with it
+[47:16] using the responses API. Uh so here's
+[47:20] just a curl request that goes out to the
+[47:21] endpoint uh that sends it some inputs,
+[47:24] right? So you can use this HTTP API from
+[47:27] anywhere um you know for however you
+[47:29] want to integrate, you can use it. uh we
+[47:31] have a specific example that uses Azure
+[47:33] AI project SDK to basically uh you know
+[47:37] make a request um using OpenAI responses
+[47:40] uh client and you know so that's that's
+[47:43] one easy way of interacting with it but
+[47:45] this is an API so you can you know you
+[47:48] can use it however you would like
+[47:52] there is also a local development loop
+[47:55] um because of course when you're
+[47:56] developing things you don't want to have
+[47:58] to deploy every time you make a change
+[47:59] uh so what we have is two commands. One
+[48:02] of them is a AI agent run and that will
+[48:04] run your agent with a local response to
+[48:07] server. Uh I think I have that here.
+[48:10] Yeah. So you can see running on you know
+[48:13] on localhost 888.
+[48:15] Um and so that way it can it can take
+[48:19] take requests and so then when we want
+[48:21] to invoke that local server we can use a
+[48:24] AI agent invoke- local and say you know
+[48:28] pass in our question right um so here I
+[48:31] just said hi but uh you can get back a
+[48:34] response from it and and you know and
+[48:37] check our our logs as well. So generally
+[48:39] when you're developing you're going to
+[48:40] be using this local development server
+[48:42] in order to um you know test your
+[48:45] changes and then you only want to deploy
+[48:47] once you're actually feeling good about
+[48:49] them and you know feel like everything's
+[48:51] working well locally.
+[48:56] So now let's talk about observability.
+[48:58] Oh I realize we have 10 minutes left so
+[49:00] I'll be fast on this. So for
+[49:02] observability we like to use open
+[49:04] telemetry in order to u output all of
+[49:07] our traces. Uh in order to do that with
+[49:10] langchain we are going to use that
+[49:11] langchain azure open telemetry extra.
+[49:15] Remember that we installed that and that
+[49:16] has this enable autotracing function in
+[49:19] it. So we call that enable autotracing
+[49:22] function in our code. Um you can see
+[49:25] actually I we have a few more options
+[49:27] that I passed into it. Where did I put
+[49:29] it?
+[49:31] enable here. So enable autotracing. So I
+[49:34] passed in the connection string. Um this
+[49:36] gets auto injected into the container by
+[49:39] the platform. I said I want you to
+[49:41] configure Azure monitor. So it's going
+[49:42] to export to Azure monitor based off
+[49:44] that connection stream. It's going to
+[49:46] record all the content. Um that includes
+[49:48] tool calls and arguments which could be
+[49:50] sensitive. So you don't always want to
+[49:51] record them. Uh trace all lingraph nodes
+[49:54] and then I gave it an ID. So that's the
+[49:56] setup that we're going to do that's
+[49:57] going to emit traces using open
+[50:00] telemetry in a standard way that's going
+[50:02] to work with app insights and also as
+[50:05] well work with foundry.
+[50:09] Uh so there we go. Um so that will that
+[50:12] will take care of it and then u once
+[50:15] that's been output then you can go to
+[50:17] foundry and uh you can go to this traces
+[50:21] tab right so here you can see playground
+[50:23] traces. So I went to traces and then
+[50:25] conversations
+[50:26] and then I click on uh one of these
+[50:30] conversations and we can see all of the
+[50:33] calls that went out right um so we can
+[50:35] see there's like invoke agent and each
+[50:37] of these calls these are um these have
+[50:40] attributes and these are all like
+[50:41] standard attributes so it's like okay
+[50:43] this is the name of the agent there's
+[50:44] the version oops sorry all right I
+[50:46] probably just got logged out of Azure
+[50:49] um uh so wait I took a screenshot in
+[50:52] case that happen. Here we go. [laughter]
+[50:56] So, yeah. So, you can see, you know,
+[50:57] we've got attributes for it. Um, and we
+[51:00] can also see calls to our LLM. We can
+[51:02] see calls to each of the the tools. So,
+[51:05] you can see first it did a
+[51:06] knowledgebased retrieval, then it did a
+[51:09] web search, and then finally did an LM
+[51:11] call. So, this is super helpful to
+[51:14] actually see what is your agent doing in
+[51:16] order to answer the question, in order
+[51:18] to get to the goal. Um, and you can also
+[51:21] see stuff like duration, you know,
+[51:22] decide, you know, how's your
+[51:24] performance? Um, so yeah, so this is
+[51:26] really nice. I really like having easy
+[51:29] traces.
+[51:33] Uh, you can also say view these same
+[51:35] traces in app insights and they actually
+[51:36] have a really nice new agents view. Uh,
+[51:38] if you haven't checked that out yet,
+[51:40] it's very cool. It'll show you um you
+[51:42] know it'll do like tool calls like this
+[51:45] is a dashboard that's just already set
+[51:46] up for you because it knows because all
+[51:48] this is done using a standard this
+[51:50] gen_ai standard. So any agent that
+[51:54] you're using with any framework as long
+[51:55] as it follows the standard for the
+[51:56] traces you can use this agents tab and
+[51:58] it'll give you really nice dashboards.
+[52:02] Okay. So finally let's talk about multi-
+[52:05] aent workflows with langraph right. So a
+[52:09] workflow is some sort of flow where you
+[52:11] you know you have agents at you know at
+[52:12] some point um but you also have a lot of
+[52:14] other things potentially in that
+[52:15] workflow. You might have branching
+[52:17] parallel flows you you know there's all
+[52:20] sorts of things you can do in a flow. So
+[52:23] for lang graph the way we make a
+[52:25] workflow is that we construct what's
+[52:27] called a state graph. And a state graph
+[52:30] has nodes with edges between them. Uh
+[52:34] and these all are based off of state. So
+[52:38] each node receives state, modifies a
+[52:41] state and then returns the updated
+[52:43] state. And then the edges actually
+[52:45] define the flow and you could have
+[52:48] conditional edges if you need to have
+[52:49] branching.
+[52:53] So this is uh almost the simplest
+[52:56] workflow, right? So here and here we're
+[52:58] not even using any agents at all. We're
+[53:00] just trying to show the idea of how you
+[53:01] build a workflow in langraph. Right? So
+[53:04] we create uh we have these two functions
+[53:07] that have a state and the state is just
+[53:10] a a dictionary that they're they're
+[53:11] changing. Um so that you know this this
+[53:14] uppercase receives a state and then it
+[53:17] returns back a new dictionary that has
+[53:20] this text from the state in uppercase
+[53:22] and then reverse text does you know same
+[53:24] thing receives a state and returns back
+[53:26] a new dictionary that has the text
+[53:28] reversed.
+[53:30] So then down here we create a graph and
+[53:32] we're saying okay we're creating a a
+[53:34] graph based off of this state. That's
+[53:36] the state we're passing around. We're
+[53:38] adding these nodes to it. We're adding
+[53:40] an edge. We're saying okay the start
+[53:41] node is uppercase. Then there's an edge
+[53:44] between uppercase and reverse text. And
+[53:47] then finally the reverse text goes to
+[53:51] the end of the graph. Right? So you
+[53:52] define your start, your betweens and
+[53:55] your end. uh then we compile the graph
+[53:57] and then we can invoke the graph with
+[53:59] some input right and here the input
+[54:02] matches this the state
+[54:05] uh so let's see
+[54:08] oh I didn't actually run let me let me
+[54:12] see if I can run this here
+[54:15] UB1 workflows stage zero
+[54:20] uh oh stage one simple nodes Okay.
+[54:29] All right. Very exciting. We got back
+[54:31] uppercase reverse text. Okay. That
+[54:34] that's that's your basic workflow. This
+[54:35] is just to explain how langraph works.
+[54:37] If you haven't made a langraph graph
+[54:39] before.
+[54:42] Now, how do we actually use LM calls
+[54:44] inside workflows? Um, one way is that,
+[54:46] you know, inside your workflow, you
+[54:48] would just call the LM um or call the
+[54:51] agent, right? like it's just having a
+[54:53] call to an LM inside a node. U that's
+[54:55] kind of the most straightforward way of
+[54:57] doing it in lingraph. So here we've got
+[54:59] these nodes, the writer and formatter.
+[55:01] The writer makes an call to an LM that
+[55:04] asks it to to do some writing. The
+[55:06] formatter says, okay, you're going to
+[55:07] add lots of emojis because of course we
+[55:08] love emojis. And you know, then we come
+[55:11] up with the same kind of graph. The
+[55:14] difference now is that these nodes have
+[55:16] LLMs in them. Let's see if I can run
+[55:18] this one. [clears throat]
+[55:25] Let me open it.
+[55:29] Okay, two
+[55:33] agent ods. All right, so it gets the
+[55:35] prompt. H yeah, sorry I can't run it
+[55:37] because I've been logged out of my Azure
+[55:39] account. I thought that would happen.
+[55:41] All right, that's why I had everything
+[55:42] pre-loaded. So apologize. Can't run that
+[55:45] right now. Um but you know basically we
+[55:47] would get back the the formatted result.
+[55:50] Now how do we host this on Foundry is
+[55:52] basically same story as before. We're
+[55:54] going to bring in that responses
+[55:56] adapter. We're going to wrap the graph
+[55:59] in the in that adapter. So basically the
+[56:01] adapter knows how to work with graphs or
+[56:03] agents. It thinks of them as being the
+[56:05] same. Um and then we're going to run
+[56:07] that as run that server
+[56:10] and then we deploy it. Uh so you know
+[56:13] basically we have the workflows in its
+[56:15] own folder. So in the workflows, it's
+[56:17] got its own agent.
+[56:19] It's got its own docker file. So that's
+[56:21] one takeaway as well is that uh you can
+[56:24] basically have a monor repo where you
+[56:26] have multiple agents and workflows that
+[56:28] are being deployed as different uh
+[56:31] different foundry agents. Just each file
+[56:33] needs to have its own docker file and
+[56:36] agent.yaml and then your root azure.yaml
+[56:39] needs a reference to that. Right? So you
+[56:41] can see oh hosted lang graph workflow
+[56:44] um and it has information for for that
+[56:46] one right that's nice because a lot of
+[56:48] us I think do work with monor repos
+[56:50] where you want to be able to deploy
+[56:51] multiple services in the same repo and
+[56:54] you know you can do that here all right
+[56:57] so I have that deployed over here so I
+[57:00] said write an ode to dark chocolate
+[57:02] honeycomb something I just discovered uh
+[57:05] and you can see it came back um with uh
+[57:09] this lovely ode that has lots Lots of
+[57:11] emojis and lots of markdown.
+[57:16] [gasps]
+[57:19] I love when I have it right poems. Okay.
+[57:23] Uh so there you go.
+[57:27] So we've, you know, shown you how to use
+[57:28] LinkedIn and Lingraph. Um but I I want
+[57:31] to preface again. This is really really
+[57:34] new, right? This this new version of
+[57:36] Foundry Host agents just came out last
+[57:38] week. uh you know, we've been using it a
+[57:40] lot. We we've been reporting the issues
+[57:42] with it because it's in public preview.
+[57:44] The goal of public preview is to get
+[57:46] feedback and to find out what things are
+[57:48] working and not working. Um so if you do
+[57:51] try it out and if you have any issues,
+[57:53] like if you have any issues with this
+[57:55] repo, just file an issue in the repo. I
+[57:58] was actually having some issues um this
+[58:00] morning. That's why I'm using Gwen's
+[58:01] version of it. So you know do file
+[58:04] issues um you know the goal of this is
+[58:06] to get feedback um you know during this
+[58:09] public preview period to figure out you
+[58:11] know how can we make the platform
+[58:14] better? What sort of um you know
+[58:16] additional code or examples do people
+[58:19] need uh to be able to you know empower
+[58:21] you to do what you want to do. Uh so
+[58:25] please please do file file issues. So if
+[58:29] it's with this repo itself, you know,
+[58:30] you can post in this uh in this. Um
+[58:33] otherwise, you can also post issues in
+[58:35] the foundry discord and uh we have folks
+[58:37] who monitor the foundry discord and they
+[58:40] can escalate uh escalate issues.
+[58:43] So yeah, uh I encourage you to try it
+[58:46] out. Um but also let us know what's
+[58:48] working and not working. So next steps,
+[58:52] uh if you haven't registered yet,
+[58:54] register for tomorrow's session. Um
+[58:56] there's a lot of really cool stuff to
+[58:57] show in tomorrow's session about quality
+[58:59] and safety evaluations. Uh so I hope
+[59:03] that you join us for that. That'll be
+[59:04] all new stuff that we haven't talked
+[59:06] about yet in this series. Um
+[59:10] uh you can also watch the past
+[59:11] recording. So if you missed yesterday's
+[59:13] and you want to check that out, uh I am
+[59:16] linking to everything from the resources
+[59:18] page. Uh and I think we've put that link
+[59:20] in the chat. But basically for every
+[59:21] session we've got YouTube, we've got
+[59:23] slides, we we also have these like
+[59:25] writeups that I make. So the writeups um
+[59:28] have like annotated versions of the
+[59:29] slides so you can go through those. Uh
+[59:32] we've got the office hour recordings.
+[59:33] We've got writeups of the office hours
+[59:35] recordings. So we try to be really
+[59:37] really thorough um and give you as many
+[59:40] resources as we we can. Uh you can also
+[59:42] post issues to this thread. So if you
+[59:43] post an issue to this thread then I will
+[59:46] see it here or you can just post an
+[59:47] issue just generally in this foundry
+[59:49] discussion forum. Uh I'm just trying to
+[59:52] give you lots of places to file issues
+[59:54] so that we can get more of your
+[59:55] feedback. [laughter]
+[59:56] Uh and then now we have our office
+[59:58] hours. So after every session we do have
+[01:00:00] an office hours. So come on over to the
+[01:00:03] Foundry Discord for office hours. Um our
+[01:00:07] office hours is in there's two channels
+[01:00:09] for office hours in the Foundry Discord
+[01:00:11] because there's just so many all the
+[01:00:12] time. So, ours, I think, is in the
+[01:00:14] community calls to channel. So,
+[01:00:17] hopefully you don't get too lost. Um, if
+[01:00:18] you find yourself in something that
+[01:00:21] doesn't look like me talking, [laughter]
+[01:00:23] then um, you know, yeah, just switch
+[01:00:26] switch channels. Um, so I know I didn't
+[01:00:28] get to answer most questions or maybe
+[01:00:31] any questions in the chat today because
+[01:00:32] we had so much to cover. Um, but we do
+[01:00:34] have the office hours now. So, I
+[01:00:36] encourage you to come on over to the
+[01:00:38] office hours and ask me your questions
+[01:00:40] there. And uh I hope to see you there or
+[01:00:45] see you tomorrow. Thank you everyone.
+[01:00:48] Bye.
+[01:00:56] Thank you all for joining and thanks
+[01:00:58] again to our speakers.
+[01:01:01] This session is part of a series. To
+[01:01:03] register for future shows and watch past
+[01:01:06] episodes on demand, you can follow the
+[01:01:08] link on the screen or in the chat.
+[01:01:12] We're always looking to improve our
+[01:01:13] sessions and your experience. If you
+[01:01:16] have any feedback for us, we would love
+[01:01:18] to hear what you have to say. You can
+[01:01:20] find that link on the screen or in the
+[01:01:22] chat. And we'll see you at the next one.
