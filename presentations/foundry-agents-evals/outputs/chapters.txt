@@ -1,0 +1,26 @@
+This session is the third and final part of the "Host your Python agents on Microsoft Foundry" series, covering quality evaluations and safety evaluations for hosted agents. It demonstrates built-in evaluators, batch/scheduled/continuous evaluations, evaluation alerts, automated red teaming, guardrails, and content filter error handling.
+
+00:00 - Introduction and series overview
+02:42 - Quality evaluations: the challenge of non-determinism
+05:06 - Human evaluations
+07:00 - Automated evaluations with LLM-as-judge
+09:27 - Built-in evaluators for AI agents
+14:00 - Tool call accuracy evaluator
+16:15 - Intent resolution evaluator
+17:02 - Task adherence evaluator
+17:51 - Response completeness evaluator
+18:51 - More built-in evaluators
+20:35 - When to run evaluations
+24:16 - Batch evaluations
+32:30 - Scheduled evaluations
+34:23 - Continuous evaluations
+38:07 - Evaluation alerts with App Insights
+42:00 - Safety evaluation: what makes output safe
+42:46 - Safety evaluation process (automated red teaming)
+46:42 - Red teaming with Python SDKs
+52:56 - When to run red teams
+54:33 - Guardrails and risk mitigation layers
+55:38 - Azure AI Content Safety
+56:23 - Configuring guardrails in Foundry
+58:13 - Content safety filter error handling
+59:54 - Next steps and resources

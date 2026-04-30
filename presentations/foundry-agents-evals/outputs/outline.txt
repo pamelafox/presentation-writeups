@@ -1,0 +1,46 @@
+1. Series title slide listing all three sessions (Apr 27: Agent Framework, Apr 29: LangChain, Apr 30: Quality and safety evals).
+2. Session title slide for "Host your agents on Foundry: Quality and safety evals" by Pamela Fox.
+3. Agenda slide listing quality evaluations (built-in evaluators, batch evals, scheduled evals, continuous evals, evals alerts), safety evaluation with red-teaming, guardrails, and content safety filter error handling.
+4. Follow-along instructions for the GitHub repository with Codespace setup steps.
+5. Section header: "Quality evaluations".
+6. Agent output is non-deterministic — explains how LLM non-determinism affects agent output quality and lists factors (tool selection, arguments, grounded response).
+7. Human evaluations — humans can spot-check on small data sets and annotate issues; not yet supported for hosted agents.
+8. Automated evaluations — LLMs can measure output performance at scale across a broader range of risks.
+9. Automating evaluations with Python SDKs — install openai and azure-ai-projects for built-in/custom evaluators and bulk evaluation.
+10. Built-in evaluators for AI agents — diagram showing ToolCallAccuracyEvaluator, IntentResolutionEvaluator, TaskAdherenceEvaluator, and ResponseCompletenessEvaluator with their inputs.
+11. Tool Call Accuracy — example showing pass/fail scenarios based on whether the agent called the right tool with correct arguments.
+12. Intent Resolution — example showing pass/fail based on whether the response fully addresses both parts of the user's question.
+13. Task Adherence — example showing pass/fail based on whether the agent followed user constraints (e.g., "using only Zava benefits information").
+14. Response Completeness — example showing pass/fail based on comparison to a ground truth response.
+15. More built-in evaluators — table listing Tool Selection, Tool Input Accuracy, Tool Output Utilization, Tool Call Success, Task Navigation Efficiency, Relevance, and Groundedness.
+16. When to run evaluations — comparison of batch evals (on demand, curated data), scheduled evals (daily/fixed time), and continuous evals (always on, live traces).
+17. Section header: "Batch evaluations".
+18. Configure Foundry project client — code for connecting with AIProjectClient and fetching the agent.
+19. Upload an evaluation data set — creating JSONL test cases and uploading to Foundry.
+20. Define evaluators — code showing how to configure evaluator names, data mappings, and initialization parameters.
+21. Run a batch evaluation — code for creating an evaluation and starting a run targeting the hosted agent.
+22. View results in Microsoft Foundry — screenshot of evaluation tab showing overall metric results and detailed per-row results.
+23. Section header: "Scheduled evaluations".
+24. What changes for scheduled evals — comparison table (use case, dataset, trigger, code) between batch and scheduled evals.
+25. Create the schedule — code for setting up a Schedule with RecurrenceTrigger and EvaluationScheduleTask.
+26. View results in Microsoft Foundry — screenshot showing scheduled evaluation run results.
+27. Section header: "Continuous evaluations".
+28. What's different about continuous evals — comparison table showing continuous evals use live agent traces from App Insights rather than uploaded datasets.
+29. Create the continuous eval schedule — code showing AzureAIDataSourceConfig with "azure_ai_traces" type sampling from App Insights.
+30. View results in Microsoft Foundry — screenshot of continuous eval results with trace_id and span_id per row.
+31. Catch quality regressions with eval alerts — code for creating alert rules in App Insights based on evaluation pass rates.
+32. Section header: "Safety evaluation".
+33. What makes an agent's output safe — lists unacceptable outputs (hateful speech, violence, sexual content, protected materials, jailbreak vulnerability).
+34. Safety evaluation process — diagram of the automated red teaming pipeline: adversarial LLM generates probes, Pyrit transforms them, sends to target, evaluates response.
+35. Which Python package to use — comparison of azure-ai-evaluation[redteam] vs azure-ai-projects for red teaming Foundry hosted agents.
+36. Configure the red team — code for creating a RedTeam with risk categories and num_objectives.
+37. Run the red team scan — code for calling model_red_team.scan() with attack strategies (Baseline, Url, Tense, composed).
+38. Review the red team results — JSON scorecard showing attack success rates per category plus TUI display option.
+39. When should you run a red team — guidance to run on model or prompt changes; table comparing attack success rates across models.
+40. Section header: "Guardrails".
+41. Risk mitigation layers — nested diagram showing Model, Safety System, System Message & Grounding, and User Experience layers.
+42. Azure AI Content Safety — configurable system that detects violations, jailbreaks, and protected materials; always enabled in Azure OpenAI and Foundry.
+43. Guardrails in Microsoft Foundry — screenshots showing default filters and custom filter configuration in the Foundry portal.
+44. Content safety filter error responses — JSON error structure returned when content violates the filter.
+45. Handling content filter errors in agents — middleware code in agent-framework to catch OpenAIContentFilterException and return user-friendly response.
+46. Next steps slide with links to past recordings and Discord office hours.

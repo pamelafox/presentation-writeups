@@ -1,0 +1,60 @@
+[00:00:00] [@hardiksoni1598]: hi
+[00:00:00] [@MicrosoftReactor]: Thanks for joining! This is Molly, your producer for today joining you from Washington state  From where are you tuning in?
+[00:00:00] [@PamelaFox]: Welcome everyone! I'm streaming from the bay area in California today as usual.
+[00:00:00] [@JorgeZunigaIT]: Hi, buen día from México!
+[00:00:00] [@aquarist123]: Good evening from East Anglia in England.
+[00:00:00] [@MohanKosireddy-x6l]: san mateo, ca
+[00:00:00] [@MicrosoftReactor]:  Please take this opportunity to review our code of conduct: https://developer.microsoft.com/react...
+[00:00:54] [@MicrosoftReactor]: Slides: https://aka.ms/foundryhosted/slides/q...
+[00:01:15] [@MohanKosireddy-x6l]: As AI foundry keep changing. Please go over 1 min on the right way of developing agentic workflows on AI foundry later please
+[00:01:30] [@BowserJay]: Hello from cool, rainy Iowa!
+[00:02:09] [@MicrosoftReactor]: Code: https://aka.ms/foundry-hosted-agentfr...
+[00:02:11] [@MadeByGPS]: this series covered agent-framework and langchain for hosted agents :)
+[00:02:46] [@iambaljinder]: Good morning from sunny SoCal
+[00:02:49] [@MohanKosireddy-x6l]: i am using langchain and MCP
+[00:03:31] [@LaxmiPriyaKasi]: Please reshare slides link - it's not accessible
+[00:03:38] [@Silvestre-PO]: Hola!  
+[00:03:44] [@MadeByGPS]: @MohanKosireddy-x6l did you watch yesterdays episode? it covered this.
+[00:10:03] [@Engeniusam]: slides are inaccessible, kindly reshare @MicrosoftReactor 
+[00:12:50] [@iambaljinder]: Yes, the slides link is broken
+[00:12:50] [@MicrosoftReactor]: Slides: https://aka.ms/foundryhosted/slides/q...
+[00:13:14] [@krishnadrupal]: still not working the slides
+[00:14:07] [@iambaljinder]: Still doesn't work. It opens a generic MS page
+[00:15:04] [@MicrosoftReactor]: Sorry about the slides link. We will provide an update after the session. Thanks for your patience. 
+[00:15:53] [@PamelaFox]: https://1drv.ms/p/c/b79cd1db3ada14c5/...
+[00:16:23] [@MadeByGPS]: one sec let me make aka
+[00:16:29] [@iambaljinder]: It works
+[00:17:35] [@MadeByGPS]: ok https://aka.ms/foundryhosted/slides/q... should work now
+[00:18:09] [@hardiksoni1598]: it works
+[00:18:09] [@iambaljinder]: Aka link works as well. Thank you!
+[00:19:32] [@SolFarahmandAI]: Wouldn’t just cause a lot of latency in the response. How would you control for that?
+[00:20:01] [@ayushsingh6342]: Can we get ppt link from yesterday's session as well.
+[00:20:20] [@MadeByGPS]: @SolFarahmandAI they are done separately. 
+[00:20:46] [@MadeByGPS]: @ayushsingh6342 you can find it https://aka.ms/foundryhosted/resources
+[00:26:01] [@pablocotaimich]: Do the built in evaluators taken into account the former chat history (e.g. intent evaluation) ?
+[00:26:22] [@SumitPandit-s5c]: is there a way to create a synthetic data for ground truth, atleast questions and sample templates
+[00:26:38] [@iambaljinder]: With the upcoming GHCP change from PRU to token based billing (or UBB), cost is going to be critical for my customers. What specific evals can help them with minimizing the cost?
+[00:26:53] [@SolFarahmandAI]: @madebygps so evaluations are not done at the time the user asks a query?
+[00:27:11] [@MadeByGPS]: @SolFarahmandAI usually not, they can be though.
+[00:28:44] [@MadeByGPS]: @iambaljinder is your question about running evals cheaper or having a custom eval to score for cost/efficiency?
+[00:29:37] [@SolFarahmandAI]: @madebygps Ok. Seems like latency would be long if the user is waiting for the response while it’s being evaluated. 
+[00:30:04] [@MohanKosireddy-x6l]: LLM response could little vague and may not match ground truth. is there a way to chec > 95 % accurate or <70% accurate ?
+[00:30:04] [@SumitPandit-s5c]: @MadeByGPS - can we evaluate the cost as well with the evaluations by foundry ?
+[00:31:15] [@iambaljinder]: @MadeByGPS I'm looking for evals (readymade or custom) that can help score for cost and efficiency
+[00:31:45] [@pablocotaimich]: I made the question above, because the context of the LLM is of course not just the actual query, but the memories(short and long). We should take all into account to evaluate the response.
+[00:32:36] [@rwuniard]: Does the report tell you give a comparison against the previous run or the average of all of the previous runs?
+[00:33:42] [@katetaylor4862]: I think there is a sentence similarity evaluator
+[00:36:55] [@MadeByGPS]: @iambaljinder I am not familiar with any ready made evals that score cost efficiency, perhaps Pamela knows and can share during office hours if so.
+[00:39:46] [@MicrosoftReactor]: Discord Office Hours after this session: https://aka.ms/pythonai/oh
+[00:40:04] [@IzzySolutions]: @iambaljinder I think you need a GHCP plugin that keeps track of your token usage and as you alter your usage behavior you can keep track of how this impacts the token consumption.
+[00:41:39] [@MicrosoftReactor]: Resources: https://aka.ms/foundryhosted/resources
+[00:45:15] [@kalyana.k.1305]: if an answer is highly relevant but has a low groundedness score, how should a developer adjust their retrieval strategy
+[00:45:57] [@SumitPandit-s5c]: I believe yes
+[00:46:39] [@MadeByGPS]: @kalyana.k.1305 can you give an example of what you mean?
+[00:55:47] [@kalyana.k.1305]: ex: User asks a question and the llm responds with an answer (relavent to the question ) but the information may not be in the document 
+[00:57:18] [@SumitPandit-s5c]: Can we include Nemo Guardrails as part of custom guardrails?
+[00:57:45] [@MicrosoftReactor]: Discord Office Hours after this session: https://aka.ms/pythonai/oh
+[00:57:57] [@pablocotaimich]: Do the safety evaluations also include detection of risks in images?
+[00:58:21] [@MicrosoftReactor]: Please take a moment to complete our brief survey: https://aka.ms/AA10rqi6 
+[01:00:52] [@pablocotaimich]: like the video !
+[01:01:35] [@BowserJay]: Thanks
