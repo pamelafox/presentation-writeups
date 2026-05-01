@@ -22,4 +22,3 @@ First we'll explore what it means for agent outputs to be high quality, using bu
 Next we'll discuss safety systems that can be layered on top of agents and audit agents for potential safety risks. To improve compliance with an organization's goals, we can configure custom policies and guardrails that can be shared across agents.
 
 Finally, we can ensure that adversarial inputs can't produce unsafe outputs by running automated red-teaming scans on agents, and even schedule those to run regularly as well. With all of these evaluation and compliance features available in Foundry, you can have more confidence hosting your agents in production.
-
