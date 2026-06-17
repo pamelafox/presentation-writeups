@@ -1,0 +1,18 @@
+This talk explores how to build MCP (Model Context Protocol) servers for PostgreSQL databases using Python and FastMCP. It covers a progression from exploratory servers where agents write full SQL queries to fully typed operational servers with maximum safety, discussing tradeoffs, failure modes, and tool design strategies at each level.
+
+00:00 - Introduction
+01:02 - Demo: Agent chatting with a Postgres DB
+01:57 - What is MCP?
+02:46 - Building MCP servers for a Postgres DB
+03:29 - Free-form SQL: maximum flexibility, maximum risk
+04:59 - Problem: Schema bloat
+05:36 - Schema discovery tools
+06:47 - Problem: Mutations without guardrails
+07:58 - Read-only SQL approach
+08:53 - Enforcing read-only: hints, AST parsing, DB-level roles
+11:58 - Layers of protection for safe SQL
+13:14 - Fully typed tools: no SQL surface
+15:22 - Elicitation for destructive operations
+17:19 - Tool selection problems
+21:46 - Summary and recommendations
+23:24 - Closing

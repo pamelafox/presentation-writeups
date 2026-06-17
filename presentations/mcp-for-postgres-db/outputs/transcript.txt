@@ -1,0 +1,665 @@
+[00:07] Hey, I'm Pamela, and I'm going to be talking
+about building an MCP server
+[00:11] for your Postgres database.
+[00:13] We're going to look at the range of ways
+you can build MCP servers,
+[00:16] from very exploratory servers where the agents
+can send full SQL queries to your database
+[00:21] and do all sorts of things,
+maybe things you don't want,
+[00:24] and then look at fully-typed operational
+servers where you can have maximum confidence
+[00:30] in the SQL that's going to get executed,
+[00:32] but agents can still
+get their questions answered.
+[00:36] So, join me to learn more about
+building an MCP for your DB.
+[00:40] So, my job is to help Python developers
+build with new technologies,
+[00:45] and for the past year,
+it's been all about MCP.
+[00:48] It's the hottest new technology and the first
+standard to really get embraced
+[00:53] by all of the generative AI industry,
+[00:55] and people are really excited about it.
+[00:57] So, I'm excited that I have the chance
+to talk about MCP for the Postgres audience.
+[01:02] So, let's start off with a little
+demo that I recorded where
+[01:07] I use GitHub Copilot to ask a question.
+[01:11] Here the question is:
+[01:13] "Hey, which bees are active in
+El Cerrito in April, where I live?"
+[01:18] So, now GitHub Copilot, the agent, is thinking,
+it's using Opus 4.6 to think about this.
+[01:23] And it sees that it has an MCP server
+that it can query to get back an answer.
+[01:27] So it's, "uh, okay, I can query this
+database using this MCP server."
+[01:31] It queries it, runs some SQL,
+gets back a bunch of rows about bees
+[01:35] and observations, and says:
+"Hey, the top groups are bumblebees."
+[01:39] And I can confirm that that is correct because
+I can look outside right now and see
+[01:44] bumblebees all over the garden.
+[01:47] So, this was just an example of how we can
+connect agents with MCP servers in order to
+[01:53] get our questions answered
+and get our jobs done.
+[01:57] So, what even is MCP?
+[02:00] It is, it stands for Model Context Protocol,
+and it is an open protocol that defines how
+[02:06] AI apps and agents can get context
+from external tools and data sources.
+[02:11] Now, this protocol was first proposed
+by Anthropic,
+[02:14] but then it got adopted by everything,
+and now it's part of the Linux Foundation.
+[02:19] So, it is a full, proper open protocol.
+[02:22] Before MCP, when we wanted to integrate AI
+apps and agents with different data sources,
+[02:27] we'd have to come up
+with these custom integrations.
+[02:28] But now, thanks to MCP,
+we simply put an MCP server in front of
+[02:33] each of these data sources, and that
+creates a common protocol
+[02:38] for getting information from them.
+[02:40] Now, one of these data sources could be
+a Postgres database,
+[02:44] and that's what we're going to dig into.
+[02:46] So let's actually build
+that MCP server that I demoed.
+[02:51] Now, what we're going to see is that there's
+a range of ways that we could build an
+[02:55] MCP server on top of a Postgres database.
+[02:58] On one extreme, we have exploratory servers
+[03:01] where the agent
+can actually write the entire SQL
+[03:04] and send that whole query to the database.
+[03:08] And that's where you're really putting a lot,
+a lot of trust in the LLM and the agent.
+[03:13] But there's a lot of risk there.
+[03:15] So, on the other extreme,
+we have these more operational servers
+[03:18] with these fully-typed constrained tools
+where we don't have the risk to full SQL.
+[03:23] And we've got options in between as well.
+[03:25] So, we're going to explore
+that whole progression today.
+[03:29] Let's start with freeform SQL.
+[03:31] It has the maximum flexibility,
+but also, the maximum risk.
+[03:37] So, here is our simplified
+Python MCP server code.
+[03:42] So, we create a server using FastMCP,
+which is my favorite way to build MCP servers
+[03:48] in Python and very, very popular package.
+[03:50] And then we define two tools on the server.
+[03:53] The first one is a tool
+that gets the database schema.
+[03:57] So, we say, okay, when you call this tool,
+it's going to do this SQL statement
+[04:01] that gets back the schema and then
+dumps it back as a string.
+[04:06] Then, the next tool can actually take in
+[04:10] a SQL query, any SQL query,
+[04:14] and then it's just going to execute that
+SQL query against the database connection.
+[04:18] So that SQL query could be a SELECT,
+but it could also be an INSERT,
+[04:21] UPDATE, or DELETE, right?
+[04:23] There's a lot of options for what
+you can execute on the database.
+[04:28] So, what that looks like in action is actually
+what we saw in the demo already, is that,
+[04:32] you know, first the agent says,
+[04:33] "okay, I'm going to call that schema tool in
+[04:36] order to find out the schema of this database,
+[04:38] see what tables are available,
+what columns they have."
+[04:40] And then once it sees that,
+then it can execute the SQL against those
+[04:45] tables to get back the answers that it needs.
+[04:49] So, this works and I was able to get
+my question answered, which is awesome.
+[04:54] But there are some definite
+problems with this server.
+[04:59] So, the first is that schema tool.
+[05:01] It dumps everything, the whole schema.
+[05:04] In this case, that's not a big deal because
+this is actually a small demo database
+[05:08] which only has 5 tables and 60 columns.
+[05:10] But you can imagine in actual databases you
+may have hundreds of tables,
+[05:14] thousands of columns,
+and that schema is just too big, right?
+[05:19] Like, it's going to confuse the LLM.
+[05:22] We've seen so much information,
+most of which it doesn't need,
+[05:26] and it may exceed the context window
+of the LLM because LLMs do
+[05:29] have limited context windows.
+[05:31] So, you're not going to always be able to have
+a tool like this that dumps the entire schema.
+[05:36] What you can do instead is that you can have
+the kind of progressive schema discovery.
+[05:40] So, you can have this list_tables() tool that'll
+just get back the names of the tables.
+[05:45] You can even describe each table.
+[05:47] And then you have a describe_table() tool,
+which is going to get back
+[05:51] the columns for a specific table.
+[05:54] So, if we give these tools to the agent,
+it's going to first call list_tables() to see
+[05:59] all the possible tables it could use.
+[06:01] Then it's going to call describe_table()
+only on the tables it cares about.
+[06:04] So, in this case, it describes the species
+tables and the observations table and
+[06:08] gets back the columns for each of them.
+[06:10] So, what you can see is that
+[06:12] it had to do 3 calls instead of 1 call
+in order to get back
+[06:18] the schema information that it needed.
+[06:20] So that is an increase in calls overall.
+[06:23] And, in that, you know,
+so it may not be worth it to move to this
+[06:29] progressive schema discovery tools.
+[06:32] But if you do have a really large schema,
+then it's definitely something
+[06:37] you want to consider as a way of,
+you know, the agent just being able
+[06:42] to discover the schema information it
+needs to answer its current question.
+[06:47] Now, a really big problem is
+mutations without guardrails.
+[06:51] It is way too easy to,
+you know, mistakenly update or delete.
+[06:56] So in this example, the user said:
+[06:58] "Oh, how many bee observations
+have a low-quality grade?"
+[07:01] "Uh, actually, you know, delete those."
+[07:03] So, the user is actually
+suggesting they want to delete.
+[07:07] But they're doing it in a really
+like casual way, right?
+[07:10] So, they say that to the agent
+and Opus 4.6 is actually like:
+[07:13] "Wait a second, are you sure you want to
+delete almost 20,000 rows?"
+[07:17] It's kind of a big deal, right?
+And maybe the user would think like:
+[07:20] "Oh, wait a second, do I really want to do that?
+[07:22] Uh, you know, that's just like a lot."
+[07:24] Now Gemini 2.5 just goes ahead
+and deletes them.
+[07:28] Doesn't even ask, right?
+It just goes for it.
+[07:31] So, you know,
+I think Opus is kind of nicer in that
+[07:33] it asks for confirmation for it's, you know,
+a big deal deleting that many rows.
+[07:37] But here's the thing, is if your tool exposes
+the ability to do a deletion,
+[07:43] there is some agent, some model out there
+that will do that deletion.
+[07:47] So you cannot rely on the safety of models.
+[07:50] You have to make your tools
+themselves be safe, right?
+[07:54] And that's what we're going to look at,
+is how can we make the tools be safe.
+[07:58] So, one option we have is
+to try and enforce read-only SQL.
+[08:03] Just allow SELECTs.
+That's it.
+[08:05] Only safe SELECTs.
+[08:07] So, here we have the code
+for a read-only SQL tool.
+[08:12] It has this readOnlyHint at the top,
+which annotates the tool as read-only.
+[08:18] It starts off with checking the SQL statement
+to see that it is only a SELECT statement,
+[08:23] and then it executes that statement and it
+limits to a certain cap so that it's
+[08:28] not fetching too many rows.
+[08:30] So, there's a couple interesting things
+here that we'll dig into soon.
+[08:34] Now when we actually use this agent from,
+we use this MCP server from the agent,
+[08:39] we can see that it is able to send a
+[08:42] complex SELECT query and execute
+that query and get back the response.
+[08:47] So we can still use this
+tool to answer that question I had earlier.
+[08:53] So, how do we enforce the read-only?
+[08:56] So, the first thing is we have that readOnlyHint.
+[08:58] You saw that that was on the MCP tool,
+[09:01] readOnlyHint equals true.
+[09:02] This is something that's in the MCP spec
+where tools can be decorated
+[09:06] to describe how they work.
+[09:08] So, there's like readOnly,
+idempotent, destructive, et cetera.
+[09:12] So, in this case we're saying: "Hey, this
+is a readOnly tool, but it is only a hint."
+[09:17] It is a hint that MCP clients can use
+[09:20] and they might change
+maybe the way the tool is rendered,
+[09:24] maybe change
+the way they do approvals.
+[09:27] But it's really just to be used for UI
+because the thing is that it's only a hint.
+[09:33] It's not a contract.
+It's not a guarantee.
+[09:35] So, you could totally annotate a tool as being
+read-only, but in fact, the tool might allow
+[09:41] non-read-only operations, right?
+[09:43] So, it is up to us as the developers of the
+MCP server to make sure that the tool
+[09:48] is in fact read-only
+if that's important to us.
+[09:53] So, how can we do that?
+[09:54] So, the first thing we have is
+that call that validates the SQL.
+[09:58] So, this call uses the library in order to
+parse the SQL statement
+[10:03] into an abstract syntax tree,
+an AST, and then checks to make sure, hey,
+[10:07] there can only be a single statement here,
+not multiple statements.
+[10:11] And that single statement has to be
+a SELECT statement,
+[10:15] can't be INSERT, DELETE, UPDATE, etc.
+Right?
+[10:18] So, that actually does block a lot
+of potential, you know,
+[10:22] queries that could go through.
+[10:24] So, it'll block any sort of invalid SQL,
+it'll block multiple statements like this one,
+[10:28] it'll block a DELETE for sure, and it'll
+still let through the SELECT statements.
+[10:34] So, that is our
+first attempt at enforcing read-only.
+[10:38] The next thing we're going to do,
+and this is really important,
+[10:40] is to enforce read-only at the database level.
+[10:43] So, we can do that at,
+when we set up the connection, we can say:
+[10:46] "Hey, for this connection,
+it is default_transaction_read_only = ON."
+[10:50] So, that's going to say only
+read-only things can happen.
+[10:53] And then even better,
+we can create a dedicated read-only role
+[10:56] and use that whenever we're sending the query.
+[10:58] So, this role
+[11:00] only has the ability to do SELECT
+on this particular schema in this database.
+[11:06] And with those combined,
+that gives us a high-level enforcement
+[11:10] on the database level itself.
+[11:12] So that'll block INSERTs, DROPs, DELETEs.
+[11:14] It also will block this trickier thing,
+which wasn't blocked from our parser.
+[11:18] So, this is a CTE, a Common Table Expression,
+where it starts with WITH
+[11:22] blah blah blah blah... SELECT FROM.
+[11:25] That might have passed through the parser,
+but it will get blocked
+[11:29] from this database-level enforcement.
+[11:32] And we're still letting through
+the SELECTs that we want.
+[11:36] And what happens is when the agent tries
+to send in a DELETE operation here,
+[11:41] it'll get back the error response that says:
+[11:43] "Hey, that's just not allowed,
+you can't do that."
+[11:46] And then it'll try and suggest like:
+[11:47] "Oh, maybe you can like try and
+run this locally," right?
+[11:49] So, this is the kind of experience we want
+is for the agent to realize:
+[11:53] "Oh, okay, this can't be done,"
+and to give the user more information.
+[11:58] Well, what we can see is
+we need a lot of layers of protection
+[12:01] to try and make this SQL safe, right?
+[12:03] Like, we've got these 4 layers of protection
+[12:06] because you can really construct a lot
+of tricky SQL queries and, you know,
+[12:11] some of them will make it
+past different layers, right?
+[12:13] So that, you know, WITH statement actually
+passes the parser, but luckily gets
+[12:16] blocked by our database enforcements.
+[12:19] Now these ones are interesting.
+[12:21] You can do these SELECTs with Postgres
+functions that have side effects like
+[12:24] terminations, reading files, etc.
+[12:26] We don't want to let those
+through either, right?
+[12:28] Now fortunately those get blocked
+by using a least-privilege role, right?
+[12:32] So, it's really important
+that you have that as well.
+[12:34] And then we can also have operations that just
+take too much time on our server,
+[12:38] which is basically like DDoSing our server.
+[12:40] So, you can do a pg_sleep() function
+or a CROSS JOIN that's just way too big.
+[12:44] So, those we kill using a timeout that we
+put on the tool and said:
+[12:49] "Hey, this tool can only take 30 seconds max."
+[12:53] So, we need those 4 layers of protection
+just to feel confident that, you know, we can
+[13:00] let agents come up with
+SQL queries themselves.
+[13:03] But are we still confident?
+[13:05] I'm still not 100% confident, right?
+[13:07] I think there's still a possibility
+[13:09] that something could get through that
+I haven't accounted for, right?
+[13:14] So, if I really want to feel very secure,
+then the best option is to not allow the agent
+[13:20] to write the SQL, to not allow
+the execution of arbitrary SQL statements.
+[13:26] So, that's when we move to our strictest level
+of tools, which would be fully-typed tools.
+[13:33] And these are all using templated queries.
+[13:35] So, this example here
+is a tool, a read-only tool.
+[13:40] It searches the species table.
+[13:41] It takes in specific parameters,
+the query and the limit,
+[13:45] and then it uses this templated SQL query
+that it passes that query and limit into.
+[13:51] And it also enforces a max limit here
+so that we don't pull too many rows.
+[13:56] And then gives back the
+typed results based off of the rows.
+[14:02] So, this is very restrictive,
+very specific,
+[14:05] but can still get back a lot of information.
+[14:09] So, when we call that,
+you can see that the agent,
+[14:12] instead of passing in a SQL query,
+is just passing in the parameters, right?
+[14:16] So here it's just passing in,
+oh, the query is "carpenter bee."
+[14:21] When it calls this other tool here,
+search_observations,
+[14:24] that one actually takes 6 parameters.
+[14:25] And so,, the agent's going to suggest
+all 6 parameters and those get passed
+[14:29] into the template SQL query.
+[14:31] So we can do fairly complex queries,
+but we're still asking the agent
+[14:35] just to come up with the parameters
+and not the query itself.
+[14:43] Now,
+that works in order to answer those questions,
+[14:46] but then there's other questions that I
+simply can't answer with these tools.
+[14:50] So, if I ask: "Oh, how many total observations
+are in the database?"
+[14:53] The agent realizes, it simply doesn't have the
+tools it needs to answer that question.
+[14:57] So, that's the issue with typed tools.
+[14:59] They're the safest,
+but they limit what the agent can do.
+[15:02] So, if you are going to have typed tools,
+you really want to monitor users and see
+[15:05] what do users want to answer,
+and then add more tools as you need to.
+[15:11] I need to drink some water.
+[15:22] Now let's look at elicitation.
+[15:24] Elicitation is another way
+we can add a layer of safety.
+[15:29] So, in this tool here, we're adding
+a tool for deleting observations.
+[15:33] Now this is a destructive operation, so
+we've also annotated it as being destructive.
+[15:38] And so, we really want to be certain that
+the user wants to delete this observation.
+[15:43] So, what we can do
+is use elicitation where we say:
+[15:46] "Hey, are you sure that you want
+to delete this observation?"
+[15:50] And give the user the option.
+[15:52] So, the MCP client, like GitHub Copilot,
+will actually send up a prompt that has this
+[15:58] elicitation here and ask the user to
+confirm that they want to do this operation.
+[16:06] And then, depending on what the user says,
+so this is actually, you know,
+[16:09] getting back input from the user.
+[16:12] Depending on the user's input,
+we're either going to go forward
+[16:14] with the cancelation, with the deletion,
+or we're going to cancel it.
+[16:19] So, this is what it looks like in VS Code.
+[16:21] So, you know,
+it runs delete_observation and says:
+[16:24] "Ooh,
+you're about to permanently delete this row."
+[16:26] And what's nice here is that I can give more
+information about what they're going to delete,
+[16:30] because I've already
+looked it up in the database.
+[16:31] And so, then the user can like really think
+like, "Oh, wait a second,
+[16:34] maybe that's not the one I want to delete."
+[16:36] So, I think this is a really nice
+user experience.
+[16:39] And so, then I can confirm yes or no,
+and then the tool can, you know,
+[16:43] decide to delete or to cancel the deletion.
+[16:46] Now you can use elicitations
+for all kinds of things.
+[16:49] So, I think it's a really great thing to use
+when you're doing any sort of
+[16:52] destructive operation just to double check.
+[16:55] But you can also use it if there's any sort
+of ambiguity,
+[16:58] you know, in the user's query,
+or if you want to refine the parameters,
+[17:02] if you want to suggest a different
+sort of a query or parameter.
+[17:07] There's many things you can use it for, right?
+[17:08] Just imagine all the things you might want to
+throw up, you know,
+[17:11] an additional prompt for and get back more
+information from the user
+[17:15] before you continue on.
+[17:19] Okay, so we've built the tools, we've,
+you know, we've got this whole range of tools.
+[17:23] Now, as you're getting excited
+about building tools,
+[17:26] you might want to build
+more and more tools, right?
+[17:28] And you might have,
+you know, dozens or hundreds of tables
+[17:33] that you want to build tools for.
+[17:35] Well, then as you build more tools,
+you're going to have the problem of the agent
+[17:41] having to select between those tools.
+[17:44] You know, when an agent only has a few
+tools to pick from, it can do a great job.
+[17:48] When it has more and more tools to pick from,
+and those tools are increasingly similar
+[17:52] to each other, it can have a harder time
+picking which tool is going to be
+[17:57] the right one to answer a particular question.
+[17:59] So, I wanted to talk about this tool selection
+problem and do a little experiment
+[18:05] to think about how we can handle this.
+[18:09] So, for my experiment, I added two tools.
+[18:11] The first one is search_observations(),
+[18:13] and that is searching recent bee observations
+from 2020 to present.
+[18:18] And, you know, it says that you need to use
+the other tool for older ones,
+[18:22] and you need to call
+both tools if you need to span all years.
+[18:26] And then the second tool is searching
+the historical observations before 2020.
+[18:30] And, you know, it has the same tips about
+the other tool and to call both tools.
+[18:34] So, you can see these tools,
+they know about each other,
+[18:37] they reference each other in descriptions.
+[18:39] And so, the agent is going
+to get all this information.
+[18:42] Generally,
+when an agent is looking at an MCP server,
+[18:44] the information it gets is
+[18:46] the tool names, the tool parameters,
+and the tool descriptions.
+[18:49] So, this is actually all prompt engineering is
+deciding what you're going to put in those names,
+[18:54] parameters, and descriptions to help the agent
+decide which tools to use
+[18:58] and what to pass into those tools.
+[19:01] So, then I ran a little experiment, right?
+[19:04] If I send a bunch of queries that should need
+both tools, how does, you know,
+[19:09] what tool does the agent decide to call?
+[19:13] So, here we have some successful queries.
+[19:15] So I said, oh, past and present,
+it called both.
+[19:17] Compare 2010 versus 2024, called both.
+[19:20] Compare these two years, called both.
+Okay, great, good.
+[19:23] But then there's other ones like, oh,
+have we ever seen these leafcutter bees?
+[19:27] All right, it only called recent.
+[19:29] Include all years, only called recent.
+[19:31] All records in a year,
+it only called recent, right?
+[19:34] Full history, only called historical,
+always historical, right?
+[19:37] So these are all examples where it should have
+called both, but for whatever reason,
+[19:41] it only called one of the tools.
+[19:43] And that means that the answer
+is not going to be a full answer.
+[19:46] It's not going to be a comprehensive answer.
+[19:48] It's not going to be
+an accurate answer, right?
+[19:50] And that's a big problem
+[19:51] if people are expecting to get accurate
+answers from these coding agents.
+[19:57] So, in this case, we really do not want
+to have to make the agent choose, right?
+[20:01] If you have these two tools that are
+so similar, so ambiguous,
+[20:06] it can be just too confusing
+for the agent to decide between them.
+[20:10] And, you know, it's just not going to call
+them in all the situations
+[20:14] you want them to call them.
+[20:15] So, in this particular situation,
+we have a few possible fixes.
+[20:19] One fix is that we could return a hint
+in the result from each of the tools
+[20:23] that says, oh, okay, you know,
+this tool only covers this kind of data.
+[20:27] For the other kind of data,
+use the other tool, right?
+[20:29] And so that kind of might remind
+it like, oh, good point.
+[20:32] Maybe I'll call the other tool and so
+it'll do a follow-up tool call.
+[20:36] The other thing that would be nicer,
+that would be more agent-friendly,
+[20:40] is to add an additional tool,
+or a different tool actually, replace,
+[20:43] you know, take out those tools and instead
+define a search_all_observations tool.
+[20:47] And that tool is just going to query
+both tables internally, right?
+[20:50] So, we shouldn't expose
+the data split to the agent.
+[20:53] We should just take care
+of that behind the scenes.
+[20:56] And then of course you could just refactor
+the tables in your database
+[20:59] to keep everything in one table.
+[21:00] And that might make things easier
+for lots of people, not just your agents.
+[21:03] But generally, you know,
+this was a specific example where we have
+[21:07] a tool selection problem, but you're going to
+have other kinds of tool selection problems.
+[21:12] And they all follow a general pattern where
+[21:14] if you have tools that are
+too similar to each other,
+[21:17] where it's really not clear to the agent
+[21:20] which of the tools are going to answer
+the question,
+[21:22] then you have the risk of it
+not calling the right tool.
+[21:25] So, what you want to do is think very
+carefully about tool descriptions and names.
+[21:29] And consider, you know, whether
+you're defining the right tools.
+[21:33] Set up some evaluations like I did and see
+what the agents actually do
+[21:38] and decide, do you need to change your tool
+design, merge some tools,
+[21:42] you know, make some changes.
+[21:46] Okay, so we've looked at a lot of ways
+to build MCP servers
+[21:53] on top of your Postgres database.
+[21:55] As we saw, you can do these
+more exploratory servers
+[21:59] where you're letting the agent full, you know,
+send in the full SQL.
+[22:03] And that has the advantage that you can answer
+all sorts of questions that way
+[22:07] and could be really useful, especially for
+people who are using databases internally
+[22:11] and need to get a lot of questions answered.
+[22:13] But it has this huge risk of, you know,
+allowing all sorts of SQL operations, right?
+[22:19] And then on the other side,
+we have those fully typed tools,
+[22:22] but they can only answer a more limited
+range of questions.
+[22:25] And then in the middle we have, you know,
+the read-only SQL queries there.
+[22:30] So, you can figure out where
+you are in the spectrum,
+[22:34] what is going to work for your situation.
+[22:36] You want to mix and match
+different things here,
+[22:38] but definitely keep in mind all your options
+for how you can
+[22:43] enforce that only the operations happen
+that you want to enforce,
+[22:48] because you can enforce a lot
+of this at the database level,
+[22:51] and that is going to be your safest approach.
+[22:55] And then adding more layers on top
+because there's a — it's really powerful
+[22:59] to build MCP servers for your databases.
+[23:02] I want to encourage everyone to do it
+because it can really empower your users,
+[23:08] whether they're internal users
+or external users,
+[23:10] to be able to use natural language
+to interact with the database.
+[23:14] So definitely do it,
+but keep all this in mind when you are
+[23:18] designing your servers and consider
+how you want to go about your server.
+[23:24] So, thank you so much for watching.
+[23:27] You can grab my slides from this URL here.
+[23:30] You can grab all the code from this repo,
+and if you have any follow-up questions,
+[23:35] you can always hit me up online
+and I'm happy to chat more about MCP.
+[23:42] Bye everyone.
+Thank you.

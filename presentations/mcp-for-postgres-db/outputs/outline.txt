@@ -1,0 +1,45 @@
+1. Title slide: "An MCP for your Postgres DB" by Pamela Fox.
+2. Demo section header: Agent chatting with a Postgres database using an MCP server.
+3. Explains Model Context Protocol as an open protocol defining how AI apps get context from external tools and data sources.
+4. Section header: Building MCP servers for a Postgres DB.
+5. Shows the progression from exploratory (free-form SQL, trust the LLM entirely) to operational (fully typed tools, remove SQL from the equation).
+6. Section header: Free-form SQL — maximum flexibility, maximum risk.
+7. Shows Python code for a free-form SQL MCP server with get_db_schema() and execute_sql() tools using FastMCP.
+8. Demo: Agent calling free-form SQL tools to answer a bee observation query.
+9. Problem: Schema bloat — get_db_schema() dumps all 5 tables and 60+ columns at once, which can overwhelm LLMs.
+10. Shows schema discovery tools (list_tables and describe_table) as an alternative to dumping the entire schema.
+11. Demo: Agent calling progressive schema discovery tools (list_tables then describe_table).
+12. Problem: Mutations without guardrails — Opus 4.6 asks before deleting 18,633 rows.
+13. Same mutation problem — Gemini 2.5 Pro deletes immediately without asking; the problem is the tool surface, not the model.
+14. Section header: Read-only SQL — what if we only allow SELECT?
+15. Shows code for a read-only SQL execution tool with validation, readOnlyHint annotation, and row cap.
+16. Demo: Agent calling read-only SQL tools to execute a SELECT query.
+17. Explains readOnlyHint annotation: it guides MCP clients but does not enforce safety — annotations are hints, not contracts.
+18. Shows AST-parsing validation using pglast to enforce single SELECT statements only.
+19. Shows DB-level read-only enforcement: SET default_transaction_read_only = ON and creating a dedicated read-only role with SELECT-only grants.
+20. Demo: Agent blocked when attempting a DELETE query against the read-only tool.
+21. Table showing layers of SQL safety: Parser → Read-only transaction → Least-privilege role → Timeout (first rows only).
+22. Same table with DELETE/INSERT/DROP blocked by parser.
+23. Same table adding CTE-wrapped mutations that pass parser but get blocked by read-only transaction.
+24. Same table adding pg_terminate_backend, pg_read_file, pg_reload_conf that pass parser and read-only but get blocked by least-privilege role.
+25. Complete table: pg_sleep and CROSS JOIN pass all layers except timeout, which kills them at 30 seconds.
+26. Same table with conclusion: four layers block everything, or just don't expose SQL at all.
+27. Section header: Fully typed tools — no SQL surface, server builds all queries.
+28. Shows code for a fully typed search_species tool with parameterized query and enforced max limit.
+29. Demo: Agent calling search_species with typed parameters instead of raw SQL.
+30. Demo: Agent calling search_observations with 6 typed parameters.
+31. Demo: Agent constrained by typed tools — cannot answer "how many total observations" because tools require specific parameters.
+32. Section header: Elicitation — one more layer of safety.
+33. Shows code for tool elicitation using ctx.elicit() to confirm destructive delete operations with the user.
+34. Demo: VS Code rendering an elicitation dialog asking user to confirm deletion of a specific observation.
+35. Section header: Tool selection — can the agent select the right tool?
+36. Shows two similar tools (search_observations for 2020+ and search_historical_observations for pre-2020) with descriptions saying "call both."
+37. Results table header for queries that need both tools.
+38. Results showing successful cases where both tools were called (past and present, compare years).
+39. Results showing failures: "ever seen" and "all years" queries only called one tool.
+40. Complete results showing "full history" only called historical tool.
+41. Recommendations: don't make the agent choose between ambiguous tools — return hints, add a combined tool, or refactor the database.
+42. Section header: Final words.
+43. Summary: which approach to use — free-form SQL for internal prototyping, read-only SQL for analytics, fully typed tools for production; always use DB-level permissions.
+44. Thank you slide with links to slides and code repository.
+45. Blank closing slide.
