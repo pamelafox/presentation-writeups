@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "httpx",
+#     "httpx2",
 #     "playwright",
 # ]
 # ///
@@ -15,7 +15,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-import httpx
+import httpx2
 from playwright.sync_api import sync_playwright
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -96,7 +96,7 @@ def extract_revealjs_content(url: str, output_path: str) -> str:
     """Extract text content and links from RevealJS slides."""
     logger.info(f"Extracting RevealJS slide content from: {url}")
 
-    response = httpx.get(url, follow_redirects=True)
+    response = httpx2.get(url, follow_redirects=True)
     html = response.text
 
     class SlideExtractor(HTMLParser):
@@ -217,7 +217,7 @@ def fetch_slides_from_url(url: str, output_dir: str) -> tuple[str, str | None]:
         download_url = get_onedrive_download_url(url)
         logger.info(f"Detected OneDrive URL, using download URL: {download_url}")
 
-        response = httpx.get(download_url, follow_redirects=True, timeout=60.0)
+        response = httpx2.get(download_url, follow_redirects=True, timeout=60.0)
         content_type = response.headers.get("content-type", "").lower()
 
         if "presentationml" in content_type or "pptx" in content_type:
@@ -233,18 +233,18 @@ def fetch_slides_from_url(url: str, output_dir: str) -> tuple[str, str | None]:
             raise ValueError(f"Unexpected content type from OneDrive: {content_type}")
 
     logger.info(f"Checking content type for: {url}")
-    response = httpx.head(url, follow_redirects=True)
+    response = httpx2.head(url, follow_redirects=True)
     content_type = response.headers.get("content-type", "").lower()
 
     if "application/pdf" in content_type:
         logger.info("Detected PDF, downloading directly...")
-        response = httpx.get(url, follow_redirects=True)
+        response = httpx2.get(url, follow_redirects=True)
         pdf_path.write_bytes(response.content)
         logger.info(f"Saved PDF to: {pdf_path}")
         return str(pdf_path), None
     elif "presentationml" in content_type or "pptx" in content_type:
         logger.info("Detected PPTX, downloading and converting to PDF...")
-        response = httpx.get(url, follow_redirects=True)
+        response = httpx2.get(url, follow_redirects=True)
         pptx_path.write_bytes(response.content)
         convert_pptx_to_pdf(str(pptx_path), str(pdf_path))
         return str(pdf_path), None
