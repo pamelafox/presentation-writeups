@@ -1,0 +1,39 @@
+1. Series title slide for the three-day Microsoft IQ Deep Dive with Python (Foundry IQ July 28, Work IQ July 29, Fabric IQ July 30).
+2. Session title slide for the Work IQ deep dive, presented by Ayça Baş, Senior Cloud Advocate at Microsoft/GitHub.
+3. Agenda covering Work IQ overview, API concepts and protocols, A2A patterns, MCP and do_action, building with Work IQ tools, agents, and Agent 365 autopilots.
+4. Instructions for opening the sample repo at aka.ms/iqdeepdive in a GitHub Codespace.
+5. Section header slide for Microsoft IQ.
+6. The Microsoft IQ platform diagram showing Work IQ, Fabric IQ, Web IQ, and Foundry IQ and which session covers each.
+7. Section header slide for Work IQ.
+8. Architecture diagram of Work IQ as an agent for work data, with MCP/A2A/REST over a routing orchestrator, Agentic Context API and Agentic Tool APIs over Microsoft 365.
+9. Five benefits of Work IQ: intelligence, security, speed, scale, and efficiency.
+10. Comparison table of Microsoft Graph as a data-access API versus Work IQ as an intelligence and context layer.
+11. The Work IQ API surface: chat, context, tools, and workspaces behind three protocols.
+12. Protocol strategy guidance for picking A2A, MCP, or REST by scenario.
+13. Example of Work IQ retrieval returning a summary plus attribution links instead of raw emails.
+14. Section header slide for building with Work IQ.
+15. Python snippet using the Work IQ ask tool over MCP to summarize recent emails.
+16. Example A2A agent card JSON served at /a2a/.well-known/agent-card.json.
+17. Python snippet calling Work IQ over the A2A protocol with a JSON-RPC message/send request parsed from SSE.
+18. The 10 generic Work IQ tools grouped into chat, schema, entity read, and entity write, with a progressive disclosure flow.
+19. Python snippet listing MCP tools and calling fetch with entityUrls.
+20. The do_action write path and its guardrails, including allowed and blocked path prefixes.
+21. Python snippet calling do_action with /me/sendMail and a JSON-encoded jsonBody.
+22. Section header slide for Foundry IQ plus Work IQ.
+23. Diagram of a Foundry IQ knowledge base blending HR docs, health docs, and Work IQ into one answer.
+24. How Work IQ works as a knowledge source: admin key for setup, delegated token at query time, blended answer respecting user access.
+25. Python snippet creating a WorkIQKnowledgeSource and a multi-source KnowledgeBase with answer synthesis.
+26. Section header slide for agents plus Work IQ.
+27. Definition of an AI agent as an LLM running tools in a loop, illustrated with a deadline question answered via work_iq.ask.
+28. Two options for using Work IQ in an agent: point at the MCP endpoint, or write a custom tool over the API.
+29. Python snippet creating an MCPStreamableHTTPTool for Work IQ and passing it to a Microsoft Agent Framework Agent.
+30. Section header slide for Agent 365 autopilots.
+31. Definition of an Agent 365 autopilot: own Microsoft 365 identity, registered as a blueprint, @mentionable in Teams, grounded via Work IQ.
+32. Diagram of how an autopilot is wired from a Teams message through Azure Bot Service, Foundry activity endpoint, and a container running the Responses API with the Work IQ MCP.
+33. Hosting diagram for the activity host container with CloudAdapter, MsalConnectionManager, and the FoundryDigitalWorkerAgent.
+34. Contrast between the Foundry playground, where the agent runs on behalf of the signed-in user, and Teams, where it acts as its own identity.
+35. Five-step pipeline for turning a hosted agent into an autopilot, from azd deploy through admin approval.
+36. The governed publish and approval lifecycle: register, grant scopes, submit, approve, govern.
+37. Demo slide for the Work Mate autopilot.
+38. Next steps slide with office hours and series registration links.
+39. Microsoft IQ Live promo for bi-weekly Reactor episodes from Aug 6 to Nov 12, 2026.

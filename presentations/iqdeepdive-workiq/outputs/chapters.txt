@@ -1,0 +1,32 @@
+Session 2 of the Microsoft IQ Deep Dive with Python series, presented by Ayça Baş. It covers Work IQ, the Microsoft 365 intelligence layer that gives agents access to work context — mail, meetings, chats, and documents — through A2A, MCP, and REST. The session walks through the 10 generic Work IQ tools in Python notebooks, uses Work IQ as a Foundry IQ knowledge source, wires it into a Microsoft Agent Framework agent, and finishes by turning that hosted agent into an Agent 365 autopilot with its own Microsoft 365 identity.
+
+00:00 - Welcome and housekeeping
+00:56 - Series introduction and speaker
+02:16 - Agenda
+04:08 - Getting the code
+04:40 - The Microsoft IQ platform
+05:50 - What is Work IQ
+08:13 - Why Work IQ: intelligence, security, speed, scale, efficiency
+10:01 - Work IQ vs Microsoft Graph
+12:50 - The Work IQ API surface
+13:52 - Choosing between A2A, MCP, and REST
+15:24 - How Work IQ retrieval works
+16:33 - Demo: the ask tool
+19:52 - A2A agent card and discovery
+20:34 - Demo: Work IQ over A2A
+22:40 - The 10 generic tools
+23:16 - Work IQ over MCP
+25:08 - do_action and the write path
+25:58 - Demo: tools and actions notebook
+30:37 - Foundry IQ plus Work IQ knowledge sources
+33:04 - Demo: multi-source knowledge base
+36:08 - Agents and Work IQ
+37:30 - Two ways to use Work IQ in an agent
+38:23 - Work IQ in a Microsoft Agent Framework agent
+40:54 - Agent 365 autopilots
+43:44 - How an autopilot is wired
+45:36 - The autopilot acts as itself, not as you
+47:15 - Publishing a hosted agent as an autopilot
+50:13 - Demo: Workmate autopilot in Teams
+54:29 - Blueprints, instances, and licensing
+56:43 - Next steps and resources

@@ -1,0 +1,1184 @@
+[00:03] Hi everyone. Thank you for joining us
+[00:06] for our next live stream. I'll be your
+[00:08] producer for this session.
+[00:10] Before we start, I do have some quick
+[00:12] housekeeping.
+[00:14] Please take a moment to read our code of
+[00:16] conduct.
+[00:18] We seek to provide a respectful
+[00:19] environment for both our audience and
+[00:21] presenters.
+[00:23] While we absolutely encourage engagement
+[00:25] in the chat, we ask that you please be
+[00:27] mindful of your commentary, remain
+[00:29] professional and on topic.
+[00:33] Keep an eye on that chat. We'll be
+[00:34] dropping helpful links and checking for
+[00:36] questions for our presenters to answer
+[00:38] live.
+[00:41] Our session is being recorded. It will
+[00:43] be available to view on demand right
+[00:45] here on the Reactor channel.
+[00:48] With that, I'd love to turn it over to
+[00:50] our speakers for today. Thank you for
+[00:52] joining.
+[00:56] >> Welcome everyone. This is Microsoft IQ
+[00:58] deep dive with Python and every single
+[01:01] day within this week we are covering
+[01:04] another IQ. Yesterday my colleague
+[01:06] Pamela did a quick intro of Microsoft IQ
+[01:10] family and then uh she did a full walk
+[01:12] through the deep dive into Foundry IQ
+[01:16] and she also mentioned a bit about web
+[01:18] IQ as well. In today's session, we will
+[01:20] be diving deeper into work IQ and in
+[01:24] tomorrow's session, a Pamela again will
+[01:26] be doing deep dive into fabric IQ. So if
+[01:29] you are new to this series, register to
+[01:32] the entire series. So you'll be getting
+[01:35] uh rest of the sessions as well from
+[01:37] Foundry IQ and fabric IQ. And in today's
+[01:40] session uh for one hour full hour we
+[01:43] will talk about work IQ. So let me
+[01:46] quickly uh change my slides. All right.
+[01:50] So uh let's let me quickly introduce
+[01:53] myself. My name is Acha Bush. I'm a
+[01:55] cloud developer advocate at Microsoft.
+[01:57] Um so I have my GitHub link and I have
+[02:00] bunch of examples on my GitHub too. If
+[02:02] you're interested in today's session, if
+[02:04] you want to try the like have a look at
+[02:06] the slides or present yourself as well,
+[02:08] you can get them from the AK link
+[02:11] mentioned in the slide. It's iq deep
+[02:13] dives slidesworkq
+[02:16] and let's have a look at the agenda
+[02:18] today we have what we are going to do in
+[02:21] the entire session. So first of all I
+[02:24] will do work IQ overview talk a bit
+[02:27] about what is the idea behind the scene
+[02:30] of work IQ and then we will look into
+[02:33] the API uh concepts and what are the
+[02:36] available protocols for uh work IQ which
+[02:39] is all three are available A2A MCP and
+[02:42] REST and then we will deep a little
+[02:44] deeper into each one of them with some
+[02:47] code examples and notebooks uh which is
+[02:49] also available for you to try out in our
+[02:51] GitHub repo. Uh and my colleague Paulo
+[02:55] uh is also in the chat answering your
+[02:58] questions. If you are um trying to get
+[03:00] familiar with any of those concepts and
+[03:02] have questions, feel free to drop them
+[03:04] in the chat. And Molly who is our
+[03:06] producer is helping us with the links
+[03:08] and she will be dropping those GitHub
+[03:11] repos and etc all of them in the link as
+[03:13] well. And um after all the after running
+[03:17] you through all of those concepts then I
+[03:20] will briefly talk about the tools
+[03:21] available in work IQ and then jump into
+[03:24] how we can use work IQ in agent
+[03:27] framework agents and finally I want to
+[03:30] spend a bit of time talking about agent
+[03:33] 365 autopilots and how we can bring work
+[03:36] IQ in the agent 365 autopilot concepts
+[03:39] and how are they different than uh
+[03:41] agents we publish on teams etc.
+[03:44] Um yeah, so this is going to be a really
+[03:47] long and full session. Um and again if
+[03:50] you're interested you can drop your
+[03:51] questions in chat or we also have office
+[03:54] hours right after this session on
+[03:56] discord. We will also drop the links in
+[03:58] the chat for the office hours. Join
+[04:01] there as well. We will be answering all
+[04:02] of your questions. It's all about your
+[04:04] questions in that discord uh community
+[04:07] call.
+[04:08] Okay. And where is the code? If you want
+[04:11] to see all the code I'm going to share
+[04:13] today, they're all available in
+[04:15] ak.msiqdeep
+[04:17] dive. Um again, not just my demos, not
+[04:22] just my notebooks, also the session from
+[04:25] yesterday and session tomorrow. All of
+[04:27] the demos are available in the same
+[04:29] repo. So you can find out all of the
+[04:32] foundry IQ, work IQ, and fabric IQ,
+[04:35] notebooks, agents, etc. in a single
+[04:38] repo.
+[04:40] All right. So, Microsoft IQ. Um, so PA
+[04:44] yesterday gave the big picture of what
+[04:48] is Microsoft IQ platform, what is
+[04:50] included in the Microsoft IQ family. But
+[04:52] just to quickly open the session with a
+[04:55] brief intro of Microsoft IQ. So, IQ
+[04:59] family is bringing us the context from
+[05:02] different places like work, web, uh,
+[05:04] your business entities, documents, etc.
+[05:08] In yesterday's session, we touched in um
+[05:11] Foundry IQ. We talked about a bit about
+[05:14] web IQ too. In today's session, session
+[05:17] two, we're going going to cover work IQ.
+[05:20] And tomorrow again, we're going to uh
+[05:22] talk about fabric IQ. Pamela will be
+[05:24] covering Fabric IQ, too. And let's dive
+[05:28] deeper into work IQ. Uh because if
+[05:31] you're interested in the Microsoft IQ
+[05:33] platform intro, maybe you can watch
+[05:35] yesterday's session where Pamela is
+[05:38] doing a bit of an introduction of the
+[05:40] full IQ uh family and going through all
+[05:44] of them one by one and in today we're
+[05:47] going to talk about all about work IQ.
+[05:50] Um so what is work IQ? When I introduce
+[05:54] work hacking in general, I always try to
+[05:57] explain it as a human context. So when
+[06:02] your agent is looking for let's say
+[06:04] information, we can always check for
+[06:07] policies in the foundry IQ and we can
+[06:10] get some structured information. Let's
+[06:12] say some shipping information is missing
+[06:14] etc. We can get all of that in across
+[06:17] the different IQs and web as well. These
+[06:20] have all of them has its own benefit and
+[06:24] work IQ's benefit in the entire overall
+[06:27] schema of things is that um maybe you're
+[06:31] missing the human context that means
+[06:33] let's say a customer is asking refund
+[06:36] but then um what we have in the data
+[06:39] behind the scene and the policies is one
+[06:42] thing but maybe we already had a chat
+[06:44] about it on teams or maybe there's an
+[06:46] email escalation about it uh on Outlook
+[06:49] etc.
+[06:50] we might be missing the human uh context
+[06:53] across all of that data set. So that's
+[06:56] where work IQ comes uh in a really big
+[06:59] play in the agent um environment. So it
+[07:02] is basically your work data and um work
+[07:05] IQ pro provides all three protocols you
+[07:09] can use MCPA
+[07:11] rest and it also provides you two
+[07:15] different APIs. So um first one is
+[07:18] agentic context API for your context.
+[07:22] Instead of basically running bunch of
+[07:24] calls to try to get all of the
+[07:26] information, you're basically getting
+[07:28] one single API to collect um multi-step
+[07:32] agentic um information and then you will
+[07:36] be retrieving one single information
+[07:38] instead of making bunch of API calls.
+[07:42] And in the tool APIs um basically what
+[07:46] we are doing is designing what agent is
+[07:49] trying to do before basically providing
+[07:53] um what uh actions it needs to take. So,
+[07:58] agentic tool APIs are all about taking
+[08:01] actions and context APIs are basically
+[08:04] uh the new way of retrieving information
+[08:07] basically an agentic way of retrieving
+[08:09] information across your uh work data.
+[08:13] And what is the benefit of using work
+[08:16] IQ? Um first of all, work IQ is not a
+[08:20] tool that only gives you the data. So,
+[08:22] it's not a basic retrieval. It has an
+[08:25] intelligent layer behind the scene. You
+[08:27] get semantic index, memory, schema. You
+[08:31] have the full people and your org chart.
+[08:35] Um, so it has the intelligence benefit
+[08:38] to it other than just calling a single
+[08:41] dedicated API. And there's also speed
+[08:44] portion of it because work is built for
+[08:46] agent usage, not for human consumption.
+[08:50] Everything is optimized for agents use
+[08:52] usage. Uh so instead of doing multiple
+[08:55] calls step by step, you're doing fewer
+[08:58] um uh calls and then you will be
+[09:00] receiving better answers in a more
+[09:03] efficient way. And the next thing is
+[09:05] obviously I'm going to talk about
+[09:07] efficiency. Um it reduces number of
+[09:09] tokens uh you're using and it is
+[09:12] basically giving you an easier and
+[09:14] quicker uh answer because there's an
+[09:17] intelligence layer to it and scale is
+[09:20] definitely easier as well. multi-step
+[09:22] workloads are um a lot easier using work
+[09:26] IQ and finally security is the biggest
+[09:30] uh across probably all of them uh
+[09:33] because your data is not going anywhere
+[09:36] else your data is staying under your
+[09:38] Microsoft 365 tenant. So inside the
+[09:41] boundary inside the M365 tenant boundary
+[09:45] um you are retrieving the data through
+[09:47] work IQ in your agent your data stays
+[09:50] where it is. So you don't have to get
+[09:53] your M365 data, index it somewhere and
+[09:56] try to use it. Instead you can just use
+[09:58] work IQ for it.
+[10:01] And uh the biggest question we get uh is
+[10:04] comparing work IQ with Microsoft graph.
+[10:07] How they are different? Is it a
+[10:09] replacement etc. So before I dive deeper
+[10:13] into the code I want to explain how are
+[10:15] they different. So, Microsoft Graph is a
+[10:19] is a set of APIs that is built over
+[10:22] Microsoft 365 data. But work IQ on the
+[10:26] other hand is a intelligence layer built
+[10:29] on top of your entry 665 data. So,
+[10:31] answers you're going to get when you use
+[10:33] work IQ is not going to be like let's
+[10:36] say these are the three emails. It will
+[10:39] be summary of your email. So you will be
+[10:41] getting some um LLM summarization and uh
+[10:46] intelligence behind the scene and again
+[10:49] Microsoft Graph is built for apps and
+[10:52] users but work IQ is built for agents.
+[10:56] Consumption of the work IQ is going to
+[10:58] be through the agents. Um and again uh
+[11:03] Microsoft graph is available for app
+[11:05] only delegated work IQ is uh available
+[11:10] for delegated only. Um and Microsoft
+[11:14] graph is probably more straightforward
+[11:16] getting the answer in uh what I mean by
+[11:19] that is you just retrieve raw data when
+[11:23] you do search for example with Microsoft
+[11:25] graph you're just retrieving raw emails
+[11:28] whatever uh keyword you search you will
+[11:31] just get the related emails that also
+[11:35] has that keyword but work IQ because it
+[11:39] has grounded uh data enter5 If I have
+[11:42] grounded data behind the scene, it will
+[11:44] give you more grounded answers and also
+[11:47] references attached to it. Um, in work
+[11:50] in Microsoft graph, if you work with
+[11:52] Microsoft graph, you would know that
+[11:53] there are hundreds of endpoints, all of
+[11:55] them reaching different apps and uh
+[11:58] different data sets in behind the scene
+[12:01] of Microsoft 365. But work IQ is
+[12:04] providing you only 10 generic tools over
+[12:07] MCP which is actually making our jobs
+[12:10] really easy as developers because now
+[12:13] you can call more intelligent tools to
+[12:16] be able to retrieve information instead
+[12:18] of trying to remember which endpoints
+[12:20] you need to direct to maybe it can be 20
+[12:23] 30 etc. you never know and um when
+[12:26] you're using Microsoft graph APIs again
+[12:29] managing the throttling paging is all
+[12:32] your responsibility as a developer but
+[12:35] work IQ is because it's agent optimized
+[12:38] um it is all set be behind the scenes
+[12:42] for you so you don't have to worry about
+[12:44] managing um the paging throttling and
+[12:48] all sorts of stuff
+[12:50] and um if you look at the API service
+[12:54] surface office we provide through work
+[12:56] IQ. Um first we have chat which is um
+[13:00] basically uh it is the conversation with
+[13:03] people or other agents. Uh it can be ask
+[13:06] which is basically when you use ask in
+[13:09] work IQ you will be calling enter 65
+[13:11] copilot and there's also A2A. So in the
+[13:15] agent agent multi- aent uh
+[13:17] orchestrations you can use work IQ A2A
+[13:20] as well. There's also context. It's
+[13:23] basically grounding your um enter 65
+[13:26] information like mail, teams chats, team
+[13:28] ch teams channels, meetings, all of the
+[13:31] documents in enter 65 um will be the
+[13:35] context and there is also tools uh for
+[13:38] retrieving and acting over 65 and then
+[13:42] there's workspaces for um agents uh to
+[13:47] basically run them through across
+[13:49] various tasks.
+[13:52] Okay, so what are the pro protocols we
+[13:54] are talking about and when to use which
+[13:57] is a really big question. Um so when
+[14:00] you're building your agent for work IQ
+[14:03] we have three options. The first option
+[14:05] is agent to agent and it is um mainly
+[14:09] preferred for multi- aent orchestration.
+[14:11] If you want to delegate your task over
+[14:14] another agent then work QA2A will be
+[14:17] able to run all of the workrelated
+[14:20] context. um by itself if uh let's say
+[14:23] another agent give all the task to the
+[14:26] work IQ8 and there's also MCP which is a
+[14:30] very common way of using tools. Um so my
+[14:34] personal preference when there's a need
+[14:36] of taking any action and I'll talk a bit
+[14:39] deeper on do action tool inside work IQ
+[14:43] then we would need work IQ MCP. So if
+[14:46] you connect work MCP into your agent
+[14:49] then not only you're grounding your M365
+[14:51] data um but also uh it your ent so work
+[14:57] will be able to act over um your
+[15:01] environment
+[15:02] as a signin user and finally there's
+[15:06] also rest option if you're interested in
+[15:09] using work IQ through rest these are
+[15:11] mostly preferred through let's say if
+[15:13] you want to use work IQ
+[15:15] in uh mobile or web app uh in the
+[15:18] queries coming from those uh work IQ
+[15:21] rest is also available.
+[15:24] So how does the retrieval pro process go
+[15:28] for work IQ? So when we ask the question
+[15:31] uh to and let's say we ask a question to
+[15:34] the agent and then agent calls work IQ
+[15:38] the answer will not be um when we ask
+[15:42] what did my manager email me about this
+[15:44] week it will not be like three emails
+[15:47] these are the emails what we're getting
+[15:50] instead is the intelligent answer from
+[15:52] work IQ we will be getting a summary
+[15:55] what is needed uh and what I need to do
+[15:58] uh about etc. And we will be also
+[16:01] getting the reference links for each
+[16:03] email. So this is pretty different than
+[16:06] uh the static information retrieval
+[16:09] because work IQ is an intelligent tool.
+[16:12] You will be getting more detailed tasks
+[16:15] and if there is a um infrastructure for
+[16:18] it, it will even be able to act on
+[16:20] behalf of the signin user.
+[16:23] Okay, so I talked over slides so much.
+[16:27] Let's start working on building with
+[16:30] work IQ a little bit
+[16:33] and uh the first thing I want to mention
+[16:35] which is pretty cool is the ask tool in
+[16:38] work IQ and I will be talking over this
+[16:41] using the work IQ API concept. So um let
+[16:45] me jump to VS code and show you how it
+[16:50] actually looks like. So
+[16:52] um work work IQ APIs are basically um
+[16:57] coming through just like MCP and A2A we
+[17:00] have bunch of tools available and the
+[17:03] first thing we need to do in every step
+[17:05] of the protocol you're using either A2A
+[17:08] MCP APIs whichever tool you're using we
+[17:12] need the authentication layer so first
+[17:14] what I'm doing is use getting the user
+[17:17] token and then next step is using the
+[17:20] tool I want and here what I'm doing is
+[17:24] using the ask tool inside work IQ. Um so
+[17:28] as you see the the question of ask is uh
+[17:32] very simple summarize my five uh most
+[17:35] recent emails but what we are doing here
+[17:38] instead is pretty different uh than
+[17:42] fetching and retrieving information from
+[17:45] uh different apps because what we are
+[17:47] doing is exactly calling M365 copilot
+[17:51] when you use ask tool then you will be
+[17:53] calling M365 copilot so you will be
+[17:56] getting LLM our agent uh response right
+[17:59] away. So, it's going to be uh like
+[18:02] information about um the email and the
+[18:06] summary of the email etc. All of those
+[18:08] details
+[18:10] and um what are the concepts we have
+[18:13] available in work IQ. Let me quickly
+[18:16] walk you through what else we have
+[18:18] available beyond just calling Microsoft
+[18:21] 365 copilot. So first of all we have
+[18:23] search paths which is if you need to
+[18:26] discover M365 resource paths available
+[18:29] under work IQ and then we have get
+[18:31] schema which is pretty uh critical for
+[18:34] us to fetch information uh because we
+[18:38] need open API schema for all of that.
+[18:42] Then we have fetch. Fetch means if you
+[18:45] need to do very straightforward uh
+[18:47] information retrieval then uh if you use
+[18:50] fetch then you will be able to call um
+[18:54] APIs right away with work IQ like
+[18:57] fetching um emails or fetching teams
+[19:00] chats etc. And we also have uh create,
+[19:03] update, delete entities. And on top of
+[19:07] all that we have do action which is for
+[19:10] uh basically taking action on behalf of
+[19:12] the signin user. And uh in this example
+[19:17] what we are doing is uh calling search
+[19:20] paths and we are able to see what what
+[19:23] search uh what what paths are available
+[19:26] for mail. So if you don't put the filter
+[19:29] then this paths uh will be very a long
+[19:32] list of things um work IQ can do for us.
+[19:37] So I'm going to quickly go back to our
+[19:39] slide deck. Um so to start with work IQ
+[19:44] retrieval I started with ask but there
+[19:47] are multiple other tools available. We
+[19:49] will be talking a bit more about all of
+[19:51] them. Let's continue with H2A. Um so how
+[19:57] work IQ works with 8way. So first thing
+[20:00] you need in 8way world is basically
+[20:03] discovery. Work IQ makes that um
+[20:06] standard. It's pretty generic. We are
+[20:09] using uh 8way well-known agent card
+[20:12] JSON. If you work with uh 8way before
+[20:15] then this should look very familiar to
+[20:18] you. What we need to do is basically
+[20:22] define um work IQ in this agent card and
+[20:25] then you you you will be able to connect
+[20:28] to all of the skills provided in work IQ
+[20:31] as well.
+[20:34] And then um I went one slide back. Okay,
+[20:38] we're going forward. Work IQ A2A
+[20:40] protocol also uses um RPC and you should
+[20:46] be able to utilize it by just provide
+[20:49] providing your question and then posting
+[20:52] work to work IQ uh gateway and it should
+[20:56] be pretty straightforward. Let me
+[20:58] actually
+[20:59] show you the code. Apologies.
+[21:02] Let me actually show you the code.
+[21:06] Okay.
+[21:08] Okay, let's have a look at the A2A.
+[21:12] Okay, so um this is what we're doing is
+[21:17] here is actually using the agent card
+[21:20] for work IQ A2A and first of all
+[21:26] defining all of this and then the next
+[21:29] is using ask work IQ. Uh so this skill
+[21:33] this skill will be available for us
+[21:35] right away and then we are sending a
+[21:38] task over JSON uh using RPC. So this is
+[21:43] a very basic call because we are doing
+[21:46] um just uh what are most recent teams
+[21:49] chat messages and what are they about.
+[21:52] Again, A2A has the same intelligence
+[21:56] power um coming from work IQ. And if you
+[22:00] see here, answer is not straight um
+[22:03] direct answers coming from let's say a
+[22:06] single API call. It is an intelligent
+[22:09] LLM response where we are getting
+[22:11] summaries over uh the the uh retrieved
+[22:15] responses not just the links but what we
+[22:18] are basically getting over here is um
+[22:22] defining what is uh each email about and
+[22:25] then getting the uh reference links
+[22:28] about each one of them and then um let's
+[22:32] quickly jump into
+[22:35] the MCP protocol
+[22:37] Wait.
+[22:40] Okay. So before all that I want to share
+[22:42] with you 10 generic tools we have
+[22:44] available.
+[22:46] So as I mentioned earlier we have chat
+[22:49] which is ask list agents schema. We have
+[22:53] we can search paths what paths are
+[22:55] available for us and get schema from uh
+[22:58] open API. We have entity read which you
+[23:01] can call fetch directly getting
+[23:04] retrieving answers uh or you can do
+[23:07] entity write. We have create update
+[23:10] delete and the most importantly we have
+[23:12] do action uh on behalf of the signin
+[23:15] user.
+[23:16] And if we have a look at the MCP
+[23:20] protocol it is again very standard uh
+[23:23] MCP call. What we need at first is uh
+[23:26] getting the user token and then calling
+[23:29] first of all listing all of the tools
+[23:31] available in MCP and then using the one
+[23:35] we need for example we're using fetch
+[23:37] tool uh in MCP and then we are
+[23:41] retrieving messages top five messages uh
+[23:45] showing subject etc. Let me run over to
+[23:51] the code a bit. Okay. So these are all
+[23:54] tools we have available. Ask fetch um
+[23:58] and do action are the tools I use very
+[24:02] frequently. Uh after signing in um and
+[24:06] running basically handling the
+[24:07] authentication bit. You can list the
+[24:10] tools we have available here. You're
+[24:12] basically listing the tools um and
+[24:16] getting what is available. So you can
+[24:19] see what is work IQ is providing you.
+[24:21] And then you can get the schema for for
+[24:24] example me/ messages and you can uh have
+[24:28] a look at what is available behind the
+[24:31] scene of uh MI messages and then you can
+[24:35] do a simple fetch for users over users
+[24:39] email what is the let's say top five
+[24:42] email um I have in my mailbox and it
+[24:45] will be doing a really uh standard fetch
+[24:48] call over this and you can also use ask
+[24:51] uh using MCP but in some scenarios you
+[24:55] would just require uh direct fetch and
+[24:58] direct uh information retrieval which is
+[25:01] also available.
+[25:04] Okay,
+[25:06] let's carry on.
+[25:08] So um let's talk a bit about do action
+[25:12] which is a very special tool uh that
+[25:15] lets us work with work IQ in a really
+[25:18] different way. Uh first of all um we
+[25:22] would need search paths. So we need to
+[25:25] understand what requirements we have and
+[25:28] define what are the paths available and
+[25:30] then we need to get schema uh for uh
+[25:34] creating the do action path and then
+[25:38] after defining all that you will be
+[25:40] using do action to be able to take any
+[25:43] actions on behalf of the user. And the
+[25:46] allow list are me, users, sites, etc. We
+[25:50] won't be able to do authentication or
+[25:52] service principles with work IQ do
+[25:55] action
+[25:58] and how do action actually works uh in
+[26:02] Python? Uh it is very straightforward.
+[26:06] Uh basically we are using me send email.
+[26:10] You would need JSON body in in mail uh
+[26:13] kind this will look like this. If let's
+[26:16] say you're creating a calendar invite
+[26:18] etc. it will be looking like calendar
+[26:20] event uh structure and you're calling
+[26:24] the tool uh do action. Let me go over
+[26:28] the notebook.
+[26:33] Okay. So this part actually dives a bit
+[26:36] deeper uh in the tools. After the
+[26:40] authentication
+[26:41] uh we first get the list of um items
+[26:46] list of tools list of tools we can use
+[26:49] in work IQ and then ne next is using
+[26:52] ask. So over here u we are just sending
+[26:56] the information basically sending the
+[26:59] query to enter 65 coatically sum
+[27:02] summarize my most recent emails and
+[27:05] teams chats and list anything that needs
+[27:07] my attention. So you will be getting
+[27:10] very detailed answer because copilot is
+[27:12] powered by uh really good uh agent
+[27:16] orchestration behind the scenes. So you
+[27:18] will be getting LM power agent
+[27:20] information. You can also list agents
+[27:23] over here what agents are available. Um
+[27:26] here as you can see we have four
+[27:28] Microsoft
+[27:30] uh under Microsoft Corporation we have
+[27:33] planner agent M365 admin surveys and
+[27:36] workmate which we will talk very briefly
+[27:39] in the end and then search paths get
+[27:43] schema I think we looked uh over them in
+[27:46] previous notebooks but um let's say that
+[27:49] we want to see what paths are available
+[27:51] for messages and events under mail or uh
+[27:55] calendar you can discover what are the
+[27:59] paths available for uh our calls here we
+[28:02] have messages the chat ids pin messages
+[28:06] all of the calendar events calendar
+[28:07] events by ID etc and finally you can you
+[28:12] should use get schema to be able to see
+[28:15] the open API uh description of all of
+[28:20] the uh paths you want to use as you can
+[28:22] see here for me/ messages SLvents.
+[28:26] These are the schema. We can read and
+[28:29] create schema for all of this. And the
+[28:34] entity tools we have fetch and call
+[28:37] action. In fetch you will be basically
+[28:40] doing the call right away getting top
+[28:44] five messages in the mailbox and you
+[28:47] will be getting direct answer and call
+[28:50] function uh will be calling direct
+[28:54] functions from Microsoft graph as you
+[28:56] can see calendar uh and you can put
+[28:59] filters over it start time end time etc.
+[29:03] So there won't be uh any blockering
+[29:08] between Microsoft graph or uh work IQ no
+[29:12] LM. So you'll be able to provide very
+[29:14] detailed cast custom Microsoft graph uh
+[29:18] API call over here.
+[29:21] And then we also have as I mentioned
+[29:23] create entity, update entity, delete
+[29:25] entity and do action.
+[29:27] Um and here um basically what we need to
+[29:33] be able to uh work with all of this is
+[29:37] uh having a payload. Let's say you want
+[29:40] to create an event on Outlook calendar.
+[29:42] Then you will be needing a payload like
+[29:45] subject, start time, end time, all of
+[29:48] this. And then you'll be able to create
+[29:51] the calendar event using work I key as
+[29:53] well. And um do action uh in here will
+[29:58] be able to um run all of this for you
+[30:02] after getting the schema for it, getting
+[30:05] this schema, creating it or deleting it.
+[30:08] And yeah, that's pretty much it. So as
+[30:11] you can see here, what we are doing is
+[30:13] MCP call do action and then we will be
+[30:17] sending the payload JSON body. Uh if
+[30:20] you're creating any uh calendar invite
+[30:23] or sending an email, then that detail
+[30:26] will be a part of your JSON body as
+[30:28] well.
+[30:29] All right,
+[30:31] let's quickly go back
+[30:34] and carry on.
+[30:37] Let's also talk a bit about Foundry IQ
+[30:41] and work IQ together. So as you've seen
+[30:46] in yesterday's session, foundry IQ
+[30:48] knowledge bases are very advanced
+[30:51] knowledge bases where you can bring
+[30:53] different knowledge sources from
+[30:54] different places which is actually
+[30:57] making really intelligent knowledge
+[30:59] layer for your agents and work IQ is a
+[31:03] part of that knowledge source uh
+[31:05] catalog.
+[31:07] So when you're building your knowledge
+[31:08] bases using foundry IQ, you can use uh
+[31:12] indexes from Azure search blob storage
+[31:15] and all of the other options plus you
+[31:17] can also connect work IQ and you can
+[31:20] create knowledge source for work IQ.
+[31:22] That means that your knowledge base will
+[31:24] be able to have all of the let's say HR
+[31:27] documents, policies, all of the
+[31:30] benefits, perks available, health plans,
+[31:33] etc. available in indexes and also it
+[31:36] will have your work context inside the
+[31:39] knowledge base. So you don't have to
+[31:41] worry about connecting work IQ in a
+[31:44] different tool set let's say through MCP
+[31:47] or etc. Uh your knowledge base will be
+[31:50] able to handle the questions coming
+[31:53] related to your work environment as well
+[31:57] and how work IQ works as a knowledge
+[32:01] source. Um so work IQ knowledge source
+[32:04] when you uh create work basically when
+[32:07] you select work IQ if you want to add
+[32:10] that inside the knowledge base then
+[32:12] first you need to handle the
+[32:14] authentication
+[32:16] and you will need the search admin key
+[32:19] uh after setting that up when you let's
+[32:22] say send a query to your knowledge base
+[32:24] directly
+[32:26] um we will be using delegated token pass
+[32:29] uh search.asure.com azure.com token uh
+[32:32] for the authorization and then you will
+[32:35] be receiving blended answer. So that
+[32:37] question let's say can be a very complex
+[32:40] question asking about
+[32:42] policy and then your work context. For
+[32:46] example here we have our leave policy
+[32:49] and how much PTO PTO do I have. So it
+[32:52] can be blend of the policy coming from
+[32:55] the index uh HR docs and then
+[32:58] information about myself in the work
+[33:01] context too
+[33:04] and here how work IQ uh works as a
+[33:07] knowledge source in the knowledge base
+[33:09] as well. So what you're creating here is
+[33:12] a unified knowledge base where it
+[33:14] connects three different knowledge
+[33:16] sources one of which is work IQ itself
+[33:19] and I want to also show that to you um
+[33:22] in a notebook which is pretty cool. Um
+[33:26] so here after loading all of your
+[33:28] environment variables
+[33:30] uh and you have to log in and uh acquire
+[33:33] delegated token as well and after
+[33:37] logging in what you're doing is actually
+[33:40] creating three different knowledge
+[33:41] sources. One is HR docs. It's a index in
+[33:46] Azure search. Another is health docs
+[33:48] again index in Azure AI search and work
+[33:51] IQ knowledge source which is the third
+[33:53] one. So when you create all of these
+[33:56] three knowledge sources, next step is
+[34:00] basically creating the knowledge base
+[34:02] using all of these three um knowledge
+[34:06] sources inside the knowledge base.
+[34:09] And in the end when you do a C c query
+[34:12] like check my recent team's messages for
+[34:16] uh professional clawhammer summarize
+[34:18] what colleagues are saying and what
+[34:20] actions have been requested which cont
+[34:24] roles are responsible for inventory etc.
+[34:26] So this uh question requires searching
+[34:30] across all of these three knowledge
+[34:32] sources. That means that you need
+[34:34] information in a unified space where you
+[34:37] can get a proper proper answer. Um and
+[34:41] the knowledge base is doing exactly that
+[34:43] retrieving the information from a team's
+[34:46] chat as you can see. And then um also
+[34:50] saying colleagues are saying Seattle is
+[34:53] facing ongoing stock uh outage etc. So
+[34:56] these information are coming from work
+[34:58] IQ but then we're also checking
+[35:01] inventory availability across stores
+[35:04] etc. All of that information and um
+[35:08] contoso job roles etc are coming from
+[35:11] the index in Azure AI search. So we we
+[35:15] get a blended information in the end
+[35:17] because knowledge source is combining
+[35:20] all of this information in a human
+[35:22] readable uh text. So this is becoming
+[35:25] more like a intelligent answer rather
+[35:28] than uh this is from teams this is from
+[35:31] outlook this is from index etc. We are
+[35:34] getting blended reasonable answer in the
+[35:36] end. And here is the activity log we
+[35:39] have. As you can see, we retrieved uh
+[35:42] information from work IQ
+[35:45] and preferences. We retrieve stuff from
+[35:49] teams uh shareepoint and as you can see
+[35:53] we you get documents from shareepoint
+[35:56] and information from teams and so on.
+[35:59] Yeah. So this is how we use work IQ as a
+[36:03] knowledge source in Foundry IQ knowledge
+[36:05] basis.
+[36:08] All right. So let's talk a bit about
+[36:11] agents and work IQ. How we use work IQ
+[36:14] inside the agents. So agents basically
+[36:19] uh uses an LM LLM to run tools. There
+[36:23] are multiple tools available. one of
+[36:25] which can be work IQ and work IQ has
+[36:28] multiple tools inside of it as well.
+[36:31] when let's say agent gets a question uh
+[36:34] about what's my next deadline and then
+[36:37] LLM agent first checks the current date
+[36:40] time what is the date and then agent
+[36:43] again goes and calls work IQ ask and
+[36:46] check the due this week what is waiting
+[36:49] in the agenda and then we retrieve a
+[36:52] reasonable answer an intelligent answer
+[36:54] from work IQ ask because not only we go
+[36:58] and check the outlook in teams but work
+[37:03] as because it's calling Microsoft 365
+[37:05] copilot it is giving me a very detailed
+[37:08] answer about you know these are the
+[37:11] items uh you have to complete within
+[37:14] August 1st etc so you're not getting a
+[37:17] simple information retrieval you're
+[37:19] basically getting an agent that is
+[37:22] connecting to work IQ and helping us
+[37:24] along the way uh when using all of those
+[37:27] tools
+[37:30] And we have two options here. The first
+[37:32] option is using work IQ MCP endpoint
+[37:37] which is everything pre-built and
+[37:40] agentic optimized for you. You don't
+[37:42] have to do so anything much. You don't
+[37:45] have to uh customize the parameters. All
+[37:48] of the tools are pre-built and available
+[37:51] for you. And uh you don't have to worry
+[37:54] about how to retrieve references,
+[37:56] activity logs, etc. Or if you need more
+[38:00] refined uh structure and if you want to
+[38:03] build all of those details yourself
+[38:06] uh you can use work IQ via API you will
+[38:09] get full control over you know all of
+[38:11] the parameters and responses you're
+[38:14] retrieving uh but then it is less less
+[38:17] optimized for the agentic usage
+[38:23] and using work IQ as a tool uh in the
+[38:27] MCP server It's a very common practice
+[38:30] in foundry agents to use toolboxes and
+[38:33] what I'm going to show you is using work
+[38:36] IQ tools inside the toolbox itself. But
+[38:40] when we are defining an agent, we are
+[38:42] also creating MCP streamable HTTP tool
+[38:46] and we are getting the work IQ endpoint
+[38:48] and choosing what are the allowed tools
+[38:51] we're using. And there are some
+[38:53] scenarios ask is more uh reasonable.
+[38:57] There are some scenarios where we would
+[38:59] need only fetch and do action. If you
+[39:02] want your agent to take any action on
+[39:05] behalf of you, then you would also need
+[39:07] do action over here. So you can pick and
+[39:10] choose which tools you want to use and
+[39:12] then your agent will be able to um run
+[39:16] with the work IQ tool as a part of its
+[39:18] own tool set. Let's quickly have a look
+[39:21] at the agent we have over here. Let me
+[39:25] close the notebooks and find
+[39:30] uh
+[39:31] map agent. Yes.
+[39:35] So uh here I'm using work IQ as a tool
+[39:39] inside the toolbox we are creating and
+[39:43] um this is basically
+[39:45] uh the toolbox endpoint we are using
+[39:49] through uh it's a foundry toolbox MCP we
+[39:53] are connecting uh true and work IQ
+[39:56] toolbox we are creating over here and
+[39:58] work IQ toolbox basically includes work
+[40:01] IQ as a part of it if you need of
+[40:04] obviously toolbox is more comfortable uh
+[40:07] when you create first you can use across
+[40:10] different agents. So uh not just a
+[40:13] single tool but you can add multiple
+[40:15] tools inside your uh toolbox as well. So
+[40:18] you can add work IQ MCP different custom
+[40:22] MCPS let's say um maybe fabric IQ and
+[40:28] web IQ etc. all of the different things
+[40:30] you can also utilize inside your foundry
+[40:34] toolbox as well. And and it's pretty
+[40:37] straightforward. Uh when when you use
+[40:39] work IQ inside um agent framework, what
+[40:43] you just need to do is defining the MCP
+[40:46] as a tool and that's pretty much it.
+[40:50] Um
+[40:54] all right. So, I really wanted to spend
+[40:57] some time with agent 365 autopilots
+[41:00] because it really ties into the story of
+[41:03] work IQ and I will briefly introduce you
+[41:07] the agent 365 autopilots if you haven't
+[41:10] heard of them before and I'll show you
+[41:12] also how we use work IQ inside the agent
+[41:15] 365 autopilots.
+[41:17] So, what is an agent 365 autopilot?
+[41:21] First of all, if you never heard of this
+[41:23] before, agent 365 autopilots are
+[41:27] different than the agents we publish to
+[41:30] M365 like publishing agent to teams etc.
+[41:34] Um these autopilots have their own
+[41:38] identity that means they also have their
+[41:41] own mailbox, their own calendar, their
+[41:44] own let's say team's presence that they
+[41:46] can report to a manager uh etc. So it is
+[41:51] basically a part of the tenant instead
+[41:53] of working um on behalf of you. Agent is
+[41:58] working on behalf of itself. Um so when
+[42:02] we create an agent in foundry hosted
+[42:05] agents in foundry come with agent 365
+[42:08] blueprints. Um and in agent 365
+[42:12] blueprint is where we are basically
+[42:15] registering our agent in our entry 65
+[42:18] tenant. Um you can at mention uh agent
+[42:22] 365 autopilots um and you can basically
+[42:26] connect with it uh through teams through
+[42:29] mail outlook just like how you connect
+[42:31] with your colleagues you can connect you
+[42:33] can chat with your autopilot uh across
+[42:36] any M365 platform.
+[42:39] Um once you build a hosted agent and
+[42:43] deploy it the same activity endpoint is
+[42:46] powering the autopilot as well behind
+[42:49] the scene and you can ground agent 365
+[42:52] autopilot just like any agent you can
+[42:55] ground your agent 365 autopilot in work
+[42:58] IQ as well. Why work IQ is very critical
+[43:02] in this scenario? Because work IQ is a
+[43:05] very core uh concept in enter 65. We
+[43:09] need the context of enter 65 in
+[43:13] autopilot because autopilot will be
+[43:15] working in our tenant. So autopilot
+[43:17] being a part of our own tenant being a
+[43:20] part of the you know chat sharepoint uh
+[43:24] mails etc. it needs the uh information
+[43:28] across all of that. Um so that's why any
+[43:31] agent 365 autopilot scenario we are
+[43:34] building pretty much all of them would
+[43:36] require work IQ to be able to bring the
+[43:38] work context into uh the agent 365
+[43:42] autopilot itself.
+[43:44] So
+[43:46] just to give you a bit of information
+[43:47] how autopilots are wired. Um so we have
+[43:52] let's say teams as the interface sending
+[43:55] the message in a thread. Uh what this
+[43:58] does is basically calling an Azure bot
+[44:01] service uh with found uh foundry
+[44:04] activity endpoint and then calling your
+[44:07] container with activity protocol. In the
+[44:10] end that message reaches to responses
+[44:12] API and then calling the tool we require
+[44:15] which is workm tool. Again, if you look
+[44:20] at like a big picture of hosting
+[44:22] autopilot
+[44:24] uh and how they act in the tenant, how
+[44:27] they work in the tenants, how we
+[44:29] interact with them is that we first um
+[44:34] build the foundry work let's say
+[44:37] workmate agent and then connect all of
+[44:39] the tools like how we usually connect
+[44:42] but with a single change which is the
+[44:44] authentication layer because now
+[44:47] autopilot is not authentic
+[44:48] authenticating on behalf of you. It is
+[44:50] authenticating on behalf of itself. That
+[44:53] means the uh token user token will be
+[44:57] agent's token not your token. Uh so when
+[45:01] we let's say check emails uh through a
+[45:05] foundry agent then because you're signed
+[45:07] in as a user agent will be getting your
+[45:10] emails from your outlook mailbox. But if
+[45:13] you chat with autopilot and ask check
+[45:16] your mailbox then autopilot will go
+[45:18] ahead and check its own mailbox. So that
+[45:21] authentication layer will be slightly
+[45:23] different and then we will we will be
+[45:26] wrapping that agent with both framework
+[45:28] activity host and then uh using a
+[45:31] container to be able to connect uh with
+[45:33] the entry point.
+[45:36] Okay. So, I'm going I'm going to
+[45:38] summarize the difference between uh
+[45:41] agents in Teams versus um uh autopilot
+[45:47] in Teams versus how autopilot acts in
+[45:50] Foundry when we first build them. And
+[45:53] just to make sure I'm not confusing
+[45:55] anyone, when I say in the playground,
+[45:58] I'm talking about Foundry playground.
+[46:00] Obviously, uh for hosted agents, you can
+[46:03] use uh the Foundry toolkit. There's a um
+[46:07] also the agent playground there. When
+[46:10] you build an agent as an autopilot with
+[46:13] its own identity, but when you test them
+[46:16] in the playground because you are signed
+[46:19] in h as you then agent will be acting on
+[46:24] behalf of you, checking your mailbox. It
+[46:27] has your permissions, your identity.
+[46:30] when you bring that uh agent into M365
+[46:35] as autopilot and when you chat with the
+[46:38] same very same agent as an autopilot on
+[46:40] teams then it acts as its own identity.
+[46:44] So when you ask the same question it
+[46:46] will go ahead and check its own mailbox
+[46:49] um it will have its own identity
+[46:52] whatever permission is giving to the
+[46:54] autopilot it will be able to access the
+[46:57] data accordingly. So when we take action
+[47:00] using do action that means that
+[47:03] autopilot will not be sending an email
+[47:06] on behalf of you that autopilot will be
+[47:08] sending an email on behalf of itself
+[47:10] with its own male mail address and
+[47:13] everything
+[47:15] and I'm going to also show you how it
+[47:17] looks like in a second but I want to
+[47:19] finish this off very quickly. So making
+[47:23] a hosted agent in Foundry. So let's say
+[47:26] that you build a hosted agent in
+[47:29] foundry. You want to bring that into
+[47:31] autopilot. What does it take to do all
+[47:34] that? First of all, you build hosted
+[47:37] agent and then you build an image for
+[47:41] activity protocol and then um you
+[47:45] basically uh get the new agent version
+[47:49] and finally you will need a b service
+[47:52] for the activity protocol endpoint. In
+[47:55] the last step you need to register your
+[47:58] agent in the tenant and that step
+[48:01] requires admin consent. So uh not admin
+[48:04] consent sorry admin uh global admin
+[48:07] rights. So either you would if you if
+[48:10] you're global admin in the tenant you
+[48:12] can publish and approve your agent or
+[48:14] you would need your admin to do that on
+[48:17] behalf of you. So what it what we need
+[48:20] is to access to admin center and admin
+[48:23] center submit the agent as autopilot and
+[48:27] approve as an admin. So this uh section
+[48:32] is very different than one-click teams
+[48:35] publish uh as an assistant in the
+[48:37] foundry. Pamela did this yesterday in
+[48:40] her demo. She used foundry and hit uh
+[48:44] publish and she published an agent on
+[48:46] teams. What she did there is publishing
+[48:49] an agent app on teams. What we are doing
+[48:52] here is we are creating a brand new
+[48:54] identity uh in our tenant. That means
+[48:58] it's not an app anymore. It's an
+[49:00] autopilot working together with you in
+[49:03] the same tenant.
+[49:06] And to summarize a little bit just to
+[49:08] help you, first you need to register uh
+[49:11] your agent blueprint and then create
+[49:13] your uh Azure bot service for activity
+[49:16] endpoint and then you need to grant
+[49:18] scopes. This is very critical because
+[49:21] you need to also define the
+[49:23] authentication for that identity. Um the
+[49:27] new brand new blueprint you create for
+[49:29] the agent work IQ and all of the other
+[49:32] MC MCP scopes should be a part of it. Um
+[49:36] after you define your scopes then you
+[49:38] need to submit your agent in M365 admin
+[49:41] center for approval. Once it is approved
+[49:43] by your admin then autopilot will show
+[49:46] up on teams. you will be able to create
+[49:49] your own instance and I will show you
+[49:51] what I mean by creating an instance and
+[49:54] after that you'll be able to manage
+[49:57] govern your um autopilot uh through
+[50:01] enter 65 admin center and it will be a
+[50:04] part of your day-to-day um work
+[50:07] environment as a identity not as a app
+[50:11] only.
+[50:13] So to give you a better idea, I build
+[50:16] you I built an uh workmate autopilot and
+[50:19] I'm going to show you how it looks like
+[50:22] uh by walking you through all of these
+[50:24] steps. So this is a foundry hosted agent
+[50:28] but instead of publishing this uh
+[50:30] through publish teams button and
+[50:32] bringing this uh as a you know part of
+[50:36] teams as an app I created this as an
+[50:39] autopilot. How is it different when you
+[50:42] create an agent? Agent shows as an app
+[50:45] as a part of the apps we have over here.
+[50:49] But when it is autopilot, how it is
+[50:52] different is actually if I go over to
+[50:55] workmate, workmate has its own contact
+[50:58] information, has its own email address.
+[51:01] And if you have a look at the orc chart,
+[51:04] workmate is actually reporting to in
+[51:06] fact I have multiple uh autopilots
+[51:09] reporting to me at the moment. So
+[51:11] workmate is a part of my or chart and
+[51:14] reporting to me. And also when I have a
+[51:17] chat with workmate um workmate can email
+[51:20] me, send me a message and do all of that
+[51:24] on behalf of itself. Just to give you an
+[51:27] example for um I already tried this as
+[51:30] you can see earlier today but I'll try
+[51:32] to ask the same question
+[51:35] um any pending tasks in the mailbox then
+[51:40] what we assume here is workmate to go
+[51:44] ahead and check its own mailbox not my
+[51:47] mailbox because workmate has its own
+[51:50] identity um and it is authenticated
+[51:54] uh as by itself. myself not on behalf of
+[51:56] me and getting the information. For
+[51:59] example, it says there's a refund
+[52:01] request from Maria Garcia. Let's quickly
+[52:05] go ahead and check Outlook. This is my
+[52:07] demo tenant and this is workmate and
+[52:11] workmate really has this email uh over
+[52:15] here from Maria Garcia and it can read
+[52:19] through its own mailbox. As you can see,
+[52:21] I have bunch of other stuff in my
+[52:23] mailbox. And that's u Maria Garcia email
+[52:27] is not part of my mailbox. And if you
+[52:30] give the do action uh tool to autopilot,
+[52:35] what it can do is actually uh if I say
+[52:39] let's issue her a refund
+[52:43] and let
+[52:46] her know.
+[52:49] Then what workmate can do is actually
+[52:52] because it's autopilot it can reply to
+[52:55] Maria Garcia directly and I don't even
+[52:57] have to be a part of CC etc. Um it says
+[53:02] I already issued uh a refund to Maria
+[53:05] Garcia because I tested this earlier
+[53:08] today. uh reply again
+[53:15] um so that I will show you it can
+[53:18] actually send an email
+[53:20] um
+[53:22] and let's hope that we will get
+[53:28] we will get that. Okay, let's check
+[53:30] Maria's mailbox. Yes.
+[53:33] Okay, we just got a mailbox and uh as
+[53:37] you can see I'm not even part of this
+[53:39] conversation. Workmate is sending this
+[53:42] email to Maria Garcia and confirming
+[53:46] that refund is issued etc etc. So this
+[53:51] is an awesome use case for work IQ and
+[53:54] it is a very core work IQ is a really
+[53:56] core concept of the agent 365 autopilots
+[54:00] because autopilot can do pretty much
+[54:02] anything uh that we can do in the tenant
+[54:06] h as long as it has access to let's say
+[54:09] that you're we I'm talking about a word
+[54:12] document powerpoint as long as you share
+[54:16] that document with the autopilot then
+[54:18] autopilot will be able to read through
+[54:20] it otherwise it will not be able to
+[54:22] preview or read uh the information
+[54:25] inside it. And quickly just to show you
+[54:29] what I mean by admin center uh when you
+[54:33] create an agent publish it in uh your
+[54:36] tenant and waiting for the approval in
+[54:39] admin. uh when admin approves it um then
+[54:43] this uh agent 365 autopilot will start
+[54:47] showing up on teams and this is this uh
+[54:52] agent for autopilot has its own
+[54:54] blueprint uh entra agent ID and this
+[54:57] blueprint is unified across instances
+[55:01] but what you actually need to do is you
+[55:03] need to create your own instance that
+[55:06] means that everyone can create their own
+[55:09] workmate instance. I can create one.
+[55:11] Paulo can create uh his own workmate.
+[55:14] Pamela can create his her own workmate.
+[55:17] So, everyone can have their own version
+[55:20] of workmate. Autopilot source code will
+[55:23] be the same. Identity uh blueprint will
+[55:26] be the same. But we will be having our
+[55:29] own
+[55:30] um basically autopilots with a unique uh
+[55:35] email and unique mailbox uh etc etc. So
+[55:40] um the uh the final thing I want to
+[55:44] share here is that when you create the
+[55:46] instance just like any user you create
+[55:49] in the tenant you need to assign this
+[55:51] instance autopilot instance a license.
+[55:55] So to be able to let's say see this
+[55:58] agent on teams and make sure that this
+[56:01] agent is a part of your org charts this
+[56:04] agent has access to teams outlook etc.
+[56:07] this agent just like myself uh need E5
+[56:11] license or something similar and same
+[56:14] let's say if you want your autopilot to
+[56:16] use power automate and let's say M365
+[56:20] copilot or other stuff then you will
+[56:22] have to assign the very same license to
+[56:25] this autopilot as well and again if all
+[56:29] of us create our own instances that
+[56:32] means each individual dual instance will
+[56:34] also require dedicated licenses for uh
+[56:38] that autopilot to appear in different
+[56:41] places.
+[56:43] All right. So, um let's go back to the
+[56:48] slide deck quickly.
+[56:51] Not this one.
+[56:55] All right. So, next steps. This is all I
+[56:59] wanted to share in this session. Um but
+[57:01] right after this session, we have office
+[57:03] hours in Discord. Don't forget to join
+[57:06] that. It is ak.ms/pythonaih.
+[57:10] So you can join the office hours. If you
+[57:12] missed yesterday's session, Pamela
+[57:15] covered Foundry IQ there. Make sure to
+[57:17] watch it. And tomorrow she will be
+[57:19] talking about fabric IQ. Make sure to
+[57:22] catch that up as well. If you're new to
+[57:24] the series, register uh through our AK
+[57:27] link. And one last thing I want to share
+[57:29] with you, this IQ concepts and learning
+[57:33] series does not end here. after this
+[57:35] week. Next week we are starting a
+[57:38] dedicated bi-weekly session for all IQs.
+[57:42] Uh so you can also register to that.
+[57:45] This is a bi-weekly series. It goes
+[57:47] until November 12th, right before
+[57:50] Ignite, we stopped the series. But up
+[57:52] until that point from from August 6 to
+[57:54] November 12th, you will be getting
+[57:57] bi-weekly episodes covering different IQ
+[57:59] topics every week. So make sure to check
+[58:02] that out as well. That's
+[58:03] ak.msicrosoftiql
+[58:06] live. And with that, thank you so much
+[58:08] everyone and thanks for joining the
+[58:11] session.
+[58:24] Thank you all for joining and thanks
+[58:26] again to our speakers.
+[58:28] This session is part of a series. To
+[58:31] register for future shows and watch past
+[58:34] episodes on demand, you can follow the
+[58:36] link on the screen or in the chat.
+[58:40] We're always looking to improve our
+[58:41] sessions and your experience. If you
+[58:44] have any feedback for us, we would love
+[58:46] to hear what you have to say. You can
+[58:48] find that link on the screen or in the
+[58:50] chat. And we'll see you at the next one.

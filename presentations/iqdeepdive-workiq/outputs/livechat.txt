@@ -1,0 +1,78 @@
+[00:00:00] [@WebCoreGamer]: Input
+[00:00:00] [@MicrosoftReactor]: Hello everyone, welcome! We'll begin shortly! Please stay tuned  
+[00:00:00] [@bsayca]: Welcome everyone  Starting in few min
+[00:00:00] [@MicrosoftReactor]: Please take a moment to read our Code of Conduct > https://developer.microsoft.com/react... 
+[00:00:22] [@JonEricE-n1k]: Hello from Chicago !
+[00:00:30] [@aquarist123]: Good afternoon from East Anglia in England.
+[00:01:07] [@peterm8605]: hello from saugerties, NY
+[00:01:13] [@lee_stott]: Hi Everyone welcome todays session 
+[00:01:30] [@PamelaFox]: Hi everyone, welcome to the series! 
+[00:01:33] [@MicrosoftReactor]: Register for the series here: https://aka.ms/IQDeepDivePython/series 
+[00:01:51] [@rserran1]: Hi 
+[00:01:54] [@PamelaFox]: If you missed yesterday's, you can get all the resources from https://aka.ms/iqdeepdive/resources 
+[00:02:17] [@MicrosoftReactor]: Download the slides from https://aka.ms/iqdeepdive/slides/workiq
+[00:03:24] [@paolopialorsi]: Hello everyone! I'm here to help! 
+[00:03:58] [@MicrosoftReactor]: Bring your questions to office hours right after --- https://aka.ms/pythonai/oh
+[00:04:16] [@MicrosoftReactor]: Grab the code from http://aka.ms/iqdeepdive
+[00:06:39] [@WebCoreGamer]: --
+[00:07:56] [@NM-tr1ii]: Is Work IQ in GA yet? 
+[00:10:34] [@paolopialorsi]: Yes, Work IQ is GA since June 2026, but since it is an AI technology it is still evolving ...
+[00:11:54] [@timanderson-d2v]: Assuming the data used is not trainable?
+[00:13:05] [@udaiappa]: Does Work IQ work the same way as Microsoft Graph semantic search, also known as Graph Retrieval or the Copilot Data Endpoint?
+[00:13:30] [@paolopialorsi]: @timanderson-d2v It works with your context, memory, and preferences and it gives personalised answers to any user
+[00:13:37] [@timanderson-d2v]: to clarify, wondering how silo-ized is our account data?
+[00:14:12] [@timanderson-d2v]: tenant B is not able to access tenant A's data correct?
+[00:14:30] [@paolopialorsi]: @udaiappa it is definitely more than Graph Semantic Search. You will see in this session ...
+[00:15:41] [@paolopialorsi]: @timanderson-d2v data is tenant bounded. There is permission inheritance, DLP, and regulatory compliance
+[00:15:56] [@timanderson-d2v]: ok - thanks Paolo
+[00:17:27] [@pablocotaimich]: do the 3 calling options allow to set parameters/options in the request?
+[00:18:38] [@paolopialorsi]: @pablocotaimich each protocol does have its own syntax, but yes you can provide options/parameters based on your needs 
+[00:20:04] [@KevinPatel-goat]: Where can i find the slide deck?
+[00:20:22] [@derekhorrall8135]: Scenario: Say I want to create a company-wide Agent that can access ALL email correpondance with a particular customer. Can Work IQ fetch emails from ALL Users or just the signed in User?
+[00:20:31] [@PamelaFox]: Slides: https://aka.ms/iqdeepdive/slides/workiq
+[00:21:46] [@lee_stott]: All resources are also shared in the #microsoft-iq channel in the discord 
+[00:22:11] [@paolopialorsi]: @derekhorrall8135 with Work IQ every user can only see what they are allowed to see.
+[00:23:28] [@JeffPribich]: can these be tools be run recursively?
+[00:28:37] [@EricfromtheU.P]: Why is Work IQ not able to access Microsoft To Do tasks and Planner tasks? Is that coming soon?
+[00:29:39] [@prodigiousnishu]: what is work iq used for what is the need to use it? 
+[00:30:03] [@arorama]: what identity does workIQ assumes? is it OBO or other identities are also supported? 
+[00:30:28] [@paolopialorsi]: @jeffpribich can you expand a little bit more?
+[00:30:48] [@timanderson-d2v]: So I'm assuming that we wouldn't be coding interactions with those tools - wouldn't an agent know about the capabilities through the MCP? We're just looking through this to show capability, correct?
+[00:32:06] [@paolopialorsi]: @EricfromtheU.P If I'm not mistaken planner should be accessible through Work IQ, but as I said before this is a continuously evolving technology
+[00:32:25] [@PamelaFox]: @timanderson-d2v Most of the time, yes, an agent would be using MCP to discover available tools and call them appropriately. Thats why it has so many discovery/schema tools.
+[00:32:43] [@timanderson-d2v]: great! Thanks Pamela.
+[00:33:07] [@paolopialorsi]: @prodigiousnishu Work IQ is designed to allow consuming organization's knowledge and intelligence from every agent. So whenever you have 3rd party agents, Work IQ is a good fit.
+[00:33:43] [@paolopialorsi]: @arorama Work IQ API works with the identity of the current user relying on a delegated Access Token
+[00:34:12] [@arorama]: Thanks makes sense
+[00:34:21] [@paolopialorsi]: @timanderson-d2v you are correct. Agents will be able to "understand" when to use what of the tools of Work IQ MCP.
+[00:36:59] [@bernhard.merkle]: workIQ kind of hides the specific tool where the answer came from IIRC. how can i then debug this if e.g. the answer is not correct ?
+[00:39:13] [@Satiremdk]: so work IQ has access to everything the user has access to? OneDrive, Emails and their attachments, SharePoint sites, Teams channels and messages etc?
+[00:39:21] [@paolopialorsi]: @bernhard.merkle it depends on the technology you are using to build your agent. For example in Declarative Agents there is a debug mode to inspect MCP tools calls.
+[00:39:51] [@paolopialorsi]: @Satiremdk generally speaking, what you say is correct.
+[00:45:08] [@Satiremdk]: Work IQ is for retrieval, but what if we want to take actions: send an email, create a meeting, create a new folder in OneDrive, do we have an MCP for that?
+[00:46:51] [@PamelaFox]: WorkIQ includes write actions as well, Ayca stepped through some examples, like in https://github.com/microsoft/iqdeepdi...
+[00:47:53] [@JonEricE-n1k]: oh cool it's own email any customization on the email? 
+[00:48:28] [@bernhard.merkle]: for autopilot, who has to pay the tokens it consumed ? I assume the user who invoked it ?
+[00:49:39] [@MariuszDotNet]: @Satiremdk - for that there are MCPs for each of those which you call OBO of the user who owns those resoruces.
+[00:50:15] [@bernhard.merkle]: for publish agents are here any security checks or frameworks to check the agent against risky action ? in order to avoid security issues
+[00:50:36] [@andrewburns9817]: how will Autopilot billing work?
+[00:51:43] [@JonEricE-n1k]: oh cool going to update my org chart now!
+[00:52:01] [@MicrosoftReactor]: Please take a moment to complete our Reactor Survey: https://aka.ms/AA11zwzm ---- The Reactor Code is: 27337. We appreciate your feedback.
+[00:52:17] [@prodigiousnishu]: can you show how the backend of workmate has been built? and where? do we need to buil in foundry?
+[00:52:21] [@JonEricE-n1k]: Wow!
+[00:52:47] [@PamelaFox]: Workmate code is here: https://github.com/microsoft/iqdeepdi...
+[00:54:16] [@JonEricE-n1k]: Excited to test work mate out this weekend. 
+[00:56:12] [@Satiremdk]: This is amazing guys!, the only thing that I'm worried about is token usage and cost
+[00:57:01] [@MicrosoftReactor]: Register for the series here: https://aka.ms/IQDeepDivePython/series 
+[00:57:17] [@MicrosoftReactor]: Bring your questions to office hours right after --- https://aka.ms/pythonai/oh
+[00:57:35] [@renaldoh2819]: Thank you so much !
+[00:57:52] [@davekumar8162]: Thanks very much for this session.
+[00:57:54] [@MicrosoftReactor]: Please take a moment to complete our Reactor Survey: https://aka.ms/AA11zwzm ---- The Reactor Code is: 27337. We appreciate your feedback.
+[00:57:55] [@christianochamma]: Thanks!
+[00:57:56] [@semosby9814]: Sorry to ask a repeat question. When will the recording be ready? 
+[00:58:04] [@PamelaFox]: Bi-weekly series: https://aka.ms/MicrosoftIQLive
+[00:58:22] [@PamelaFox]: @semosby9814 It's usually instantly ready on YouTube. Grab links from https://aka.ms/iqdeepdive/resources
+[00:58:36] [@PamelaFox]: Please bring any additional questions to the Discord OH now! https://aka.ms/pythonai/oh
+[00:58:36] [@JonEricE-n1k]: Great Job very informative!
+[00:59:19] [@andrewstorms481]: Very helpful! how do we register for the bi-weekly WorkIQ sesssions?
+[00:59:29] [@semosby9814]: Thank you!
