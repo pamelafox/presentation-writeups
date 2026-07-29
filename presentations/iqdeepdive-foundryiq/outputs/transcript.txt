@@ -1,0 +1,1585 @@
+[00:03] Hi everyone. Thank you for joining us
+[00:05] for our next live stream. I'll be your
+[00:08] producer for this session. Before we
+[00:11] start, I do have some quick
+[00:12] housekeeping.
+[00:14] Please take a moment to read our code of
+[00:15] conduct.
+[00:18] We seek to provide a respectful
+[00:19] environment for both our audience and
+[00:21] presenters.
+[00:23] While we absolutely encourage engagement
+[00:25] in the chat, we ask that you please be
+[00:27] mindful of your commentary, remain
+[00:29] professional and on topic.
+[00:32] Keep an eye on that chat. We'll be
+[00:34] dropping helpful links and checking for
+[00:36] questions for our presenters to answer
+[00:38] live.
+[00:40] Our session is being recorded. It will
+[00:43] be available to view on demand right
+[00:45] here on the Reactor channel.
+[00:48] With that, I'd love to turn it over to
+[00:50] our speakers for today. Thank you for
+[00:52] joining.
+[00:55] >> Hello. Hello everyone. Welcome to our
+[00:59] new live stream series. This is
+[01:01] Microsoft IQ deep dive with Python. This
+[01:05] is a three-part live stream series and
+[01:08] we're going to be exploring Foundry IQ,
+[01:11] Work IQ, and Fabric IQ. We will even
+[01:14] briefly explore web IQ as part of
+[01:16] today's session. So that means we are
+[01:18] covering all four of the Microsoft IQ
+[01:22] family in this series and we're really
+[01:25] focusing on ways that you can use these
+[01:27] IQs programmatically when you're
+[01:29] developing your own AI applications and
+[01:32] agents and especially when using Python.
+[01:36] Uh so if you have not yet registered for
+[01:38] the series, please do register. That way
+[01:41] you get notified when the next two live
+[01:44] streams start about work IQ and fabric
+[01:46] IQ and so that we can see you the entire
+[01:49] week.
+[01:52] So for today's session we are focusing
+[01:55] on Foundry IQ. Uh you are welcome to
+[01:59] take the slides and uh download them
+[02:02] from the URL here and we'll paste this
+[02:04] in the chat so that you can get it for
+[02:06] yourself. uh you can use these slides
+[02:09] for whatever you can deliver this
+[02:10] session yourself and you know spread the
+[02:13] word to your community and colleagues.
+[02:15] My name is Pamela Fox. I am a principal
+[02:18] cloud advocate and I work at both
+[02:20] Microsoft and GitHub. We're all part of
+[02:22] the same company and I really focus on
+[02:25] ways that developers can build AI
+[02:29] applications and agents uh especially in
+[02:32] Python uh with all of our different
+[02:34] Microsoft APIs, SDKs and tools and with
+[02:37] GitHub Copilot and VS Code.
+[02:42] So today we're going to cover a lot. I'm
+[02:46] going to just let you know right now we
+[02:47] are covering a lot today. Uh we're going
+[02:49] to you know brief overview Microsoft IQ
+[02:51] then really deep deep dive into Foundry
+[02:54] IQ and um how we can set up Foundry IQ
+[02:58] knowledge bases how we can use it inside
+[03:00] agents how we can use it with Foundry
+[03:01] toolbox and then how we can deploy
+[03:04] agents that use Foundry IQ onto Foundry
+[03:07] hosted agents platform and even use them
+[03:09] from inside teams. So there's a ton we
+[03:11] have to cover today. Uh, so I will
+[03:14] probably be talking fast, but don't
+[03:16] worry because we do always record these
+[03:18] sessions. You can always rewatch them.
+[03:20] And if you have any questions, you're
+[03:22] welcome to post them in the chat. My
+[03:24] colleague Aicha is in the chat and she
+[03:26] may be able to answer or even better,
+[03:29] you can save your questions because
+[03:30] we're going to have a full hour of
+[03:32] office hours right after this. Um, so
+[03:36] you know, because I won't have time to
+[03:37] answer questions during it. That's why
+[03:39] we're going to jump into Discord
+[03:41] afterwards. So if you have any
+[03:42] additional questions, we can really
+[03:44] spend a lot of time of those questions
+[03:46] in our Discord office hours afterwards.
+[03:51] All right, so we are going to be showing
+[03:54] a lot of code in this series and we've
+[03:57] put it all in the same repo. This is
+[03:59] aka.msiqdeep
+[04:01] ddive. That will bring you to this
+[04:04] Microsoft repo here, IQ deep dive. And
+[04:07] this has all of the code we're going to
+[04:09] show over the next three days. Uh so
+[04:11] we've got lots of Jupyter notebooks,
+[04:14] lots of agents, lots of infrastructure.
+[04:17] Uh it's it's all in this repo. Now, in
+[04:21] order to actually run this code
+[04:22] yourself, you do need to have an Azure
+[04:25] account and se several licenses set up
+[04:28] for the various IQs. Um so you may not
+[04:31] be able to run it all yourself. Um but
+[04:33] all of the code is available and if you
+[04:35] do have you know fabric license work IQ
+[04:37] license then you'll be able to run those
+[04:39] examples as well. Uh so definitely you
+[04:43] know clone the code star the clo you
+[04:45] know star the code uh this is a
+[04:47] reference for you to use uh with all of
+[04:49] your IQ development.
+[04:56] So now let's talk about Microsoft IQ.
+[04:58] The point of this whole series and uh
+[05:01] this Microsoft IQ platform the idea here
+[05:05] is to provide all the kinds of
+[05:08] intelligence information that AI needs
+[05:12] because what we've seen is that LLMs are
+[05:14] you know incredibly powerful but they
+[05:16] are the most powerful when they are
+[05:19] grounded in your domain's information.
+[05:22] Right? If you give them information,
+[05:25] LLMs are so good at answering questions,
+[05:27] at synthesizing information, at um, you
+[05:31] know, transforming that information from
+[05:32] one format to the other, like it just
+[05:35] makes it way easier to to get, you know,
+[05:38] get back the answers we need. Um, when
+[05:40] we have an LLM that can, you know, much
+[05:42] more quickly look through all this
+[05:44] information and and um, synthesize it
+[05:47] for us. So the idea of Microsoft IQ
+[05:49] platform is to be this unified
+[05:51] intelligence layer for your AI
+[05:53] applications and to cover all the
+[05:56] different kinds of uh you know
+[05:58] information that you would need to
+[06:00] ground your applications in.
+[06:03] So we have work IQ which is how your
+[06:06] employees work and that's basically uh
+[06:08] bringing in Microsoft 365 data. So that
+[06:11] is you know your teams email calendar um
+[06:15] shareepoint office docs like all of that
+[06:18] information that's spread across
+[06:20] Microsoft 365
+[06:22] um productivity suite all of that would
+[06:24] be from work IQ and that we're going to
+[06:27] be covering tomorrow with my colleague
+[06:29] it then we have fabric IQ so this if
+[06:32] you're using Microsoft fabric that is a
+[06:34] way that you can store all the business
+[06:36] data that's powering your applications
+[06:38] like uh you know you can have your
+[06:41] relational data there, you can have your
+[06:42] analytics data there, um all your
+[06:45] reporting data there, right? Everything
+[06:46] can go in this Microsoft Fabric platform
+[06:49] and then you can use Fabric IQ in order
+[06:51] to, you know, pull that back out in an
+[06:53] agentfriendly way. So that we're going
+[06:55] to be covering on Thursday and really
+[06:57] going deep into that on Thursday.
+[07:01] Then we have web IQ uh which is uh how
+[07:05] we can connect to information from the
+[07:07] web, right? We often need to get
+[07:09] real-time information from the web like
+[07:11] news, weather, etc. Like just make sure
+[07:14] we're up to date with what's happening
+[07:15] in the world and that's what we can use
+[07:17] web IQ for. And then finally, Foundry
+[07:20] IQ. This is really how we can bring any
+[07:22] sort of information in. So Foundry IQ
+[07:24] can actually bring in all those other
+[07:25] sources. Uh but it can also just ingest
+[07:28] ingest any sort of unstructured data we
+[07:30] have any sort of documents. You have
+[07:32] piles of documents somewhere, stick them
+[07:33] in Foundry IQ, right? And so to that
+[07:36] today, that's what we're going to be
+[07:37] talking about.
+[07:40] So now let's talk deep about Foundry IQ.
+[07:46] So Foundry IQ is trying to tackle the
+[07:48] problem that your knowledge is
+[07:50] everywhere, right? You know, you've got
+[07:53] knowledge in relational tables, you've
+[07:55] got it analytics data, you've got web,
+[07:57] you've got SharePoint, you've got lots
+[07:58] of PDF files, um you know, CSV files,
+[08:02] text files, JSON files, markdown files.
+[08:04] There's so many different sources of
+[08:07] information. So given that you know
+[08:10] information is spread across
+[08:13] all these different file formats, how
+[08:15] can we efficiently find the right
+[08:18] information across so much different so
+[08:21] many different sources?
+[08:23] So that's why we have Foundry IQ is to
+[08:26] be able to retrieve across all of these
+[08:29] in a way that is you know going to find
+[08:32] the best most relevant results for our
+[08:36] applications and agents. Uh so Foundry
+[08:38] IQ um which is based off of Azure AI
+[08:41] search. Uh so you can basically think of
+[08:43] Foundry IQ and Azure AI search as the
+[08:45] same. Uh so foundry IQ is going to is
+[08:49] going to be able to take care of how to
+[08:51] select the right places to find the
+[08:52] information. Then once it's found the
+[08:54] right source of information retrieving
+[08:56] from that source then if it's you know
+[08:58] selected multiple results merging those
+[09:01] results together and then finally it can
+[09:03] also synthesize an answer. Uh so it can
+[09:05] help us do the entire retrieval process.
+[09:11] So how this works is with a foundry IQ
+[09:14] knowledge base. Uh so this is this is a
+[09:18] knowledge base that can do this
+[09:20] multi-step retrieval process across
+[09:22] multiple sources. So we start over here
+[09:25] with the input right? So the input very
+[09:27] often is an entire conversation right
+[09:29] because many of our you know many of our
+[09:31] applications now are actually
+[09:32] conversations based like it's a chatbot
+[09:34] or it's an agent and you're you know
+[09:36] you're having a little discussion with
+[09:37] them about what you want. uh so you know
+[09:40] we'll input that conversation and any
+[09:43] you know additional uh steering
+[09:44] instructions and that gets sent to this
+[09:47] retrieval planning stage. So the
+[09:49] retrieval planning stage uses an LLM in
+[09:52] order to decide okay based off this
+[09:54] conversation what do I think we actually
+[09:57] need to search for. So, it's going to
+[09:58] turn that conversation into search
+[10:00] queries and say, "Okay, um, you know, I
+[10:03] came up with a couple queries and these
+[10:05] queries, you know, identify what
+[10:07] information this user really needs in
+[10:09] order to answer their question." So, it
+[10:11] comes up with, you know, one or more
+[10:13] queries and then it sends all of these
+[10:16] queries in parallel to selected
+[10:18] knowledge sources, right? So, you can
+[10:21] connect a bunch of knowledge sources up
+[10:22] to your knowledge base, whatever it is
+[10:24] you need. You could have multiple search
+[10:25] indexes. You could have MCP servers. You
+[10:27] could have Work IQ. You could have
+[10:28] fabric IQ. You can connect all of those
+[10:31] up to your knowledge base. And then, you
+[10:33] know, it's going to decide which of
+[10:35] those knowledge sources to send it to.
+[10:37] And it'll do it all in parallel. And
+[10:39] that's really nice because then the
+[10:41] retrieval step is only going to be as
+[10:43] slow as your slowest knowledge source,
+[10:47] right? Um, so then that way, you know,
+[10:50] we're we're not having to wait for
+[10:52] sequential retrieval across each of
+[10:54] them. We're just going to do all of that
+[10:56] in parallel and then we get back the
+[10:58] results. So then with the results, it's
+[11:00] going to merge those results together
+[11:02] and rerank them according to the
+[11:04] original, you know, user query and say,
+[11:06] okay, you know, we got all these results
+[11:08] across a bunch of different sources. Uh,
+[11:11] which of these is actually the best
+[11:12] result for the query? So then it does
+[11:14] this reranking step there. uh and that
+[11:16] helps us figure out like okay what's
+[11:18] what are actually the the best answers.
+[11:20] Uh we can also get an activity log so we
+[11:22] can see exactly what happened and we can
+[11:24] even have it synthesize an answer with
+[11:27] its LLM if we wanted to.
+[11:30] Uh so that is you know that's like the
+[11:33] you know a full um agentic retrieval
+[11:36] there that we can do with a knowledge
+[11:37] base.
+[11:39] So now let's dive into the different
+[11:42] kinds of knowledge sources. Uh so today
+[11:45] we're really going to focus on index
+[11:46] knowledge and putting stuff in a search
+[11:49] index. Uh so that you know when we're
+[11:52] going when we're creating a search index
+[11:54] that means we're creating a search index
+[11:56] for uh unstructured data right. Um so
+[12:00] that's stuff like PDFs, text files, uh
+[12:03] you know things that aren't already in a
+[12:05] database. So for that kind of for those
+[12:08] kind of files we need a data ingestion
+[12:10] flow. So this is the general data
+[12:13] ingestion flow we're going to use. So we
+[12:15] start off with our document, right? And
+[12:17] it could be various formats here like
+[12:19] PDF or DOCX or HTML. Then we extract the
+[12:23] information from that document, right?
+[12:25] So we there's a lot of information we
+[12:26] want to get rid of like you know
+[12:28] formatting information that's not
+[12:29] important. Um but we do want to get out
+[12:32] the text, we want to get out the tables,
+[12:34] and we also ideally want to get out any
+[12:36] figures. And that can be a bit tricky to
+[12:38] to extract figures. But ideally, we also
+[12:40] want to get back figures. So if there is
+[12:41] an image in there, you want to pull out
+[12:43] the image. You want to get a description
+[12:45] of that image. And you want to know, you
+[12:46] know, where that image is relative to
+[12:48] the rest of the text. So that's what a
+[12:49] full extraction is going to look like.
+[12:52] Then we're going to uh chunk that text
+[12:55] into chunks um that are, you know,
+[12:59] optimal um for for agent use later
+[13:02] because you don't usually, you know,
+[13:04] let's say you've got a 20page document.
+[13:06] you don't want to have to send that
+[13:07] entire 20page document to the LLM uh if
+[13:10] the relevant piece of information is
+[13:12] just like a paragraph on page three,
+[13:14] right? So, typically we're going to, you
+[13:16] know, actually take that full document
+[13:18] and then chunk it into smaller chunks.
+[13:20] And usually that's uh based on number
+[13:22] and tokens. So, maybe we'll try and come
+[13:24] up with a chunk that's like 500 tokens
+[13:26] long approximately or maybe even a
+[13:28] thousand tokens long approximately. And
+[13:30] we might even try to do some semantic
+[13:32] chunking and say like, oh, if there's
+[13:33] like a section, we're going to just
+[13:35] chunk that entire section because that's
+[13:37] about the right size. Uh so there's
+[13:39] various chunking algorithms you can use,
+[13:40] character based, token based, semantic
+[13:42] based. Um but in the end, you want to
+[13:44] have, you know, around 500 or thousand
+[13:46] tokens for each chunk. Then once you
+[13:49] have the chunks, you want to embed those
+[13:51] chunks using a vector embedding model.
+[13:53] So that vector embedding model turns
+[13:55] that chunk into a list of floatingoint
+[13:58] numbers which represents that text in a
+[14:02] multi-dimensional semantic space. Right?
+[14:04] And so then once you have vector
+[14:06] embeddings for every chunk, you can
+[14:07] actually see for any particular user
+[14:09] query, hey, which of these embeddings
+[14:12] is, you know, which of these vector
+[14:13] embeddings is closest to this user
+[14:16] query. So that makes our search more
+[14:18] powerful where we can search not just by
+[14:20] keywords but also by vectors.
+[14:23] Uh, and then finally, once we have all
+[14:26] the information we need, we can store it
+[14:27] in the actual search index. So, we're
+[14:29] going to have an ID for each chunk. Um,
+[14:31] ideally a parent ID to say what document
+[14:33] it came from. Uh, the path to the uh,
+[14:36] you know, the the file path. Um, might
+[14:38] be in blob storage. Uh, the actual chunk
+[14:41] of text and then the vector which
+[14:43] represents the the embedding of that
+[14:45] chunk in vector space with your
+[14:47] particular vector embedding model. So,
+[14:50] that's what oftentimes what you're going
+[14:51] to store. You could also store some
+[14:53] additional metadata. Um, but that's kind
+[14:55] of the bare minimum that I would store.
+[15:00] So, with the search indexes, with
+[15:03] Foundry IQ, there are two different ways
+[15:06] that you could add index knowledge.
+[15:07] There is a new way called the file
+[15:10] knowledge source that tries to make it
+[15:12] super easy to add files. Um, where you
+[15:16] don't have to set up a data source at
+[15:18] all. you can just literally directly
+[15:20] upload files to it. Uh and we'll we'll
+[15:23] see that soon in uh in Python. Um so you
+[15:26] you know there's no setup needed just
+[15:27] directly upload files. So this is a
+[15:29] great way to get started um where you
+[15:31] just want to start prototyping and not
+[15:34] have to worry about setting up a data
+[15:35] source. Now usually when you move to
+[15:37] production you're going to actually set
+[15:38] up a a data source, right? So for
+[15:40] unstructured data it's usually going to
+[15:42] be blob storage or data like storage gen
+[15:45] 2. um or for relational data like if you
+[15:48] have like a Cosmos DB or Postgress DB,
+[15:51] you can actually like set up indexers
+[15:53] for um you know your relational
+[15:55] databases as well, right? There's a
+[15:57] bunch of built-in indexers that can
+[15:59] bring in data from different sources. So
+[16:02] there you're going to configure a whole
+[16:03] pipeline. You're going to make a data
+[16:05] source. You're going to make an indexer.
+[16:06] You're going to equip it with certain
+[16:08] skills for you know embedding and
+[16:09] chunking and then it's going to go to
+[16:10] the index. Uh so that's what you'll do
+[16:13] you know in in production and run that
+[16:16] ingestion in that custom ingestion
+[16:18] pipeline in the cloud.
+[16:24] So what does that process look like um
+[16:26] for an ingestion pipeline? Right? So you
+[16:28] set up your data sources and I was
+[16:29] saying there's quite a few data sources
+[16:31] that you can set up. There's even more
+[16:33] than what I was able to fit in the slide
+[16:35] here. Um and these are built-in
+[16:38] indexers. So you can just tell tell
+[16:41] Foundry IQ like hey I've got this data
+[16:43] source you know it's an Azure table and
+[16:47] uh it knows how to connect to that data
+[16:49] source and and run an indexer for it and
+[16:52] it'll add change tracking. So what's
+[16:54] really nice is that with with these data
+[16:56] sources we've got built-in support for
+[16:58] change tracking. So, it'll say like,
+[16:59] "Oh, okay." Like, it'll, you know, run
+[17:01] every five minutes or 10 minutes or
+[17:02] whatever and say, "Oh, I see there's a
+[17:04] new file or a new row or or or
+[17:07] something's been deleted or added,
+[17:08] right?" Um, and then, you know, it'll
+[17:11] it'll run that and see like, oh, there's
+[17:13] a new file. When it sees there's a new
+[17:15] file, then it's going to run its
+[17:16] built-in its skill set, right? And you
+[17:18] can use built-in skills or you can also
+[17:20] run your own skills, which are Azure
+[17:22] functions. Um, but there's a lot of
+[17:23] built-in skills, so you always want to
+[17:25] start with that. Um, so we've got the
+[17:27] built-in skill content understanding,
+[17:28] and that's the one that's going to do
+[17:29] the document extraction that I talked
+[17:31] about, and that one can even understand
+[17:34] images, figures, tables in your
+[17:36] documents. Then we've got the split
+[17:38] skill, and that does the chunking I
+[17:39] talked about. Uh, and then we've got the
+[17:41] embedding skill, which would connect to
+[17:43] like an Azure OpenI embedding model. So
+[17:45] there tons of built-in skills, and you
+[17:47] would, you know, put them together into
+[17:48] a skill set to make this like pipeline
+[17:50] of skills. Uh but you can also build
+[17:53] your own custom skills using Azure
+[17:55] functions
+[17:57] and you can customize the built-in
+[17:59] skills to an extent like for the
+[18:01] embedding skills you can connect that to
+[18:04] any of the Azure OpenAI embedding models
+[18:06] but if you needed to connect that to a
+[18:08] completely different embedding model in
+[18:10] that case you probably want to build
+[18:12] your own skills. So once again if you do
+[18:14] realize that you know you don't have the
+[18:15] flexibility you need in a building skill
+[18:18] instead you'll make an Azure function
+[18:19] and that Azure function will you know
+[18:21] it'll receive um you know receive the
+[18:24] input which would be like a document and
+[18:25] then it'll you know run whatever code
+[18:27] you want it to run and then it'll output
+[18:30] um you know output whatever it's created
+[18:32] like an embedding
+[18:34] and then finally the output from this
+[18:36] whole ingestion pipeline goes into the
+[18:39] search index.
+[18:43] So once we have our knowledge indexed
+[18:46] then how does retrieval actually work?
+[18:49] So with founder IQ we get the best
+[18:52] retrieval strategy which is a hybrid
+[18:55] search stack. Hybrid search means that
+[18:58] we're using both vector and keyword
+[19:00] search combined and that is really
+[19:02] really important in order to get the
+[19:04] best results for all sorts of user
+[19:07] queries. Uh you might hear people talk a
+[19:09] lot about vector search these days and
+[19:11] vector search is amazing but it cannot
+[19:14] answer every single user query. You
+[19:16] really need a combination of vector
+[19:18] search and keyword search together
+[19:21] right. Um so with this index you know
+[19:25] when we have a search index and we
+[19:26] search across it we get in a user
+[19:28] question and then um you know in that we
+[19:32] do both a keyword search and that will
+[19:35] you know do any direct matches of the
+[19:36] keywords uh then we also get vector
+[19:39] results and so that's good if if you
+[19:41] know the w the words might be completely
+[19:43] different but they might be semantically
+[19:44] similar then we use this fusion step
+[19:48] which use an algorithm called reciprocal
+[19:50] rank fusion that just merges the results
+[19:53] together based off the relative rank of
+[19:55] each result uh in like the sub results.
+[19:57] So it'll you know rerank according to
+[19:59] that and then we send to an actual
+[20:01] reranking model. So this is a special
+[20:04] model that has been developed
+[20:06] specifically for the task of reranking.
+[20:09] So it looks at the original user query.
+[20:11] It looks at the results and says hey for
+[20:13] this user query and these results do I
+[20:15] think this is the optimal ordering or do
+[20:17] I want to reorder it? Right? Uh, and
+[20:20] this is not necessarily an LLM. It's
+[20:21] often a cross- encoder model. So, it's
+[20:24] faster than an LLM. Uh, but it's really
+[20:26] helpful to have this step because that
+[20:28] way you can take like, you know, the 50
+[20:30] merge results and then rerank them and
+[20:32] then feel confident that like the top 10
+[20:34] are the most 10 relevant results.
+[20:40] Okay. So, now we've seen how we can set
+[20:42] up a search index and do ingestion and
+[20:46] and get great search on just that search
+[20:48] index. So now let's zoom back out to
+[20:50] knowledge bases which can put together
+[20:52] multiple you know knowledge sources um
+[20:56] and uh you know include multiple things.
+[20:59] So let's talk about how we can configure
+[21:01] a knowledge base right uh there's
+[21:04] actually multiple effort levels for a
+[21:06] knowledge base from minimal to low to
+[21:09] medium. There is no high right now. Um
+[21:12] they're you know still deciding exactly
+[21:14] how this is going to look. I actually
+[21:15] think what they're going to add might be
+[21:17] an auto instead of a high, but we'll
+[21:19] see. Um, so we're going to look at these
+[21:22] options here. So, let's start with
+[21:24] minimal. So, this is a knowledge base
+[21:27] with minimal effort. So, it actually
+[21:30] does not use any LLM at all. Uh, that
+[21:33] means that you need to send it, you
+[21:35] know, however many search intents or
+[21:37] queries you have. Uh so you come up with
+[21:39] you know that list yourself and then it
+[21:42] will send you know it can send all those
+[21:44] in parallel to every single source. So
+[21:47] every source you have configured it will
+[21:50] send them in parallel to every single
+[21:53] source
+[21:55] and then it gets all the results back.
+[21:58] It does have a reranker model for
+[21:59] merging. So we will get reranked results
+[22:02] from all those results. Uh so you know
+[22:04] so that is actually really helpful
+[22:06] still. Um so this minimal mode it is
+[22:09] definitely minimal all right like we
+[22:11] don't have the query planning from
+[22:12] before uh we don't have the source
+[22:14] selection where it decides which ones to
+[22:16] search for u but we still get parallel
+[22:19] search execution and we still get result
+[22:21] merging with a ranking model. Uh so this
+[22:24] minimal effort mode can still be really
+[22:26] helpful for a lot of cases and we're
+[22:28] going to actually use it for our agents
+[22:30] later. So you're going to see that for
+[22:31] agents particular minimal effort can be
+[22:34] a really good fit.
+[22:38] Here's an example of, you know, minimal
+[22:41] effort, right? So, we have an input and
+[22:42] in this case I just have one input, but
+[22:44] I could pass in multiple um intents as
+[22:47] we call them or queries, right? Um and
+[22:50] so it's going to search and in this case
+[22:51] it's going to search across every source
+[22:53] like a search index and a SharePoint
+[22:56] and and then it gets back the merged
+[22:58] results and each of them has a ranker
+[23:00] score and uh and then we can use those
+[23:04] results.
+[23:06] Now let's go to loweffort. Now this
+[23:09] loweffort this looks like what I showed
+[23:10] earlier right so we this time we bring
+[23:13] in an LLM the LLM does the the query
+[23:15] planning stage or retrieval planning so
+[23:17] that's where it you know looks at the
+[23:19] conversation decides on the search
+[23:21] queries and then also does source
+[23:25] selection so it says oh for these
+[23:27] queries I think we only need you know
+[23:30] this search index and fabric IQ and then
+[23:32] we don't need these other two right so
+[23:34] it's going to it can decide whether to
+[23:37] ignore sources So this is particularly
+[23:38] helpful if you do have a lot of sources
+[23:41] that are connected to a particular
+[23:43] knowledge base. Uh it can help to you
+[23:45] know make sure that you're not wasting
+[23:47] queries when it's very clear that um you
+[23:50] know a particular answer won't be found
+[23:52] in queries uh in a particular source. Uh
+[23:56] so then it does it across all those and
+[23:58] then we get the merge results activity
+[24:00] log and if you want you can even have it
+[24:02] answer the question yourself because it
+[24:04] has an LLM. So, of course, an LLM can
+[24:06] also answer the question itself. So,
+[24:08] this can potentially like, you know,
+[24:10] this can do the entire flow. You don't
+[24:12] need much else because you've got an
+[24:13] LLM, right? So, it can do the entire
+[24:16] flow from a a user's question to the
+[24:19] answer.
+[24:22] So, here's an example with low effort,
+[24:24] right? We get um sorry we get the
+[24:27] question here and then it does the query
+[24:29] planning stage and that you know uses a
+[24:31] certain number of tokens and we can you
+[24:33] know see how many tokens it uses and it
+[24:35] comes up in this case it comes up with
+[24:37] multiple queries right so it's searching
+[24:38] for you know bathroom paint and then
+[24:40] paint prices right and in this case it
+[24:43] decided only to search the search index
+[24:44] so it sent those two queries both to the
+[24:47] search index um then it did reranking
+[24:49] and then finally synthesize the answer.
+[24:51] So here we can get the results and we
+[24:53] can also get the answer.
+[24:59] Finally we get to medium effort. Uh so
+[25:02] medium effort is a mode where it will
+[25:05] will actually do a second retrieval. So
+[25:08] what happens here is that it gets to the
+[25:10] you know the output here and it looks at
+[25:12] the results it looks at the question and
+[25:14] it uses it uses a this keeps going
+[25:17] around. Sorry. So we get to these
+[25:20] results and in this mode it will
+[25:23] actually use another model one that they
+[25:26] specifically trained uh in order to look
+[25:29] at the results look at the user's
+[25:31] question and say hey do we have enough
+[25:34] information to answer this question
+[25:36] because sometimes it might say like
+[25:38] listen we got a bunch of results but we
+[25:39] still don't have enough information
+[25:40] because you know maybe we didn't do a
+[25:42] good enough search we like didn't
+[25:43] realize what additional information we
+[25:45] needed or maybe it's kind of like a
+[25:46] multihop question where in order to
+[25:48] really answer it, you need to like, you
+[25:50] know, first get some other information
+[25:52] from there, right? So, uh it's going to
+[25:55] use this this uh this special model in
+[25:58] order to decide, do we need information?
+[26:00] And if that model says yes, we do need
+[26:02] information, it's going to do an
+[26:04] iterative retrieval and say, all right,
+[26:06] we're going at it again. We're going to
+[26:08] do another we're going to do another
+[26:10] step. Um, and you know, this definitely
+[26:13] is going to take more time because it's
+[26:14] going to go through the entire process
+[26:15] again, but sometimes it is needed for
+[26:18] those complex multihop questions.
+[26:23] So, here's an example of, you know,
+[26:25] medium effort. So, in this one, the
+[26:26] activity log is much longer because it
+[26:28] actually goes through multiple steps,
+[26:30] right? So, um, you know, uh, say this is
+[26:33] a more complex question. Um, so it does
+[26:36] a first round with two queries to two
+[26:38] different sources. So, that's four
+[26:39] retrievals. Then it says, "Uh oh, we
+[26:41] don't have enough information." It
+[26:43] realized it needs to search for more
+[26:44] information. And so it does another
+[26:47] round with a query to both of the
+[26:50] indexes and then gets back the results
+[26:53] and comes up with an answer. Right? So
+[26:55] it's going to take a lot longer, but um
+[26:58] you know potentially give you a more
+[27:00] complete answer.
+[27:04] Okay? So that those were the effort
+[27:06] levels. And it's good to know about all
+[27:08] the effort levels because there's some
+[27:09] situations where, you know, it's
+[27:11] appropriate to use the minimal, some
+[27:14] low, some medium, and you just want to
+[27:16] be able to decide for yourself what's
+[27:17] going to be best. Uh, as I mentioned,
+[27:19] they they are looking into doing
+[27:21] something like an auto mode. Um, if
+[27:23] you've used like GitHub Copilot has an
+[27:25] auto mode for like the model picker,
+[27:26] right? It kind kind of same idea because
+[27:29] sometimes maybe you don't know, you
+[27:31] know, what effort level is best. So if
+[27:32] there's an auto mode, maybe it will
+[27:34] decide for you, right?
+[27:37] So, how do we actually do this in
+[27:40] Python? Let's just go over to the
+[27:42] notebooks. Now, we haven't we haven't
+[27:44] shown any of the code yet. [laughter]
+[27:46] So, [clears throat] now I think we've
+[27:47] got a good basis and um and we can start
+[27:51] looking at some code here. Um so, I'm in
+[27:54] notebooks, the notebooks folder. There
+[27:57] is founder IQ-basic.
+[27:59] Uh that's the notebook that I'm looking
+[28:01] at here. And uh you can explore this in
+[28:04] the repo. In the repo, we have checked
+[28:06] in all the notebook output. So you can
+[28:08] see everything that I'm about to run.
+[28:12] Uh so first I'm just going to load up my
+[28:16] environment. I've got everything
+[28:18] provisioned. And so first I'm going to
+[28:20] show that file knowledge source.
+[28:22] Remember I said that the file knowledge
+[28:23] source can be the easiest way of getting
+[28:25] started. Let me make that even bigger.
+[28:27] Um and this one we can directly upload
+[28:30] to. So I actually have you know a local
+[28:32] file here. In this case it's a markdown
+[28:35] file. So it is actually doing that
+[28:38] upload right now in you know just in in
+[28:43] this notebook. um it is uploading that
+[28:45] to the file knowledge source and you can
+[28:48] we can see this does take uh I think
+[28:50] around 35
+[28:52] seconds uh because it's doing that
+[28:54] entire pipeline right so it is uh you
+[28:57] know doing the extraction of the text
+[29:00] it's doing the chunking it's doing the
+[29:01] embedding and there we can see it
+[29:03] finished after 25 seconds okay so now
+[29:06] this file is in that knowledge source uh
+[29:09] so so that's all set up so for you know
+[29:12] this is the minimal setup
+[29:14] you can do if you just want to start
+[29:16] quickly using um a knowledge base and
+[29:19] don't want to have to set up anything
+[29:21] separate.
+[29:22] So then we're going to create a
+[29:24] knowledge base. So for this one we set
+[29:26] up um you know we're going to set up a
+[29:30] um you know we're going to set up an an
+[29:31] LLM. So say you know here is our um you
+[29:36] know here's our LLM deployment. Uh this
+[29:38] is only compatible with the Azure OpenAI
+[29:41] models right now. like uh I'm using GPD
+[29:44] 54. Um you can use most of the GPD 4
+[29:47] like from 40, 41, 54,
+[29:51] maybe 55, not 56 yet. Tried it
+[29:54] yesterday. So we'll work on that. Um but
+[29:58] generally I tend to use 54. So we set up
+[30:00] the LLM. Then um you know, then we're
+[30:04] setting up the knowledge base, right? So
+[30:05] we say here's our knowledge base. We
+[30:07] give it a name. We give it a model. Uh,
+[30:10] and then we give it knowledge sources.
+[30:12] So, in this case, we're only giving it a
+[30:13] single knowledge source. And that's that
+[30:15] file knowledge source that we just set
+[30:17] up. And we're telling it to use answer
+[30:20] synthesis mode. So, it will actually
+[30:22] come up with an answer. So, it's going
+[30:23] to use that LLM to come up with an
+[30:25] answer.
+[30:28] And there we go. Let's run that. Okay.
+[30:30] There we That's done. So, now that the
+[30:33] knowledge base is set up, now we can
+[30:34] actually query it, right? Um, so we're
+[30:36] going to create a retrieval client for
+[30:38] that knowledge base.
+[30:40] And we can customize you know the way in
+[30:44] which we use each knowledge source. So
+[30:45] here we're saying okay I want you to
+[30:47] include the references so that we can
+[30:49] see the citations and here's a question
+[30:52] I'm passing into it and I construct my
+[30:56] conversation. So you know I'm saying oh
+[30:58] the user is asking this. So this looks
+[30:59] like a conversation somebody is you know
+[31:01] having with a chatbot or an agent.
+[31:04] and um and then I tell it to retrieve
+[31:07] it.
+[31:09] So here it is going and um it's doing
+[31:13] that full knowledgebased process and now
+[31:17] it's done already. So that was after 5
+[31:19] seconds. That was pretty good. Uh so now
+[31:21] we can get the answer. And what you'll
+[31:23] notice is in the answer we have
+[31:24] citations and that's really really
+[31:27] important. Right? Whenever you're
+[31:28] getting answers that are grounded in
+[31:31] results you really want to have
+[31:33] citations. Uh so when he uses answer
+[31:35] synthesis mode it will ensure there's
+[31:36] citations there. If you're writing your
+[31:38] own application then you just want to
+[31:40] make sure in your prompt you're telling
+[31:41] it like hey here's you know here's your
+[31:43] references you know make sure you do
+[31:44] citations. Um so these citations are are
+[31:48] will tie to the references that we can
+[31:50] pull out later. So you can actually make
+[31:52] a a linkable interface to those
+[31:54] citations.
+[31:56] So then we have the activity log. Uh so
+[32:00] this is really helpful for understanding
+[32:02] what happened for debugging that entire
+[32:04] knowledgebased process right so when we
+[32:07] look at this we can actually see okay
+[32:08] like you know it did do query planning
+[32:11] and then it sent you know we can see
+[32:13] what queries it sent so it sent this
+[32:15] query to the file knowledge source it
+[32:17] sent this query to the file knowledge
+[32:19] source it sent this query to the file
+[32:22] knowledge source so it actually in that
+[32:23] query planning stage this one came up
+[32:25] with three different queries and decided
+[32:28] to send all of them into the file
+[32:30] knowledge source and then it did the
+[32:32] answer synthesis step and and these are
+[32:34] the reranking tokens here. So that's the
+[32:37] activity log here and this is super
+[32:40] helpful to understand why an answer is
+[32:43] working as well it does. Um I saw
+[32:45] there's questions about doing
+[32:46] evaluations. We're not we don't have
+[32:48] time to talk about evaluations in this
+[32:50] series. I do discuss that you know in a
+[32:52] lot of my other um videos. It's you know
+[32:55] it's really important to set up
+[32:56] evaluations and generally when you are
+[32:58] doing evaluations I would give your
+[33:00] evals access to the activity log because
+[33:03] I think it can be really helpful for
+[33:05] understanding why something went wrong
+[33:08] um or at least when you look back at
+[33:09] your evals and see something's a failure
+[33:11] you really want to look at this activity
+[33:12] log and see why like was the problem in
+[33:14] the query planning stage was it with the
+[33:17] ingestion like so many things can go can
+[33:20] go ary right you could realize like oh
+[33:22] my ingestion's not doing a good job or
+[33:24] you know the query planning is not doing
+[33:25] a job. Let let me try a different model,
+[33:27] right? Um so you really want to look at
+[33:29] that activity log to get you give you a
+[33:32] insight for what's happening behind the
+[33:34] scenes, right? Because you really can't
+[33:36] look at just the output and know, you
+[33:39] know, why it's good or bad. You really
+[33:40] need to look at the whole process. And
+[33:42] then we can also look at the references.
+[33:44] These are the same references that are
+[33:47] um you know, referred to in the answers,
+[33:50] right? And so we can see like okay
+[33:52] reference zero is this one and that's
+[33:54] where it got most of its answers from.
+[33:56] And we can see you know the the that
+[33:59] this is the file path that it came from.
+[34:02] Uh so we could you know tell people like
+[34:04] oh but you know this answer came from
+[34:06] you know this file. And if you're
+[34:07] developing an application you know you
+[34:09] can pop open that file and make it so
+[34:10] they can browse the entire file.
+[34:16] Okay. So there we go. So that is doing a
+[34:19] file knowledge source. Now let's look
+[34:22] briefly at an index knowledge sources
+[34:24] because this is what you're going to
+[34:25] well both of them are index but
+[34:27] [laughter]
+[34:28] um you know this we call this one an
+[34:30] index knowledge source. Um ultimately
+[34:32] everything's stored in you know they're
+[34:34] both stored in index but um these are
+[34:36] ones where we're actually setting up a
+[34:38] you know we would set up a proper
+[34:39] indexer pipeline. This is what we would
+[34:40] use in production. So we've already set
+[34:43] up the indexes here because that takes
+[34:44] some time. So that we've got two
+[34:46] indexes, one with 50 chunks and the
+[34:48] other one with 334 chunks. You can see
+[34:50] it says documents, but you can really
+[34:52] think of those as document chunks.
+[34:54] Uh, and then based off those search
+[34:56] indexes, we create a search index
+[34:59] knowledge source. Right? So this is just
+[35:02] us describing and saying like, hey, we
+[35:03] have these search indexes. We want you
+[35:05] to create a knowledge source based off
+[35:07] these search indexes and you know,
+[35:09] here's what you're going to be
+[35:10] searching. You know, the fields you'll
+[35:12] be searching in those search indexes.
+[35:15] then we can create another knowledge
+[35:17] base. So this knowledge base is going to
+[35:19] have the same LLM hooked up but in this
+[35:21] case we are giving it um you know those
+[35:25] two knowledge sources. So we're actually
+[35:28] making a multissource knowledge base and
+[35:31] um that way you know it it's going to
+[35:34] have to decide whether it's going to
+[35:36] send the query to all of the knowledge
+[35:38] sources or just one of them.
+[35:42] Uh so then we can go and ask it a
+[35:44] question. Um and we're giving it a bit
+[35:47] of a complex question here. So it's
+[35:50] probably going to query both of them. Uh
+[35:53] so here we got back the answer quite
+[35:55] quickly. And so we can now look at the
+[35:58] activity log and say okay all right what
+[36:00] did it do this time? Um you know it it
+[36:02] sent uh it sent this this search query
+[36:07] here to this knowledge source. Um it
+[36:11] sent this one to the same knowledge
+[36:12] source. Uh actually it looks like oh
+[36:15] there and it did actually send queries
+[36:17] to health docs as well. Okay so it
+[36:19] decided to query both the knowledge
+[36:20] sources. So it sent three queries to
+[36:23] each of them. But you see it was like
+[36:24] very fast right? So it's actually doing
+[36:26] it's doing a lot of searches but since
+[36:28] it is doing them in parallel it is able
+[36:30] to do it very quickly.
+[36:33] And then we can review the references.
+[36:36] So there so there we go. Um so those
+[36:39] shows you you know doing setting up a
+[36:42] knowledge base you know your simplest
+[36:44] way with a file knowledge source and
+[36:46] then more complex um you know with
+[36:48] actually properly setting up a data
+[36:50] source and an indexer pipeline and all
+[36:52] that stuff.
+[36:55] Um so there we go. Okay. All right. So
+[36:58] that was you know that was a basic
+[37:00] multis source knowledge base. We're
+[37:02] going to keep making knowledge bases you
+[37:04] know in the course of this series. So
+[37:05] we'll, you know, we'll be hooking up
+[37:07] work IQ and fabric IQ. So we're going to
+[37:09] keep seeing knowledge bases. Um the
+[37:11] first thing we're going to hook up today
+[37:13] is web IQ, right? So now we're moving
+[37:16] from index sources to remote sources. So
+[37:19] these are cases where like the data is
+[37:21] not indexed in Foundry IQ itself. The
+[37:23] data is somewhere else, but Foundry IQ
+[37:26] can still reach out to remote sources
+[37:29] and get that data and merge it in with
+[37:31] your index data. And that's what's
+[37:33] helpful about Poundary IQ is the ability
+[37:34] to combine your index data with remote
+[37:38] data because realistically some data is
+[37:41] indexed, some data is remote. We want to
+[37:43] be able to bring them together.
+[37:46] So let's talk about web Microsoft web
+[37:48] IQ. This was just announced at Build.
+[37:50] Super new. It is a web search service
+[37:52] designed specifically for agents. It is
+[37:55] very very fast, super duper fast. I'm
+[37:57] very impressed with its speed. Um and
+[37:58] they because they really did a lot of
+[38:01] work on the speed and on making an
+[38:04] architecture that would be able to be
+[38:05] really fast. Uh and when you have web
+[38:08] IQ, you do get access to the full a full
+[38:11] like content um in an agent friendly
+[38:14] format. So it's usually uh you can get
+[38:16] markdown, summaries, HTML, like you can
+[38:18] actually get access to all of that. So
+[38:19] it's it's a very good service. It's so
+[38:22] good that it's only in private preview
+[38:24] right now. That's the the big uh you
+[38:26] know drawback is that right now you do
+[38:28] have to apply for it access to it and
+[38:31] it's uh only being tested with a few
+[38:33] Azure customers right now. So obviously
+[38:35] we're all very hopeful that it's going
+[38:37] to get rolled out you know to more
+[38:39] broadly so that more people can play
+[38:40] with it because it is a very good
+[38:42] service. Um but you know it's they're
+[38:45] also designing it to in a responsible
+[38:47] way right they're working with web
+[38:48] publishers um to make sure that this is
+[38:51] working for web publishers as well like
+[38:53] so that it's not um you know you know
+[38:56] stealing uh you know you know like ad
+[38:58] revenue from people who are running
+[39:00] websites right um so there you know they
+[39:02] really worked a lot on both speed and
+[39:05] like performance but also like how can
+[39:07] this be something that works for both
+[39:08] agents and works for people making
+[39:10] websites.
+[39:12] So, we're going to be using WebQ as its
+[39:15] MCP server. It has it has an MCP server
+[39:18] that you, you know, once you have access
+[39:20] and once you have a key, you can call
+[39:22] that MCP server and then get back
+[39:25] results. So, you'll get back title, URL,
+[39:27] content, a crawl date, and a language,
+[39:29] right? Um, and you know, you can see
+[39:32] there's actually multiple tools that
+[39:34] that they have. So, they do have like
+[39:36] different tools for like video versus
+[39:38] news. We're going to be using the web
+[39:39] tool so that we can bring in web
+[39:42] results.
+[39:45] So, let's see how we can do that. We're
+[39:47] going to go to the web IQ notebook here.
+[39:50] Um, I have a web IQ key thanks to having
+[39:54] some friends on [laughter] the web IQ
+[39:57] team. Um, and yeah, so once we have
+[40:01] that, then we're going to set up uh
+[40:03] we're going to set up the the same
+[40:05] search index knowledge sources from
+[40:07] before just to have those, but then
+[40:09] we're also going to set up this MCB
+[40:11] server knowledge source. So with Foundry
+[40:13] IQ, you can bring in any MCB server. Um,
+[40:16] and in this case, we're bringing in web
+[40:19] web IQ. So we're saying, okay, this is,
+[40:21] you know, the this is what we're
+[40:23] bringing in. This is the URL of the
+[40:25] server. This is how the authentication
+[40:26] works. We're going to send along this
+[40:28] header and this header is going to
+[40:29] contain the key, right? [snorts] So you
+[40:31] can bring in any server as long as
+[40:33] you're able to connect to it um you know
+[40:37] with the right authentication. So in
+[40:39] this case we can send in the key and say
+[40:41] hey we're going to use the tool named
+[40:43] the web tool.
+[40:46] So now our knowledge base can decide
+[40:48] that when it's going to use this web
+[40:50] tool.
+[40:52] So then we go and we create Oh did I?
+[40:56] Yeah, I ran that. Then we're going to go
+[40:57] and create the knowledge base. Um, so
+[41:00] we're going to connect it up to both the
+[41:02] index knowledge sources and the MCP
+[41:04] knowledge source. And you'll see I added
+[41:06] some instructions. I said, oh, use the
+[41:08] HR for company policy questions and use
+[41:10] web IQ tool for context from public web
+[41:13] pages. So when you start to add more
+[41:15] knowledge sources to your knowledge
+[41:16] base, you are going to want to, you
+[41:19] know, give it more instructions. Uh,
+[41:22] this is called the retrieval
+[41:23] instructions. you want to give it more
+[41:24] instructions about when it should use
+[41:27] what, right? So, um you know, it's just
+[41:30] going to help it make a better job
+[41:32] deciding.
+[41:35] And then we're going to query. So, in
+[41:37] this case, um we're asking it to check
+[41:41] for mental health coverage. That's from
+[41:43] the internal docs.
+[41:46] And then it's also going to search the
+[41:48] web for industry benchmarks at for me
+[41:52] mental health at at other tech
+[41:53] companies, right? And so you see it
+[41:55] finished and it finished in just 16
+[41:56] seconds. Um, and that did all of those
+[42:00] searches, right? So we got all this
+[42:02] information from the internal docs. Then
+[42:04] we got all this information from the web
+[42:08] and then you know does this summary
+[42:09] here. So really really comprehensive. So
+[42:12] it it's very helpful for these sorts of
+[42:14] questions that you know where you want
+[42:16] to have some information you know from
+[42:19] from the broader web.
+[42:22] So then when we look at the activities
+[42:23] we can see oh okay like let's see uh
+[42:25] here it is. So MVP server um and we can
+[42:29] see that it sent this query to it like
+[42:31] current industry benchmarks D. Um so
+[42:35] that's the query it came up with to send
+[42:37] to that MCP server.
+[42:40] And then when we look at the references,
+[42:42] that's where we're going to see the
+[42:43] results. So you see for the MCB server
+[42:45] the um the references is actually it's
+[42:49] actually JSON here that has you can see
+[42:51] title, URL, and then there's a bunch of
+[42:55] content in here. It keeps going for a
+[42:57] long long long time um because it's got
+[43:01] it's got all this all this content here.
+[43:06] So there we go. So now that shows you
+[43:08] know connecting to this web IQ server.
+[43:11] So that is a remote server. When it is a
+[43:13] remote service that data is not getting
+[43:17] stored in an index at all. It's just
+[43:19] being incorporated into your results. Um
+[43:21] so it does go through the re ranking
+[43:23] model um at the end in order to merge it
+[43:26] but it never gets stored in like an
+[43:28] actual index right? It stays remote and
+[43:31] fresh.
+[43:35] Okay. So now we've seen uh you know
+[43:39] Foundry IQ multissource knowledge bases
+[43:41] we've hooked them both to index
+[43:42] knowledge sources and a remote knowledge
+[43:44] source. How do we use Foundry IQ inside
+[43:48] agents? First of all, what is an agent?
+[43:51] Uh you know I've talked about them a lot
+[43:53] today, but I always like to make sure we
+[43:55] have a definition of what an agent is.
+[43:57] An AI agent uses an LLM to to run tools
+[44:02] in a loop to achieve a goal. Right? The
+[44:04] goal is often answering a user's
+[44:06] question, but it's just any sort of
+[44:07] goal, right? So, the LLM has, you know,
+[44:10] the agent has an LLM that knows about uh
+[44:13] all these tools it has access to. It can
+[44:15] look at the input and say, "Okay, you
+[44:16] know, based off of this question, what
+[44:18] are the tools I need to call?" And it'll
+[44:20] keep calling tools until it feels like
+[44:22] it has enough information in order to
+[44:24] answer the original question. Right? So,
+[44:27] that is an agent. And it's a very simple
+[44:29] concept, but it turns out it's so
+[44:33] powerful once you hook it up to the
+[44:36] right tools that can, you know, achieve
+[44:38] goals, right? So you can you you can
+[44:41] make these really really incredible
+[44:43] agents just by giving them access to the
+[44:45] right tools.
+[44:48] So when I think about using Foundry IQ
+[44:51] as a tool for AI agents, there are three
+[44:54] main options that I would recommend and
+[44:56] these all can work um for different
+[44:58] scenarios. So the first option is to
+[45:01] write a custom tool ourselves that calls
+[45:04] the knowledge base using those API
+[45:06] commands that you know we just ran in
+[45:08] the notebook, right? And that will give
+[45:09] us full control over everything because
+[45:12] we're writing the code ourselves. Option
+[45:14] two is that we can point at the
+[45:16] knowledge base's MCP endpoint because
+[45:18] every knowledge base exposes an MCP
+[45:21] endpoint and that's for greater
+[45:23] portability. Um, and you know that's
+[45:25] just easy because all you know agents
+[45:27] know how to work with MCP servers and so
+[45:30] that might just be the easiest thing to
+[45:31] do. And then option three is we're going
+[45:34] to try out using Foundry toolbox and
+[45:36] that can be helpful when we want to
+[45:37] bring in other tools as well. So we're
+[45:39] going to show all three options here.
+[45:42] Now first of all when we're doing you
+[45:44] know when we're using knowledge bases
+[45:45] with agents which of those retrieval
+[45:47] efforts do we want to use in for these
+[45:50] examples I decided to use minimal right
+[45:53] the reason I'm using minimal is because
+[45:55] I have an agent and the agent can handle
+[45:58] the query writing and the iteration uh
+[46:00] the one thing the agent can't do is the
+[46:02] source selection because that's not a
+[46:05] something that can be controlled um from
+[46:09] outside the knowledge base. um but
+[46:11] [clears throat]
+[46:12] uh you know that I'm I'm okay with that,
+[46:16] right? So I'm going to use the minimal
+[46:18] knowledge base because I you know I'm
+[46:20] writing my own agent and that agent can
+[46:23] do the query writing and the iteration.
+[46:25] Um but you might decide that for your
+[46:27] use case that you may want low or medium
+[46:30] um you know if if maybe you really like
+[46:32] the query rewriting and iteration that
+[46:35] the knowledge base itself is doing right
+[46:37] but since we are because here's the
+[46:39] thing about amount of knowledge base the
+[46:40] knowledge base is itself agentic right
+[46:42] it has these agentic abilities so we
+[46:44] have to decide like how much of the
+[46:46] knowledge base's own agentic abilities
+[46:48] do we want to use versus relying on our
+[46:50] agents abilities so in this case I'm
+[46:52] going to use minimal and really rely on
+[46:55] my agents abilities.
+[46:58] Um so let's look at this first example
+[47:00] here. Right? So this is um you know
+[47:03] underneath here uh we've got a bunch of
+[47:08] agents under the source folder. Um so
+[47:12] the first one agent foundry IQ API right
+[47:16] so this is an agent that's using
+[47:18] Microsoft agent framework
+[47:20] in order to build the agent. So you can
+[47:22] see the agent code here and I gave that
+[47:26] agent access to three tools. So uh two
+[47:29] of them are just uh just date tools like
+[47:32] get enrollment deadline, get current
+[47:34] date and then this one retrieve company
+[47:37] knowledge. That's the one that sets up a
+[47:41] retrieval request. So it says hey I need
+[47:43] a list of queries and then it sends
+[47:47] those queries to the knowledge base and
+[47:50] this knowledge base is using minimal. So
+[47:52] it's sending it to a minimal knowledge
+[47:54] base and then it's sending back the
+[47:56] response the references and the
+[47:58] activity. So it's sending back all that
+[48:00] information because it could be helpful
+[48:01] for the agent to reason about you know
+[48:03] whether it needs to do another call
+[48:06] right. Um so this is this is our custom
+[48:09] tool and sing this is a custom tool. So
+[48:11] we could, you know, we could write this
+[48:13] any way we wanted. Um, but this, you
+[48:16] know, is what what I came up with here.
+[48:20] Okay. So then we can, uh, let's actually
+[48:23] run that. Oh, let me go ahead and run
+[48:25] that tool.
+[48:28] Here we go. So I'm running it using the
+[48:30] AZD AI agent extension, which uh, works
+[48:34] really well with Foundry Foundry agents
+[48:36] if you're which we're going to turn this
+[48:38] into a Foundry agent as well. So, this
+[48:41] is running locally
+[48:44] and then it's going to I can pop it up
+[48:49] over here. Okay. So, it pops open this
+[48:51] playground.
+[48:52] Just make sure it's working. Hi. All
+[48:55] right. Working here.
+[49:01] And so, we can actually check the logs
+[49:02] and see everything that's happening
+[49:04] here. You can see all the requests going
+[49:06] up over the network. and we'll just say
+[49:08] like okay we'll just send a question
+[49:10] here
+[49:13] uh what benefits are available when do I
+[49:15] need to enroll
+[49:17] and so that is sending to the agent and
+[49:20] the agent's going to decide okay which
+[49:22] of these tools am I going to call in
+[49:24] order to answer this question right and
+[49:26] so remember it's got uh you know it's
+[49:29] got three different tools it can call
+[49:30] one of those is a tool that calls the
+[49:32] knowledge base and if we go here we can
+[49:35] see uh you know lots of um you know
+[49:39] things that are going over the wire here
+[49:42] and let me open up this again uh so we
+[49:45] can see the code.
+[49:48] All right, still and still working on it
+[49:53] of course with live demos. All right,
+[49:56] still sending here.
+[50:02] There we go. Okay,
+[50:04] it said it all exited. Let's see if my
+[50:07] if my um
+[50:11] Oh, there we go. Actually, I see a bunch
+[50:12] here. Okay. All right. There we go. So,
+[50:15] now it's all done. Okay. So, everything
+[50:16] came back now. So, here we can see these
+[50:18] are the queries that got sent. Um and
+[50:22] this is my So, this thing my agent did
+[50:24] the query writing here, right? Because I
+[50:26] just told the agent, hey, here's the
+[50:27] tool. It takes a list of queries. And so
+[50:30] my agent decided, all right, I'm gonna,
+[50:32] you know, take this question and turn it
+[50:35] into these queries, right?
+[50:39] And in this case, it just came up with a
+[50:41] single query. It looks like um models
+[50:43] are very will vary widely based off how
+[50:46] like depending on what model you're
+[50:48] using, you're going to see very
+[50:49] different query writing. That's one of
+[50:50] the biggest factors actually when you're
+[50:52] doing something like this. So you
+[50:53] definitely want to pay attention to
+[50:55] query writing. you may want to like give
+[50:56] it more instruction like oh you know
+[50:58] come up with this number of queries
+[50:59] split them this way whatever um but
+[51:01] that's definitely can affect your you
+[51:03] know your your uh output your retrieval
+[51:05] quality and then we get back the
+[51:07] response this is the response you know
+[51:09] from the API and it has we put
+[51:11] everything in it so we've got the
+[51:12] references we've got the activity log
+[51:14] we've got it all and then we get back
+[51:16] the answers and then it combined it with
+[51:19] results from the other local tools here
+[51:22] so here we go and that's working really
+[51:24] well uh So that is a definite option.
+[51:31] The next option is to use the MCP server
+[51:34] as the tool. Right? So as I saying every
+[51:36] knowledge base exposes an MCP endpoint
+[51:40] and that MCP endpoint is you know going
+[51:42] to execute the knowledge base behind the
+[51:44] scenes and do all the steps based off
+[51:47] whatever uh effort level you configure
+[51:49] the knowledge base with. So that's going
+[51:51] to look a little bit different. So
+[51:53] that's in our MCP folder. Okay.
+[51:58] All right. So what we do here is we say
+[52:01] hey this is our knowledge base and this
+[52:02] is its MCP endpoint. Right. So you can
+[52:05] construct this just knowing your search
+[52:06] endpoint and your knowledge base name.
+[52:09] And then we make sure it has its
+[52:12] credential. So it is able to you know
+[52:14] send the right token to it because we're
+[52:16] using um you know we're using
+[52:18] entrabbased credential oath credentials
+[52:20] here. Uh we set up the tool. we say
+[52:22] you're going to be able to this is the
+[52:24] in tool name that every MCB uh
+[52:27] knowledgebased MCP server exposes
+[52:30] and uh yeah and so this way you know in
+[52:33] instead of that local function it's has
+[52:36] that MCP tool instead
+[52:40] and it's basically it's just going to
+[52:42] work the same way. Um so I'm not going
+[52:45] to keep showing each of them just
+[52:46] because of the amount of time we have
+[52:48] left um because it's going to look
+[52:50] really similar, right? it's going to
+[52:52] send it off and it'll, you know, make a
+[52:55] query here. I've got a screenshot,
+[52:56] right? So, you know, in in that in this
+[52:58] case, it calls the knowledgebased
+[53:00] retrieve tool because that's what it's
+[53:02] called on the MCP server and um you
+[53:05] know, passes in a list of queries
+[53:07] because it accepts expects the same
+[53:09] thing and then we get back the results.
+[53:12] Now, let's talk about Foundry toolbox.
+[53:15] Foundry Toolbox is part of, you know,
+[53:18] the Foundry platform and the idea here
+[53:21] is to make it super easy for you to
+[53:23] compose a bunch of tools together and
+[53:25] expose them to your agents and it
+[53:27] particularly makes authentication
+[53:29] easier. Um, so it's it can be really
+[53:32] really helpful when you're um dealing
+[53:35] with tools and it also just gives you
+[53:36] access to built-in tools like webs there
+[53:38] is actually a web search tool in toolbox
+[53:41] that's different from web IQ. So you're
+[53:44] not going to get the same results there,
+[53:46] but there is a web search tool there.
+[53:47] There's also a code interpreter tool
+[53:49] that's that one I really like that does
+[53:50] sandbox Python execution. Um, but it's
+[53:53] also going to give you access to work
+[53:54] IQ, fabric IQ, any MCP server, right? So
+[53:58] the cool thing about Foundry Toolbox is
+[53:59] that you can put together all these
+[54:00] tools and then Foundry Toolbox itself is
+[54:03] actually an MCP server, right? So it's
+[54:05] like an MCP server that can combine all
+[54:07] these other MCP servers or or other
+[54:09] built-in tools. Um, so we can use we can
+[54:13] construct a foundry toolbox from code.
+[54:15] Um, so it's one way you can make a
+[54:16] toolbox. You can also just make it in
+[54:18] the Foundry UI. Uh, and so here I'm
+[54:20] making a toolbox that has the web search
+[54:22] tool, the code interpreter tool, and the
+[54:25] MCP um, uh, you know, an MCP tool for
+[54:29] that knowledge base. Right? So we're
+[54:31] once again using the Foundry IQ MCP
+[54:34] server in order to add it to the Foundry
+[54:36] toolbox tools. So we create that toolbox
+[54:40] and then we can use that inside an
+[54:41] agent. Now with agent framework, it's
+[54:43] actually super easy to use it because
+[54:45] they even just decided to make a class
+[54:47] for it. So there's this foundry toolbox
+[54:49] class. So all you have to do is say
+[54:51] like, okay, I'm making a toolbox. I'm
+[54:53] using, you know, here's my credential.
+[54:55] Here's my URL. And so you can see that
+[54:57] the toolbox itself is an MCB server. So
+[54:59] we actually point it at the MCP endpoint
+[55:02] for the toolbox.
+[55:04] And um and yeah and then when we make
+[55:07] the agent for the tools this time the
+[55:10] third tool is the toolbox right and that
+[55:13] toolbox has both the foundry IQ MCP and
+[55:16] the other two tools as well right and we
+[55:18] can keep adding other stuff tool that
+[55:20] toolbox.
+[55:24] So then when we run that we're going to
+[55:26] see really similar results there. you
+[55:29] will see that there's like um the tool
+[55:32] has a prefix at the beginning just to
+[55:34] show where you know that you know what
+[55:36] sub tool it came from since now we're
+[55:38] using like a toolbox of tools right so
+[55:39] it's um but besides that like everything
+[55:42] pretty much looks the same. Uh so this
+[55:44] can be you know a really um helpful
+[55:46] thing to use and the nice thing about
+[55:47] toolboxes is that they're more reusable
+[55:49] too. So if there's a certain set of
+[55:51] tools that you're using across multiple
+[55:52] agents, you can make that toolbox once
+[55:54] and then you can use that toolbox from
+[55:56] other agents, right?
+[55:59] Okay, we got five minutes left. So let's
+[56:02] talk about deploying agents. How are we
+[56:05] going to actually deploy those agents
+[56:06] that I just showed? Because it's great
+[56:07] that all this works locally, but
+[56:09] obviously we want to use this in
+[56:11] deployment. Uh so we're going to show
+[56:14] how to use Foundry agent service. Uh,
+[56:17] and the goal here is to make it super
+[56:19] easy to host our agents. Uh, the agent
+[56:21] service has two kinds of agents, prompt
+[56:23] agents and hosted agents. Uh, we're
+[56:26] going to look at hosted agents where we
+[56:28] get to bring bring our own code to it.
+[56:31] Um, and really be able to customize it
+[56:33] more. So, with Foundry hosted agents,
+[56:37] uh, in theory, we can serve any agent as
+[56:39] long as it supports the responses API.
+[56:41] So, we use this responses API. This is
+[56:43] from OpenAI. uh we use that responses
+[56:46] API as like our compatibility layer. Um
+[56:49] and then we you know so we have our code
+[56:51] our code exposes a responses API
+[56:54] endpoint and then that gets run in this
+[56:57] container app sandbox which is this
+[56:59] super fast microVM isolated environment
+[57:02] and then you know the agent service
+[57:04] takes care of identity and scaling
+[57:06] observability all of that stuff
+[57:08] evaluation people ask about evaluation
+[57:10] it takes care of all that stuff so as as
+[57:12] long as we use foundry hosted agents
+[57:14] observability scaling uh evaluation all
+[57:17] of that becomes really really easy. Uh
+[57:19] so that's what I would recommend if you
+[57:21] do want all of those just out of the
+[57:23] box.
+[57:25] So this is what it looks like when
+[57:26] you're using agent framework. Agent
+[57:27] framework does have a built-in adapter.
+[57:30] So you can use the agent framework
+[57:31] hosting package and import the responses
+[57:34] host server and then you just take your
+[57:36] agent class, you wrap it in the
+[57:39] responses host server, and this exposes
+[57:41] your agent using this responses API
+[57:43] compatibility layer and then runs it.
+[57:45] Right? So I've actually got those.
+[57:47] You'll see that at the bottom of all of
+[57:49] mine is that it they get wrapped in this
+[57:51] responses host server and that's how I'm
+[57:54] able to run them as foundry agents
+[57:58] and so then it gets deployed on Foundry.
+[58:00] So then I can go, you know, here. So
+[58:02] I've got it and be like, okay, you know,
+[58:04] the last question cover scuba diving,
+[58:08] right? So now I can interact with it
+[58:10] from, you know, this is the foundry
+[58:12] playground and we can actually see these
+[58:14] are all logs from the um, you know, from
+[58:16] the container environment
+[58:19] and uh, we can watch the logs. We can
+[58:21] see traces, right? Traces are really
+[58:23] helpful. Um, the first trace isn't going
+[58:25] to be very exciting. Um, but this is all
+[58:27] using like open telemetry. So we can see
+[58:30] everything that's going on here. We got
+[58:32] back an answer and um you know the
+[58:35] answer has all the information. We can
+[58:37] check the traces here. We can see in the
+[58:40] traces that it did use the foundry
+[58:42] toolbox in order to execute the
+[58:44] knowledgebased tool inside the toolbox.
+[58:47] So really good observability. Um and
+[58:50] then you can you know add on add on
+[58:52] evals very easily as well. There's also
+[58:55] oneclick publishing. So, I have one
+[58:57] minute left. Um, so, uh, you can do this
+[59:01] one-click publish to Teams and, uh, you
+[59:04] know, I tested it out and it does work.
+[59:06] Um, so here's the setup, right? You
+[59:08] click this publish that will create an
+[59:10] Azure bot service behind the scenes and
+[59:13] then you can add it to your teams and in
+[59:16] Teams, you know, you'll you'll say hello
+[59:18] to it and that you'll sign in and um,
+[59:21] and then you can start chatting with it.
+[59:22] So, you know, the goal is to try and
+[59:24] make it really easy to do what you want
+[59:26] to do and you know, everyone wants to
+[59:28] publish to teams. Um, so, uh, you should
+[59:31] be able to follow this process and use
+[59:34] it in teams, too.
+[59:36] Okay. All right. So, we covered a lot
+[59:39] today and I know there were lots of
+[59:42] great questions in the chat. I was
+[59:44] trying to keep one little eye on them.
+[59:46] Um, luckily we do have office hours
+[59:49] right now. So, as soon as I say goodbye
+[59:52] here, I'm going to pop over to Discord
+[59:55] and um start up the office hours there.
+[59:57] We're going to be in the community calls
+[01:00:00] 2 channel. So, there are two channels
+[01:00:02] for for office hours there. So, you're
+[01:00:04] going to join make sure you find me in
+[01:00:06] the community calls to channel and there
+[01:00:09] I can ask your questions. Um if you're
+[01:00:10] unable to use Discord there, I know
+[01:00:12] there were some mentions that um some
+[01:00:14] people can't use discord due to company
+[01:00:16] policy. Um, you can also post your
+[01:00:18] questions in this um this resources
+[01:00:21] thread here. Um, we're going to put the
+[01:00:24] resources
+[01:00:25] thread in the chat. I'll just put it
+[01:00:29] here too. Uh, you can always post a
+[01:00:31] question here. This is a discussion
+[01:00:32] thread. So, I'll see if you post a
+[01:00:34] question in there. Uh, if you're unable
+[01:00:36] to join the discord, right? So, we'll
+[01:00:38] try to get all the questions answered.
+[01:00:41] um you know whether we get to answer
+[01:00:42] them in discord or in in the discussion
+[01:00:45] forum we will try to answer them all and
+[01:00:49] you can you know grab all resources from
+[01:00:51] this resources page here I will be
+[01:00:53] continually putting slides I'll make
+[01:00:55] these writeups I'll put office hour
+[01:00:58] recordings there we'll try to put
+[01:00:59] everything here so that you can keep up
+[01:01:01] to date with everything
+[01:01:04] all right so I hope to see you in the
+[01:01:05] discord and also see you tomorrow for
+[01:01:07] work IQ that'll be with my colleague
+[01:01:09] Aicha who's an expert on that and then
+[01:01:12] Thursday for fabric IQ and
+[01:01:13] [clears throat] I'll be back for that
+[01:01:15] one.
+[01:01:17] All right, see you all. Bye.
+[01:01:29] Thank you all for joining and thanks
+[01:01:31] again to our speakers.
+[01:01:33] This session is part of a series. to
+[01:01:36] register for future shows and watch past
+[01:01:39] episodes on demand. You can follow the
+[01:01:41] link on the screen or in the chat.
+[01:01:44] We're always looking to improve our
+[01:01:46] sessions and your experience. If you
+[01:01:48] have any feedback for us, we would love
+[01:01:50] to hear what you have to say. You can
+[01:01:53] find that link on the screen or in the
+[01:01:55] chat. And we'll see you at the next one.

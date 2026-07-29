@@ -1,0 +1,99 @@
+[00:00:00] [@MicrosoftReactor]: Hello everyone, welcome! We'll begin shortly! Please stay tuned  
+[00:00:00] [@IRHS-d5i]: Would we have session on Web IQ as well?
+[00:00:00] [@bsayca]: Hi everyone 
+[00:00:00] [@PamelaFox]: Hi everyone! We will briefly discuss Web IQ today @IRHS-d5i
+[00:00:00] [@MicrosoftReactor]: We will begin shortly. Please review the Code of Conduct, https://developer.microsoft.com/react...
+[00:00:00] [@LazarusNightshade]: Hello 
+[00:00:00] [@rserran1]: Hi 
+[00:00:00] [@MarzenaMalinowska-n2o]: Hi
+[00:00:00] [@PamelaFox]: Hi everyone! I'm streaming from California today as usual
+[00:00:00] [@shamssultan3106]: Dhaka
+[00:00:16] [@vst121]: Hi everyone 
+[00:00:32] [@tkbsmanian]: Hi
+[00:00:41] [@rgaliardi]: Hello
+[00:00:47] [@aquarist123]: Hello from East Anglia in England.
+[00:00:58] [@JoseSilva-gt6zj]:  Hello from Brazil !!!
+[00:01:05] [@MicrosoftReactor]: Register for the series here: https://aka.ms/IQDeepDivePython/series 
+[00:01:22] [@renaldoh2819]: Hi from NY
+[00:01:31] [@JonEricE-n1k]: Hello from Chicago !
+[00:02:00] [@MicrosoftReactor]: Download the slides from https://aka.ms/iqdeepdive/slides/foun... 
+[00:03:28] [@MicrosoftReactor]: Bring your questions to office hours right after: https://aka.ms/pythonai/oh
+[00:03:56] [@MicrosoftReactor]: Grab the code from http://aka.ms/iqdeepdive
+[00:04:03] [@phillipjmurphy]: fyi, Discord is blocked by some enterprises. 
+[00:04:37] [@bsayca]: Happy to help with questions here or join the Discord office hours right after this session  http://aka.ms/aipython/oh
+[00:11:09] [@JonEricE-n1k]: If you owned the Azure bill, what Foundry IQ architecture would you choose today for the best quality-per-dollar ratio?
+[00:11:11] [@NM-tr1ii]: What is the limitation of Foundation IQ in terms of the number of indexes available? What if our data expands beyond the number of index limit? Do we then need multiple foundry resources?
+[00:12:26] [@PrasantMohanty-b3i]: Hi , from India 
+[00:12:49] [@christianochamma]: Hello from Brazil
+[00:13:29] [@nauvyram]: Hello from Chennai
+[00:13:36] [@christianochamma]: Can you configure chunk size and chunk strategy?
+[00:14:48] [@takescake]: EmbeddingGemma the GOAT 
+[00:15:04] [@MicrosoftReactor]: Please keep all the questions coming. If we don't get to them in the chat, please join for the office hours immediately after this session. Here is the link -- https://aka.ms/pythonai/oh
+[00:15:39] [@filippohronsky4644]: PDF has to be searchable and well prepared?
+[00:16:02] [@KevinPatel-goat]: is there a way to get the slide deck?
+[00:16:19] [@MicrosoftReactor]: Download the slides from https://aka.ms/iqdeepdive/slides/foun... 
+[00:16:26] [@christianochamma]: Can you choose embedding model?
+[00:22:11] [@MichelJonker]: When it comes to knowledge, what role do knowledge graphs or ontologies play in Foundry IQ?
+[00:22:12] [@barkovurur3043]: did Pamela say "Model" would be her guess for High? 
+[00:22:34] [@barkovurur3043]: @MichelJonker good question
+[00:24:33] [@barkovurur3043]: since most useful human knowledge is apparently contained in YouTube videos, is there a built-in way to harvest relevant YouTube content for inclusion in the Knowledge Base? Currently use fabric 
+[00:24:37] [@sam16379]: where is Web IQ fits here? (MCP)
+[00:25:07] [@BlueHelmTech]: @barkovurur3043 I think she said "auto"
+[00:25:22] [@barkovurur3043]: "auto" effort? ok, that makes sense
+[00:25:25] [@barkovurur3043]: thank you
+[00:26:29] [@barkovurur3043]: Also, will this Deep Dive Series include information on Evals/LLM-As-Judge type functionality?
+[00:27:42] [@MicrosoftReactor]: Bring your questions to office hours right after --- https://aka.ms/pythonai/oh
+[00:28:01] [@MicrosoftReactor]: Get all resources (recordings, writeups, code) from https://aka.ms/iqdeepdive/resources 
+[00:28:55] [@amruizva]: does it have integration with onelake?
+[00:30:23] [@christianochamma]: We already have Fabric. Could you please share a link about Foundry IQ licensing and pricing?
+[00:32:31] [@bsayca]: @christianochamma here is the pricing information for Foundry IQ: https://azure.microsoft.com/en-us/pri...
+[00:33:45] [@Satiremdk]: When we set a model for the knowledge base, will this model be used for everything that requires an LLM or are there LLM calls that use a different model under the hood?
+[00:34:04] [@dragonflyzee]: Pam is brilliant explainer
+[00:34:10] [@JonEricE-n1k]: Have you come across any examples of spatial GIS data indexed?
+[00:34:20] [@amruizva]: i have a pipeline with ingestion of incremental technical documents of 500 pages daily. what would be the most cost-efficient solution
+[00:34:25] [@lee_stott]: Enabling tracing and observbility is key for using evaluations and more importantly using optimizer to optimize your agents 
+[00:34:54] [@lee_stott]: Some useful resources 
+[00:34:58] [@tkbsmanian]: how do we see the assembled prompt sent to the model? and the iterations, final output?
+[00:35:00] [@lee_stott]: Human evals https://learn.microsoft.com/en-us/azu...
+[00:35:04] [@nnamdiodozi7713]: Is all of this happening without us deliberately using an agent framework
+[00:35:15] [@lee_stott]: Agent Optimizer https://learn.microsoft.com/en-us/azu...
+[00:35:33] [@lee_stott]: quick start to optimize your models https://learn.microsoft.com/en-us/azu...
+[00:38:32] [@peterm8605]: hello from saugerties, NY. power outages due to storm
+[00:39:28] [@nnamdiodozi7713]: Is there any guard against indirect prompt injection?
+[00:40:00] [@MicrosoftReactor]: Pamela will be at the office hours immediately after this session to answer your questions --- https://aka.ms/pythonai/oh
+[00:40:27] [@arorama]: for remote sources, where do indexes reside? would it safe to say indexes are remote? 
+[00:42:56] [@pawansinghrathore5677]: @Pamela can WebIQ be used just for onprem, near future ?
+[00:43:12] [@amruizva]: looks expensive everytime it has to call to web/search/index/..
+[00:44:01] [@arorama]: for remote queries - do they get cached? 
+[00:44:35] [@tkbsmanian]: which model is being used for ranking the response?
+[00:47:00] [@MicrosoftReactor]: Please bring your questions to office hours right after --- https://aka.ms/pythonai/oh
+[00:48:41] [@jamesnaurot9252]: has anything changed with azure's mcp servers since anthropic changed the protocol? when will azure roll out changes?
+[00:49:30] [@Satiremdk]: what's the link for the repo containing these examples?
+[00:50:48] [@MicrosoftReactor]: Get all resources (recordings, writeups, code) from https://aka.ms/iqdeepdive/resources 
+[00:51:07] [@JonEricE-n1k]: wow that's awesome!
+[00:52:06] [@MicrosoftReactor]: Please take a moment to complete our Reactor Survey: https://aka.ms/AA11zwzl ---- The Reactor Code is: 27336. We appreciate your feedback.
+[00:52:42] [@lee_stott]: Hi @@pawansinghrathore5677 Foundry IQ is built around Azure AI Search, knowledge bases, indexers, and enterprise content sources such as SharePoint, OneLake, Blob Storage, and Cosmos DB
+[00:55:02] [@alejandroguadarramasanlore5011]: hi Pam!
+[00:57:39] [@JonEricE-n1k]: Could we obtain samples of the Hosted Agents?
+[00:58:07] [@MicrosoftReactor]: Get all resources (recordings, writeups, code) from https://aka.ms/iqdeepdive/resources 
+[00:58:08] [@arorama]: as foundry tool box surfaces an mcp endpoint, and within it we may have other tools with mcp end points so nesting mcps end points ... wondering performance overhead concerns with such scenarios.
+[00:58:27] [@lee_stott]: Hi @jamesnaurot9252 MCP is a open protocl and Microsoft is one of the key contributors so yes all MCPs are being updated based on todays latest protocol updates see https://aka.ms/mcp-for-beginners 
+[00:58:37] [@bsayca]: @satiremdk all sample code shown is available in this repo: https://aka.ms/iqdeepdive
+[00:59:42] [@MicrosoftReactor]: Register for the series here: https://aka.ms/IQDeepDivePython/series 
+[00:59:55] [@MicrosoftReactor]: Bring your questions to office hours right after --- https://aka.ms/pythonai/oh
+[00:59:56] [@lee_stott]: Hi @arorama so there is a minimal overhead but its not significant as toolbox is acting as a router solution.. But its not evident
+[01:00:01] [@phillipjmurphy]: Thanks ! 
+[01:00:11] [@barkovurur3043]: 3rd eye activate
+[01:00:20] [@barkovurur3043]: I'm afraid of Discord
+[01:00:22] [@PamelaFox]: https://aka.ms/iqdeepdive/resources
+[01:00:24] [@phillipjmurphy]: no discord access  
+[01:00:40] [@christianochamma]: Thanks!
+[01:01:15] [@dragonflyzee]: thanks
+[01:01:24] [@HadiLoghman-w8f]: thanks
+[01:01:29] [@JonEricE-n1k]: Thank you for an insightful session! I appreciate your time and expertise.
+[01:01:31] [@Walitumpa77]: Thanks 
+[01:01:36] [@barkovurur3043]: thank you, great presentation, informative
+[01:01:36] [@phillipjmurphy]: Thanks again ! 
+[01:01:41] [@lee_stott]: Thanks everyone!
+[01:01:59] [@JoseSilva-gt6zj]:  Thank you, Pamela! !!
+[01:02:07] [@PamelaFox]: Off to Discord! https://aka.ms/pythonai/oh

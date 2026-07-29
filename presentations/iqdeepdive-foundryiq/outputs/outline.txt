@@ -1,0 +1,49 @@
+1. Series title slide for "Microsoft IQ Deep Dive with Python" listing July 28 Foundry IQ, July 29 Work IQ, July 30 Fabric IQ, with registration at aka.ms/IQDeepDivePython/series.
+2. Session title slide for "Microsoft IQ Deep Dive: Foundry IQ" with the slide link and speaker Pamela Fox, Principal Cloud Advocate at Microsoft/GitHub.
+3. Agenda listing Foundry IQ knowledge bases, data ingestion, Web IQ, Foundry IQ inside agents, Foundry IQ in Foundry Toolbox, and deploying agents.
+4. Instructions for getting the code from the aka.ms/iqdeepdive GitHub repo and opening it in a GitHub Codespace.
+5. Section header: Microsoft IQ.
+6. The Microsoft IQ platform diagram showing Work IQ, Fabric IQ, Web IQ, and Foundry IQ as a unified intelligence layer for enterprise AI.
+7. Section header: Foundry IQ.
+8. "Knowledge is everywhere" slide showing scattered sources like PDFs, relational tables, analytics data, web articles, SharePoint documents, email threads, Teams chats, calendar events, and meeting notes.
+9. Foundry IQ (Azure AI Search) positioned in the middle of those sources with the steps route, retrieve, merge, and synthesize.
+10. Architecture of a Foundry IQ knowledge base: conversation plus steering instructions go to retrieval planning, producing search queries sent to knowledge sources, returning merged results, activity log, and answer synthesis.
+11. Section header: Indexed knowledge.
+12. Data ingestion pipeline for unstructured data: document, extraction, chunking, embedding, index, with the resulting index schema fields id, parent_id, path, chunk, and vector.
+13. Comparison of the File Knowledge Source (zero ingestion code, fixed schema) against the Indexed Knowledge Source (custom data source, indexer, and skillset).
+14. Indexed knowledge ingestion diagram with data sources (Blob, ADLSv2, Table, Cosmos DB, Azure SQL, OneLake, SharePoint), an indexer with change tracking, a skillset, and the search index.
+15. Hybrid retrieval diagram combining keyword and vector results with reciprocal rank fusion followed by a reranking model.
+16. Section header: Knowledge bases.
+17. Knowledge base retrieval reasoning effort levels: minimal, low, and medium, trading latency and cost for quality.
+18. Minimal effort knowledge base diagram: caller-supplied search intents sent to all sources in parallel, no LLM, merged results and activity log.
+19. Concrete minimal effort example with a paint question, activity log showing the same intent sent to a search index and SharePoint, and merged results with reranker scores.
+20. Low effort knowledge base diagram adding an LLM for retrieval planning, source selection, and optional answer synthesis.
+21. Concrete low effort example with token counts for query planning, two generated queries, merged results, and a synthesized answer with citations.
+22. Medium effort knowledge base diagram adding iterative retrieval when more context is needed.
+23. Concrete medium effort example with two rounds of query planning across index and web sources and a longer synthesized answer.
+24. Python code for creating a multi-source knowledge base with two knowledge sources, low reasoning effort, answer synthesis, and querying it.
+25. Section header: Web IQ.
+26. Microsoft Web IQ overview: web search designed for agents with search, news, finance, video, sports, and browse tools, ~164ms P95 latency, and full markdown/HTML payloads.
+27. Retrieval with the Web IQ MCP server showing a mental health benefits question and the returned title, URL, content, crawl date, and language, plus a note that private preview access is required.
+28. Python code creating an MCP server knowledge source for Web IQ with stored header authentication and adding it to a knowledge base.
+29. Section header: Foundry IQ inside Agents.
+30. Definition of an AI agent as an LLM running tools in a loop to achieve a goal, illustrated with an HR assistant calling get_current_datetime and search_kb.
+31. Three options for using Foundry IQ in an agent: custom tool via the API, pointing the agent at the knowledge base MCP endpoint, or using Foundry Toolbox with the knowledge base MCP.
+32. Recommendation to use minimal retrieval effort for deployed agents so the Python agent handles query rewriting and iteration.
+33. Python code for a custom @tool that calls the knowledge base retrieval API and returns response, references, and activity.
+34. Demo slide for running the custom-tool agent locally with azd ai agent run and invoking it.
+35. Diagram of the knowledge base MCP endpoint returning merged results with citations but no activity log or separate references.
+36. Python code wiring the knowledge base MCP endpoint into an agent with MCPStreamableHTTPTool and Azure token credential auth.
+37. Demo slide for running the MCP-based agent locally.
+38. Foundry Toolbox diagram showing a toolbox that composes Foundry Tools and MCP servers, with an example combining web search, code interpreter, and the Foundry IQ MCP.
+39. Python code creating a Foundry Toolbox version with web search, code interpreter, and MCP toolbox tools.
+40. Python code using the FoundryToolbox class from Microsoft Agent Framework inside an agent with instructions for when to use each tool.
+41. Demo slide for running the toolbox-based agent locally.
+42. Section header: Agent deployment.
+43. Foundry Agent Service overview with prompt agents and hosted agents on top of Foundry Tools, Foundry IQ, Foundry Memory, and Foundry Models.
+44. Foundry Hosted Agents architecture: Agent Service handles identity, endpoint, state, scaling, and observability, with your code behind a Responses API adapter in an Azure Container Apps sandbox.
+45. Python code wrapping a Microsoft Agent Framework agent in ResponsesHostServer for hosting on Foundry.
+46. Demo slide for deploying with azd deploy and invoking the hosted agent.
+47. Demo slide for publishing a hosted agent to Teams via the Foundry UI, which auto-creates an Azure Bot service.
+48. Next steps slide with links to Discord office hours, session resources, and series registration.
+49. Promotion for the Microsoft IQ Live bi-weekly episodes on Microsoft Reactor from Aug 6 to Nov 12, 2026.

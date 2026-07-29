@@ -1,0 +1,31 @@
+Summary:
+Part 1 of the "Microsoft IQ Deep Dive with Python" series introduces the Microsoft IQ family (Work IQ, Fabric IQ, Web IQ, Foundry IQ) and then goes deep on Foundry IQ, which is Azure AI Search. It covers knowledge bases, the data ingestion pipeline for unstructured documents, hybrid retrieval, the three retrieval reasoning effort levels, and how to connect multiple knowledge sources including search indexes and MCP servers like Web IQ. The second half shows three ways to use a Foundry IQ knowledge base as a tool inside a Python agent built with Microsoft Agent Framework, then deploys those agents to Foundry Agent Service hosted agents and publishes one to Teams.
+
+Chapters:
+00:00 - Housekeeping and welcome
+00:55 - Microsoft IQ Deep Dive with Python series overview
+02:42 - Today's agenda
+03:51 - Getting the code
+04:56 - The Microsoft IQ platform
+07:40 - Foundry IQ: knowledge is everywhere
+09:11 - Inside a Foundry IQ knowledge base
+11:39 - Indexed knowledge and data ingestion
+15:00 - File knowledge source vs indexed knowledge source
+16:24 - Indexer, skillset, and change tracking
+18:43 - Hybrid retrieval and reranking
+20:40 - Knowledge base retrieval reasoning effort
+21:24 - Minimal effort
+23:06 - Low effort
+24:59 - Medium effort
+27:37 - Demo: knowledge bases in Python notebooks
+34:16 - Demo: multi-source index knowledge sources
+37:16 - Microsoft Web IQ
+39:45 - Demo: Web IQ as an MCP knowledge source
+43:35 - Foundry IQ inside agents
+44:48 - Three options for using a knowledge base as a tool
+46:58 - Option 1: custom tool calling the knowledge base API
+51:31 - Option 2: the knowledge base MCP endpoint
+53:12 - Option 3: Foundry Toolbox
+55:59 - Deploying agents to Foundry Agent Service
+58:55 - Publishing a hosted agent to Teams
+59:36 - Next steps and resources
