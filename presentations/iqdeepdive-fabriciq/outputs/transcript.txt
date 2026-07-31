@@ -1,0 +1,1573 @@
+[00:04] Hi everyone. Thank you for joining us
+[00:06] for our next live stream. I'll be your
+[00:09] producer for this session.
+[00:11] Before we start, I do have some quick
+[00:13] housekeeping.
+[00:14] Please take a moment to read our code of
+[00:16] conduct.
+[00:18] We seek to provide a respectful
+[00:20] environment for both our audience and
+[00:21] presenters.
+[00:23] While we absolutely encourage engagement
+[00:25] in the chat, we ask that you please be
+[00:27] mindful of your commentary. remain
+[00:29] professional and on topic.
+[00:33] Keep an eye on that chat. We'll be
+[00:35] dropping helpful links and checking for
+[00:37] questions for our presenters to answer
+[00:39] live.
+[00:41] Our session is being recorded. It will
+[00:43] be available to view on demand right
+[00:46] here on the Reactor channel.
+[00:48] With that, I'd love to turn it over to
+[00:50] our speakers for today. Thank you for
+[00:52] joining.
+[00:56] Welcome everyone. Welcome to our
+[00:58] Microsoft IQ deep dive with Python live
+[01:01] stream series. This is our final session
+[01:05] in the series. We already covered
+[01:07] Foundry IQ and Work IQ earlier this
+[01:09] week. And now for our final session,
+[01:12] we're focused on Fabric IQ. If you
+[01:14] missed any of the earlier sessions, you
+[01:17] can go back and rewatch them.
+[01:19] Everything's available the videos, the
+[01:21] slides, the code and we can share those
+[01:24] links in the chat. Uh so you can catch
+[01:27] up at any time.
+[01:30] So today we are focused on fabric IQ. Uh
+[01:34] we'll put the link to the slides in the
+[01:36] chat. You're welcome to use the slides.
+[01:37] You're welcome to deliver the slides
+[01:39] yourself and you know they're they're
+[01:41] for you to to use however you need. Uh I
+[01:44] am Pamela Fox. I am a principal cloud
+[01:46] advocate at Microsoft and GitHub and I
+[01:49] specifically focus on Python and all the
+[01:52] different ways that developers can use
+[01:53] Python with the many many Microsoft and
+[01:56] GitHub tools. Uh so APIs, SDKs, GitHub
+[01:59] copilot uh you really everything. Uh my
+[02:02] background is in full stack web
+[02:04] development. So I'm very interested in
+[02:06] how we can build applications on top of
+[02:09] these technologies, especially these new
+[02:11] generative AI uh technologies, figuring
+[02:14] out how to build, you know, really good
+[02:16] scalable applications on top of them and
+[02:20] make our users happy.
+[02:24] So today we are covering fabric IQ. Uh
+[02:28] we're going to go into multiple
+[02:30] components of fabric IQ. It actually
+[02:31] encompasses a lot of technologies. So
+[02:33] today we're going to look at ontologies,
+[02:36] graphs, PowerBI semantic models, uh,
+[02:39] data agents and integration with Foundry
+[02:42] IQ and all of those.
+[02:46] All of the code is available in this
+[02:49] GitHub repository and we'll put the link
+[02:52] for this repository in the chat so that
+[02:54] you can get it yourself. Uh, let me show
+[02:57] the repo. Uh, here we go. Here's the
+[03:00] repo. Uh so it has all the code that
+[03:03] we've used throughout this entire
+[03:05] series. Uh it includes Jupyter
+[03:07] notebooks, Python files, Python agents.
+[03:10] It's got all the infrastructure as code.
+[03:12] So it's got bice bicep, it's got
+[03:14] provisioning and setup scripts. Um
+[03:16] there's quite a lot in here uh for
+[03:18] fabric IQ particularly. You know, you
+[03:20] that's um there's instructions here for
+[03:22] how you can deploy all the fabric um you
+[03:26] know, all the fabric capacity and data
+[03:28] and and that stuff. So, you know, in
+[03:30] order to actually run this code
+[03:32] yourself, you will need to have an Azure
+[03:35] account. You'll need to have a fabric
+[03:37] license and have the ability to create
+[03:39] fabric items. Um, but if you have all
+[03:42] that, then you can use this this repo to
+[03:44] set everything up. Uh, and you can also
+[03:46] just use the code here as inspiration
+[03:48] for, you know, all of your existing code
+[03:51] projects.
+[03:57] All right. So, let's start off with
+[03:59] actually uh talking briefly about
+[04:01] Microsoft IQ uh just for folks who are
+[04:04] new to the series. Uh so, we have this
+[04:07] Microsoft IQ platform and the goal here
+[04:11] is that to provide you a way to ground
+[04:14] all of your AI uh LLM powered
+[04:17] applications, right? So we know that
+[04:19] when we give an LLM context that it can
+[04:23] provide accurate answers based off that
+[04:26] context and that basically the more the
+[04:29] better the context is that we give to
+[04:31] LMS you know the better the results are
+[04:33] the more we get our domain specific
+[04:35] results our personalized results you
+[04:37] know our accurate results right so at
+[04:39] Microsoft we're trying to figure out
+[04:40] like okay what is it that you need like
+[04:42] what kind of information do you you need
+[04:44] to ground your applications in in order
+[04:47] to have you you know, great accurate
+[04:49] results. So, we have these four IQs uh
+[04:53] that you can use. Uh so, we've covered
+[04:55] work IQ, which is like all of your
+[04:58] Microsoft 365 data like teams, emails,
+[05:00] chats, documents, all of that stuff. Uh
+[05:02] we've got web IQ, which is web live web
+[05:05] results. Uh we've got Foundry IQ, which
+[05:09] is uh a way that you can index any sort
+[05:12] of documents. So if you got just a pile
+[05:13] of PDFs somewhere or billions of PDFs,
+[05:16] you know, you can uh store those in
+[05:17] Foundry IQ. And then today of course we
+[05:20] have fabric IQ and this is storing often
+[05:22] your actual business data. Um you know
+[05:26] you could be storing your relational
+[05:27] data for backing your your company. It
+[05:30] often times is storing your analytics
+[05:32] data. It's very good at storing
+[05:33] analytics data. Uh so that's your
+[05:35] operational your business data. Uh so
+[05:38] with all these IQs together, the goal is
+[05:40] that you can build applications that are
+[05:42] grounded in the results from these IQ
+[05:45] services and are able to be highly
+[05:48] accurate and super useful.
+[05:52] So now we're digging in to fabric IQ.
+[05:55] So first let's talk about Microsoft
+[05:57] Fabric. Uh Microsoft Fabric is a
+[05:59] platform for all of your data to unite
+[06:02] it all in one place. So, you know,
+[06:05] before Microsoft fabric, there were lots
+[06:07] of different places you could have data.
+[06:08] Uh, Azure has many different data
+[06:11] offerings, right? So, we've got data
+[06:13] lake and Azure SQL and data bricks and
+[06:15] PowerBI and Azure ML like all these
+[06:17] different places you could have your
+[06:18] data and you'll have like separate
+[06:20] storage accounts. You need to figure out
+[06:22] how to, you know, do ETL to, you know,
+[06:25] to do data pipelines between each one in
+[06:27] order to, you know, stores things and
+[06:29] mirror things and connect them all
+[06:30] together and it's like a big pain,
+[06:32] right? So with Microsoft fabric the idea
+[06:35] here is that um you've got uh you've got
+[06:38] everything in one place you've got a
+[06:40] common way of accessing data across all
+[06:44] these sources right so everything is in
+[06:46] one lake u and one lake can connect to
+[06:49] other sources and bring them together in
+[06:51] a unified format right so the whole idea
+[06:54] is to unify in one lake um and then once
+[06:57] you have it in one lake then you know
+[06:59] you've got common things that you can
+[07:00] run on top so you've got data
+[07:01] engineering which is like your Spark
+[07:03] notebooks and pipelines. Um, you've got
+[07:05] PowerBI for doing like your, you know,
+[07:07] reporting dashboards. Um, and of course
+[07:10] your fabric IQ we're talking about
+[07:11] today. And there's many different
+[07:14] sources you can bring into one like,
+[07:16] right? Uh, in order to unify. And
+[07:18] sometimes these sources you set up as
+[07:21] like a shortcut. So, you're just saying
+[07:23] like, oh, here it is. Just jump over
+[07:25] there and and link to it. Uh, or
+[07:27] sometimes you do mirroring. And with
+[07:29] mirroring, sometimes we copy it in and
+[07:31] sometimes we're just copying in the
+[07:32] metadata and we know how to access it.
+[07:34] So the exact way that we bring it into
+[07:37] one lake does depend uh based off of
+[07:40] what you're bringing in and also how
+[07:41] much of it you want to bring in, whether
+[07:43] you're bringing in just a single file
+[07:45] from somewhere else uh or if you're
+[07:46] bringing in like the entire catalog from
+[07:48] somewhere else. So there's all these
+[07:50] different strategies that we can use for
+[07:51] shortcut and mirroring. But the point is
+[07:53] that there is a way to do it, right? So
+[07:56] for all these different data sources,
+[07:58] right? So you can see obviously all of
+[08:00] our Azure ones like Azure Postgress,
+[08:02] Azure Cosmos, SQL Server, you know, we
+[08:04] can definitely bring those in, but also
+[08:06] you can connect to Google Cloud Storage,
+[08:07] Amazon S3, a datab bricks catalog,
+[08:10] right? Google BigQuery that that's in
+[08:12] uh, you know, preview now. So many
+[08:15] different sources that you could unify
+[08:17] under uh, you know, under fabric in in
+[08:20] one lake.
+[08:23] So we're going to be using fabric IQ on
+[08:26] top of one lake, right? So we're
+[08:27] assuming that we've brought data into
+[08:29] one lake and that one lake has is, you
+[08:32] know, providing a unified front to to be
+[08:34] able to access different kinds of data.
+[08:36] So one lake can handle structured data,
+[08:38] relational data, unstructured data,
+[08:40] real-time data, graph data. It's able to
+[08:42] store all of that kinds of data. So then
+[08:44] on top of that, we have fabric IQ. And
+[08:46] fabric IQ is actually many different
+[08:49] services on top. Uh and so we're we're
+[08:51] going to explore more than half of these
+[08:54] today. Uh so we're going to look at
+[08:56] ontology. We'll look at semantic model,
+[08:59] graph, and data agent. So those first
+[09:01] four are the ones we're going to look at
+[09:03] today. But there's also something called
+[09:05] the plan or planning. Uh there's a
+[09:08] digital twin builder, uh which creates
+[09:10] this digital representation of your real
+[09:12] world business entity, which super
+[09:13] interesting sounding. And then there's
+[09:15] operations agent. So that one you
+[09:16] definitely want to use um as a
+[09:18] complement to all of this because it's
+[09:20] going to be actually like it's you know
+[09:22] it's monitoring your fabric data to look
+[09:23] for you know kind of data data issues
+[09:27] right so you always want to be using
+[09:28] operations agent that's like your kind
+[09:30] of devops for your fabric right
+[09:34] uh so let's dig into these these four
+[09:37] components of fabric IQ
+[09:40] so we're going to start off with
+[09:42] ontology
+[09:44] so an ontology is a way to describe the
+[09:47] data that we have in our one lake and to
+[09:49] be able to give it a richer description
+[09:52] so that our agents can understand it
+[09:54] better, right? Because we can have all
+[09:57] sorts of data in our one lake and really
+[09:58] it can be quite messy uh to just look at
+[10:01] that data and not know anything about
+[10:03] it. And an agent could kind of guess
+[10:05] like oh you called this t you know this
+[10:07] CSV is called tables and uh sorry this
+[10:09] CSV is called products and this CSV is
+[10:12] called orders. So probably there's a
+[10:14] relationship between products and
+[10:15] orders, right? So yes, an you know an
+[10:18] LLM could guess about you know the the
+[10:22] relations between the data that you've
+[10:24] stuffed into your one lake but it is
+[10:26] much you're going to get much better
+[10:27] results if you actually specifically
+[10:30] describe it and say hey this is the
+[10:33] shape of my data you know these are the
+[10:35] entities in my data these are the
+[10:37] relationships between those entities you
+[10:39] know this is the property of each of
+[10:41] them right so this is what we do with an
+[10:42] ontologies we describe our entities and
+[10:44] their properties and the relation
+[10:46] ationships between entities and then we
+[10:48] bind those two data in one link, right?
+[10:51] And sometimes it's a very direct
+[10:52] onetoone binding where it's like
+[10:54] obviously got the same name but
+[10:56] sometimes like you you know you might
+[10:58] have a slightly different um you know
+[11:01] name across different sources and then
+[11:03] you know and the binding really helps to
+[11:05] to show like okay this is what we mean
+[11:07] when we say the store name it it maps to
+[11:10] this uh actual data in one link right so
+[11:13] that's the idea of ontology so for an
+[11:16] example ontology if we're making an
+[11:18] ontology for a re retail store right So
+[11:20] we've got entities like store. So here's
+[11:23] our store, our inven store. You know a
+[11:26] store holds inventory, right? So this is
+[11:28] a relationship between two entities. So
+[11:30] we say a store holds inventory and then
+[11:33] the inventory is recording the stock of
+[11:35] a product. Uh we also have a supplier
+[11:38] that supplies the product and we have a
+[11:41] category which contains products. Right?
+[11:43] So here you can see we've got let's see
+[11:45] five entities and four relationships
+[11:49] describing them. Right? And we're, you
+[11:52] know, we create this ontology and then
+[11:54] we we actually bind it to data behind
+[11:57] it. And once we have this ontology, it
+[11:59] becomes much easier to be able to answer
+[12:03] questions like, hey, which store has the
+[12:05] most number of hammers, right? And it's
+[12:07] like, oh, okay, I'm just going to follow
+[12:08] down, you know, follow down this
+[12:10] relationship and and, you know, answer
+[12:13] this question, right?
+[12:17] So, let's actually look at the ontology
+[12:19] um that I've got in fabric, right? So,
+[12:23] here uh let me go to my store
+[12:27] ontology.
+[12:29] Uh
+[12:31] let's see. I'm going to go back. Okay.
+[12:34] So, here this is the ontology explorer
+[12:38] in fabric. So you can see uh here's you
+[12:42] know product and you can see that you
+[12:44] know pro it says category contains
+[12:46] product uh we see inventory
+[12:50] record stock for product and supplier
+[12:53] supplies product and then we can click
+[12:56] on an individual one and we can see the
+[12:58] data bindings right so you'll see here
+[13:00] the properties so these properties uh
+[13:03] are the properties on the entity so
+[13:05] we're saying hey this product has a
+[13:06] category it has a description has a
+[13:08] price and Then we tell it like you're
+[13:10] going to bind to this data source. So uh
+[13:13] you know we can actually go and and um
+[13:16] edit the binding if we're if we uh
+[13:19] decide that it needs to bind to
+[13:21] somewhere else. Uh so here we can you
+[13:24] know dig into the data bindings. Uh and
+[13:26] here this is the data binding right so
+[13:28] in this case it's a really
+[13:30] straightforward data binding because
+[13:31] most of them you know I've done like a
+[13:33] you know casing change uh but you know
+[13:36] the names in the source look similar to
+[13:38] the property name but a lot of times
+[13:40] your your data is a lot messier than
+[13:41] that right like I remember once dealing
+[13:43] with some data at a company and we had
+[13:46] multiple user ID fields and it wasn't
+[13:50] obvious to me which of the user ID field
+[13:52] was like the correct one and I ended up
+[13:55] making a big mistake um and using the
+[13:58] wrong user ID and that like really
+[14:00] really affected the results of a query
+[14:04] by half a million users. Um and I didn't
+[14:07] realize that mistake till a lot later.
+[14:09] But if I had had like a proper ontology
+[14:11] that said like hey you know this is the
+[14:13] user ID when we're talking about user ID
+[14:15] it's this ID right? Um, so because real
+[14:18] data can be quite quite messy and
+[14:20] because like you'll have like oh like oh
+[14:21] no that was like the old version of the
+[14:23] user ID now we're using the new version
+[14:24] of the user ID right like so figuring
+[14:26] out what really is the correct um you
+[14:29] know connection across all data like
+[14:31] it's really you know it's really
+[14:32] important. Um, so there, so there, so
+[14:34] you can see we've got our ontology,
+[14:36] we've got our data binding. Um, you
+[14:39] know, we can look and see this is a a
+[14:41] nice little overview. So we can actually
+[14:43] see um the kind of the get a feel for
+[14:46] our data. So it's actually showing us
+[14:48] like the values for category
+[14:51] uh for price. Um, so this is actually
+[14:53] pretty cool just to have an easy way of
+[14:55] just getting an overview of our data and
+[14:57] it's just get getting a feel for whether
+[14:59] we're we've done this correctly.
+[15:02] Okay. So that is an ontology and you can
+[15:06] create that ontology in the fabric UI.
+[15:08] You can also create that uh
+[15:10] programmatically. So everything I've
+[15:11] shown here I've created programmatically
+[15:14] just in Python. So you can see um I have
+[15:17] this create lakehouse and in that
+[15:19] lakehouse I've created the ontology. So
+[15:21] I've defined my entities. I've defined
+[15:23] their properties. Um I you know defined
+[15:26] their bindings and you know then I add
+[15:29] relationships. So it's up to you, you
+[15:31] know, how you want to, you know, work
+[15:34] with these things. Whether you're you
+[15:35] you you want to do everything with code
+[15:37] first or if you want to start off in the
+[15:40] fabric UI, you you know, you have all of
+[15:43] those options.
+[15:46] All right, so we've got our ontology. So
+[15:48] now the question is, what can we do with
+[15:49] this ontology? Right? We've we've built
+[15:51] this ontology. We want to use it. Uh so
+[15:54] the good news is that there's a lot of
+[15:57] um agents at Microsoft that already have
+[15:59] built-in support for ontology, right? So
+[16:03] if you're using Copied Studio, that
+[16:05] should have like just a one-click add in
+[16:06] ontology. Um Fabric data agent, we're
+[16:09] going to see that today. Fabric
+[16:10] operations agent knows about it. Um
+[16:13] Foundry IQ knows about it. We're going
+[16:15] to see that today. Um Foundry hosted
+[16:17] agent, we talked about that on Tuesday.
+[16:19] That one you can add ontology in the
+[16:21] Foundry toolbox. Uh, so that's also just
+[16:25] a a built-in option for Foundry Toolbox.
+[16:28] So, the good news is, you know, if
+[16:30] you're using an agent at Microsoft, many
+[16:33] of them already just know about Fabric
+[16:36] IQ ontologies and have it as like a
+[16:38] one-click thing that you can just add
+[16:40] into there, which is really cool.
+[16:42] However, there's also just generically
+[16:44] an MCP server. And an MCP server is
+[16:48] great because you can just point any
+[16:49] agent as an MCP server as long as you
+[16:52] can handle, you know, passing in the
+[16:53] right authorization. So we're actually
+[16:56] going to start with looking at that
+[16:57] ontology MCP server because it's also
+[17:00] the ontology MCP server is what a lot of
+[17:01] those agents use behind the scenes,
+[17:03] right? So this is, you know, if if you
+[17:05] were going to build your own agent on
+[17:07] top of it, you would use this ontology
+[17:09] MCP server. Um, so basically we
+[17:11] construct this URL for the MCP server,
+[17:14] right? It's at this MCP URL for the
+[17:16] works, you know, our workspace ID and
+[17:18] then our ontology ID. So, every ontology
+[17:20] will have its own specific MCP URL. So,
+[17:23] you could actually have be running
+[17:24] multiple ontology MCP servers. And then
+[17:28] it has two different tools that it
+[17:31] exposes. So, the first tool is list
+[17:34] ontology entity types. So, that just
+[17:35] shows you what are all the entities in
+[17:37] thistology and that helps the you know
+[17:40] give the agent some information about
+[17:41] how it can explore it. Uh but then
+[17:43] there's also search ontology so that you
+[17:45] can just pass a natural language query
+[17:47] in and uh you'll get back results and
+[17:50] you can even get back an an a full
+[17:52] answer too. So you can actually say
+[17:54] whether you want a full answer true or
+[17:56] false and then it'll use its own LLM to
+[17:58] even answer your question. Right? So
+[18:00] we're going to go ahead and play with
+[18:03] that in see that in this notebook here.
+[18:07] Let me go open it up. Oh here we go. Um,
+[18:12] oh no, no, I want my other one. This
+[18:14] one. Here we go. All right. Um, so the
+[18:19] first thing we're doing is I'm using the
+[18:22] just official MCPS SDK to create an MCP
+[18:24] client uh so that I can interact with
+[18:27] it. And I've got my MCP URL stored in my
+[18:32] MV file. So I set up a client uh that
+[18:36] connects to that MCP URL
+[18:39] and it is passing in my my token. Um, so
+[18:43] I'm using the, you know, a credential
+[18:46] for my fabric tenant and it is passing
+[18:48] in that as an ooth bearer token, right?
+[18:51] So fabric IQ, it's based off of the
+[18:55] user's access to fabric, right? So I'm
+[18:58] able to access this fabric ontology
+[19:00] because I have permission to this fabric
+[19:02] ontology workspace. Um, you know,
+[19:05] somebody else in like may not have
+[19:07] permission for it. So this is based off
+[19:09] of does the user have permission to
+[19:11] access this fabric workspace.
+[19:15] So we have that listed and then we list
+[19:18] the available tools. So we're just
+[19:20] saying hey MCP server. So an MCP server
+[19:22] if you haven't used MCP is a standard
+[19:25] way that servers can expose tools for
+[19:28] agents to use. So we can ask the server
+[19:31] hey what tools do you have that I can
+[19:33] use? So it says back like oh I've got
+[19:35] this listtology entity types. Here's the
+[19:37] description of it. Um, here is the
+[19:41] parameters that it takes. So, it's
+[19:42] looking for an entity name if you want
+[19:44] to pass it in. That's optional. Uh,
+[19:46] whether to include properties, right?
+[19:48] So, that's that's really our kind of
+[19:51] ontology discovery mechanism. And then
+[19:52] the more one is search ontology because
+[19:54] that is going to take in a natural
+[19:56] language question and then it can even
+[19:59] give back a natural language response uh
+[20:01] if we want it. Otherwise, it'll give
+[20:04] just the results. So here I'm going to
+[20:06] use that one and I'm going to pass in
+[20:08] this question. Which products currently
+[20:10] have the lowest inventory quantities?
+[20:12] And that should be answerable from the
+[20:14] ontology because we have the product
+[20:16] inventory and all those relationships.
+[20:17] And then I'm going to say I do want the
+[20:20] natural language response, right? And
+[20:22] that does mean that this is going to
+[20:24] take longer. Um uh this was actually
+[20:27] pretty fast. This was 18 seconds. But
+[20:29] generally like just anytime you're going
+[20:31] to get uh back a natural language
+[20:33] response that's going to take longer
+[20:34] because that does use an LM. So here you
+[20:37] can see we get back a basically like
+[20:39] flattened data. So there's two things
+[20:41] that comes back. There's this raw and
+[20:43] then at the very bottom there's this
+[20:45] natural language response. And so we can
+[20:47] take a look at this first. Right? So we
+[20:48] get back this response that says oh
+[20:50] here's the products with the lowest
+[20:51] available inventor content, you know,
+[20:53] inventory and here's all the
+[20:55] information. Right? So sometimes that's
+[20:57] all we need is a response, but we also
+[20:59] get access to this raw data that comes
+[21:02] back and um you know it basically
+[21:05] chooses what data it's going to send
+[21:06] back that it thinks you want. And in
+[21:08] this case it basically flattened a lot
+[21:10] of data. So it gave me back like the
+[21:12] full product JSON um as well as skew and
+[21:15] name separately and then it gave back
+[21:16] like full inventory JSON and then ID and
+[21:19] quantity. Right? So it's kind of
+[21:20] flattening back the results in a way
+[21:22] that it can pass it pass it all like
+[21:24] this.
+[21:26] So there we go. So we can get um you
+[21:29] know really useful responses from the
+[21:32] ontology and so you could point you know
+[21:34] you can point any agent at this ontology
+[21:36] MP server as long as you can send in the
+[21:39] right authorization. So I actually have
+[21:41] it added to my GitHub copilot. So here
+[21:44] in VS Code I've configured a um a global
+[21:48] MCP configuration to know about this
+[21:52] fabrictology MCP server. And so that's
+[21:54] using the same URL as before. And you
+[21:57] can see that it found that there's two
+[21:58] tools. And so I can open up my co-pilot
+[22:02] here. And I can see the tools and I can
+[22:05] see them listed here. And so I can
+[22:08] actually just ask the question here like
+[22:09] you know what um let me see what was the
+[22:11] question we asked here. [laughter]
+[22:13] I'll just take the same question here
+[22:17] and put it in here.
+[22:21] So the hope is that it's going to
+[22:23] realize that the ontology server
+[22:27] is going to be the way to answer it. And
+[22:30] uh and it decided that it's going to
+[22:31] first list the ontology entity types
+[22:38] and [clears throat] it now it's doing
+[22:40] searchontology. Oh, and it's gotten
+[22:42] really fancy.
+[22:44] So in this case it because it first
+[22:46] looked at the anttology now it knows a
+[22:48] lot. So now it's like giving like this
+[22:50] super specific query. Um, which is quite
+[22:54] interesting. You know, every time you
+[22:55] use an agent with an MCP server, you're
+[22:57] you're going to get different results
+[22:59] because every agent, every model has,
+[23:01] you know, every agent harness, every
+[23:02] model has a different approach they're
+[23:04] going to use to tool calling. So, you
+[23:06] know, this is G56 soul on medium. So,
+[23:08] this is what it decided to do this time.
+[23:10] Previous times, you know, it's done
+[23:12] something different. Um, so you know
+[23:14] there's always going to be variability
+[23:16] when you're using agents with MCP
+[23:18] servers in terms of which tools they
+[23:20] choose to call, which order they do it
+[23:22] in, you know, and what arguments they
+[23:24] decide to pass in.
+[23:27] Uh, so you see we can get back the
+[23:28] result. We can look and see this is the,
+[23:30] you know, this is what we saw before raw
+[23:32] fields and then um, we also got the
+[23:35] natural language response. Uh, and
+[23:38] interesting it decided to ask for the
+[23:39] natural language response. Um and then
+[23:42] and then we got the actual summary in VS
+[23:46] Code here.
+[23:47] Uh so so there we go. So we can use it
+[23:50] from a lot of sources. Um you can use it
+[23:53] from VS Code, you can use it from the
+[23:54] copilot CLI, you can use it from the
+[23:56] copilot app. Now so it works in all of
+[23:59] these um you know GitHub copilot
+[24:02] instances.
+[24:04] Unfortunately, I don't think it would
+[24:06] work in something like a a client like
+[24:09] Claude. And that's because of the
+[24:11] authorization. Um the it works in
+[24:14] clients that are pre-authorized with
+[24:16] Microsoft Entra like all of these, you
+[24:19] know, official Microsoft ones. Uh I
+[24:22] don't think it would work with a uh
+[24:24] client like Claude because of the just
+[24:28] how MPO works and uh not having
+[24:31] pre-authorization. So that's just a
+[24:33] warning that if you do try it outside of
+[24:35] these three places, you may find that
+[24:37] the authorization um doesn't work and
+[24:39] you may have to like set up like an
+[24:41] Entra client ID and and all this stuff.
+[24:43] So uh it's great that it works all these
+[24:45] places because these are all my favorite
+[24:47] places to you know I I I love GitHub
+[24:49] Copilot and that's what I use. U so it's
+[24:51] great that it works so well with our
+[24:53] offerings. Um but just because of the
+[24:55] complexity of MSV off you may have some
+[24:57] issues if you try to use it in any in an
+[24:59] arbitrary MCP client.
+[25:02] All right, so now let's talk about
+[25:03] integration with Foundry IQ. So we
+[25:06] talked about Foundry IQ on Tuesday. So
+[25:08] as a reminder with Foundry IQ, we can
+[25:09] set up these knowledge bases that have
+[25:11] multiple sources and then we can do
+[25:13] searches across these multiple sources
+[25:15] and get merged results from them. Now,
+[25:17] one of these sources can be a fabric IQ
+[25:21] ontology. And so that's treated as a
+[25:23] remote knowledge source where it's
+[25:24] actually going to use that like MCP
+[25:26] server behind the scenes, send the query
+[25:28] to it, get back the results, and merge
+[25:30] them with the other results. Uh so you
+[25:34] know what's going to happen is we get
+[25:35] our question, it goes off to thelogy,
+[25:37] the ontology queries the lakehouse, we
+[25:40] get back the results, and those results
+[25:41] gets merged with the rest of them.
+[25:45] So let's actually look at the code for
+[25:48] that. Right. So here we've got another
+[25:52] um notebook. So we set up you know
+[25:54] everything we need um to connect
+[25:56] everything. Uh we get uh a token. So
+[25:59] once again you know the the in for this
+[26:03] um we do need a token that has access to
+[26:07] the fabric workspace. that is could be
+[26:12] different from the token that has access
+[26:14] to the search service. So there may be
+[26:16] two tokens involved. In fact, in in my
+[26:18] case, there are two tokens involved,
+[26:20] right? Um I have the search service on a
+[26:22] different tenant than the fabric tenant.
+[26:24] So I, you know, I I'm using uh oh, in
+[26:27] this case, I'm using a key credential
+[26:28] for the search service. Um but that is
+[26:30] on a different tenant. And for the
+[26:31] fabric service, I'm making sure that I'm
+[26:34] getting a token for me in that tenant
+[26:37] because that's, you know, who has
+[26:39] permission to it. So when we're using
+[26:41] adding this you know remote fabric
+[26:42] knowledge source we do need a way of
+[26:44] getting a token for uh the person that
+[26:48] has access to that fabric tenant
+[26:51] that fabric workspace. Then we are using
+[26:54] the um you know a search python SDK to
+[26:57] set up knowledge sources. So we can set
+[26:59] up some just normal index knowledge
+[27:01] sources. Uh but then we can set our
+[27:03] fabricontology knowledge source. So we
+[27:05] say okay this is our fabricontology
+[27:07] knowledge source. Here's our parameters.
+[27:09] Here's the workspace ID and here's the
+[27:10] ontology ID. And then we can also give
+[27:13] it some more information that will help
+[27:14] it decide when it's going to use this
+[27:16] knowledge source. Right? Because when
+[27:18] we're setting up these knowledge bases,
+[27:19] we have multiple knowledge sources. We
+[27:21] want to make sure it's clear what, you
+[27:22] know, what questions should go to this
+[27:26] source, right? So, I've specifically
+[27:28] told it that it has product data. And I
+[27:30] could get much more descriptive there
+[27:31] and say, oh, it's got like inventory and
+[27:34] stock and all of that stuff, right?
+[27:37] uh and then we're going to set up the
+[27:39] knowledge base. So we say like okay you
+[27:41] know you're going to create a knowledge
+[27:42] base with all those knowledge sources
+[27:44] and I even give it additional
+[27:46] instructions here. So these are my
+[27:47] retrieval instructions and I said hey
+[27:49] use fabricontologist for structure
+[27:50] operational data use a search index for
+[27:53] HR and pol policy documents right so you
+[27:55] can you know give it lots of information
+[27:58] to help it choose the right source to
+[28:00] use uh so then I gave it a question so
+[28:03] which product categories currently have
+[28:05] the lowest stock sales and uh we can see
+[28:09] that it got back the responses and this
+[28:13] all came from the product ontology this
+[28:15] is from like category combined with
+[28:17] inventory and um stock levels. And then
+[28:21] we can check the uh the activity log and
+[28:24] we can see that it did send a query to
+[28:26] the ontology and it actually decided in
+[28:29] this case because part of what the
+[28:30] knowledgeb does is decide which sources
+[28:32] to send to. It did not send this
+[28:34] question to our other search indexes at
+[28:37] all because it said hey this is a
+[28:39] product question. I only have have to
+[28:41] send this to ontology. Right? So that's
+[28:43] one of the nice things about the
+[28:44] knowledge bases is that it has this
+[28:45] source selection built in. So we can
+[28:47] look at the question and say like listen
+[28:49] I only have in order to answer this
+[28:51] question I only have to send it to one
+[28:52] of these sources. I'm not going to waste
+[28:54] my time with the other sources. So in
+[28:55] this case it only sent it to the
+[28:57] ontology and not to any of the other
+[28:59] sources. Um and so then we can also look
+[29:02] at the references and we can see back
+[29:04] everything that came back. And so that's
+[29:06] how it answered the question was based
+[29:08] off of all this uh data that came back.
+[29:12] So we can see that raw data which we saw
+[29:14] before and that answer.
+[29:18] All right. So there we go. So that's um
+[29:20] integration with Foundry IQ. So as I
+[29:25] saying ontology does integrate with many
+[29:27] places. Um so if you are you know
+[29:30] deploying a Foundry agent, you should
+[29:32] also be able to add antology there. I
+[29:34] saw a question about teams. You should
+[29:35] be able to then publish your you know
+[29:37] Foundry hosted agent to teams and then
+[29:39] be able to use fabric. But just keep in
+[29:41] mind um that the person authenticating
+[29:44] would need to have access to that fabric
+[29:47] tenant. Um so that may not always be um
+[29:52] you know what you expect. So you just
+[29:54] have to think about whether that's
+[29:56] that's you know the way you want to set
+[29:58] it up.
+[30:00] All right let's talk about graph now.
+[30:05] So and graph is going to look similar to
+[30:07] ontology. Anttology actually has a like
+[30:09] uses graph for its quering. So that's
+[30:11] what's interesting. But graph is an uh
+[30:15] you know offering in fabric IQ in fabric
+[30:19] when you really really want the
+[30:23] advantages of graph quering and graph
+[30:26] database. So when if you're doing
+[30:28] queries that are really really um
+[30:32] reliant on being able to do traversal in
+[30:34] a graph then you can choose to use to
+[30:38] set up to explicitly set up a fabric
+[30:39] graph in order to um store that data in
+[30:44] a the most efficient manner. Right? So
+[30:46] if you know you're doing lots and lots
+[30:48] of queries that are that are you know
+[30:50] require um these graph traversals
+[30:55] then you may choose to store data in
+[30:56] graph in order to really optimize those
+[30:59] queries. So that's how I would think of
+[31:01] the fabric graphs. Uh so um it's just a
+[31:05] little confusing between ontology and
+[31:07] graph because I think you'll be looking
+[31:08] at this and thinking like wait a second
+[31:09] like nodes and edges entities and
+[31:11] relationships those are very similar and
+[31:13] there is c there's definitely um an
+[31:15] overlap in between them but I would say
+[31:18] um you know using you want to use graphs
+[31:20] when you know if you're just thinking
+[31:21] about like something you would normally
+[31:22] use a graph database for so when you
+[31:24] know you're really going to do doing a
+[31:26] lot of graph querying that's when graph
+[31:29] would make sense. Um so what we do is we
+[31:31] set up nodes and edges. So the nodes are
+[31:33] the things and the edges are the
+[31:34] relationships, right? And then you know
+[31:36] we've got labels for nodes and then
+[31:38] properties for them. Um so this is
+[31:41] similar to like ontology with any
+[31:43] relationships but we're using graph
+[31:45] terminology here um in order to describe
+[31:49] everything.
+[31:53] So once we set up the graph, we also
+[31:55] need to bind it to some data, right? So
+[31:57] similar to how we did data bindings
+[31:58] before, we're going to set up some
+[31:59] source data and say like hey this is our
+[32:01] source data. It's one lake. It's got
+[32:02] like these lakehouse tables and we say
+[32:06] um you know this this is how we're gonna
+[32:08] we're gonna map this, right? Um and so
+[32:11] like the edges will actually like have
+[32:13] their own table. So like this one like
+[32:15] review feature mentions like that would
+[32:17] actually be a table in lakehouse and
+[32:19] that becomes an edge over here, right?
+[32:21] So we have our source data and then we
+[32:23] map it and it becomes then it becomes a
+[32:26] query queryable graph and that graph is
+[32:29] optimized for very fast traversal and
+[32:32] very fast graph queries.
+[32:36] So I have a graph that I set up in
+[32:38] fabric UI. Uh so here I'm using it for
+[32:41] product reviews. So imagine you know
+[32:43] I've got a website for all these
+[32:45] products. So each product has a review.
+[32:48] A reviewer wrote the review. Each you
+[32:50] know review can mention features right
+[32:52] so we can see like oh does this review
+[32:54] mention you know particular feature of a
+[32:56] product so we can see you know who's
+[32:58] talking you know positive or negative
+[33:01] about some you know particular feature
+[33:03] of a product. So that's our graph set up
+[33:07] here and this is you know our little
+[33:09] graph explorer
+[33:11] um and uh you can you know dig in more
+[33:16] to them like to each individual one. So
+[33:18] here you can see with product we have a
+[33:20] source table for it and um we map the
+[33:24] labels to the source columns right and
+[33:27] then if we click on the um edge same
+[33:30] thing is that the edge has a source
+[33:34] table and it needs to know um like how
+[33:38] to go get get from the origin to the
+[33:41] target. So we say oh the origin node is
+[33:43] product skew and the target node is
+[33:45] review ID. So it's doing this uh mapping
+[33:49] between um nodes and edges.
+[33:53] So we set up all these all these edges
+[33:56] and nodes. So now we've got our graph
+[33:58] and once again I did all this in you
+[34:01] know I created all this in Python um but
+[34:04] you can do this all in the UI as well
+[34:07] however you want to do it. So we have
+[34:09] our graph now. Now we can use GQL and
+[34:13] GQL is a graph query language. It's not
+[34:16] the same as GraphQL. So I keep on
+[34:19] accidentally saying that instead, but it
+[34:20] is GQL. So GQL is uh this this language
+[34:25] for quering the graphs and you know it
+[34:27] specifically has this syntax for
+[34:30] identifying nodes to edges. So you can
+[34:31] see here it's like um this GQL query is
+[34:34] saying okay Matt you know follow the
+[34:36] product has review mentions features. So
+[34:39] this is basically like doing a little
+[34:40] graph traversal here with the um you
+[34:43] know you can follow it's going node to
+[34:45] edge to node to edge to um node here and
+[34:49] then we can add on you know filters. So
+[34:51] here we're saying okay filter where the
+[34:52] sentiment is negative and then you're
+[34:54] going to return all this stuff here. So
+[34:56] you can create these GQL queries and um
+[34:59] that's that can query the graph and then
+[35:02] you can then execute those GQL queries.
+[35:04] So you can execute in the fabric UI or
+[35:06] you can execute them over the rest uh
+[35:09] rest API.
+[35:11] Uh so let's go ahead and use the rest
+[35:15] API. So here um we are you know setting
+[35:19] everything up and we've got the GQL
+[35:21] endpoint. So you know here we're
+[35:24] specifying our workspace ID and our
+[35:26] graph ID and that gives us our URL for
+[35:29] the sending the GQL queries. Then uh we
+[35:34] have our actual GQL query
+[35:37] and the goal of this query is to find
+[35:39] negative feature mentions connected to
+[35:41] product reviews. So we want to see where
+[35:43] our products aren't doing as well. And
+[35:45] then we get a token for our fabric
+[35:48] tenant. Once again, it needs to be for
+[35:50] us that has access to the fabric tenant
+[35:52] uh fabric workspace. And then we get
+[35:55] back the response. So here in the
+[35:57] response we can see uh we get back a
+[36:02] table with columns and then we get back
+[36:04] the actual data right so this is the
+[36:06] data that it sent back u so basically
+[36:09] this is everything we asked it to return
+[36:10] see we asked it to return all this so we
+[36:13] get back uh all of that in a single
+[36:16] table and you know it's it's combined
+[36:19] all this information together for us so
+[36:20] we can see oh okay it's saying that you
+[36:23] know the weight of this okay so I guess
+[36:26] They're saying the weight is uh is
+[36:28] negative, right? Battery life is
+[36:30] negative. Okay, so it's a negative
+[36:31] review about battery life for this, you
+[36:34] know, for this product here, right? Uh
+[36:37] so we get back all the results. And so
+[36:38] you'll notice we only get back data
+[36:40] results, right? So this GraphQL is
+[36:43] purely doing a data query. Um it's, you
+[36:47] know, so there's no LLM involved here,
+[36:49] right? because, you know, we're just
+[36:51] sending in a a graph GQL query and we're
+[36:54] getting back data. Um, so this was
+[36:56] actually quite fast. You can see this
+[36:57] was two seconds to execute that. That's
+[36:59] that's pretty fast. And um, you know,
+[37:02] it's able to do that very quickly
+[37:03] because there's no LLM involved. We're
+[37:05] just sending in a query. We're getting
+[37:07] back results.
+[37:11] So, how would we then query this from
+[37:14] agents? So generally if you wanted to
+[37:16] query this from agents you would want
+[37:18] the agent to be able to create the GQL.
+[37:21] Um and luckily like you know GQL is you
+[37:24] know this particular GQL is specific to
+[37:27] fabric but it's also generic too like
+[37:29] it's it's um there's kind of like this
+[37:31] generic standard around it. So the
+[37:33] agents are pretty good at constructing
+[37:35] GQL especially if you kind of give them
+[37:37] some tips about how to do it. So you
+[37:39] could create your own tool that um you
+[37:42] know says like hey I need a GQL and then
+[37:44] you could you know do what I just did is
+[37:46] then just call that graph API behind the
+[37:49] scenes. So that would one be one way
+[37:50] that you could do it. Uh or you can add
+[37:53] it as a data source to fabric data
+[37:55] agent. So that's what we're going to be
+[37:56] doing later today when we see fabric
+[37:58] data agent is just adding this as a data
+[38:00] source. So that's what most people will
+[38:01] do is just add it as a source to fabric
+[38:03] data agent. But you can always make your
+[38:06] own tool, right? For any like you can
+[38:08] like basically for anything in life,
+[38:11] anything that's anything you can
+[38:12] programmatically, you know, access, you
+[38:15] could make your own tool for for, right?
+[38:17] And you just have to figure out what is,
+[38:19] you know, arguments is your tool going
+[38:20] to have and what is it going to return
+[38:22] back and then you just make this API
+[38:23] call behind the scenes.
+[38:26] All right, so now let's talk about
+[38:29] semantic models. Uh so these semantic
+[38:32] models, these come from PowerBI. Uh so
+[38:36] uh for those of you familiar with
+[38:37] PowerBI, these are the PowerBI semantic
+[38:39] models. I'm actually not that familiar
+[38:41] with PowerBI, so this was my first real
+[38:43] introduction to it. Um but these are
+[38:46] really optimized for aggregation and
+[38:48] reporting like analytics reporting,
+[38:51] right? So um I have used many PowerBI
+[38:54] reports from other people and it's
+[38:55] always for analytics. It's like how are
+[38:57] our how are our GitHub repos doing? how
+[38:59] many deployments are we seeing, right?
+[39:00] Like how have we done in the last month?
+[39:02] And you're always like slice and dicing
+[39:04] like, you know, let's slice it by repo,
+[39:06] let's slice it by month, right? So these
+[39:08] are all optimized for reporting. Um so
+[39:11] in semantic models, you have tables, you
+[39:13] have relationships between tables, you
+[39:15] have the measures which are like the
+[39:16] calculations um that are being done on
+[39:18] these on these uh tables and then you
+[39:21] have the data source which is you know
+[39:22] the data binding uh which is binding it
+[39:24] to the one lake, right? Right. So, we
+[39:26] set up everything up and then we make a
+[39:27] PowerBI report that can query all of
+[39:30] that.
+[39:31] Now, when we um describe our data, we
+[39:34] use something called a star schema. And
+[39:36] you see here I made a diagram that looks
+[39:38] roughly like a star. And in the star
+[39:41] schema, there are facts and there are
+[39:43] dimensions. Uh so the fact those are the
+[39:46] rows that are going to be aggregated. A
+[39:47] lot of times these are events. So I find
+[39:49] it the most useful to think about it as
+[39:50] events. So a page view would be a fact,
+[39:53] right? because page views happen
+[39:55] constantly, right? Like, you know,
+[39:56] thousands of people an hour are like,
+[39:58] you know, doing page views, right? So,
+[40:00] that would be uh that would be a fact.
+[40:03] And then the dimensions, those are the
+[40:05] things that you want to be grouping or
+[40:06] filtering by. So, you can think like,
+[40:08] oh, for a page view, what country did
+[40:09] that person come from? Uh, you know,
+[40:11] what browser were they using? Those
+[40:13] would be a dimension to those facts,
+[40:16] right? So, that's that's how I think of
+[40:18] the difference between facts and
+[40:20] dimensions. Uh so whatever it is you're
+[40:22] going to be reporting on you you want to
+[40:24] come up with the schema of facts and
+[40:26] dimensions um so that you have uh really
+[40:29] good performant reports.
+[40:32] So we can define those uh semantic
+[40:35] models using this format called TMDL
+[40:39] and um I have TMDL in the repo. So this
+[40:42] is all just from uh from the repo here.
+[40:45] So you can see we can have a TMDL file
+[40:47] for a fact table and then a TMDL for a
+[40:50] dimension table. So for session sessions
+[40:52] we say okay we're doing a session and um
+[40:55] here's and then we do the data binder we
+[40:57] data binding we say oh coming from our
+[40:59] our you know lakehouse and it's coming
+[41:01] from you know this table in the
+[41:03] lakehouse right and then we add we can
+[41:05] add measures to those fact tables right
+[41:07] so here we have a measure and it's doing
+[41:09] this calculation and this is called a
+[41:11] DAX calculation uh which is basically
+[41:13] like excel but even better or like excel
+[41:17] formulas but more [snorts]
+[41:19] um so here you know we have this um
+[41:21] these calculations here. So we define
+[41:23] that all in the fact table and then we
+[41:24] have the dimension table and similarly
+[41:26] we define these dimensions and then we
+[41:28] need to bind them to a um you know a
+[41:32] lakehouse entity. So then once we have
+[41:35] all these defined then we can create
+[41:37] semantic models based off of these facts
+[41:40] and dimension TMDL files.
+[41:45] So now let's go and explore the semantic
+[41:48] models that I've created. Uh oh, first
+[41:52] here we can see these are what we're
+[41:53] binding to. So I'm saying we do have
+[41:55] these lakehouse tables here and you know
+[41:58] these are what our kind of dimensions
+[41:59] [clears throat] look like. Um this is
+[42:01] what our sessions look like. So you can
+[42:03] see there's a lot of sessions and they
+[42:05] just basically have lots of keys out to
+[42:08] the dimensions, right? So the session
+[42:10] rows are quite short because we're
+[42:12] everything here is really a key. So that
+[42:14] then we can look it up in the um
+[42:17] dimension tables here. Right?
+[42:20] So then we create the semantic models on
+[42:24] top of them. Where's our models?
+[42:31] Umah
+[42:34] I have to remember where to actually
+[42:35] even find the models. Okay.
+[42:39] Semantic models.
+[42:41] Let's see. Wait, let me see if I just
+[42:43] have it in my A lot of times I just
+[42:46] write out the semantic model UI. Okay,
+[42:48] great. Let me check this one.
+[42:54] This might be our This might be our
+[42:57] lakehouse again. Let's see.
+[43:01] Oh, there we go. Yeah, this is what I
+[43:03] wanted. Okay. All right. So, this is how
+[43:06] we can explore the semantic models. So
+[43:08] we can see uh like sessions and you see
+[43:11] the
+[43:12] the epsilon [laughter] the
+[43:14] [clears throat] that e next to it and
+[43:16] that indicates a calculation. So all of
+[43:19] these are um DAX calculations.
+[43:23] Uh
+[43:24] right and then we've got the actual
+[43:26] things that are being stored in that in
+[43:29] that lakehouse table.
+[43:31] And then we've got our dimensions here.
+[43:34] And you can see how things are
+[43:36] connected. And you know, looks roughly
+[43:38] like a star.
+[43:40] So, we've got that all set up now.
+[43:44] [clears throat] And once we have the
+[43:46] semantic models and the binding, then we
+[43:48] can create a PowerBI report. And a
+[43:51] report is like the whole dashboard. And
+[43:53] inside a report, you have pages. And
+[43:55] inside each page, you have visuals and
+[43:57] you have filters. Uh so once again you
+[44:00] can define all this in code um actually
+[44:03] using a um a JSON format. So I've got a
+[44:07] bunch of JSON in the repo that defines
+[44:10] the parts of this report and then I can
+[44:12] create that report um you know putting
+[44:14] together all those different components.
+[44:18] So then going over here I've got my
+[44:20] dashboard. So this you can see, you
+[44:23] know, this is a page in the dashboard
+[44:25] and we've got these cards up here that
+[44:28] are just showing you just simple
+[44:30] numbers. We've got filters on the side
+[44:32] here. So we can look at date. Um we've
+[44:35] got charts here. So these are nice
+[44:37] visuals that are charts and um and yeah,
+[44:41] we can see how the filters are, you
+[44:42] know, affecting everything here. So
+[44:45] there's our report. Okay. So So that's
+[44:48] cool. So that's like how would you even
+[44:50] set up PowerBI programmatically which is
+[44:52] helpful. Um now maybe my colleagues will
+[44:55] ask me to make PowerBI reports. So don't
+[44:57] tell them I know about PowerBI now. Uh
+[44:59] and now the question is okay we've got
+[45:01] the sematic models set up. You know
+[45:03] we've got the reports and people like
+[45:04] the reports but we want to be able to
+[45:06] programmatically query those semantic
+[45:09] models from our agents um so that we
+[45:11] don't have to be going to the reports to
+[45:13] answer all the questions. So for that
+[45:15] what we need to do is create DAX queries
+[45:19] right so the DAX queries I saying that's
+[45:21] kind of looks like a like an Excel
+[45:22] formula but it has some additional
+[45:24] features like here you can see like
+[45:25] order by right um so we need to be able
+[45:28] to construct DAX queries and then we can
+[45:31] send those DAX queries to the semantic
+[45:33] models so that means we need something
+[45:35] that can do natural language to DAX. Uh
+[45:38] now fabric data agent once again already
+[45:40] has support for natural language to DAX.
+[45:43] it knows how to do it. You can also try
+[45:45] building your own our agents and having
+[45:48] it do that NL to DAX. DAX is specific to
+[45:51] Microsoft. So it may be, you know, might
+[45:55] have a harder time with it, but also the
+[45:58] models do know Microsoft stuff pretty
+[46:00] well. Um, so even if it is like specific
+[46:02] to to Microsoft, um, you know, I think
+[46:05] they can do a pretty good job at it. Um,
+[46:07] there is some, uh, prep work you can do.
+[46:09] So there's a there's a whole
+[46:11] documentation here about how to make
+[46:13] your semantic models be the most you
+[46:15] know agent friendly like um so that
+[46:18] they're the most it's has the greatest
+[46:20] success at doing that NL to DAX um
+[46:23] formulation.
+[46:25] So most of the time you're probably just
+[46:27] going to add it as a data source to a
+[46:28] fabric data agent and use it that way.
+[46:30] But if you wanted to you could also make
+[46:32] your own agent with a custom tool that
+[46:34] basically did NL to DAX.
+[46:37] All right. So that finally brings us to
+[46:40] data agent.
+[46:43] Uh so fabric data agent is a
+[46:45] computational agent that can query
+[46:47] across multiple fabric data sources. Um
+[46:51] and it you know this is kind of similar
+[46:54] to the you know knowledge bases we were
+[46:55] talking about before right the ability
+[46:56] to query across multiple fabric data
+[46:58] sources. So, it's going to take in a
+[47:00] question. It's going to validate that
+[47:02] the question is like a valid question
+[47:04] that's not violating any sort of like
+[47:07] policies or PII issues that you might
+[47:09] have enforced um you know that
+[47:11] syntactically that it makes sense. Then
+[47:13] it's going to do source selection. So,
+[47:15] it's going to decide which of these
+[47:16] sources is going to use to answer the
+[47:18] question. I believe it can only use one
+[47:20] source at a time. This is something that
+[47:22] I need to get confirmation of, but in my
+[47:24] experience, it's only selected one
+[47:26] source at a time. Um, so I think
+[47:28] currently it's it's it's figuring out
+[47:30] which of these is going to answer it um
+[47:32] versus like sending it to multiple at
+[47:34] once. So it's going to select one of
+[47:35] those sources. It's going to generate
+[47:37] the query for those sources. Now each of
+[47:39] these understands a different sort of
+[47:40] language, right? So semantic model
+[47:42] that's going to be DAX. If it was
+[47:44] Lakehouse direct SQL, if it's event
+[47:46] house, KQL. If it's the graph model,
+[47:48] GQL. If it's data warehouse SQL, right?
+[47:51] Now luckily these models can can
+[47:54] construct all of those you know kinds of
+[47:56] languages but it is going to depend on
+[47:58] the data source what sort of query it
+[48:00] forms.
+[48:04] Then once we've set up the data agent we
+[48:06] can um we can use that data agent as an
+[48:09] MCP server. uh so we you know have a URL
+[48:12] for the data agent and that uh that data
+[48:16] agent MCP server exposes a tool just for
+[48:19] that agent that can take in the question
+[48:21] and get back the results. So let's check
+[48:23] out how that works. Uh
+[48:27] okay so here we go.
+[48:30] So this is you know similar to before we
+[48:32] are just creating an MCP client that is
+[48:35] pointing at that MCP URL.
+[48:38] Then we say, "Hey, MCP server, what
+[48:41] tools do you have?" And you can see it
+[48:42] has a single tool and it's actually
+[48:44] named custom based off of what I called
+[48:47] that data agent. So it says, "Okay, this
+[48:48] is the Kontoso DIY data agent. Kontoso
+[48:51] is my pretend store." Uh, it also has a
+[48:54] description and the description was
+[48:55] entirely based off of what I told it. So
+[48:57] here you can actually control tool and
+[48:59] description. That can be really helpful
+[49:00] because if you have multiple data
+[49:01] agents, you want to disambiguate, right?
+[49:03] So this helps with disamiguation.
+[49:05] And then we can see that this tool takes
+[49:08] a single argument which is the user
+[49:10] question.
+[49:12] Then we can query it. Um so we can you
+[49:14] know we can try querying multiple
+[49:16] sources. So this first question I have
+[49:18] here this is one that would be answered
+[49:19] by the ontology and I've added that
+[49:22] ontology as a data source to this data
+[49:25] agent. So uh it should be able to answer
+[49:28] this question because it has access to
+[49:30] the ontology. So, we can see that it
+[49:32] does get back an answer
+[49:35] and it gives me all this back. And
+[49:37] what's really cool, it gives you this
+[49:39] deep link URL in the results as well.
+[49:42] And this opens up this um fabric UI
+[49:46] which gives you more details on the
+[49:48] query. So, we can see here's the query
+[49:50] and then we can see what it actually
+[49:52] did. So, we can see that the way it
+[49:54] answered this query is it actually came
+[49:56] up with GQL. So the the way it does um
+[49:59] ontologies is it does come up with a GQL
+[50:01] query. So it came up with this GQL and
+[50:03] it ran that GQL and then we get more
+[50:06] data here. So here we can actually see
+[50:07] it said oh the result was incomplete. Um
+[50:10] so you definitely want to be checking
+[50:12] out this uh you know when you're
+[50:14] developing your data agent like you do
+[50:16] want to be clicking through and looking
+[50:18] at this um you know this process here to
+[50:20] see um you know if it's working the way
+[50:23] you expect or if there's anything you
+[50:24] need to improve.
+[50:27] Uh now we can also ask a question that
+[50:28] would uh query that PowerBI model right.
+[50:31] So uh you know what is the total website
+[50:34] revenue and conversion rate? That answer
+[50:35] is only in the semantic models. Um and
+[50:40] we can see that it got back an answer.
+[50:43] And once again we can open that in
+[50:45] fabric.
+[50:51] All right. And we'll look at this thing
+[50:53] here. And in this case it did a DAX
+[50:55] query. Right. So it came up with this
+[50:57] DAX here and um it was this was a pretty
+[51:03] simple DAX because the the data was
+[51:04] already um directly in there and then we
+[51:07] also get back the you know the the more
+[51:10] natural language response here. Um so so
+[51:13] there we go. So you can add you know all
+[51:15] of these multiple data sources to your
+[51:17] data agent and then be able to get back
+[51:19] responses for it. Now since this is an
+[51:22] MCP server once again we can access that
+[51:25] from um our GitHub copilot clients. So I
+[51:29] added it to GitHub copilot app. So if
+[51:31] you look at my MCP servers, you can see
+[51:35] um that I added this MCP server here and
+[51:39] you know just as HTTP and when I added
+[51:41] it, it it prompted my login because it
+[51:43] needs my my O token and I had to log in
+[51:46] to the account that had the fabric
+[51:48] server in it, right? And then I could
+[51:50] ask the same question and we can see the
+[51:52] user question it decided to use. We can
+[51:55] see back the you know the answer and we
+[51:58] can see that deep link URL so that we
+[52:00] could debug it.
+[52:01] Right. Um, we could also just see what
+[52:03] my co-pilot model decided to respond to
+[52:06] with and just see that answer there. Uh,
+[52:09] so that's, you know, that's really cool
+[52:11] that we can use this data agent from
+[52:13] multiple sources. Now, we can also use
+[52:17] it
+[52:19] from Foundry IQ knowledge base, right?
+[52:21] So, going back to Foundry IQ knowledge
+[52:22] bases, one of the knowledge sources you
+[52:24] can add is a fabric data agent knowledge
+[52:28] source.
+[52:30] Uh, and so that one we're adding like
+[52:33] another level. So basically what we did
+[52:35] before, but we're adding another level.
+[52:36] So this time if we're adding a fabric
+[52:37] data agent, that fabric data agent is
+[52:41] going to receive the query and it's
+[52:42] going to decide whether to send it to an
+[52:44] ontology, a graph or semantic models,
+[52:46] right? So if it decides to send it to
+[52:48] the ontology, then you know we go back
+[52:50] down that ontology route. Um, so this is
+[52:52] definitely adding another, you know,
+[52:54] we're adding another agent in this flow.
+[52:58] And, uh, you really want to consider
+[53:00] carefully if you do want to set up this
+[53:02] this sort of flow. Uh, for example, if
+[53:04] all you have was ontology, you would
+[53:06] certainly want to just directly add
+[53:08] ontology as a knowledge source, right?
+[53:09] You don't want to have this data agent
+[53:10] in the way. The data agent is the most
+[53:12] useful when you've got these multiple
+[53:14] sources and um you know especially
+[53:17] beyond ontology and you you want to be
+[53:19] able to just arbitrarily handle any of
+[53:21] them. Uh so yeah, but we can add this
+[53:24] data agent if that's helpful. So then we
+[53:26] can go and check out what that looks
+[53:28] like. Um so you know we set up our
+[53:30] connection, we get the token for our
+[53:32] fabric tenant. Then this time when we
+[53:35] create the um knowledge source, we're
+[53:38] creating a fabric data agent knowledge
+[53:41] source. So we give it our fabric
+[53:42] workspace ID and our data agent ID and
+[53:45] we tell it what sort of information it
+[53:47] has access to.
+[53:50] Then we create the multissource
+[53:52] knowledge base and this time in the
+[53:54] retrieval instruction I said use the
+[53:56] fabric data for structured product
+[53:58] inventory and analytical questions. So
+[54:01] trying to give it a good idea of when
+[54:02] it's going to use that data agent and
+[54:05] when it's going to use the other
+[54:06] indexes.
+[54:07] Um so in this case I'm sending it a
+[54:10] complex question actually. So I said oh
+[54:12] okay which products or product
+[54:13] categories have the lowest inventory
+[54:14] right now? And I also asked which Ktoso
+[54:17] job roles are responsible for inventory
+[54:18] strategy. So this actually can only be
+[54:21] answered by the search indexes and this
+[54:23] is the question that can be answered by
+[54:24] the data agent. Um, so we get back an
+[54:28] answer and all of this information here
+[54:30] all came from the data agent from the
+[54:32] ontology underneath it and then this all
+[54:35] this information here came from the
+[54:37] search indexes, right? And then it, you
+[54:39] know, tries to come up with an answer
+[54:41] based off of all the information it sees
+[54:43] across that.
+[54:46] Uh, and then we can look and see what it
+[54:48] did. So we can see, okay, the knowledge
+[54:49] base, you know, it decided to send this
+[54:52] search, this query to the index.
+[54:55] um it sent a couple different queries to
+[54:56] the index and then this is what it you
+[54:58] know for the data agent it just directly
+[55:00] sends the the full question and lets the
+[55:03] data agent decide what to do with it
+[55:06] and then we can look at the references
+[55:08] and in the references we can see what
+[55:11] came back from each of the sources so
+[55:13] I'm just looking for the data agent here
+[55:16] data agent might be at the bottom okay
+[55:18] let's see okay there we go um so here's
+[55:22] the fabric answer
+[55:24] and uh you can see it it's very long.
+[55:28] [laughter] There we go. Um so we got
+[55:30] back that answer there.
+[55:35] All right. Okay. So there you can see
+[55:37] integration with Foundry IQ. Once again
+[55:39] you could also integrate with Foundry
+[55:40] hosted agents and add the Fabric data
+[55:43] agent to a Foundry toolbox and um as
+[55:47] long as the user was authenticating that
+[55:48] had access to Fabric, they'd be able to
+[55:50] access it there. So lots of different
+[55:51] ways that you can integrate with um with
+[55:54] data agent. I saw there's a question
+[55:56] about the the um deep link URL. So that
+[55:59] is just literally it's coming back as a
+[56:02] result from the MCP server. So the MCP
+[56:04] server um is returning both structured
+[56:07] content. So this is the structured
+[56:08] content which is basically JSON you know
+[56:11] being rendered as JSON here and then uh
+[56:13] free text content. Um so uh in the
+[56:16] structured content is where the deep
+[56:18] link URL is and then in the free text
+[56:20] content is where you get the actual
+[56:23] answer right so here you can see um you
+[56:25] know result.content is where I get the
+[56:27] natural language response and then
+[56:28] result.structured structured content is
+[56:30] where I get the deep link URL. Now,
+[56:32] since we're talking about it, I will
+[56:34] admit that there is an open issue in VS
+[56:36] Code where it's it ignores if you have
+[56:40] both. Um, here we go. Here's the issue.
+[56:43] If you have both if an MC server returns
+[56:46] both structured content and content,
+[56:49] it's actually not showing the content uh
+[56:53] to the agent. Um so that is why I did
+[56:57] that data agent demo in copilot app. Uh
+[57:00] because VS code um does have this open
+[57:02] issue where it's confused about the
+[57:04] mixed use of structured content. And
+[57:06] this part of this is just because you
+[57:07] know MCP is a new a newish protocol.
+[57:10] We're still fig trying to figure out uh
+[57:12] you know how clients could respond to
+[57:13] it. And so it was like unclear like oh
+[57:16] if a call to a result has both content
+[57:18] and structured content how should that
+[57:20] be presented to the LLM? Right? Should
+[57:21] the LLM see both of those? um should
+[57:24] only see um uh one of them. So um you
+[57:28] know I've pinged this to the VSS code
+[57:30] team and said hey this is affecting you
+[57:31] know one of our MCP servers. So um yeah
+[57:34] so hopefully that'll be resolved soon.
+[57:36] Um but yeah that is why with the fabric
+[57:39] data agent MCP we get back both this
+[57:43] free text response and the um the
+[57:46] structured response here that has that
+[57:48] deep link URL.
+[57:52] All right.
+[57:54] Okay. So, now we're reaching the end of
+[57:56] our our series. Uh we've tried to cover
+[58:00] a lot of aspects of the current
+[58:02] Microsoft IQ platform. It is evolving
+[58:06] all the time as we figure out you know
+[58:08] um what it what people need in order to
+[58:11] you know build the most powerful and
+[58:13] accurate applications with LLMs. Uh but
+[58:16] we've seen work IQ, we've seen fabric
+[58:18] IQ, we've seen web IQ on the first day
+[58:20] with Foundry IQ and then of course
+[58:22] Foundry IQ and all of these like can IQs
+[58:25] can interact with each other. So you
+[58:26] know Foundry IQ can actually consume web
+[58:29] IQ, fabric IQ and work IQ. So if you
+[58:31] want you can actually use Foundry IQ as
+[58:33] your like one IQ to rule them all and
+[58:36] and have it be a multis source knowledge
+[58:37] base for everything else or you can use
+[58:39] these things you know um you know
+[58:41] separately of one each other, right? So
+[58:43] you really you need to figure out what
+[58:45] are the you know what are the situations
+[58:47] that you're solving for what are you
+[58:48] building what do you need access to what
+[58:51] sort of like you know do you want to go
+[58:53] through an agent do you want very like
+[58:55] do you want just directly the structured
+[58:57] results um what's the sort of latency
+[59:00] concerns that you have because a lot of
+[59:01] these do have their own built-in LLMs
+[59:03] that can do query planning and answering
+[59:06] all that stuff uh but anytime you have a
+[59:08] built-in LLM that does add latency right
+[59:10] so hopefully you've seen a lot of
+[59:12] options options over the course of this
+[59:13] series and you can start experimenting
+[59:16] those options and uh start setting up
+[59:19] evaluations. We didn't have time to talk
+[59:22] about evaluations in this series uh but
+[59:24] I you know I've I've talked about that
+[59:26] in previous live streams. It's so
+[59:28] important to set up evaluations. Uh
+[59:30] Foundry has a really nice evaluation uh
+[59:32] platform. Now, you really need to set up
+[59:34] evaluations so to represent all the
+[59:37] different, you know, queries that you
+[59:39] think you're going to be handling and
+[59:40] seeing what results you're getting back.
+[59:43] Are they accurate? Are they fast enough?
+[59:45] You know, and and figure out what
+[59:48] solution you're going to use to power
+[59:50] your applications.
+[59:52] We are going to be having a bi-weekly
+[59:55] Microsoft Reactor series on YouTube um
+[59:57] starting August 6th. So if you want to
+[59:59] continue your Microsoft IQ journey, this
+[01:00:02] is being organized by ICHA. Uh so you
+[01:00:04] can register for that at this aka that
+[01:00:06] we'll put in the link Microsoft IQ live
+[01:00:09] and so that way you can keep up to date
+[01:00:10] with everything happening with Microsoft
+[01:00:12] IQ. It's definitely evolving all the
+[01:00:15] time. Uh so you should like keep
+[01:00:17] watching and seeing as we uh improve it
+[01:00:21] and develop more uh services based on
+[01:00:23] what all of you need.
+[01:00:26] So for today the stream is over but we
+[01:00:29] do have office hours. So uh if you have
+[01:00:32] additional questions please come to
+[01:00:33] office hours. I've asked our fabric data
+[01:00:36] advocates to join in the office hours
+[01:00:38] and share their expertise. Uh I'm
+[01:00:41] actually quite new to fabric. This is my
+[01:00:42] first time talking about fabric. So
+[01:00:44] thanks all of you for uh letting me
+[01:00:47] giving me excuse to talk about it. Um
+[01:00:49] but we do have fabric data advocates
+[01:00:51] that are going to be bringing their
+[01:00:53] expertise to the discord. So, please
+[01:00:55] jump into the Discord. We'll putting the
+[01:00:58] link and in the chat. We've got it in
+[01:01:00] the chat already. So, you can come into
+[01:01:02] the Discord and ask any of your
+[01:01:04] additional questions about fabric in the
+[01:01:07] Discord. All right. And yeah, that is
+[01:01:12] what we have for you. I'll head over to
+[01:01:15] the Discord and uh thanks everybody for
+[01:01:19] joining the series and bringing your
+[01:01:21] enthusiasm and your questions. See you
+[01:01:23] in Discord. Bye.
+[01:01:38] Thank you all for joining and thanks
+[01:01:39] again to our speakers.
+[01:01:42] This session is part of a series. To
+[01:01:44] register for future shows and watch past
+[01:01:47] episodes on demand, you can follow the
+[01:01:49] link on the screen or in the chat.
+[01:01:53] We're always looking to improve our
+[01:01:54] sessions and your experience. If you
+[01:01:57] have any feedback for us, we would love
+[01:01:59] to hear what you have to say. You can
+[01:02:01] find that link on the screen or in the
+[01:02:03] chat. and we'll see you at the next one.

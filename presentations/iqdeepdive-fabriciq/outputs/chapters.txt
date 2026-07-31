@@ -1,0 +1,29 @@
+In the third session of the Microsoft IQ Deep Dive with Python series, we explored Fabric IQ and its components for grounding AI applications in business data stored in Microsoft Fabric's OneLake. We covered ontologies for defining business entity vocabularies, graphs for efficient relationship traversal, semantic models for Power BI analytics, and data agents as conversational interfaces to multiple data sources. Each component was demonstrated with practical code examples and integration patterns with Foundry IQ knowledge bases for multi-source intelligent retrieval.
+
+Chapter timestamps:
+00:00 - Introduction and series overview
+01:52 - Microsoft IQ platform overview
+06:02 - Microsoft Fabric and OneLake unified data platform
+08:23 - Fabric IQ overview and components
+09:42 - Ontologies: defining business vocabulary
+12:17 - Ontology data bindings and real-world example
+15:02 - Creating ontologies programmatically in Python
+16:03 - Ontology MCP server for agent integration
+17:00 - Querying ontologies with GitHub Copilot
+25:03 - Integration with Foundry IQ knowledge bases
+28:55 - Fabric IQ graphs for graph database queries
+32:05 - Graph data modeling and GQL queries
+35:15 - Querying graphs from agents with NL2GQL
+38:29 - Semantic models for Power BI analytics
+39:26 - Semantic models architecture and star schema
+40:32 - Defining semantic models with TMDL format
+42:41 - Exploring semantic models in Fabric UI
+43:51 - Creating Power BI reports programmatically
+45:01 - Querying semantic models with NL2DAX
+46:40 - Fabric data agent for multi-source queries
+47:00 - Data agent architecture and query pipeline
+48:06 - Data agent MCP server integration
+50:27 - Querying data agents from agents with MCP
+52:19 - Data agent integration with Foundry IQ
+54:46 - Building knowledge bases with Fabric data agent
+57:54 - Wrap-up and Microsoft IQ Live announcement

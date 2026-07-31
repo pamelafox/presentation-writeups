@@ -1,0 +1,45 @@
+1. Microsoft IQ Deep Dive with Python is a three-part live stream series covering Foundry IQ, Work IQ, and Fabric IQ, encouraging registration at aka.ms/IQDeepDivePython/series.
+2. Pamela Fox, Principal Cloud Advocate at Microsoft and GitHub, presents Fabric IQ with slides available at aka.ms/iqdeepdive/slides/fabriciq.
+3. Today's session covers Fabric IQ components including ontologies, graphs, semantic models, data agents, and integration with Foundry IQ.
+4. All code for the series is available in an open GitHub repository at aka.ms/iqdeepdive, accessible via GitHub Codespace, requiring an Azure account and Fabric license.
+5. Microsoft IQ is a unified intelligence platform designed to ground AI and LLM applications with accurate context.
+6. The Microsoft IQ platform includes Work IQ for employee collaboration, Fabric IQ for business operations, Web IQ for web intelligence, and Foundry IQ for knowledge bases.
+7. Fabric IQ is Microsoft's offering for accessing business data and operational information stored in OneLake.
+8. Microsoft Fabric provides a unified platform for all data workloads with OneLake as a single shared storage layer replacing separate storage accounts and ETL.
+9. OneLake unifies data from multiple sources including Azure SQL, Azure Data Lake, Cosmos DB, PostgreSQL, SQL Server, Snowflake, and cloud storage via shortcuts and mirroring.
+10. Fabric IQ encompasses multiple components built on OneLake including ontologies, semantic models, graphs, data agents, planning tools, digital twin builder, and operations agent.
+11. Ontologies are Fabric IQ's mechanism for creating a shared business vocabulary that describes data entities and their relationships.
+12. Fabric IQ ontologies consist of entity types, properties describing those entities, relationships between entities, and data bindings connecting to actual OneLake data.
+13. A retail store ontology example demonstrates how entities like Store, Product, Category, Inventory, and Supplier are connected through relationships such as contains and holds.
+14. Users can explore and manage ontologies visually in the Fabric UI to verify data bindings and review entity properties.
+15. Multiple Microsoft agents support Fabric IQ ontologies, including Copilot Studio, Fabric data agent, Foundry IQ, and Foundry hosted agents through direct integration or the Ontology MCP server.
+16. The Ontology MCP server at the Fabric API endpoint exposes two tools: list_ontology_entity_types for discovery and search_ontology for natural-language queries.
+17. GitHub Copilot can query Fabric IQ ontologies through the Ontology MCP server when configured with proper authorization in VS Code, the CLI, or the Copilot app.
+18. Foundry IQ knowledge bases support Fabric IQ as a knowledge source, enabling multi-source retrieval that merges ontology results with other sources.
+19. A Foundry IQ plus Fabric IQ knowledge source example answers product questions by querying OneLake data through the ontology.
+20. Creating a Foundry IQ knowledge base with a Fabric ontology source requires a FabricOntologyKnowledgeSource with workspace and ontology IDs plus retrieval instructions.
+21. Fabric IQ's graph component offers dedicated graph database capabilities for scenarios requiring extensive relationship traversal.
+22. Fabric IQ graphs use nodes for entities with labels and properties and edges for relationships between nodes.
+23. Graph data is created by mapping OneLake lakehouse tables to node and edge definitions, producing a graph optimized for traversal queries.
+24. Users can explore and visualize graphs in the Fabric UI's graph explorer.
+25. Fabric IQ graphs use GQL, which supports pattern matching for nodes, edges, filters, and return statements through a REST API.
+26. Agents can query Fabric IQ graphs by adding the graph to a Fabric data agent, enabling natural-language-to-GQL translation.
+27. Semantic models in Fabric IQ are Power BI models optimized for aggregations and reporting analytics on tabular business data.
+28. Fabric IQ semantic models contain tables, relationships, DAX measures, and data source bindings to OneLake through Direct Lake.
+29. A web analytics star schema uses a Sessions fact table and Date, Devices, and Pages dimensions for efficient aggregation and filtering.
+30. Semantic models use TMDL, a declarative format for Power BI semantic models in Fabric, with separate fact and dimension table definitions.
+31. The Fabric UI visualizes semantic model tables, relationships, measures, and data bindings.
+32. Power BI reports in Fabric contain pages with visuals and filters bound to semantic models for interactive analytics.
+33. Power BI reports can be created programmatically with the Fabric SDK by defining report components in PBIR JSON and binding them to semantic models.
+34. The Fabric UI supports creating, editing, and exploring Power BI reports with interactive filtering and visualization.
+35. Agents can query semantic models through a Fabric data agent, which translates natural-language analytics questions into DAX.
+36. Fabric data agent is Fabric IQ's conversational agent component for querying across multiple Fabric data sources.
+37. Fabric data agent validates questions, selects sources, and generates DAX, SQL, KQL, or GQL based on the chosen data source.
+38. The data agent MCP server exposes a Fabric data agent as a tool at the agent's API endpoint for any MCP-compatible client.
+39. GitHub Copilot can query Fabric data agents through MCP, letting multi-source data-agent reasoning answer natural-language questions.
+40. Foundry IQ knowledge bases can include a Fabric data agent as a source, enabling multi-level agent reasoning across both systems.
+41. A Foundry IQ plus Fabric data agent example answers product inventory questions through the agent's access to ontologies, graphs, and semantic models.
+42. Creating a Foundry IQ knowledge base with a Fabric data agent source requires a FabricDataAgentKnowledgeSource configured with workspace and agent IDs.
+43. Microsoft IQ combines Work IQ, Fabric IQ, Web IQ, and Foundry IQ as interconnected sources of enterprise context for AI.
+44. Microsoft IQ Live is a biweekly YouTube series starting August 6, 2026, on Microsoft Reactor and covering the evolving Microsoft IQ platform.
+45. Next steps include continuing with Microsoft IQ Live and joining Discord office hours for follow-up questions.
