@@ -304,5 +304,37 @@ async def delete_observation(ctx: Context, observation_id: int) -> str:
   """Delete a bee observation."""
   row = ... # look up the record
   result = await ctx.elicit(
-    f"Permanently delete observation #{eo}
+    f"Permanently delete observation #{row.observation_id}?\n"
+    f".  {row.scientific_name} on {row.observed_data}\n",
+    response_type=["yes, delete it", "no, keep it"])
+  if result.action == "cancel" or result.data == "no, keep it":
+    return "Deletion cancelled."
+  await session.execute(
+    text("DELETE FROM observations WHERE observation_id = :oid"),
+    {"oid": observation_id}
   )
+  await session.commit()
+  return f"Deleted observation #{observation_id}"
+</pre>
+
+<p>TODO VS Code paragraph</p>
+
+<img src="">
+
+<h2>Which approach should you use?</h2>
+
+<p>We've explored a range of options for exposing your database as MCP server:</p>
+
+<img src="TODO">
+
+<p>
+Free-form SQL suits internal prototyping where you need maximum flexibility.
+Read-only SQL works well for data analytics use cases — add a parser, timeout, and row limit.
+Fully typed tools are best for production and user-facing scenarios — add elicitation for destructive operations.
+Across all approaches, always enforce DB-level permissions with a least-privilege role and read-only transactions.
+Mix and match these techniques based on your situation.
+</p>
+
+<p>
+Building MCP servers for databases empowers users to interact with data through natural language, but design your tools with safety in mind.
+</p>
