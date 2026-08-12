@@ -1,37 +1,35 @@
-<a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> is an open protocol that describes how agents can connect to external tools and data sources,
+<p><a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> is an open protocol that describes how agents can connect to external tools and data sources,
 and is now widely supported by the most popular coding agents (like GitHub Copilot, Claude Code, and Codex) and agent frameworks (like LangChain and Pydantic AI).
 If you want to give agents a standard way to access the data in a database, you can build your own MCP server and expose tools for the agent to query or even modify data.
-But you need to design your MCP server carefully, to ensure that agents can do everything that users want - but nothing that you don't want them to do!
+But you need to design your MCP server carefully, to ensure that agents can do everything that users want - but nothing that you don't want them to do!</p>
 
-In this blog post, we'll walk through the range of ways to build MCP servers on top of a PostgreSQL database,
+<p>In this blog post, we'll walk through the range of ways to build MCP servers on top of a <a href="https://www.postgresql.org/">PostgreSQL</a> database,
 since PostgreSQL is the most popular open source database and is production-ready with hosted offerings like <a href="https://learn.microsoft.com/azure/postgresql/">Azure Database for PostgreSQL</a>.
-You can apply these same principles to any database, however.
+You can apply these same principles to any database, however.</p>
 
-There's a spectrum of ways to build MCP servers on top of a database.
+<p>There's a spectrum of ways to build MCP servers on top of a database.
 We'll start with the most flexible option, exploratory servers that allow the agent to generate full SQL queries,
 conclude with the strictest option, fully typed tools for templated queries,
-and explore options in the middle too.
+and explore options in the middle too.</p>
 
 <img src="arrowdiagram.png">
 
 <h2>Free-form SQL</h2>
 
-Let's take a look at a simple MCP server that gives the agent as much information and control as possible.
-For all of our examples, we use the Python language and the FastMCP package, but SDKs are available in <a href="https://modelcontextprotocol.io/docs/sdk">multiple languages</a>.
+<p>Let's take a look at a simple MCP server that gives the agent as much information and control as possible.
+For all of our examples, we use the Python language and the <a href="https://gofastmcp.com/">FastMCP</a> package, but SDKs are available in <a href="https://modelcontextprotocol.io/docs/sdk">multiple languages</a>.
+All code is available in the <a target="_blank" href="https://github.com/pamelafox/mcp-for-postgres-db-demo/">GitHub repository</a>.</p>
 
-We start off by giving the server a name, which the agent will see and consider when deciding which MCP server to invoke for a given user query:
+<p>We start off by giving the server a name, which the agent will see and consider when deciding which MCP server to invoke for a given user query:</p>
 
-<pre>
-mcp = FastMCP("Bees database MCP server")
-</pre>
+<pre class="language-python"><code>mcp = FastMCP("Bees database MCP server")</code></pre>
 
-For this example, my database stores observations of bees, so I name it accordingly.
+<p>For this example, my database stores observations of bees, so I name it accordingly.</p>
 
-We then define an <code>execute_sql</code> tool that accepts any SQL string, executes it against the database,
-and returns the rows.
+<p>We then define an <code>execute_sql</code> tool that accepts any SQL string, executes it against the database,
+and returns the rows.</p>
 
-<pre>
-@mcp.tool()
+<pre class="language-python"><code>@mcp.tool()
 async def execute_sql(sql: str) -> str:
   """Execute a SQL query against the database and return results."""
   engine = await _get_engine()
@@ -42,47 +40,43 @@ async def execute_sql(sql: str) -> str:
       rows = result.fetchall()
       return {"columns": columns, "rows": [[str(v) for v in row] for row in rows]}
     await conn.commit()
-    return f"Statement executed. Rows affected: {result.rowcount}"
-</pre>
+    return f"Statement executed. Rows affected: {result.rowcount}"</code></pre>
 
-How will the agent know what SQL can be passed into that tool, however?
+<p>How will the agent know what SQL can be passed into that tool, however?
 We need to give it a way to discover the schema,
 so we also define a <code>get_db_schema</code> tool that
-dumps out the entire schema with table names, columns, and data types.
+dumps out the entire schema with table names, columns, and data types.</p>
 
-<pre>
-@mcp.tool()
+<pre class="language-python"><code>@mcp.tool()
 async def get_db_schema() -> str:
   """Return the database schema for all public tables."""
   engine = await _get_engine()
-  return await get_db_schema_text(engine)
-</pre>
+  return await get_db_schema_text(engine)</code></pre>
 
-We can test this MCP server out with a coding agent like GitHub Copilot.
+<p>We can test this MCP server out with a coding agent like GitHub Copilot.
 When we ask the agent "Which bees are active in El Cerrito in April?",
 the agent realizes that the Bees MCP server has relevant tools for the task,
 first calls <code>get_db_schema</code>, then calls <code>execute_sql</code>
-with a SELECT query. The database returns the results and the agent formats them into a Markdown table.
+with a SELECT query. The database returns the results and the agent formats them into a Markdown table.</p>
 
 <img src="freeformsql.png">
 
-This MCP server does work - we got the answer we wanted - but as you may already notice,
-there are multiple problems and risks to this approach.
+<p>This MCP server does work - we got the answer we wanted - but as you may already notice,
+there are multiple problems and risks to this approach.</p>
 
 <h2>Problem: Schema bloat</h2>
 
-Let's tackle the problem with the <code>get_db_schema</code> tool first - it dumps <em>everything</em>!
+<p>Let's tackle the problem with the <code>get_db_schema</code> tool first - it dumps <em>everything</em>!
 My observations database has only 5 tables and 60 columns, but a production database
 may have hundreds of tables and thousands of columns.  
 Dumping the entire schema can confuse the LLM with irrelevant information,
-and unnecessarily fill up its context window.
+and unnecessarily fill up its context window.</p>
 
-What can we do instead? <strong>Progressive</strong> schema discovery.
+<p>What can we do instead? <strong>Progressive</strong> schema discovery.
 We provide two tools: <code>list_tables</code> that only returns table names,
-and <code>describe_table</code> that returns the columns only for the given table.
+and <code>describe_table</code> that returns the columns only for the given table.</p>
 
-<pre>
-@mcp.tool()
+<pre class="language-python"><code>@mcp.tool()
 async def list_tables() -> str:
   """List all tables in the public schema. Call this first to discover available tables."""
   async with engine.connect() as conn:
@@ -101,8 +95,7 @@ async def describe_table(table_name: str) -> str:
         {"table_name": table_name})
     rows = result.fetchall()
   columns = [{"name": col, "type": dt, "nullable": n == "YES"} for col, dt, n in rows]
-  return {"table": table_name, "columns": columns}
-</pre>
+  return {"table": table_name, "columns": columns}</code></pre>
 
 
 <p>When we expose these tools to GitHub Copilot,
@@ -135,8 +128,7 @@ a verification that the SQL contains only SELECT, a 30-second timeout to prevent
 and a maximum of 100 rows:
 </p>
 
-<pre>
-@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True), timeout=30.0)
+<pre class="language-python"><code>@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True), timeout=30.0)
 async def execute_readonly_sql(sql: str) -> dict:
   """Execute a read-only SQL query against the database.
   Only SELECT statements are allowed. Non-SELECT statements are rejected.
@@ -150,13 +142,12 @@ async def execute_readonly_sql(sql: str) -> dict:
     result = await conn.execute(text(validated_sql))
     columns = list(result.keys())
     rows = result.fetchmany(MAX_LIMIT) # Cap rows regardless of LIMIT
-    return {"columns": columns, "rows": [[str(v) for v in row] for row in rows]}
-</pre>
+    return {"columns": columns, "rows": [[str(v) for v in row] for row in rows]}</code></pre>
 
 <p>Notice the tool is annotated with <code>readOnlyHint=True</code>, one of the allowed <a href="https://modelcontextprotocol.io/specification/2026-07-28/schema#toolannotations">annotations from the MCP specification</a>.
 When we set that read-only hint on a tool, we're sending a signal to the MCP client that this is a tool
 that does not modify data, which may affect how the client renders the tool or handles approvals.
-But it is <em>only</e> a hint, not a contract. A server could lie about it, or even unintentionally report it incorrectly.
+But it is <em>only</em> a hint, not a contract. A server could lie about it, or even unintentionally report it incorrectly.
 As the server developer, we must enforce actual read-only operations inside the tool logic itself.
 </p>
 
@@ -165,8 +156,7 @@ is a SELECT statement and nothing more. In Python, I implemented that check usin
 for parsing the Abstract Syntax Tree (AST) of the SQL string, confirming that it contained a single statement,
 and confirming that the single statement is specifically a SELECT statement:</p>
 
-<pre>
-def validate_readonly_sql(sql: str) -> str:
+<pre class="language-python"><code>def validate_readonly_sql(sql: str) -> str:
   try:
     stmts = pglast.parse_sql(sql)
   except pglast.parser.ParseError as e:
@@ -176,10 +166,9 @@ def validate_readonly_sql(sql: str) -> str:
     raise ValueError("Only one statement is allowed")
   if (stmt_type := type(stmts[0].stmt).__name__) != "SelectStmt":
     raise ValueError(f"Only SELECT statements are allowed, got {stmt_type}")
-  return sql
-</pre>
+  return sql</code></pre>
 
-<p>That will block the majority of destructive SQL calls, such as:
+<p>That will block the majority of destructive SQL calls, such as:</p>
 
 <table>
  <thead>
@@ -192,15 +181,13 @@ def validate_readonly_sql(sql: str) -> str:
 
 <p>We're not safe yet! There are still a few tricky destructive SQL statements that can pass that check.
 We could extend the AST-based parsing to try to block those, but PostgreSQL offers a better way:
-read-only enforcement at the database level.
+read-only enforcement at the database level.</p>
 
 <p>When we connect to the database, we run this SET command to enforce read-only transactions only:</p>
 
-<pre>
-SET default_transaction_read_only = ON
-</pre>
+<pre class="language-sql"><code>SET default_transaction_read_only = ON</code></pre>
 
-<p>That blocks these CTEs that start with <code>WITH</code> and hide mutations inside:</p>
+<p>That blocks these <a href="https://www.postgresql.org/docs/current/queries-with.html">CTEs</a> that start with <code>WITH</code> and hide mutations inside:</p>
 
 <table>
  <thead>
@@ -213,12 +200,10 @@ SET default_transaction_read_only = ON
 <p>We can go even further and create a dedicated PostgreSQL role for the MCP server that only 
 has the ability to issue SELECT queries on a given schema:</p>
 
-<pre>
-CREATE ROLE mcp_readonly;
+<pre class="language-sql"><code>CREATE ROLE mcp_readonly;
 GRANT CONNECT ON DATABASE bees TO mcp_readonly;
 GRANT USAGE ON SCHEMA public TO mcp_readonly;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_readonly;
-</pre>
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO mcp_readonly;</code></pre>
 
 <p>That blocks these SELECT statements that call potentially destructive built-in SQL functions:</p>
 
@@ -244,8 +229,7 @@ get safely merged into a templated SQL query - or passed to an ORM call. </p>
 and executes a templated SQL query on a hard-coded table:
 </p>
 
-<pre>
-@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
+<pre class="language-python"><code>@mcp.tool(annotations=ToolAnnotations(readOnlyHint=True))
 async def search_species(q: str, limit: int = 10) -> list[SpeciesResults]:
   """Search bee species by scientific or common name.
   Use to resolve a name to a taxon_id before calling other tools."""
@@ -257,8 +241,7 @@ async def search_species(q: str, limit: int = 10) -> list[SpeciesResults]:
     ORDER BY scientific_name ASC LIMIT :limit""")
   async with engine.connect() as conn:
     result = await conn.execute(sql, {"q": q, "limit": min(limit, 50)})
-    return [SpeciesResult(...) for row in result.fetchall()]
-</pre>
+    return [SpeciesResult(...) for row in result.fetchall()]</code></pre>
 
 <p>We need to define additional tools for every SQL query that might be needed to
 answer user questions, like a <code>search_observations_tool</code> that accepts
@@ -287,7 +270,7 @@ In a database admin UI, a delete button is typically bright red and pops up a di
 
 <img src="deletedb.png">
 
-<p>We can achieve a similar UI for our MCP server, thanks to form-based elicitation, a relatively recent addition to the MCP spec.
+<p>We can achieve a similar UI for our MCP server, thanks to <a href="https://modelcontextprotocol.io/specification/2026-07-28/client/elicitation">form-based elicitation</a>, a relatively recent addition to the MCP spec.
 In the MCP clients that support elicitations, the client will pop up a form 
 with our desired question and options. We can then change what our tool does, depending on what the user selects.
 </p>
@@ -296,8 +279,7 @@ with our desired question and options. We can then change what our tool does, de
 the user really wants to delete the row that it found in the database:
 </p>
 
-<pre>
-@mcp.tool(annotations=ToolAnnotations(destructiveHint=True))
+<pre class="language-python"><code>@mcp.tool(annotations=ToolAnnotations(destructiveHint=True))
 async def delete_observation(ctx: Context, observation_id: int) -> str:
   """Delete a bee observation."""
   row = ... # look up the record
@@ -312,8 +294,7 @@ async def delete_observation(ctx: Context, observation_id: int) -> str:
     {"oid": observation_id}
   )
   await session.commit()
-  return f"Deleted observation #{observation_id}"
-</pre>
+  return f"Deleted observation #{observation_id}"</code></pre>
 
 <p>When we ask GitHub Copilot to delete an observation, the agent runs that <code>delete_observation</code> tool
   and the elicitation dialog pops up. The user has to explicitly click to confirm deletion.</p>
@@ -328,16 +309,19 @@ async def delete_observation(ctx: Context, observation_id: int) -> str:
 
 <p>We've explored a range of options for exposing your database as an MCP server:</p>
 
-<img src="optionsrange.png">
+<img src="finaloptions.png">
 
 <p>
-Free-form SQL suits internal prototyping where you need maximum flexibility.
-Read-only SQL works well for data analytics use cases — add a parser, timeout, and row limit.
-Fully typed tools are best for production and user-facing scenarios — add elicitation for destructive operations.
-Across all approaches, always enforce DB-level permissions with a least-privilege role and read-only transactions.
-Mix and match these techniques based on your situation.
+<strong>Free-form SQL</strong> is a good fit for internal prototyping where you need maximum flexibility.
+<strong>Read-only SQL</strong> works well for data analytics use cases, to allow arbitrary analysis.
+<strong>Templated queries</strong> are the safest bet for production and user-facing scenarios.
+Across all approaches, always enforce DB-level permissions to reduce risk.
 </p>
 
 <p>
-Building MCP servers for databases empowers users to interact with data through natural language, but you should design your tools with safety in mind.
+Building MCP servers for your database is a great way to empower users to interact with data through natural language,
+but you should design your tools with safety in mind.
 </p>
+
+<p>To learn more, explore the <a href="https://github.com/pamelafox/mcp-for-postgres-db-demo/">complete source code on GitHub</a>
+  which contains four MCP servers demonstrating each of the techniques, and can be run either locally on on Azure.</p>
